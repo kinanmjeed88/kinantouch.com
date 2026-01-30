@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>لوحة القيادة | TechTouch CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Tajawal', sans-serif; }
+        .tab-active { background-color: #eff6ff; color: #2563eb; border-right: 3px solid #2563eb; }
+        .hidden-section { display: none; }
+        /* Icon Picker Grid */
+        .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 0.5rem; }
+        .icon-option { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer; transition: all 0.2s; }
+        .icon-option:hover { background-color: #eff6ff; border-color: #2563eb; color: #2563eb; }
+        
+        /* Modal Tabs */
+        .modal-tab-btn { padding: 0.5rem 1rem; border-bottom: 2px solid transparent; color: #6b7280; font-weight: 600; }
+        .modal-tab-btn.active { border-bottom-color: #2563eb; color: #2563eb; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+
+    <!-- Mobile Header -->
+    <header class="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-50">
+        <h1 class="text-xl font-bold tracking-tight">TechTouch CMS</h1>
+        <button onclick="document.getElementById('sidebar').classList.toggle('translate-x-full')" class="p-2 hover:bg-gray-100 rounded-lg">
+            <i data-lucide="menu"></i>
+        </button>
+    </header>
+
+    <!-- Sidebar (Fixed Right) -->
+    <aside id="sidebar" class="w-64 bg-white border-l border-gray-200 h-screen fixed right-0 top-0 z-[60] flex flex-col shadow-lg transition-transform duration-300 transform translate-x-full md:translate-x-0">
+        <div class="p-6 border-b border-gray-100 flex items-center gap-3 justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">T</div>
+                <h1 class="text-xl font-bold tracking-tight">TechTouch CMS</h1>
+            </div>
+            <button onclick="document.getElementById('sidebar').classList.add('translate-x-full')" class="md:hidden p-1 text-gray-400">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        
+        <nav class="flex-1 p-4 space-y-2">
+            <button onclick="switchTab('posts')" id="nav-posts" class="tab-active w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-gray-600 hover:bg-gray-50">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                المقالات
+            </button>
+            <button onclick="switchTab('channels')" id="nav-channels" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-gray-600 hover:bg-gray-50">
+                <i data-lucide="grid" class="w-5 h-5"></i>
+                القنوات والأدوات
+            </button>
+            <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-gray-600 hover:bg-gray-50">
+                <i data-lucide="user-cog" class="w-5 h-5"></i>
+                الملف الشخصي والمظهر
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-gray-100">
+            <button onclick="toggleGithubSettings()" class="w-full flex items-center gap-2 text-xs text-gray-400 hover:text-blue-600">
+                <i data-lucide="settings"></i> إعدادات الاتصال
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content (Pushed by margin on desktop) -->
+    <main class="flex-1 w-full md:mr-64 p-4 md:p-8 transition-all min-h-screen">
+        
+        <!-- Advanced Icon/Image Picker Modal -->
+        <div id="iconPickerModal" class="hidden fixed inset-0 bg-black/60 z-[80] flex items-center justify-center backdrop-blur-sm px-4">
+            <div class="bg-white rounded-2xl p-0 w-full max-w-md shadow-2xl animate-fade-in flex flex-col max-h-[90vh] overflow-hidden">
+                
+                <!-- Modal Header -->
+                <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+                    <h3 class="font-bold text-lg">تخصيص الأيقونة</h3>
+                    <button onclick="closeIconPicker()" class="p-1 hover:bg-gray-200 rounded"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex border-b">
+                    <button onclick="switchPickerTab('lucide')" id="tab-btn-lucide" class="modal-tab-btn active flex-1">أيقونات جاهزة</button>
+                    <button onclick="switchPickerTab('image')" id="tab-btn-image" class="modal-tab-btn flex-1">صورة مخصصة</button>
+                </div>
+
+                <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
+                    
+                    <!-- Size Slider (Common) -->
+                    <div class="mb-6 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                        <label class="label flex justify-between">
+                            <span>حجم الأيقونة/الصورة</span>
+                            <span id="sizeDisplay" class="text-blue-600 font-bold">24px</span>
+                        </label>
+                        <input type="range" id="pickerSize" min="16" max="128" step="4" value="24" class="w-full accent-blue-600" oninput="updateSizeDisplay(this.value)">
+                    </div>
+
+                    <!-- TAB 1: Lucide Icons -->
+                    <div id="picker-lucide" class="picker-tab">
+                        <input type="text" id="customIconInput" placeholder="بحث عن أيقونة..." class="w-full p-2 border rounded-lg mb-4 text-sm dir-ltr">
+                        <div class="icon-grid" id="iconGrid">
+                            <!-- Icons injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: Image Upload -->
+                    <div id="picker-image" class="picker-tab hidden">
+                        <div class="flex flex-col items-center justify-center gap-4">
+                            <div class="w-24 h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50 overflow-hidden relative group">
+                                <img id="pickerPreviewImg" src="" class="w-full h-full object-contain hidden">
+                                <div id="pickerPlaceholder" class="text-gray-400 flex flex-col items-center">
+                                    <i data-lucide="image" class="w-8 h-8 mb-1"></i>
+                                    <span class="text-[10px]">معاينة</span>
+                                </div>
+                            </div>
+                            
+                            <div class="w-full">
+                                <input type="file" id="pickerFile" class="hidden" onchange="handlePickerFileSelect(this)">
+                                <button onclick="document.getElementById('pickerFile').click()" id="btnUploadPicker" class="w-full btn-secondary mb-2">
+                                    <i data-lucide="upload"></i> رفع صورة
+                                </button>
+                                <input type="text" id="pickerUrl" placeholder="أو رابط الصورة (URL)" class="input-field dir-ltr text-sm" oninput="updatePickerPreview(this.value)">
+                            </div>
+                        </div>
+                        <button onclick="confirmImageSelection()" class="mt-6 w-full btn-primary">تأكيد الصورة والحجم</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GitHub Settings Modal -->
+        <div id="ghModal" class="hidden fixed inset-0 bg-black/60 z-[70] flex items-center justify-center backdrop-blur-sm px-4">
+            <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl animate-fade-in">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="github"></i> ربط المستودع</h2>
+                <div class="space-y-4">
+                    <input type="text" id="ghOwner" class="w-full p-3 border rounded-lg bg-gray-50" placeholder="GitHub Username">
+                    <input type="text" id="ghRepo" class="w-full p-3 border rounded-lg bg-gray-50" placeholder="Repository Name">
+                    <input type="password" id="ghToken" class="w-full p-3 border rounded-lg bg-gray-50" placeholder="Personal Access Token (Repo Scope)">
+                    <button onclick="saveGhSettings()" class="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-gray-800">حفظ واتصال</button>
+                    <button onclick="toggleGithubSettings()" class="w-full text-gray-500 py-2">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="toast" class="fixed top-4 left-4 z-[80] transform transition-all duration-300 translate-y-[-100%] opacity-0">
+            <div class="bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-2">
+                <i data-lucide="info" class="w-4 h-4"></i>
+                <span id="toastMsg">تم الحفظ بنجاح</span>
+            </div>
+        </div>
+
+        <!-- SECTION: POSTS -->
+        <section id="sec-posts" class="space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold">إدارة المقالات</h2>
+                <button onclick="openPostEditor()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-200">
+                    <i data-lucide="plus"></i> <span class="hidden sm:inline">مقال جديد</span>
+                </button>
+            </div>
+
+            <div id="postsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>
+            <div id="postsList" class="grid grid-cols-1 gap-4"></div>
+
+            <!-- Post Editor Modal -->
+            <div id="postEditor" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto">
+                <div class="max-w-4xl mx-auto p-4 md:p-8">
+                    <div class="flex justify-between items-center mb-8 border-b pb-4">
+                        <h2 class="text-2xl font-bold" id="editorTitle">مقال جديد</h2>
+                        <button onclick="closePostEditor()" class="p-2 hover:bg-gray-100 rounded-full"><i data-lucide="x"></i></button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="col-span-2">
+                            <label class="label">العنوان (بالعربية)</label>
+                            <input type="text" id="pTitle" class="input-field" oninput="autoSlug()" placeholder="عنوان المقال هنا...">
+                        </div>
+                        <div>
+                            <label class="label">الرابط (Slug - إنجليزي تلقائي)</label>
+                            <input type="text" id="pSlug" class="input-field bg-gray-50" readonly>
+                        </div>
+                        <div>
+                            <label class="label">القسم</label>
+                            <select id="pCat" class="input-field">
+                                <option value="articles">اخبار</option>
+                                <option value="apps">تطبيقات</option>
+                                <option value="games">ألعاب</option>
+                                <option value="sports">رياضة</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="label">الصورة</label>
+                            <div class="flex gap-2">
+                                <input type="file" id="pFile" class="hidden" onchange="handleFileSelect(this, 'pImage')">
+                                <button onclick="document.getElementById('pFile').click()" class="btn-secondary whitespace-nowrap"><i data-lucide="image"></i> رفع</button>
+                                <input type="text" id="pImage" class="input-field dir-ltr" placeholder="URL">
+                            </div>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="label">الوصف القصير</label>
+                            <textarea id="pDesc" rows="2" class="input-field"></textarea>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="label">المحتوى (Markdown)</label>
+                            <div class="flex flex-wrap gap-2 mb-2 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <button onclick="insertTag('# عنوان رئيسي\n')" class="badge bg-white shadow-sm hover:text-blue-600">H1</button>
+                                <button onclick="insertTag('## عنوان فرعي\n')" class="badge bg-white shadow-sm hover:text-blue-600">H2</button>
+                                <button onclick="insertTag('### عنوان صغير\n')" class="badge bg-white shadow-sm hover:text-blue-600">H3</button>
+                                <button onclick="insertTag('**نص عريض**')" class="badge bg-white shadow-sm hover:text-blue-600 font-bold">B</button>
+                                <button onclick="insertTag('- عنصر قائمة\n')" class="badge bg-white shadow-sm hover:text-blue-600">List</button>
+                                <button onclick="insertLink()" class="badge bg-green-50 text-green-700 hover:bg-green-100 flex items-center gap-1"><i data-lucide="link" class="w-3 h-3"></i> رابط زر</button>
+                                <button onclick="insertYoutube()" class="badge bg-red-50 text-red-700 hover:bg-red-100 flex items-center gap-1"><i data-lucide="youtube" class="w-3 h-3"></i> يوتيوب</button>
+                            </div>
+                            <textarea id="pContent" rows="15" class="input-field font-mono text-sm leading-relaxed" placeholder="اكتب محتوى المقال هنا بصيغة Markdown..."></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex justify-end gap-4 pb-8">
+                        <button onclick="savePost()" id="btnSavePost" class="btn-primary w-full md:w-40">حفظ ونشر</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CHANNELS -->
+        <section id="sec-channels" class="hidden-section space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold">القنوات والمواقع</h2>
+                <button onclick="addChannel()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="plus"></i> <span class="hidden sm:inline">إضافة</span>
+                </button>
+            </div>
+            <div id="channelsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div></div>
+            <div id="channelsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+
+        <!-- SECTION: SETTINGS -->
+        <section id="sec-settings" class="hidden-section space-y-8">
+            <h2 class="text-2xl font-bold">الإعدادات والملف الشخصي</h2>
+            
+            <div id="settingsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div></div>
+
+            <div id="settingsForm" class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100 hidden">
+                
+                <!-- Profile -->
+                <div class="flex flex-col md:flex-row items-center gap-6 mb-8 border-b pb-8">
+                    <div class="relative">
+                        <img id="previewProfile" src="" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100">
+                        <button onclick="document.getElementById('fileProfile').click()" class="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700">
+                            <i data-lucide="camera" class="w-4 h-4"></i>
+                        </button>
+                        <input type="file" id="fileProfile" class="hidden" onchange="handleFileSelect(this, 'valProfileImg', 'previewProfile')">
+                        <input type="hidden" id="valProfileImg">
+                    </div>
+                    <div class="w-full">
+                        <label class="label">الاسم المعروض</label>
+                        <input type="text" id="valName" class="input-field">
+                    </div>
+                </div>
+
+                <!-- News Ticker Config -->
+                <div class="mb-8 border-b pb-8 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <h3 class="font-bold text-lg mb-4 text-blue-800 flex items-center gap-2">
+                        <i data-lucide="megaphone" class="w-5 h-5"></i> الشريط الإخباري (Ticker)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-1">
+                            <label class="label">العنوان (التسمية)</label>
+                            <input type="text" id="tickerLabel" class="input-field" placeholder="مثال: عاجل">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="label">نص الشريط</label>
+                            <input type="text" id="tickerText" class="input-field" placeholder="النص المتحرك...">
+                        </div>
+                        <div class="md:col-span-1">
+                            <label class="label">الرابط</label>
+                            <input type="text" id="tickerUrl" class="input-field dir-ltr" placeholder="#">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cover & Bio -->
+                <div class="grid grid-cols-1 gap-6 mb-8 border-b pb-8">
+                    <div>
+                        <label class="label mb-2">صورة الغلاف (من نحن)</label>
+                        <div class="flex gap-4 mb-2">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="coverType" value="color" onchange="toggleCoverInput()"> لون</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="coverType" value="image" onchange="toggleCoverInput()"> صورة</label>
+                        </div>
+                        <div id="coverColorInput" class="hidden"><input type="text" id="valCoverColor" class="input-field" placeholder="ex: bg-gradient-to-r from-blue-700 to-blue-500"></div>
+                        <div id="coverImageInput" class="hidden flex gap-2">
+                            <input type="text" id="valCoverImg" class="input-field flex-1" placeholder="Image URL">
+                            <input type="file" id="fileCover" class="hidden" onchange="handleFileSelect(this, 'valCoverImg')">
+                            <button onclick="document.getElementById('fileCover').click()" class="btn-secondary">رفع</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="label">السيرة الذاتية (Bio)</label>
+                        <textarea id="valBio" rows="3" class="input-field"></textarea>
+                    </div>
+                </div>
+
+                <!-- About Page Extra Sections (NEW) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 border-b pb-8">
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <label class="label flex items-center gap-2"><i data-lucide="bot" class="w-4 h-4"></i> قسم البوت</label>
+                        <input type="text" id="valBotTitle" class="input-field mb-2 bg-white" placeholder="عنوان القسم (مثال: مركز خدمة الطلبات)">
+                        <p class="text-xs text-gray-500 mb-2">نقاط المحتوى (كل نقطة في سطر)</p>
+                        <textarea id="valBotInfo" rows="5" class="input-field" placeholder="مثال: ارسل اسم التطبيق..."></textarea>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <label class="label flex items-center gap-2"><i data-lucide="search" class="w-4 h-4"></i> قسم البحث</label>
+                        <input type="text" id="valSearchTitle" class="input-field mb-2 bg-white" placeholder="عنوان القسم (مثال: دليل الوصول الذكي)">
+                        <p class="text-xs text-gray-500 mb-2">نقاط المحتوى (كل نقطة في سطر)</p>
+                        <textarea id="valSearchInfo" rows="5" class="input-field" placeholder="مثال: استخدم زر البحث..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Social Links -->
+                <div>
+                    <h3 class="font-bold text-lg mb-4">روابط التواصل (Footer)</h3>
+                    <div class="grid grid-cols-1 gap-4">
+                        <!-- Facebook -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="openIconPickerForSocial('facebook')" id="btnIcon_facebook" class="w-12 h-12 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors bg-white overflow-hidden relative">
+                                <i data-lucide="facebook"></i>
+                            </button>
+                            <div class="flex-1"><label class="text-xs text-gray-500">Facebook</label><input type="text" id="socFb" class="input-field dir-ltr"></div>
+                        </div>
+                        <!-- Instagram -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="openIconPickerForSocial('instagram')" id="btnIcon_instagram" class="w-12 h-12 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors bg-white overflow-hidden relative">
+                                <i data-lucide="instagram"></i>
+                            </button>
+                            <div class="flex-1"><label class="text-xs text-gray-500">Instagram</label><input type="text" id="socInsta" class="input-field dir-ltr"></div>
+                        </div>
+                        <!-- TikTok -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="openIconPickerForSocial('tiktok')" id="btnIcon_tiktok" class="w-12 h-12 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors bg-white overflow-hidden relative">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                            </button>
+                            <div class="flex-1"><label class="text-xs text-gray-500">TikTok</label><input type="text" id="socTikTok" class="input-field dir-ltr"></div>
+                        </div>
+                        <!-- YouTube -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="openIconPickerForSocial('youtube')" id="btnIcon_youtube" class="w-12 h-12 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors bg-white overflow-hidden relative">
+                                <i data-lucide="youtube"></i>
+                            </button>
+                            <div class="flex-1"><label class="text-xs text-gray-500">YouTube</label><input type="text" id="socYt" class="input-field dir-ltr"></div>
+                        </div>
+                        <!-- Telegram -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="openIconPickerForSocial('telegram')" id="btnIcon_telegram" class="w-12 h-12 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors bg-white overflow-hidden relative">
+                                <i data-lucide="send"></i>
+                            </button>
+                            <div class="flex-1"><label class="text-xs text-gray-500">Telegram</label><input type="text" id="socTg" class="input-field dir-ltr"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-4 border-t flex justify-end">
+                    <button onclick="saveSettingsData()" id="btnSaveSettings" class="btn-primary w-full md:w-40">حفظ التغييرات</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <style>
+        .input-field { width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; outline: none; transition: border-color 0.2s; }
+        .input-field:focus { border-color: #2563eb; ring: 2px; ring-color: #bfdbfe; }
+        .label { display: block; font-size: 0.875rem; font-weight: 700; color: #374151; margin-bottom: 0.5rem; }
+        .btn-primary { background-color: #2563eb; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 700; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .btn-secondary { background-color: #f3f4f6; color: #374151; padding: 0.75rem 1rem; border-radius: 0.75rem; font-weight: 600; border: 1px solid #e5e7eb; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-secondary:hover { background-color: #e5e7eb; }
+        .badge { padding: 0.5rem 0.75rem; font-size: 0.75rem; border-radius: 0.5rem; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+        .dir-ltr { direction: ltr; }
+    </style>
+
+    <script src="admin.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+
+{
+  "name": "techtouch-cms",
+  "version": "1.0.0",
+  "description": "Static Site Generator for TechTouch",
+  "main": "scripts/generate.js",
+  "scripts": {
+    "build": "node scripts/generate.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12"
+  }
+}

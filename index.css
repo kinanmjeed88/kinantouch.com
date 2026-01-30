@@ -1,0 +1,16 @@
+/* 
+   تم تعطيل Tailwind Directives لأننا نستخدم CDN في index.html 
+   لتشغيل الموقع كـ Static Site بدون Build
+*/
+
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+html, body {
+  height: 100%;
+}
+
+/* Custom CSS is now largely handled inside index.html <style> block 
+   to ensure everything is in one place for GitHub Pages. 
+*/

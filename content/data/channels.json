@@ -1,0 +1,99 @@
+
+[
+  {
+    "id": "bot_requests",
+    "name": "بوت الطلبات",
+    "desc": "بوت على التيليكرام لاستقبال طلبات التطبيقات والالعاب المعدلة",
+    "url": "https://t.me/techtouchAI_bot",
+    "icon": "bot",
+    "color": "purple"
+  },
+  {
+    "id": "apps_games",
+    "name": "Techtouch7",
+    "desc": "قناة نشر تطبيقات والعاب اندرويد",
+    "url": "https://t.me/techtouch7",
+    "icon": "smartphone",
+    "color": "green"
+  },
+  {
+    "id": "discussions",
+    "name": "مناقشات Techtouch",
+    "desc": "تعليقات لحل المشاكل وغيرها",
+    "url": "https://t.me/techtouch6",
+    "icon": "message-circle",
+    "color": "gray"
+  },
+  {
+    "id": "games_channel",
+    "name": "قناة الالعاب",
+    "desc": "نشر العاب اندرو معدلة",
+    "url": "https://t.me/techtouch0",
+    "icon": "gamepad-2",
+    "color": "red"
+  },
+  {
+    "id": "games_discuss",
+    "name": "مناقشات الالعاب",
+    "desc": "كروب مناقشة الالعاب",
+    "url": "https://t.me/+pScKzHOQwslhMmJi",
+    "icon": "message-square",
+    "color": "rose"
+  },
+  {
+    "id": "pc_ps",
+    "name": "قناة PC & PS",
+    "desc": "قناة لنشر مايخص البليستيشن وبرامج الوندوز",
+    "url": "https://t.me/techtouch4",
+    "icon": "monitor",
+    "color": "indigo"
+  },
+  {
+    "id": "pc_ps_discuss",
+    "name": "مناقشات PC & PS",
+    "desc": "مناقشات حول الكمبيوتر والبليستيشن",
+    "url": "https://t.me/+J1Up1q8AYgs2MWU6",
+    "icon": "message-square",
+    "color": "indigo"
+  },
+  {
+    "id": "iphone",
+    "name": "قناة الايفون",
+    "desc": "نشر مايخص الايفون تطبيقات وغيرها",
+    "url": "https://t.me/+yqBOH5BBBEM0MTQ6",
+    "icon": "smartphone",
+    "color": "slate"
+  },
+  {
+    "id": "iphone_discuss",
+    "name": "مناقشات الايفون",
+    "desc": "حل بعض المشاكل للايفون ومناقشتها",
+    "url": "https://t.me/+t1W3_jSUjOw0ZDYy",
+    "icon": "message-square",
+    "color": "slate"
+  },
+  {
+    "id": "ai",
+    "name": "قناة الذكاء الاصطناعي AI",
+    "desc": "نشر اخبار تقنية واخر اخبار الذكاء الاصطناعي",
+    "url": "https://t.me/techtouch_AI",
+    "icon": "cpu",
+    "color": "teal"
+  },
+  {
+    "id": "live",
+    "name": "قناة البث المباشر",
+    "desc": "توفير روابط مباشره لكرة القدم",
+    "url": "https://t.me/techtouch9",
+    "icon": "tv",
+    "color": "orange"
+  },
+  {
+    "id": "all_folder",
+    "name": "المجلد الكامل",
+    "desc": "للاشتراك بجميع القنوات دفعة واحدة",
+    "url": "https://t.me/addlist/Gxcy1FFJONhkMjFi",
+    "icon": "folder-plus",
+    "color": "blue"
+  }
+]

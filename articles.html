@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الاخبار | TechTouch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'] } } }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col min-h-screen">
+    
+    <!-- Header -->
+    <header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-md">
+                    <img src="assets/images/me.jpg" alt="Profile photo" class="w-full h-full object-cover" />
+                </div>
+                <span class="font-bold text-lg text-gray-800 dark:text-gray-100 hidden sm:block">كنان الصائغ</span>
+            </div>
+            <a href="index.html" class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight">TechTouch</a>
+            <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
+                <i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Nav -->
+    <nav class="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-16 z-30 overflow-x-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center space-x-reverse space-x-2 h-10 min-w-max">
+                 <a href="index.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i data-lucide="home" class="w-3.5 h-3.5"></i><span>الرئيسية</span>
+                </a>
+                 <a href="tools.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i data-lucide="wrench" class="w-3.5 h-3.5"></i><span>الأدوات</span>
+                </a>
+                <a href="about.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i><span>حول</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Categories Tabs (New Addition) -->
+    <div class="w-full py-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-2 overflow-x-auto no-scrollbar">
+          <div class="flex md:justify-center items-center gap-2 min-w-max">
+            <button class="tab-btn flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 bg-blue-600 text-white shadow-sm" data-tab="articles">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i><span>اخبار</span>
+            </button>
+            <button class="tab-btn flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700" data-tab="apps">
+                <i data-lucide="smartphone" class="w-3.5 h-3.5"></i><span>تطبيقات</span>
+            </button>
+            <button class="tab-btn flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700" data-tab="games">
+                <i data-lucide="gamepad-2" class="w-3.5 h-3.5"></i><span>ألعاب</span>
+            </button>
+             <button class="tab-btn flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700" data-tab="sports">
+                <i data-lucide="trophy" class="w-3.5 h-3.5"></i><span>رياضة</span>
+            </button>
+          </div>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in min-h-[60vh]">
+        
+        <!-- Tab Content: ARTICLES (News) -->
+        <div id="tab-articles" class="tab-content w-full">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                <!-- Asus GX10 -->
+                <a href="article-asus-gx10.html" class="group block w-full h-full">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col relative">
+                        <div class="h-48 sm:h-52 w-full overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Asus Laptop" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                            <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-10">
+                                <i data-lucide="file-text" class="w-3 h-3"></i><span>اخبار</span>
+                            </div>
+                        </div>
+                        <div class="p-4 sm:p-5 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">مراجعة شاملة لجهاز Asus GX10 الجديد</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed">هل يستحق جهاز أسوس الجديد كل هذه الضجة؟ إليك التفاصيل الكاملة للمواصفات والأداء.</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- iPhone 16 -->
+                <a href="article-iphone-16.html" class="group block w-full h-full">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col relative">
+                        <div class="h-48 sm:h-52 w-full overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="iPhone 16" />
+                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                            <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-10">
+                                <i data-lucide="file-text" class="w-3 h-3"></i><span>اخبار</span>
+                            </div>
+                        </div>
+                        <div class="p-4 sm:p-5 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">تسريبات iPhone 16: كل ما نعرفه</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed">نظرة أولية على التصميم الجديد وزر التصوير الجديد.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tab Content: APPS -->
+        <div id="tab-apps" class="tab-content w-full hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                 <!-- CapCut -->
+                 <a href="article-capcut.html" class="group block w-full h-full">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col relative">
+                        <div class="h-48 sm:h-52 w-full overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="CapCut" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                            <div class="absolute top-3 right-3 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-10">
+                                <i data-lucide="smartphone" class="w-3 h-3"></i><span>تطبيقات</span>
+                            </div>
+                        </div>
+                        <div class="p-4 sm:p-5 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">تحديث CapCut الجديد</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed">تعرف على أدوات الذكاء الاصطناعي الجديدة في التحديث الأخير.</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Lightroom -->
+                <a href="article-lightroom.html" class="group block w-full h-full">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col relative">
+                        <div class="h-48 sm:h-52 w-full overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Lightroom" />
+                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                            <div class="absolute top-3 right-3 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-10">
+                                <i data-lucide="smartphone" class="w-3 h-3"></i><span>تطبيقات</span>
+                            </div>
+                        </div>
+                        <div class="p-4 sm:p-5 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">احتراف Lightroom للموبايل</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed">دليلك الكامل لتعديل الصور باحترافية.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tab Content: GAMES -->
+        <div id="tab-games" class="tab-content w-full hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                <!-- GTA VI -->
+                <a href="article-gta-vi.html" class="group block w-full h-full">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col relative">
+                        <div class="h-48 sm:h-52 w-full overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="GTA VI" />
+                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                            <div class="absolute top-3 right-3 bg-purple-600 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-10">
+                                <i data-lucide="gamepad-2" class="w-3 h-3"></i><span>ألعاب</span>
+                            </div>
+                        </div>
+                        <div class="p-4 sm:p-5 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">تسريبات GTA VI: العودة إلى Vice City</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed">تفاصيل الخريطة والشخصيات وموعد الإصدار المتوقع.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tab Content: SPORTS -->
+        <div id="tab-sports" class="tab-content w-full hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                <!-- UCL Update -->
+                <a href="article-ucl-update.html" class="group block w-full h-full">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col relative">
+                        <div class="h-48 sm:h-52 w-full overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1614632537190-23e4146777db?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="UCL Stadium" />
+                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                            <div class="absolute top-3 right-3 bg-orange-600 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-10">
+                                <i data-lucide="trophy" class="w-3 h-3"></i><span>رياضة</span>
+                            </div>
+                        </div>
+                        <div class="p-4 sm:p-5 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">تحديث تطبيق دوري الأبطال الجديد</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed">ميزات الفانتزي والبث المباشر للإحصائيات.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+            <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
+        </div>
+    </footer>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

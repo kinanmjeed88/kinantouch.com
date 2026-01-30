@@ -1,0 +1,206 @@
+
+/* Global Styles & Animations */
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+.dark ::-webkit-scrollbar-track { background: #1f2937; }
+::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Hide Scrollbar util */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Marquee Animation */
+@keyframes marquee {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+.animate-marquee { animation: marquee 30s linear infinite; }
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.5s ease-out; }
+
+/* Conditional Marquee for Cards */
+@keyframes scrollLeftToRight {
+    0%   { transform: translateX(0); }
+    10%  { transform: translateX(0); }
+    100% { transform: translateX(50%); } 
+}
+
+.marquee-text-wrap {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    mask-image: linear-gradient(to left, transparent, black 5%, black 95%, transparent);
+}
+
+.marquee-text-content {
+    display: inline-block;
+}
+
+.animate-scroll {
+    animation: scrollLeftToRight 8s linear infinite alternate;
+}
+
+/* --- Professional Hybrid Ad System --- */
+.hybrid-ad-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    background-color: #ffffff; /* Solid background to prevent see-through */
+    border: 1px solid #e5e7eb;
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 0;
+    transition: all 0.3s ease;
+    z-index: 0; /* Keeps ad below sticky headers */
+}
+
+.dark .hybrid-ad-container {
+    border-color: #374151;
+    background-color: #1f2937;
+}
+
+/* Ad Label Badge */
+.ad-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #6b7280;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-bottom-left-radius: 0.5rem;
+    z-index: 5; /* Low enough to be under sticky nav (z-30/40) */
+    pointer-events: none;
+    font-family: sans-serif;
+}
+
+.dark .ad-badge {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+}
+
+/* The Fallback Image (Background Layer) */
+.ad-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Lowest priority */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ad-fallback img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 1; /* Full visibility by default */
+    transition: transform 0.3s ease;
+}
+
+.ad-fallback:hover img {
+    transform: scale(1.02);
+}
+
+/* The Google Ad (Top Layer) */
+.adsbygoogle {
+    position: relative;
+    z-index: 2; /* Just above fallback (1) but below badge (5) */
+    display: block;
+    width: 100%;
+    min-height: 100px; /* Ensure it takes space if loaded */
+    background: #ffffff; /* Default background for ad area to cover image cleanly */
+}
+
+.dark .adsbygoogle {
+    background: #1f2937; /* Match dark mode bg so fallback doesn't bleed weirdly */
+}
+
+/* Helper for iframe responsiveness */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 1rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    background-color: #000;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* Custom Wrapped Link Button (Transparent Card Style) */
+.btn-wrapped-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%);
+    backdrop-filter: blur(8px);
+    color: white !important; 
+    font-weight: 700;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px -3px rgba(37, 99, 235, 0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+    
+    /* Responsive Constraints */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: normal; /* Allow text wrapping */
+    text-align: center;
+    line-height: 1.4;
+    font-size: 0.95rem;
+}
+
+.btn-wrapped-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.5);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.btn-wrapped-link i {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.btn-wrapped-link span {
+    word-break: break-word; /* Ensure long words break */
+}
+
+/* Article Images Responsive Fix */
+.prose img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    margin: 1.5rem auto;
+    display: block;
+}

@@ -1,0 +1,113 @@
+
+// Initialize Lucide Icons & App Logic
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initialize Icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // 2. Theme Management
+    const themeBtn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+    } else {
+        html.classList.remove('dark');
+    }
+
+    if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+            } else {
+                localStorage.theme = 'light';
+            }
+        });
+    }
+
+    // 3. Highlight Active Nav Link
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (linkPath === currentPath || (currentPath === '' && linkPath === 'index.html')) {
+            link.classList.remove('text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-100');
+            link.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+        }
+    });
+
+    // 4. Tab Switching Logic (Homepage & Articles)
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    if (tabButtons.length > 0) {
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.getAttribute('data-tab');
+
+                // Reset all buttons
+                tabButtons.forEach(b => {
+                    b.classList.remove('bg-blue-600', 'bg-green-600', 'bg-purple-600', 'bg-orange-600', 'text-white', 'shadow-lg');
+                    b.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300');
+                });
+
+                // Activate clicked button
+                btn.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300');
+                if(targetTab === 'articles') btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+                else if(targetTab === 'apps') btn.classList.add('bg-green-600', 'text-white', 'shadow-lg');
+                else if(targetTab === 'games') btn.classList.add('bg-purple-600', 'text-white', 'shadow-lg');
+                else if(targetTab === 'sports') btn.classList.add('bg-orange-600', 'text-white', 'shadow-lg');
+
+                // Hide all contents
+                tabContents.forEach(content => content.classList.add('hidden'));
+
+                // Show target content
+                const targetContent = document.getElementById(`tab-${targetTab}`);
+                if (targetContent) {
+                    targetContent.classList.remove('hidden');
+                    targetContent.classList.remove('animate-fade-in');
+                    void targetContent.offsetWidth; // Trigger reflow
+                    targetContent.classList.add('animate-fade-in');
+                    
+                    // Mobile Optimization: Scroll slightly to content so menu doesn't block view
+                    if(window.innerWidth < 768) {
+                        const headerOffset = 140; // Approx height of header + sticky nav
+                        const elementPosition = targetContent.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+                    }
+                }
+            });
+        });
+    }
+
+    // 5. PWA Install Logic
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-app-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) {
+            installBtn.classList.remove('hidden');
+            installBtn.classList.add('flex');
+        }
+    });
+
+    if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            installBtn.classList.add('hidden');
+        });
+    }
+});

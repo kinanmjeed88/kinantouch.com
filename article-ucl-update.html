@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تحديث دوري الأبطال | TechTouch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'] } } }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col min-h-screen">
+    <header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight">TechTouch</a>
+            </div>
+            <a href="index.html" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
+        <nav class="flex text-sm text-gray-500 mb-6">
+            <a href="index.html" class="hover:text-blue-500">الرئيسية</a>
+            <span class="mx-2">/</span>
+            <a href="articles.html" class="hover:text-blue-500">رياضة</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-800 dark:text-gray-300 truncate">UCL App Update</span>
+        </nav>
+
+        <header class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight mb-4">
+                تطبيق دوري الأبطال الرسمي: متابعة حية وإحصائيات ذكية
+            </h1>
+            <div class="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-400 text-sm">
+                <div class="flex items-center gap-1">
+                    <i data-lucide="calendar" class="w-4 h-4"></i>
+                    <time>2024-05-09</time>
+                </div>
+            </div>
+        </header>
+
+        <div class="mb-8 rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700">
+            <img src="https://images.unsplash.com/photo-1614632537190-23e4146777db?auto=format&fit=crop&w=1200&q=80" alt="UCL Stadium" class="w-full object-cover max-h-[500px] hover:scale-105 transition-transform duration-700" />
+        </div>
+
+        <article class="prose prose-lg dark:prose-invert max-w-none leading-relaxed">
+            <p class="text-xl font-medium text-gray-600 dark:text-gray-300 mb-6">
+                لعشاق كرة القدم، أطلق الاتحاد الأوروبي (UEFA) تحديثاً ضخماً لتطبيقه الرسمي، ليحول تجربة المشاهدة إلى تجربة تفاعلية مليئة بالبيانات الحية.
+            </p>
+            
+            <div class="video-container my-10 shadow-2xl rounded-2xl overflow-hidden border border-gray-800">
+                <iframe src="https://www.youtube.com/embed/PjG8uL3o_A8" title="Champions League Anthem" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <h3 class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4">لماذا يجب عليك تحميل التطبيق؟</h3>
+            <ul class="list-none space-y-4 mb-8">
+                 <li class="flex items-start gap-3 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <div class="bg-indigo-100 dark:bg-indigo-900 p-2 rounded-full text-indigo-600 dark:text-indigo-400"><i data-lucide="activity" class="w-5 h-5"></i></div>
+                    <div>
+                        <strong class="block text-gray-900 dark:text-white mb-1">إحصائيات فورية (Live Stats)</strong>
+                        <p class="text-sm">شاهد خرائط الحرارة وتحركات اللاعبين ونسب الاستحواذ لحظة بلحظة.</p>
+                    </div>
+                </li>
+                 <li class="flex items-start gap-3 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <div class="bg-indigo-100 dark:bg-indigo-900 p-2 rounded-full text-indigo-600 dark:text-indigo-400"><i data-lucide="trophy" class="w-5 h-5"></i></div>
+                    <div>
+                        <strong class="block text-gray-900 dark:text-white mb-1">لعبة الفانتزي الرسمية</strong>
+                        <p class="text-sm">قم بإنشاء فريقك الخاص ونافس أصدقائك للحصول على جوائز قيمة.</p>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="my-12 flex justify-center">
+                <a href="https://www.uefa.com/championsleague/app/" target="_blank" class="btn-wrapped-link w-full md:w-auto min-w-[250px] text-center">
+                    <i data-lucide="download"></i>
+                    <span>اضغط هنا لتحميل التطبيق</span>
+                </a>
+            </div>
+        </article>
+    </main>
+    <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center">
+            <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
