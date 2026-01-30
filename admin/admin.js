@@ -63,7 +63,11 @@ const api = {
     },
 
     async put(path, content, msg, sha = null) {
-        const body = { message: msg, content: btoa(unescape(encodeURIComponent(content))) };
+        // Safe UTF-8 encoding for Arabic content
+        const body = { 
+            message: msg, 
+            content: btoa(unescape(encodeURIComponent(content))) 
+        };
         if (sha) body.sha = sha;
         
         const res = await fetch(`${this.base()}/${path}`, {
@@ -86,11 +90,12 @@ const api = {
         return new Promise((resolve, reject) => {
             reader.onload = async () => {
                 const b64 = reader.result.split(',')[1];
-                const fileName = `assets/images/${Date.now()}_${file.name}`;
+                const fileName = `assets/images/${Date.now()}_${file.name.replace(/\s/g, '_')}`;
                 await fetch(`${this.base()}/${fileName}`, {
                     method: 'PUT', headers: this.headers(),
-                    body: JSON.stringify({ message: 'Upload Image', content: b64 })
+                    body: JSON.stringify({ message: 'Upload Image via CMS', content: b64 })
                 });
+                // Return relative path for the site
                 resolve(fileName);
             };
             reader.readAsDataURL(file);
@@ -147,7 +152,6 @@ window.switchPickerTab = (tab) => {
 
 window.updateSizeDisplay = (val) => {
     document.getElementById('sizeDisplay').innerText = `${val}px`;
-    // Update preview icon size if image tab
     const prev = document.getElementById('pickerPreviewImg');
     if(prev) { prev.style.width = val + 'px'; prev.style.height = val + 'px'; }
 };
@@ -165,7 +169,7 @@ window.handlePickerFileSelect = async (input) => {
             const url = await api.uploadImage(input.files[0]);
             document.getElementById('pickerUrl').value = url;
             updatePickerPreview(url);
-        } catch(e) { alert('Upload failed'); }
+        } catch(e) { alert('Upload failed: ' + e.message); }
         btn.innerHTML = '<i data-lucide="upload"></i> رفع صورة'; btn.disabled = false;
         lucide.createIcons();
     }
@@ -175,10 +179,9 @@ window.updatePickerPreview = (url) => {
     const img = document.getElementById('pickerPreviewImg');
     const ph = document.getElementById('pickerPlaceholder');
     if (url) {
-        img.src = url;
+        img.src = url.startsWith('http') ? url : `../${url}`; // Preview adjustment
         img.classList.remove('hidden');
         ph.classList.add('hidden');
-        // Apply current size
         const size = document.getElementById('pickerSize').value;
         img.style.width = size + 'px'; img.style.height = size + 'px';
     } else {
@@ -198,19 +201,13 @@ function applyIconChange(iconData) {
     if (!iconPickerTarget) return;
 
     if (iconPickerTarget.type === 'channel') {
-        // Handle legacy vs new structure
-        // We will store full object now
         cachedChannels[iconPickerTarget.id].iconData = iconData;
-        // Keep legacy field for backward compat if needed, or just rely on render logic
-        cachedChannels[iconPickerTarget.id].icon = iconData.value; // Legacy fallback
+        cachedChannels[iconPickerTarget.id].icon = iconData.value; 
         renderChannels();
     } else if (iconPickerTarget.type === 'social') {
-        // Update UI Button
         const btn = document.getElementById(`btnIcon_${iconPickerTarget.id}`);
-        // Store data in dataset for saving later
         btn.dataset.iconInfo = JSON.stringify(iconData);
         
-        // Render preview in button
         if(iconData.type === 'image') {
             btn.innerHTML = `<img src="${iconData.value}" style="width:24px; height:24px; object-fit:contain;">`;
         } else {
@@ -239,32 +236,49 @@ async function loadPosts() {
         });
         await Promise.all(promises);
 
-        cachedPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Sort by 'updated' date if available, else 'date'
+        cachedPosts.sort((a, b) => {
+            const dateA = new Date(a.updated || a.date);
+            const dateB = new Date(b.updated || b.date);
+            return dateB - dateA;
+        });
+
         loader.classList.add('hidden');
         renderPosts();
     } catch (e) {
         console.error(e);
         loader.classList.add('hidden');
+        list.innerHTML = `<div class="text-center text-red-500">حدث خطأ في تحميل المقالات. تأكد من الإعدادات.</div>`;
     }
 }
 
 function renderPosts() {
     const list = document.getElementById('postsList');
-    list.innerHTML = cachedPosts.map(p => `
+    list.innerHTML = cachedPosts.map(p => {
+        const isUpdated = p.updated && p.updated !== p.date;
+        const dateDisplay = isUpdated 
+            ? `<span class="text-blue-500 font-bold" title="تم التحديث">♻ ${p.updated}</span>` 
+            : `<span>${p.date}</span>`;
+
+        return `
         <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all">
             <div class="flex items-center gap-4">
-                <img src="${p.image}" class="w-16 h-10 object-cover rounded-md bg-gray-100">
+                <img src="${p.image.startsWith('http') ? p.image : '../'+p.image}" class="w-16 h-10 object-cover rounded-md bg-gray-100" onerror="this.src='../assets/images/me.jpg'">
                 <div>
-                    <h3 class="font-bold text-gray-800">${p.title}</h3>
-                    <div class="text-xs text-gray-400">${p.date} • ${p.category}</div>
+                    <h3 class="font-bold text-gray-800 line-clamp-1">${p.title}</h3>
+                    <div class="text-xs text-gray-400 flex gap-2 items-center">
+                        ${dateDisplay}
+                        <span>•</span>
+                        <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category}</span>
+                    </div>
                 </div>
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-2 shrink-0">
                 <button onclick="editPost('${p.slug}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
                 <button onclick="deletePost('${p.slug}')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg"><i data-lucide="trash" class="w-4 h-4"></i></button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
     lucide.createIcons();
 }
 
@@ -272,18 +286,24 @@ window.openPostEditor = () => {
     document.getElementById('postEditor').classList.remove('hidden');
     ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('pSlug').dataset.mode = 'new';
+    document.getElementById('pSlug').readOnly = false;
+    document.getElementById('editorTitle').innerText = 'مقال جديد';
 };
+
 window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
+
 window.editPost = (slug) => {
     const p = cachedPosts.find(x => x.slug === slug);
     if (!p) return;
     document.getElementById('pTitle').value = p.title;
     document.getElementById('pSlug').value = p.slug;
+    document.getElementById('pSlug').readOnly = true; // Cannot change slug on edit to avoid dupes/404s
     document.getElementById('pSlug').dataset.mode = 'edit';
     document.getElementById('pCat').value = p.category;
     document.getElementById('pDesc').value = p.description;
     document.getElementById('pContent').value = p.content;
     document.getElementById('pImage').value = p.image;
+    document.getElementById('editorTitle').innerText = 'تعديل مقال';
     document.getElementById('postEditor').classList.remove('hidden');
 };
 
@@ -292,38 +312,61 @@ window.savePost = async () => {
     btn.innerText = 'جاري الحفظ...';
     btn.disabled = true;
     try {
-        const slug = document.getElementById('pSlug').value || 'untitled';
+        const slug = document.getElementById('pSlug').value.trim() || 'untitled';
         const isEdit = document.getElementById('pSlug').dataset.mode === 'edit';
+        const existingPost = isEdit ? cachedPosts.find(p => p.slug === slug) : null;
+        
+        const now = new Date().toISOString().split('T')[0];
+
+        // Ensure Smart Dates Logic
         const postData = {
             title: document.getElementById('pTitle').value,
             slug: slug,
             description: document.getElementById('pDesc').value,
             category: document.getElementById('pCat').value,
-            date: isEdit ? cachedPosts.find(p=>p.slug===slug).date : new Date().toISOString().split('T')[0],
+            // If edit, keep original creation date, update 'updated'. If new, set 'date' only.
+            date: isEdit ? existingPost.date : now,
+            updated: isEdit ? now : undefined, 
             image: document.getElementById('pImage').value,
-            content: document.getElementById('pContent').value // Now stores Markdown
+            content: document.getElementById('pContent').value
         };
+
+        // If newly created but updated immediately, clean up undefined
+        if(!postData.updated) delete postData.updated;
+
         const path = `content/posts/${slug}.json`;
-        let sha = null;
-        if (isEdit) sha = cachedPosts.find(p => p.slug === slug).sha;
+        let sha = existingPost ? existingPost.sha : null;
+        
         await api.put(path, JSON.stringify(postData, null, 2), `Update Post: ${postData.title}`, sha);
+        
         showToast('تم حفظ المقال بنجاح!');
         closePostEditor();
         loadPosts();
-    } catch (e) { alert(e.message); } finally { btn.innerText = 'حفظ ونشر'; btn.disabled = false; }
+    } catch (e) { 
+        alert('خطأ في الحفظ: ' + e.message); 
+    } finally { 
+        btn.innerText = 'حفظ ونشر'; 
+        btn.disabled = false; 
+    }
 };
 
 window.deletePost = async (slug) => {
-    if(!confirm('هل أنت متأكد من الحذف؟')) return;
+    if(!confirm('هل أنت متأكد من الحذف؟ هذا الإجراء لا يمكن التراجع عنه.')) return;
     const p = cachedPosts.find(x => x.slug === slug);
-    try { await api.delete(p.path, p.sha, `Delete ${slug}`); showToast('تم الحذف'); loadPosts(); } catch(e) { alert(e.message); }
+    try { 
+        await api.delete(p.path, p.sha, `Delete Post: ${slug}`); 
+        showToast('تم الحذف'); 
+        loadPosts(); 
+    } catch(e) { 
+        alert(e.message); 
+    }
 };
 
 // --- EDITOR HELPERS (Markdown) ---
 window.insertYoutube = () => {
     const url = prompt("أدخل رابط فيديو يوتيوب (مثال: https://www.youtube.com/watch?v=...)");
     if (url) {
-        // We use a custom markdown-like syntax for YouTube to be parsed by generator
+        // Extract ID for cleaner format if needed, but let generator handle full URL
         const embedCode = `\n@[youtube](${url})\n`;
         window.insertTag(embedCode);
     }
@@ -333,8 +376,6 @@ window.insertLink = () => {
     const url = prompt("أدخل رابط الموقع (URL):", "https://");
     if (!url) return;
     const text = prompt("أدخل النص الذي سيظهر على الزر:", "اضغط هنا للدخول للموقع");
-    
-    // Markdown Link format
     const linkCode = `[${text || 'اضغط هنا'}](${url})`;
     window.insertTag(linkCode);
 };
@@ -355,13 +396,11 @@ async function loadChannels() {
 function renderChannels() {
     const list = document.getElementById('channelsList');
     list.innerHTML = cachedChannels.map((ch, index) => {
-        // Resolve Icon Display
         let iconHtml = '';
         if (ch.iconData && ch.iconData.type === 'image') {
             const size = ch.iconData.size || 24;
             iconHtml = `<img src="${ch.iconData.value}" style="width:${size}px; height:${size}px; object-fit:contain;">`;
         } else {
-            // Fallback for old string format or new lucide format
             const iconName = (ch.iconData && ch.iconData.value) ? ch.iconData.value : ch.icon;
             iconHtml = `<i data-lucide="${iconName || 'star'}"></i>`;
         }
@@ -382,6 +421,7 @@ function renderChannels() {
         </div>
     `}).join('');
     
+    // Ensure save button exists
     if(!document.getElementById('btnSaveChannels')) {
         const btn = document.createElement('button');
         btn.id = 'btnSaveChannels';
@@ -419,55 +459,44 @@ async function loadSettings() {
         cachedAbout = JSON.parse(decodeURIComponent(escape(atob(file.content))));
         cachedAbout.sha = file.sha;
 
-        // Profile
         document.getElementById('valName').value = cachedAbout.profileName;
-        document.getElementById('previewProfile').src = cachedAbout.profileImage;
+        document.getElementById('previewProfile').src = cachedAbout.profileImage.startsWith('http') ? cachedAbout.profileImage : `../${cachedAbout.profileImage}`;
         document.getElementById('valProfileImg').value = cachedAbout.profileImage;
         document.getElementById('valBio').value = cachedAbout.bio;
         
-        // Ticker
         if (cachedAbout.ticker) {
             document.getElementById('tickerLabel').value = cachedAbout.ticker.label;
             document.getElementById('tickerText').value = cachedAbout.ticker.text;
             document.getElementById('tickerUrl').value = cachedAbout.ticker.url;
         }
 
-        // New Sections (Bot Info & Search Info)
         document.getElementById('valBotInfo').value = cachedAbout.botInfo || "";
         document.getElementById('valSearchInfo').value = cachedAbout.searchInfo || "";
         document.getElementById('valBotTitle').value = cachedAbout.botTitle || "مركز خدمة الطلبات (Bot)";
         document.getElementById('valSearchTitle').value = cachedAbout.searchTitle || "دليل الوصول الذكي للمحتوى";
 
-        // Cover
         const coverType = cachedAbout.coverType || 'color';
-        document.querySelector(`input[name="coverType"][value="${coverType}"]`).checked = true;
+        const rb = document.querySelector(`input[name="coverType"][value="${coverType}"]`);
+        if(rb) rb.checked = true;
+        
         if(coverType === 'color') document.getElementById('valCoverColor').value = cachedAbout.coverValue;
         else document.getElementById('valCoverImg').value = cachedAbout.coverValue;
         toggleCoverInput();
 
-        // Socials Links
         document.getElementById('socFb').value = cachedAbout.social.facebook;
         document.getElementById('socInsta').value = cachedAbout.social.instagram;
         document.getElementById('socTikTok').value = cachedAbout.social.tiktok;
         document.getElementById('socYt').value = cachedAbout.social.youtube;
         document.getElementById('socTg').value = cachedAbout.social.telegram;
 
-        // Socials Icons (Complex Object)
         const socialIcons = cachedAbout.socialIcons || {};
-        
         const setupIconBtn = (key, defaultIconName) => {
             const btn = document.getElementById(`btnIcon_${key}`);
             let data = socialIcons[key];
-            
-            // Normalize old string data to object
-            if (typeof data === 'string') {
-                data = { type: 'lucide', value: data, size: 24 };
-            } else if (!data) {
-                data = { type: 'lucide', value: defaultIconName, size: 24 };
-            }
+            if (typeof data === 'string') { data = { type: 'lucide', value: data, size: 24 }; } 
+            else if (!data) { data = { type: 'lucide', value: defaultIconName, size: 24 }; }
 
             btn.dataset.iconInfo = JSON.stringify(data);
-            
             if (data.type === 'image') {
                 btn.innerHTML = `<img src="${data.value}" style="width:${data.size}px; height:${data.size}px; object-fit:contain;">`;
             } else {
@@ -482,14 +511,13 @@ async function loadSettings() {
         setupIconBtn('telegram', 'send');
         
         lucide.createIcons();
-
         loader.classList.add('hidden');
         form.classList.remove('hidden');
     } catch(e) { console.error(e); }
 }
 
 window.toggleCoverInput = () => {
-    const type = document.querySelector('input[name="coverType"]:checked').value;
+    const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color';
     if(type === 'color') {
         document.getElementById('coverColorInput').classList.remove('hidden');
         document.getElementById('coverImageInput').classList.add('hidden');
@@ -504,12 +532,7 @@ window.saveSettingsData = async () => {
     btn.innerText = 'جاري الحفظ...';
     try {
         const coverType = document.querySelector('input[name="coverType"]:checked').value;
-        
-        // Gather Social Icons Data
-        const getIconData = (key) => {
-            const btn = document.getElementById(`btnIcon_${key}`);
-            return JSON.parse(btn.dataset.iconInfo || '{}');
-        };
+        const getIconData = (key) => JSON.parse(document.getElementById(`btnIcon_${key}`).dataset.iconInfo || '{}');
 
         const newSettings = {
             profileName: document.getElementById('valName').value,
@@ -519,7 +542,6 @@ window.saveSettingsData = async () => {
             searchInfo: document.getElementById('valSearchInfo').value,
             botTitle: document.getElementById('valBotTitle').value,
             searchTitle: document.getElementById('valSearchTitle').value,
-            
             coverType: coverType,
             coverValue: coverType === 'color' ? document.getElementById('valCoverColor').value : document.getElementById('valCoverImg').value,
             ticker: {
@@ -534,7 +556,6 @@ window.saveSettingsData = async () => {
                 youtube: document.getElementById('socYt').value,
                 telegram: document.getElementById('socTg').value
             },
-            // Save Complex Icon Data
             socialIcons: {
                 facebook: getIconData('facebook'),
                 instagram: getIconData('instagram'),
@@ -559,7 +580,6 @@ window.saveGhSettings = () => {
     location.reload();
 };
 
-// Basic Arabic to Latin Transliteration for URLs
 function arabicToLatin(str) {
     const map = {
         'أ': 'a', 'إ': 'e', 'آ': 'a', 'ا': 'a', 'ب': 'b', 'ت': 't', 'ث': 'th',
@@ -574,17 +594,13 @@ function arabicToLatin(str) {
 window.autoSlug = () => {
     const title = document.getElementById('pTitle').value;
     if (document.getElementById('pSlug').dataset.mode === 'new') {
-        // 1. Transliterate Arabic
         let latinized = arabicToLatin(title);
-        // 2. Clean up (remove non-alphanumeric, swap spaces to dashes)
         let slug = latinized.toLowerCase()
-            .replace(/[^\w\s-]/g, '') // Remove special chars
-            .replace(/\s+/g, '-')     // Space to dash
-            .replace(/-+/g, '-');     // Multiple dashes to one
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
         
-        // Fallback if empty (e.g. mixed uncommon chars)
         if(slug.length < 2) slug = 'post-' + Date.now();
-        
         document.getElementById('pSlug').value = slug.substring(0, 60);
     }
 };
@@ -595,8 +611,8 @@ window.handleFileSelect = async (input, targetId, previewId = null) => {
         try {
             const url = await api.uploadImage(input.files[0]);
             document.getElementById(targetId).value = url;
-            if(previewId) document.getElementById(previewId).src = url;
-        } catch(e) { alert('Upload failed'); }
+            if(previewId) document.getElementById(previewId).src = '../' + url;
+        } catch(e) { alert('Upload failed: ' + e.message); }
         btn.innerText = 'رفع'; btn.disabled = false;
     }
 };
@@ -606,7 +622,6 @@ window.insertTag = (tag) => {
     const start = ta.selectionStart; const end = ta.selectionEnd;
     ta.value = ta.value.substring(0, start) + tag + ta.value.substring(end);
     ta.focus();
-    // Move cursor after inserted text
     ta.selectionStart = ta.selectionEnd = start + tag.length;
 };
 
