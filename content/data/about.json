@@ -8,7 +8,7 @@
   "searchTitle": "نشر الاخبار التقنية والذكاء الاصطناعي",
   "coverType": "image",
   "coverValue": "assets/images/1769973504873_IMG_20260131_212859_807.jpg",
-  "siteName": "KinanTouch",
+  "siteName": " ",
   "categories": {
     "labels": {
       "articles": "اخبار",
@@ -16,7 +16,7 @@
       "games": "ألعاب",
       "sports": "رياضة"
     },
-    "fontSize": "8"
+    "fontSize": "6"
   },
   "ticker": {
     "label": "ملاحظة :",
