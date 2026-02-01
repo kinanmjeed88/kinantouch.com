@@ -19,10 +19,10 @@
     "fontSize": "10"
   },
   "ticker": {
-    "label": "جديد",
+    "label": "ملاحظة :",
     "text": "للدخول الى قنوات التيليكرام اضغط هنا",
     "url": "https://kinanmjeed88.github.io/tools-sites.html",
-    "fontSize": "12",
+    "fontSize": "13",
     "animated": false
   },
   "social": {
