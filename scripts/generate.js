@@ -3,10 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 // --- SAFETY FIX: Polyfill File API if missing ---
-// This prevents 'ReferenceError: File is not defined' in older Node environments
 if (typeof global.File === 'undefined') {
-    const { File } = require('node:buffer');
-    if (File) global.File = File;
+    try {
+        const { File } = require('node:buffer');
+        if (File) global.File = File;
+    } catch (e) { console.warn("Polyfill check skipped"); }
 }
 
 const cheerio = require('cheerio');
@@ -34,13 +35,13 @@ const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
   gtag('config', '${GA_ID}');
 </script>`;
 
-// AdSense HTML Block (Responsive Unit)
+// AdSense HTML Block (Strictly Contained for Mobile)
 const ADSENSE_BLOCK = `
-<div class="w-full my-10 p-1 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden text-center clear-both mx-auto max-w-full adsbygoogle-container">
-    <span class="text-[10px] text-gray-400 block mb-2 font-medium tracking-widest uppercase">إعلان</span>
-    <div style="width: 100%; overflow: hidden;">
+<div class="adsbygoogle-container w-full max-w-full overflow-hidden mx-auto my-8 bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-800 rounded-xl p-1 text-center">
+    <div class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-1">إعلان</div>
+    <div style="width: 100%; max-width: 100%; overflow: hidden;">
         <ins class="adsbygoogle block"
-             style="display:block; width: 100%; max-width: 100vw;"
+             style="display:block; min-width: 250px;"
              data-ad-client="${AD_CLIENT_ID}"
              data-ad-slot="auto"
              data-ad-format="auto"
@@ -107,24 +108,24 @@ const parseMarkdown = (markdown) => {
     // Remove artifacts
     html = html.replace(/\$1/g, '');
 
-    // YouTube Embed
+    // YouTube Embed (Responsive Wrapper)
     html = html.replace(/@\[youtube\]\((.*?)\)/g, (match, url) => {
         let videoId = '';
         const matchId = url.match(/(?:v=|\/)([\w-]{11})(?:\?|&|\/|$)/);
         if (matchId) videoId = matchId[1];
         if (videoId) {
-            return `<div class="video-container my-10 shadow-2xl rounded-2xl overflow-hidden border border-gray-800 w-full max-w-full"><iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+            return `<div class="video-container shadow-xl rounded-2xl overflow-hidden border border-gray-800 w-full"><iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
         }
         return '';
     });
 
-    // Images
+    // Images (Responsive Class)
     html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
-        return `<img src="${src}" alt="${alt}" class="max-w-full h-auto">`;
+        return `<img src="${src}" alt="${alt}" class="w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto">`;
     });
 
     // Links (Button Style - Wrapped)
-    html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-8 w-full flex justify-center px-1 sm:px-0 max-w-full"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto sm:min-w-[280px] max-w-md mx-auto whitespace-normal break-words text-center"><i data-lucide="external-link" class="shrink-0"></i><span class="break-words">$1</span></a></div>`);
+    html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-8 w-full flex justify-center px-1"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto"><i data-lucide="external-link" class="shrink-0"></i><span>$1</span></a></div>`);
 
     // Headers (With break-words)
     html = html.replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words w-full">$1</h3>');
@@ -134,13 +135,13 @@ const parseMarkdown = (markdown) => {
     // Formatting
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/^- (.*$)/gim, '<li class="ml-4 list-disc marker:text-blue-500 break-words">$1</li>');
-    html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm sm:text-base w-full max-w-full">$&</ul>');
+    html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm sm:text-base w-full">$&</ul>');
 
     // Paragraphs (With break-words)
     html = html.split('\n').map(line => {
         if (line.trim() === '') return '';
         if (line.match(/^<(h|ul|li|div|img|iframe|p|script)/)) return line;
-        return `<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-base sm:text-lg break-words w-full max-w-full">${line}</p>`;
+        return `<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-base break-words w-full">${line}</p>`;
     }).join('\n');
 
     return html;
@@ -161,61 +162,6 @@ if (fs.existsSync(POSTS_DIR)) {
     });
 }
 allPosts.sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate));
-
-// --- RSS Generator ---
-const generateRSS = () => {
-    const feedPath = path.join(ROOT_DIR, 'feed.xml');
-    const now = new Date().toUTCString();
-    let xml = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-<channel>
-    <title>TechTouch</title>
-    <link>${BASE_URL}</link>
-    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
-    <language>ar</language>
-    <lastBuildDate>${now}</lastBuildDate>
-    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />`;
-
-    allPosts.slice(0, 20).forEach(post => {
-        const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
-        const fullImg = toAbsoluteUrl(post.image);
-        xml += `
-    <item>
-        <title><![CDATA[${post.title}]]></title>
-        <link>${fullUrl}</link>
-        <guid>${fullUrl}</guid>
-        <pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate>
-        <description><![CDATA[${post.description}]]></description>
-        <enclosure url="${fullImg}" type="image/jpeg" />
-    </item>`;
-    });
-    xml += `</channel></rss>`;
-    fs.writeFileSync(feedPath, xml);
-};
-
-// --- Sitemap Generator ---
-const generateSitemap = () => {
-    const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
-    const today = new Date().toISOString().split('T')[0];
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
-
-    HTML_FILES.forEach(file => {
-        if (file === '404.html') return;
-        let priority = '0.5';
-        if(file === 'index.html') priority = '1.0';
-        xml += `<url><loc>${BASE_URL}/${file}</loc><lastmod>${today}</lastmod><priority>${priority}</priority></url>`;
-    });
-
-    allPosts.forEach(post => {
-        const fullImg = toAbsoluteUrl(post.image);
-        const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
-        xml += `<url><loc>${pageUrl}</loc><lastmod>${post.effectiveDate}</lastmod><priority>0.8</priority><image:image><image:loc>${fullImg}</image:loc><image:title>${post.title}</image:title></image:image></url>`;
-    });
-    xml += `</urlset>`;
-    fs.writeFileSync(sitemapPath, xml);
-};
 
 // --- HTML Generators ---
 const createCardHTML = (post) => {
@@ -239,7 +185,6 @@ const createCardHTML = (post) => {
                 <div class="flex items-center gap-2 text-[10px] text-gray-400 mb-2">
                     <i data-lucide="clock" class="w-3 h-3"></i><span>${post.date}</span>
                 </div>
-                <!-- Title: Added break-words and whitespace-normal to ensure wrapping on small screens -->
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2" title="${post.title}">${post.title}</h3>
                 <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed break-words w-full">${post.description}</p>
             </div>
@@ -261,15 +206,16 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('head').append(AD_SCRIPT);
     }
 
-    // 2. FORCE UPDATE Google Analytics ID (Remove old, add new)
-    // Remove any existing GTM/GTAG scripts first to avoid duplication
-    $('script[src*="googletagmanager.com/gtag/js"]').remove();
+    // 2. FORCE UPDATE Google Analytics ID
+    // Remove ALL existing GA/GTM scripts to prevent conflicts or old IDs
     $('script').each((i, el) => {
-        if ($(el).html().includes("gtag('config'")) {
+        const content = $(el).html() || '';
+        const src = $(el).attr('src') || '';
+        if (src.includes('googletagmanager.com') || content.includes("gtag('config'")) {
             $(el).remove();
         }
     });
-    // Prepend the correct GA script
+    // Inject the correct one immediately after <head> opening
     $('head').prepend(GA_SCRIPT);
 
     // 3. Canonical
@@ -294,8 +240,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     setMeta('og:description', pageDesc); setMeta('og:image', fullImageUrl);
     setName('twitter:card', 'summary_large_image'); setName('twitter:url', fullPageUrl);
     setName('twitter:title', pageTitle); setName('twitter:description', pageDesc); setName('twitter:image', fullImageUrl);
-
-    $('head').append(`<link rel="alternate" type="application/rss+xml" title="TechTouch Feed" href="${BASE_URL}/feed.xml" />`);
 
     // 5. UI Data Updates
     $('#header-profile-name').text(aboutData.profileName);
@@ -334,7 +278,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 };
 
 const updateListingPages = () => {
-    // Limits set for visual balance, full list on articles.html
     const pagesToUpdate = [{ file: 'index.html', limit: 12 }, { file: 'articles.html', limit: 1000 }];
     pagesToUpdate.forEach(pageInfo => {
         const filePath = path.join(ROOT_DIR, pageInfo.file);
@@ -374,9 +317,7 @@ const updateToolsPage = () => {
     // Find the main container
     const main = $('main');
     if (main.length) {
-        // Remove existing ad if any
         main.find('.adsbygoogle-container').remove();
-        // Append Ad Block at the end of Main
         main.append(ADSENSE_BLOCK);
     }
     
@@ -447,15 +388,13 @@ const generateIndividualArticles = () => {
         // Map Category ID to Arabic Label for Breadcrumb
         const catMap = { 'articles': 'اخبار', 'apps': 'تطبيقات', 'games': 'ألعاب', 'sports': 'رياضة' };
         const catLabel = catMap[post.category] || 'اخبار';
-        const catLink = post.category === 'articles' ? 'articles.html' : `index.html#tab-${post.category}`;
 
         $('title').text(`${post.title} | TechTouch`);
         $('meta[name="description"]').attr('content', post.description);
-        // Force wrap for Article H1 to prevent overflow on mobile
         $('h1').first().text(post.title).addClass('break-words whitespace-normal w-full');
         $('time').text(post.date);
 
-        // Update Breadcrumb: Dynamic Category + Truncated Title with Responsive CSS
+        // Update Breadcrumb
         const nav = $('nav');
         if (nav.length) {
             nav.html(`
@@ -477,7 +416,7 @@ const generateIndividualArticles = () => {
             } else {
                 $img.attr('loading', 'lazy').attr('decoding', 'async');
             }
-            $img.addClass('w-full h-auto max-w-full rounded-xl shadow-md my-6 block mx-auto border border-gray-100 dark:border-gray-700');
+            $img.addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         });
 
         const coverImg = $('img.object-cover').first();
@@ -489,7 +428,7 @@ const generateIndividualArticles = () => {
         $('article').html($content.html()); 
         
         // Inject AdSense at the end of the article
-        $('article').find('.adsbygoogle-container').remove(); // Clean old
+        $('article').find('.adsbygoogle-container').remove();
         $('article').append(ADSENSE_BLOCK);
 
         // JSON-LD
