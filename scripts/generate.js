@@ -98,6 +98,7 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     if (iconData && typeof iconData === 'object') {
         if (iconData.type === 'image') {
             const size = iconData.size || defaultSize;
+            // Use object-fit: contain for icons inside buttons/cards
             return `<img src="${iconData.value}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
         } else {
             const size = iconData.size || defaultSize;
@@ -241,7 +242,7 @@ const createCardHTML = (post) => {
 
     // Dynamic Font Size for Badge
     const catFontSize = aboutData.categories?.fontSize || 14;
-    const badgeStyle = `font-size: ${catFontSize - 2}px;`; // Badge slightly smaller than tab font
+    const badgeStyle = `font-size: ${catFontSize - 2}px;`; 
 
     return `
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
@@ -302,18 +303,31 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('head').append(`<link rel="alternate" type="application/rss+xml" title="TechTouch Feed" href="${BASE_URL}/feed.xml" />`);
 
     // 4. UI Data Updates
+    
+    // --- PROFILE IMAGE FIX ---
+    // Remove border/padding wrappers to let image fill fully via object-cover
+    const headerProfileContainer = $('div.w-10.h-10.rounded-full'); // Header Profile Container
+    if (headerProfileContainer.length) {
+        headerProfileContainer.removeClass('border-2 border-white dark:border-gray-800 shadow-md'); // Remove borders that create gaps
+        headerProfileContainer.addClass('bg-gray-200 dark:bg-gray-700'); // Add background just in case
+        headerProfileContainer.find('img').attr('src', aboutData.profileImage).addClass('object-cover w-full h-full');
+    }
+    
+    const smallProfileContainer = $('div.w-8.h-8.rounded-full'); // Another variation
+    if (smallProfileContainer.length) {
+        smallProfileContainer.removeClass('border border-gray-100');
+        smallProfileContainer.find('img').attr('src', aboutData.profileImage).addClass('object-cover w-full h-full');
+    }
+
     $('#header-profile-name').text(aboutData.profileName);
-    $('#header-profile-img').attr('src', aboutData.profileImage);
     
     // --- DYNAMIC SITE NAME ---
-    // Update the logo text in the header
     const logoLink = $('header a.text-xl.font-black, header a.text-lg.font-black');
     if (logoLink.length) {
         logoLink.text(aboutData.siteName || "TechTouch");
     }
 
     // --- DYNAMIC CATEGORY TABS ---
-    // Update labels and font sizes for category tabs in index/articles
     const catFontSize = aboutData.categories?.fontSize || 14;
     const catLabels = aboutData.categories?.labels || {};
 
@@ -321,6 +335,8 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         const btn = $(`button.tab-btn[data-tab="${tabId}"]`);
         if (btn.length) {
             btn.find('span').text(label);
+            // Apply font size directly. Padding is defined in CSS/Tailwind, so button scales with font size.
+            // Removing min-width restriction if necessary to allow shrinking.
             btn.attr('style', `font-size: ${catFontSize}px;`);
         }
     };
@@ -344,24 +360,48 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         networks.forEach(net => {
             if (aboutData.social && aboutData.social[net.key]) {
                 const iconData = (aboutData.socialIcons && aboutData.socialIcons[net.key]) || net.defaultIcon;
-                const content = (net.key === 'tiktok' && iconData === 'video') ? 
-                    `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>` : 
-                    renderIconHTML(iconData, net.defaultIcon, 20);
-                socialLinksContainer.append(`<a href="${aboutData.social[net.key]}" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 ${net.colorClass} hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700 overflow-hidden">${content}</a>`);
+                // Fix for Icon Backgrounds: Ensure button has overflow-hidden and image is object-cover
+                let content = '';
+                if (net.key === 'tiktok' && iconData === 'video') {
+                     content = `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>`;
+                } else if (iconData.type === 'image') {
+                    // For Image Icons: object-cover full width/height
+                    content = `<img src="${iconData.value}" style="width:100%; height:100%; object-fit:cover;">`;
+                } else {
+                    content = renderIconHTML(iconData, net.defaultIcon, 20);
+                }
+
+                socialLinksContainer.append(`<a href="${aboutData.social[net.key]}" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 ${net.colorClass} hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700 overflow-hidden relative">${content}</a>`);
             }
         });
     }
 
+    // --- TICKER LOGIC ---
     if (aboutData.ticker && $('#ticker-content').length) {
         $('#ticker-label').text(aboutData.ticker.label);
         
-        // Single Line Content & Font Size
         const fontSize = aboutData.ticker.fontSize || 14;
-        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text" style="font-size:${fontSize}px;">${aboutData.ticker.text}</span>`;
-        if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
-            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors">${contentHtml}</a>`;
+        const isAnimated = aboutData.ticker.animated !== false; // Default true
+
+        const tickerContentDiv = $('#ticker-content');
+        
+        // Apply animation class conditionally
+        if (isAnimated) {
+            tickerContentDiv.addClass('animate-marquee absolute right-0');
+            tickerContentDiv.removeClass('w-full justify-center');
+        } else {
+            tickerContentDiv.removeClass('animate-marquee absolute right-0');
+            tickerContentDiv.addClass('w-full justify-center');
         }
-        $('#ticker-content').html(contentHtml);
+
+        // Force whitespace-nowrap and overflow-hidden on parent/child to prevent breaking lines
+        tickerContentDiv.addClass('whitespace-nowrap overflow-hidden flex items-center');
+        
+        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap" style="font-size:${fontSize}px;">${aboutData.ticker.text}</span>`;
+        if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
+            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap">${contentHtml}</a>`;
+        }
+        tickerContentDiv.html(contentHtml);
     }
 
     return $.html();
@@ -443,7 +483,13 @@ const updateAboutPageDetails = () => {
     coverDiv.removeClass().addClass('h-40 relative');
     if (aboutData.coverType === 'image') { coverDiv.addClass('bg-cover bg-center').attr('style', `background-image: url('${aboutData.coverValue}');`); }
     else { coverDiv.removeAttr('style').addClass(aboutData.coverValue); }
-    coverDiv.find('img').attr('src', aboutData.profileImage);
+    
+    // Fix Profile Image in About Page
+    const profileImgContainer = coverDiv.find('div.rounded-full');
+    if(profileImgContainer.length) {
+        profileImgContainer.removeClass('border-[6px] border-white dark:border-gray-800'); // Remove thick borders causing gaps
+        profileImgContainer.find('img').attr('src', aboutData.profileImage).addClass('object-cover w-full h-full');
+    }
 
     fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html'));
 };
@@ -480,29 +526,26 @@ const generateIndividualArticles = () => {
         const fullUrl = `${BASE_URL}/${pageSlug}`;
         const fullImageUrl = toAbsoluteUrl(post.image);
 
-        // Map Category ID to Arabic Label for Breadcrumb
-        // Use dynamic labels
         const catLabel = getCatLabel(post.category);
 
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         
-        // Ensure Main Container has no huge top padding if needed, but sticky header requires it.
-        // We will adjust the nav spacing instead.
         const main = $('main');
+        main.removeClass('pt-20').addClass('py-6');
         
         $('h1').first().text(post.title).addClass('break-words whitespace-normal w-full');
         $('time').text(post.date);
 
         const nav = $('nav');
         if (nav.length) {
-            nav.addClass('mb-2 flex items-center whitespace-nowrap overflow-hidden text-xs sm:text-sm');
+            nav.removeClass().addClass('flex items-center text-xs text-gray-500 mb-4 w-full overflow-hidden whitespace-nowrap');
             nav.html(`
-                <a href="index.html" class="hover:text-blue-500 transition-colors shrink-0">الرئيسية</a>
-                <span class="mx-1 text-gray-300 shrink-0">/</span>
-                <a href="articles.html" class="hover:text-blue-500 transition-colors shrink-0">${catLabel}</a>
-                <span class="mx-1 text-gray-300 shrink-0">/</span>
-                <span class="text-gray-800 dark:text-gray-300 truncate max-w-[150px] sm:max-w-[300px] block" title="${post.title}">${post.title}</span>
+                <a href="index.html" class="hover:text-blue-500 shrink-0 transition-colors">الرئيسية</a>
+                <span class="mx-1 shrink-0 text-gray-300">/</span>
+                <a href="articles.html" class="hover:text-blue-500 shrink-0 transition-colors">${catLabel}</a>
+                <span class="mx-1 shrink-0 text-gray-300">/</span>
+                <span class="text-gray-800 dark:text-gray-300 truncate flex-1 min-w-0 block font-medium" title="${post.title}">${post.title}</span>
             `);
         }
 
