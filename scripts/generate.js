@@ -24,7 +24,7 @@ const BASE_URL = 'https://kinantouch.com';
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
 const AD_SCRIPT = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}" crossorigin="anonymous"></script>`;
 
-// Google Analytics Configuration (Updated)
+// Google Analytics Configuration
 const GA_ID = 'G-63BBPLQ343';
 const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
@@ -37,11 +37,11 @@ const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
 
 // AdSense HTML Block (Strictly Contained for Mobile)
 const ADSENSE_BLOCK = `
-<div class="adsbygoogle-container w-full max-w-full overflow-hidden mx-auto my-8 bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-800 rounded-xl p-1 text-center">
-    <div class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-1">إعلان</div>
-    <div style="width: 100%; max-width: 100%; overflow: hidden;">
+<div class="adsbygoogle-container w-full overflow-hidden mx-auto my-6 bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-800 rounded-xl p-1 text-center">
+    <div class="text-[9px] text-gray-400 font-bold tracking-widest uppercase mb-1">إعلان</div>
+    <div style="width: 100%; max-width: 100%; overflow: hidden; display: flex; justify-content: center;">
         <ins class="adsbygoogle block"
-             style="display:block; min-width: 250px;"
+             style="display:block; width: 100%; min-width: 250px;"
              data-ad-client="${AD_CLIENT_ID}"
              data-ad-slot="auto"
              data-ad-format="auto"
@@ -84,9 +84,9 @@ const toAbsoluteUrl = (url) => {
     return `${BASE_URL}/${cleanPath}`;
 };
 
-const renderIconHTML = (iconData, defaultIconName, defaultSize = 24) => {
+const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     if (typeof iconData === 'string') {
-        return `<i data-lucide="${iconData || defaultIconName}" class="w-6 h-6"></i>`;
+        return `<i data-lucide="${iconData || defaultIconName}" class="w-5 h-5"></i>`;
     }
     if (iconData && typeof iconData === 'object') {
         if (iconData.type === 'image') {
@@ -97,7 +97,7 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 24) => {
             return `<i data-lucide="${iconData.value}" style="width:${size}px; height:${size}px;"></i>`;
         }
     }
-    return `<i data-lucide="${defaultIconName}" class="w-6 h-6"></i>`;
+    return `<i data-lucide="${defaultIconName}" class="w-5 h-5"></i>`;
 };
 
 // Initial Markdown Parsing
@@ -114,28 +114,28 @@ const parseMarkdown = (markdown) => {
         const matchId = url.match(/(?:v=|\/)([\w-]{11})(?:\?|&|\/|$)/);
         if (matchId) videoId = matchId[1];
         if (videoId) {
-            return `<div class="video-container shadow-xl rounded-2xl overflow-hidden border border-gray-800 w-full"><iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+            return `<div class="video-container shadow-lg rounded-xl overflow-hidden border border-gray-800 w-full"><iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
         }
         return '';
     });
 
     // Images (Responsive Class)
     html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
-        return `<img src="${src}" alt="${alt}" class="w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto">`;
+        return `<img src="${src}" alt="${alt}" class="w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700">`;
     });
 
     // Links (Button Style - Wrapped)
-    html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-8 w-full flex justify-center px-1"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto"><i data-lucide="external-link" class="shrink-0"></i><span>$1</span></a></div>`);
+    html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-6 w-full flex justify-center px-2"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto"><i data-lucide="external-link" class="shrink-0 w-4 h-4"></i><span>$1</span></a></div>`);
 
     // Headers (With break-words)
-    html = html.replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words w-full">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 break-words w-full">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mt-8 mb-6 break-words w-full">$1</h1>');
+    html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words w-full">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 break-words w-full">$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-extrabold text-gray-900 dark:text-white mt-8 mb-6 break-words w-full">$1</h1>');
 
     // Formatting
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/^- (.*$)/gim, '<li class="ml-4 list-disc marker:text-blue-500 break-words">$1</li>');
-    html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm sm:text-base w-full">$&</ul>');
+    html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm w-full">$&</ul>');
 
     // Paragraphs (With break-words)
     html = html.split('\n').map(line => {
@@ -163,7 +163,8 @@ if (fs.existsSync(POSTS_DIR)) {
 }
 allPosts.sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate));
 
-// --- RSS Generator ---
+// --- Functions Definitions (Moved UP to fix ReferenceError) ---
+
 const generateRSS = () => {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
     const now = new Date().toUTCString();
@@ -194,7 +195,6 @@ const generateRSS = () => {
     fs.writeFileSync(feedPath, xml);
 };
 
-// --- Sitemap Generator ---
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
@@ -218,7 +218,6 @@ const generateSitemap = () => {
     fs.writeFileSync(sitemapPath, xml);
 };
 
-// --- HTML Generators ---
 const createCardHTML = (post) => {
     let badgeColor = 'bg-blue-600';
     let icon = 'file-text';
@@ -227,21 +226,21 @@ const createCardHTML = (post) => {
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
 
     return `
-    <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col relative w-full">
-            <div class="h-48 sm:h-52 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
+    <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
+        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
+            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
                 <img src="${post.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${post.title}" loading="lazy" decoding="async" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-3 right-3 ${badgeColor} text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg z-10">
+                <div class="absolute top-2 right-2 ${badgeColor} text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-lg z-10">
                     <i data-lucide="${icon}" class="w-3 h-3"></i><span>${getCatLabel(post.category)}</span>
                 </div>
             </div>
-            <div class="p-4 sm:p-5 flex-1 flex flex-col w-full">
+            <div class="p-4 flex-1 flex flex-col w-full">
                 <div class="flex items-center gap-2 text-[10px] text-gray-400 mb-2">
                     <i data-lucide="clock" class="w-3 h-3"></i><span>${post.date}</span>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2" title="${post.title}">${post.title}</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed break-words w-full">${post.description}</p>
+                <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2" title="${post.title}">${post.title}</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-xs line-clamp-2 mb-0 flex-1 leading-relaxed break-words w-full">${post.description}</p>
             </div>
         </div>
     </a>`;
@@ -252,33 +251,26 @@ const getCatLabel = (cat) => {
     return map[cat] || 'عام';
 };
 
-// --- Update Functions ---
 const updateGlobalElements = (htmlContent, fileName = '') => {
     const $ = cheerio.load(htmlContent);
 
-    // 1. Inject AdSense Script in Head if missing
-    if (!$('script[src*="adsbygoogle.js"]').length) {
-        $('head').append(AD_SCRIPT);
-    }
-
-    // 2. FORCE UPDATE Google Analytics ID
+    // 1. Scripts
+    if (!$('script[src*="adsbygoogle.js"]').length) $('head').append(AD_SCRIPT);
     $('script').each((i, el) => {
         const content = $(el).html() || '';
         const src = $(el).attr('src') || '';
-        if (src.includes('googletagmanager.com') || content.includes("gtag('config'")) {
-            $(el).remove();
-        }
+        if (src.includes('googletagmanager.com') || content.includes("gtag('config'")) $(el).remove();
     });
     $('head').prepend(GA_SCRIPT);
 
-    // 3. Canonical
+    // 2. Canonical
     if (fileName) {
         const canonicalUrl = `${BASE_URL}/${fileName}`;
         $('link[rel="canonical"]').remove();
         $('head').append(`<link rel="canonical" href="${canonicalUrl}">`);
     }
 
-    // 4. Meta & Social
+    // 3. Meta & Data
     const pageTitle = $('title').text() || aboutData.profileName;
     const pageDesc = $('meta[name="description"]').attr('content') || aboutData.bio;
     let pageImage = $('main img').first().attr('src');
@@ -296,11 +288,11 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     $('head').append(`<link rel="alternate" type="application/rss+xml" title="TechTouch Feed" href="${BASE_URL}/feed.xml" />`);
 
-    // 5. UI Data Updates
+    // 4. UI Data Updates
     $('#header-profile-name').text(aboutData.profileName);
     $('#header-profile-img').attr('src', aboutData.profileImage);
     
-    // 6. Social Footer
+    // 5. Social Footer
     const socialLinksContainer = $('footer .flex.items-center.justify-center.gap-4').first();
     if (socialLinksContainer.length) {
         socialLinksContainer.empty();
@@ -345,11 +337,10 @@ const updateListingPages = () => {
             if (container.length) {
                 container.empty();
                 posts.slice(0, pageInfo.limit).forEach(post => container.append(createCardHTML(post)));
-                if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400">لا توجد منشورات في هذا القسم حالياً.</div>');
+                if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
                 
-                // Inject AdSense AFTER the grid
                 const parent = container.parent();
-                parent.find('.adsbygoogle-container').remove(); // Clean old
+                parent.find('.adsbygoogle-container').remove();
                 container.after(ADSENSE_BLOCK);
             }
         };
@@ -368,14 +359,11 @@ const updateToolsPage = () => {
     if (!fs.existsSync(filePath)) return;
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html);
-    
-    // Find the main container
     const main = $('main');
     if (main.length) {
         main.find('.adsbygoogle-container').remove();
         main.append(ADSENSE_BLOCK);
     }
-    
     fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html'));
 };
 
@@ -391,12 +379,12 @@ const updateAboutPageDetails = () => {
     const botList = $('#about-bot-list');
     if(botList.length) {
         botList.empty();
-        if (aboutData.botInfo) aboutData.botInfo.split('\n').filter(l => l.trim()).forEach(line => botList.append(`<li class="flex items-start gap-2"><span class="text-blue-500 text-xl font-bold">✪</span><span>${line}</span></li>`));
+        if (aboutData.botInfo) aboutData.botInfo.split('\n').filter(l => l.trim()).forEach(line => botList.append(`<li class="flex items-start gap-2"><span class="text-blue-500 text-lg font-bold">✪</span><span>${line}</span></li>`));
     }
     const searchList = $('#about-search-list');
     if(searchList.length) {
         searchList.empty();
-        if (aboutData.searchInfo) aboutData.searchInfo.split('\n').filter(l => l.trim()).forEach(line => searchList.append(`<li class="flex items-start gap-2"><span class="text-green-500 text-xl font-bold">✪</span><span>${line}</span></li>`));
+        if (aboutData.searchInfo) aboutData.searchInfo.split('\n').filter(l => l.trim()).forEach(line => searchList.append(`<li class="flex items-start gap-2"><span class="text-green-500 text-lg font-bold">✪</span><span>${line}</span></li>`));
     }
 
     const coverDiv = $('div.bg-gradient-to-r, div.bg-cover').first();
@@ -449,7 +437,6 @@ const generateIndividualArticles = () => {
         $('h1').first().text(post.title).addClass('break-words whitespace-normal w-full');
         $('time').text(post.date);
 
-        // Update Breadcrumb
         const nav = $('nav');
         if (nav.length) {
             nav.html(`
@@ -461,7 +448,6 @@ const generateIndividualArticles = () => {
             `);
         }
 
-        // --- PRO LCP STRATEGY ---
         const $content = cheerio.load(post.content, null, false);
         $content('img').each((i, el) => {
             const $img = cheerio(el);
@@ -479,14 +465,10 @@ const generateIndividualArticles = () => {
             coverImg.attr('src', post.image).attr('alt', post.title).attr('fetchpriority', 'high').attr('decoding', 'async').removeAttr('loading');
         }
 
-        // Inject Content
         $('article').html($content.html()); 
-        
-        // Inject AdSense at the end of the article
         $('article').find('.adsbygoogle-container').remove();
         $('article').append(ADSENSE_BLOCK);
 
-        // JSON-LD
         const jsonLd = {
             "@context": "https://schema.org", "@type": "Article", "headline": post.title,
             "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(),

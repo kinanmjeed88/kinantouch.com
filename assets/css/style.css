@@ -1,26 +1,47 @@
 
-/* Global Styles & Animations */
+/* Global Reset & Layout Protection */
+*, *::before, *::after {
+    box-sizing: border-box;
+    min-width: 0; /* Critical for Flex/Grid overflow prevention */
+}
+
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 140px;
-    -webkit-text-size-adjust: 100%; /* Prevent font scaling on orientation change */
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
 }
 
 body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    overflow-x: hidden; /* Critical: Prevent horizontal scroll */
+    overflow-x: hidden; /* Prevent horizontal scroll */
     width: 100%;
     max-width: 100vw;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
-/* --- Strict Layout Protection (Mobile Fixes) --- */
-* {
-    min-width: 0; /* Prevents flex items from overflowing their container */
-    box-sizing: border-box;
+/* --- Typography Scaling (Smaller Fonts) --- */
+h1 { font-size: 1.75rem !important; line-height: 1.4 !important; }
+h2 { font-size: 1.5rem !important; }
+h3 { font-size: 1.25rem !important; }
+p, li { font-size: 1rem !important; line-height: 1.7 !important; }
+
+@media (max-width: 640px) {
+    h1 { font-size: 1.4rem !important; }
+    h2 { font-size: 1.2rem !important; }
+    h3 { font-size: 1.1rem !important; }
+    p, li, span, a { font-size: 0.95rem !important; }
+    
+    /* Extra padding for mobile containers */
+    main {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
 }
 
-/* Force text to wrap inside containers */
+/* Force Text Wrapping */
 h1, h2, h3, h4, h5, h6, p, span, a, li, div, blockquote, pre {
     overflow-wrap: break-word !important;
     word-wrap: break-word !important;
@@ -28,65 +49,38 @@ h1, h2, h3, h4, h5, h6, p, span, a, li, div, blockquote, pre {
     max-width: 100%;
 }
 
-/* Ensure media never exceeds container width */
+/* --- Media Containment --- */
 img, iframe, video, object, embed {
     max-width: 100% !important;
     height: auto !important;
     display: block;
 }
 
-/* --- AdSense Containment (Crucial Fix) --- */
+/* --- AdSense Strict Containment --- */
 .adsbygoogle-container {
     width: 100%;
-    overflow: hidden; /* Cut off anything that overflows */
+    max-width: 100%;
+    overflow: hidden; /* Clip anything that sticks out */
+    margin: 2rem 0;
+    padding: 0.5rem;
     background: transparent;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    margin: 2rem auto;
+    align-items: center;
+    border-radius: 0.75rem;
 }
 
 .adsbygoogle {
     display: block !important;
     width: 100% !important;
     max-width: 100% !important;
-    min-width: 250px; /* Minimum width for mobile ads */
-}
-
-/* Fix for top spacing on mobile */
-main {
-    padding-top: 1rem;
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: hidden; /* Double protection */
-}
-
-@media (max-width: 640px) {
-    main {
-        padding-top: 1.5rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-    h1 {
-        font-size: 1.5rem !important;
-        line-height: 1.3 !important;
-    }
-    
-    /* Force tables to scroll instead of breaking layout */
-    table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
 }
 
 /* --- Utilities --- */
-::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #f1f1f1; }
 .dark ::-webkit-scrollbar-track { background: #1f2937; }
-::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #555; }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -105,17 +99,17 @@ main {
 }
 .animate-fade-in { animation: fadeIn 0.5s ease-out; }
 
-/* Video Container (Responsive Aspect Ratio) */
+/* Video Container (16:9) */
 .video-container {
     position: relative;
-    padding-bottom: 56.25%; /* 16:9 */
+    padding-bottom: 56.25%;
     height: 0;
     overflow: hidden;
-    border-radius: 1rem;
-    margin: 2rem 0;
+    border-radius: 0.75rem;
+    margin: 1.5rem 0;
     background-color: #000;
     width: 100%;
-    max-width: 100%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .video-container iframe {
@@ -132,44 +126,59 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%);
     color: white !important; 
     font-weight: 700;
-    padding: 1rem;
-    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px -3px rgba(37, 99, 235, 0.3);
-    
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    white-space: normal;
+    white-space: normal; /* Allow text wrapping inside button */
     text-align: center;
-    line-height: 1.4;
-    font-size: 0.95rem;
+    line-height: 1.3;
+    font-size: 0.9rem;
+    margin: 1rem 0;
 }
 
 .btn-wrapped-link:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.5);
+    box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.3);
 }
 
-.btn-wrapped-link i {
-    width: 1.25rem;
-    height: 1.25rem;
-    flex-shrink: 0;
-}
-
-/* Article Typography Fixes */
+/* Article Prose Fixes */
 .prose {
     max-width: 100% !important;
     overflow-x: hidden;
+    font-size: 1rem;
 }
 
 .prose img {
-    border-radius: 0.75rem;
-    margin: 1.5rem auto;
+    border-radius: 0.5rem;
+    margin: 1rem auto;
     width: 100%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Improvements */
+.post-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 1rem;
+    transition: transform 0.3s ease;
+}
+.post-card:hover { transform: translateY(-4px); }
+
+/* Table Reset for Mobile */
+table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
 }
