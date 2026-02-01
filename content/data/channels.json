@@ -1,16 +1,12 @@
+
 [
   {
     "id": "bot_requests",
     "name": "بوت الطلبات",
     "desc": "بوت على التيليكرام لاستقبال طلبات التطبيقات والالعاب المعدلة",
     "url": "https://t.me/techtouchAI_bot",
-    "icon": "assets/images/1769973635717_IMG_20260130_132519_237.jpg",
-    "color": "purple",
-    "iconData": {
-      "type": "image",
-      "value": "assets/images/1769973635717_IMG_20260130_132519_237.jpg",
-      "size": "128"
-    }
+    "icon": "bot",
+    "color": "purple"
   },
   {
     "id": "apps_games",
@@ -41,13 +37,8 @@
     "name": "مناقشات الالعاب",
     "desc": "كروب مناقشة الالعاب",
     "url": "https://t.me/+pScKzHOQwslhMmJi",
-    "icon": "assets/images/1769973659146_IMG_20260131_212612_212.jpg",
-    "color": "rose",
-    "iconData": {
-      "type": "image",
-      "value": "assets/images/1769973659146_IMG_20260131_212612_212.jpg",
-      "size": "128"
-    }
+    "icon": "message-square",
+    "color": "rose"
   },
   {
     "id": "pc_ps",
@@ -62,13 +53,8 @@
     "name": "مناقشات PC & PS",
     "desc": "مناقشات حول الكمبيوتر والبليستيشن",
     "url": "https://t.me/+J1Up1q8AYgs2MWU6",
-    "icon": "assets/images/1769973680806_IMG_20260131_212622_109.jpg",
-    "color": "indigo",
-    "iconData": {
-      "type": "image",
-      "value": "assets/images/1769973680806_IMG_20260131_212622_109.jpg",
-      "size": "128"
-    }
+    "icon": "message-square",
+    "color": "indigo"
   },
   {
     "id": "iphone",
@@ -108,11 +94,6 @@
     "desc": "للاشتراك بجميع القنوات دفعة واحدة",
     "url": "https://t.me/addlist/Gxcy1FFJONhkMjFi",
     "icon": "folder-plus",
-    "color": "blue",
-    "iconData": {
-      "type": "lucide",
-      "value": "folder-plus",
-      "size": "24"
-    }
+    "color": "blue"
   }
 ]

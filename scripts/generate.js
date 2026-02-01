@@ -274,7 +274,7 @@ const createCardHTML = (post) => {
     if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
     const catFontSize = aboutData.categories?.fontSize || 14;
-    const badgeStyle = `font-size: ${catFontSize - 2}px;`; 
+    const badgeStyle = `font-size: ${Math.max(8, catFontSize - 4)}px; padding: 0.3em 0.6em;`; 
 
     return `
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
@@ -282,16 +282,16 @@ const createCardHTML = (post) => {
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
                 <img src="${post.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${post.title}" loading="lazy" decoding="async" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-lg z-10" style="${badgeStyle}">
-                    <i data-lucide="${icon}" class="w-3 h-3"></i><span>${getCatLabel(post.category)}</span>
+                <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10" style="${badgeStyle}">
+                    <i data-lucide="${icon}" style="width: 1.2em; height: 1.2em;"></i><span>${getCatLabel(post.category)}</span>
                 </div>
             </div>
             <div class="p-4 flex-1 flex flex-col w-full">
-                <div class="flex items-center gap-2 text-[10px] text-gray-400 mb-2">
-                    <i data-lucide="clock" class="w-3 h-3"></i><span>${post.date}</span>
+                <div class="flex items-center gap-2 text-gray-400 mb-2" style="font-size: ${Math.max(8, catFontSize - 4)}px;">
+                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span>${post.date}</span>
                 </div>
-                <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2" title="${post.title}">${post.title}</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-xs line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full">${post.description}</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2" title="${post.title}" style="font-size: ${catFontSize}px;">${post.title}</h3>
+                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full" style="font-size: ${Math.max(8, catFontSize - 2)}px;">${post.description}</p>
             </div>
         </div>
     </a>`;
@@ -336,16 +336,34 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('head').append(`<link rel="alternate" type="application/rss+xml" title="TechTouch Feed" href="${BASE_URL}/feed.xml" />`);
 
     // UI Updates
-    const headerProfileContainer = $('div.w-10.h-10.rounded-full'); 
-    if (headerProfileContainer.length) {
-        headerProfileContainer.removeClass('border-2 border-white dark:border-gray-800 shadow-md').addClass('bg-gray-200 dark:bg-gray-700'); 
-        headerProfileContainer.find('img').attr('src', aboutData.profileImage).addClass('object-cover w-full h-full');
+    
+    // --- 1. Profile Image Fix (Universal Selector) ---
+    // Specifically target by ID for best accuracy
+    $('#header-profile-img').attr('src', aboutData.profileImage);
+    
+    // Also target container for styling to handle w-8 vs w-10 differences gracefully
+    const profileImg = $('#header-profile-img');
+    if (profileImg.length) {
+        const container = profileImg.parent();
+        container.removeClass('border-white').addClass('border-gray-100 dark:border-gray-700 bg-gray-200 dark:bg-gray-700');
+        profileImg.addClass('object-cover w-full h-full');
     }
+
+    // Backup: If ID missing in some templates, use broad class search
+    $('div.rounded-full.overflow-hidden').has('img').each((i, el) => {
+        const $el = $(el);
+        // Ensure it's likely a profile image (small size)
+        if ($el.hasClass('w-8') || $el.hasClass('w-10')) {
+            $el.find('img').attr('src', aboutData.profileImage);
+        }
+    });
+
     $('#header-profile-name').text(aboutData.profileName);
     const logoLink = $('header a.text-xl.font-black, header a.text-lg.font-black');
     if (logoLink.length) logoLink.text(aboutData.siteName || "TechTouch");
 
     // Navigation Scaling
+    const catFontSize = parseInt(aboutData.categories?.fontSize) || 14;
     const catLabels = aboutData.categories?.labels || {};
     const updateTabBtn = (tabId, label) => { const btn = $(`button.tab-btn[data-tab="${tabId}"]`); if (btn.length) btn.find('span').text(label); };
     updateTabBtn('articles', catLabels.articles || "اخبار");
@@ -353,28 +371,30 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     updateTabBtn('games', catLabels.games || "ألعاب");
     updateTabBtn('sports', catLabels.sports || "رياضة");
 
+    // --- 2. Font Size Fix (Dynamic Calculation) ---
     const applyResponsiveScaling = (selector) => {
         $(selector).each((i, el) => {
             const $el = $(el);
             // Removing Tailwind default spacing classes to enforce custom strict values
             $el.removeClass('px-3 py-1.5 px-4 gap-1.5 text-xs text-sm').find('svg, i').removeClass('w-3 h-3 w-3.5 h-3.5 w-4 h-4 w-5 h-5');
             
-            // Ultra-Compact Style: 10px Font, Tight Spacing
+            // Dynamic Compact Style: Uses variables from CMS
+            // Uses 'em' units for padding/gap so they scale perfectly with font-size
             const compactStyle = `
-                font-size: 10px !important; 
-                padding: 6px 12px !important; 
-                gap: 4px !important; 
+                font-size: ${catFontSize}px !important; 
+                padding: 0.5em 1em !important; 
+                gap: 0.4em !important; 
                 display: inline-flex; 
                 align-items: center; 
-                min-height: 26px !important;
+                min-height: 2.2em !important;
                 line-height: 1 !important;
                 border-radius: 9999px;
             `;
             
             $el.attr('style', compactStyle.replace(/\s+/g, ' '));
             
-            // Icons scaled to match 10px text (12px)
-            $el.find('svg, i').attr('style', `width: 12px !important; height: 12px !important; display: block;`);
+            // Icons scaled relative to text (1.2em = 120% of font size)
+            $el.find('svg, i').attr('style', `width: 1.2em !important; height: 1.2em !important; display: block;`);
         });
     };
     
