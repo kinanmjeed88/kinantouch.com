@@ -15,9 +15,20 @@ const BASE_URL = 'https://kinantouch.com';
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
 const AD_SCRIPT = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}" crossorigin="anonymous"></script>`;
 
+// Google Analytics Configuration
+const GA_ID = 'G-63BBPLQ343';
+const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '${GA_ID}');
+</script>`;
+
 // AdSense HTML Block (Responsive Unit with Strict Overflow Protection)
 const ADSENSE_BLOCK = `
-<div class="w-full my-10 p-1 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden text-center clear-both mx-auto max-w-full">
+<div class="w-full my-10 p-1 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden text-center clear-both mx-auto max-w-full adsbygoogle-container">
     <span class="text-[10px] text-gray-400 block mb-2 font-medium tracking-widest uppercase">إعلان</span>
     <div style="width: 100%; overflow: hidden;">
         <ins class="adsbygoogle block"
@@ -242,14 +253,23 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('head').append(AD_SCRIPT);
     }
 
-    // 2. Canonical
+    // 2. FORCE UPDATE Google Analytics ID (Remove old, add new)
+    $('script[src*="googletagmanager.com/gtag/js"]').remove();
+    $('script').each((i, el) => {
+        if ($(el).html().includes("gtag('config'")) {
+            $(el).remove();
+        }
+    });
+    $('head').prepend(GA_SCRIPT);
+
+    // 3. Canonical
     if (fileName) {
         const canonicalUrl = `${BASE_URL}/${fileName}`;
         $('link[rel="canonical"]').remove();
         $('head').append(`<link rel="canonical" href="${canonicalUrl}">`);
     }
 
-    // 3. Meta & Social
+    // 4. Meta & Social
     const pageTitle = $('title').text() || aboutData.profileName;
     const pageDesc = $('meta[name="description"]').attr('content') || aboutData.bio;
     let pageImage = $('main img').first().attr('src');
@@ -267,11 +287,11 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     $('head').append(`<link rel="alternate" type="application/rss+xml" title="TechTouch Feed" href="${BASE_URL}/feed.xml" />`);
 
-    // 4. UI Data Updates
+    // 5. UI Data Updates
     $('#header-profile-name').text(aboutData.profileName);
     $('#header-profile-img').attr('src', aboutData.profileImage);
     
-    // 5. Social Footer
+    // 6. Social Footer
     const socialLinksContainer = $('footer .flex.items-center.justify-center.gap-4').first();
     if (socialLinksContainer.length) {
         socialLinksContainer.empty();
@@ -320,9 +340,9 @@ const updateListingPages = () => {
                 if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400">لا توجد منشورات في هذا القسم حالياً.</div>');
                 
                 // Inject AdSense AFTER the grid in listing pages
-                const adContainer = container.parent().find('.adsbygoogle-container');
-                if (adContainer.length) adContainer.remove(); // Clean old
-                container.after(`<div class="adsbygoogle-container w-full overflow-hidden">${ADSENSE_BLOCK}</div>`);
+                const parent = container.parent();
+                parent.find('.adsbygoogle-container').remove(); // Clean old
+                container.after(ADSENSE_BLOCK);
             }
         };
 
@@ -333,6 +353,24 @@ const updateListingPages = () => {
 
         fs.writeFileSync(filePath, updateGlobalElements($.html(), pageInfo.file));
     });
+};
+
+const updateToolsPage = () => {
+    const filePath = path.join(ROOT_DIR, 'tools.html');
+    if (!fs.existsSync(filePath)) return;
+    let html = fs.readFileSync(filePath, 'utf8');
+    const $ = cheerio.load(html);
+    
+    // Find the main container
+    const main = $('main');
+    if (main.length) {
+        // Remove existing ad if any
+        main.find('.adsbygoogle-container').remove();
+        // Append Ad Block at the end of Main
+        main.append(ADSENSE_BLOCK);
+    }
+    
+    fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html'));
 };
 
 const updateAboutPageDetails = () => {
@@ -441,6 +479,7 @@ const generateIndividualArticles = () => {
         $('article').html($content.html()); 
         
         // Inject AdSense at the end of the article
+        $('article').find('.adsbygoogle-container').remove(); // Clean old
         $('article').append(ADSENSE_BLOCK);
 
         // JSON-LD
@@ -472,6 +511,7 @@ const updateSearchData = () => {
 // Execution
 updateAboutPageDetails();
 updateChannelsPage();
+updateToolsPage();
 HTML_FILES.forEach(file => {
     const filePath = path.join(ROOT_DIR, file);
     if (fs.existsSync(filePath)) fs.writeFileSync(filePath, updateGlobalElements(fs.readFileSync(filePath, 'utf8'), file));

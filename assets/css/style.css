@@ -1,21 +1,28 @@
 
 /* Global Styles & Animations */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 140px; /* Critical: Offsets anchor links so they don't hide behind the sticky header */
+}
+
 body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     overflow-x: hidden; /* Critical: Prevent horizontal scroll */
     width: 100%;
+    min-height: 100vh;
 }
 
 /* --- Strict Layout Protection (Mobile Fixes) --- */
 * {
     min-width: 0; /* Prevents flex items from overflowing their container */
+    box-sizing: border-box;
 }
 
 /* Force text to wrap inside containers, breaking long words if necessary */
 h1, h2, h3, h4, h5, h6, p, span, a, li, div {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
     max-width: 100%;
 }
 
@@ -30,6 +37,23 @@ img, iframe, video {
     width: 100% !important;
     max-width: 100vw !important;
     overflow: hidden !important;
+    display: block !important;
+}
+
+/* Fix for top spacing on mobile to prevent content being cut off by header */
+main {
+    padding-top: 1rem; /* Default padding */
+}
+
+@media (max-width: 640px) {
+    main {
+        padding-top: 1.5rem; /* Extra padding on mobile */
+        overflow-x: hidden;
+    }
+    h1 {
+        font-size: 1.5rem !important; /* Resize huge titles on mobile */
+        line-height: 1.3 !important;
+    }
 }
 
 /* --- End Layout Protection --- */
