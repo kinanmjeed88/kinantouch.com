@@ -63,7 +63,14 @@ const HTML_FILES = [
 ];
 
 // 1. Load Data
-let aboutData = { profileName: "TechTouch", bio: "", profileImage: "assets/images/me.jpg", social: {} };
+let aboutData = { 
+    profileName: "TechTouch", 
+    bio: "", 
+    profileImage: "assets/images/me.jpg", 
+    siteName: "TechTouch",
+    categories: { labels: { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" }, fontSize: 14 },
+    social: {} 
+};
 let channelsData = [];
 
 if (fs.existsSync(path.join(DATA_DIR, 'about.json'))) {
@@ -165,13 +172,20 @@ allPosts.sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate));
 
 // --- HELPER FUNCTIONS (Defined BEFORE usage) ---
 
+const getCatLabel = (cat) => {
+    // Dynamically fetch labels from aboutData, fallback to defaults
+    const defaults = { 'articles': 'اخبار', 'apps': 'تطبيقات', 'games': 'ألعاب', 'sports': 'رياضة' };
+    const configured = aboutData.categories?.labels || {};
+    return configured[cat] || defaults[cat] || 'عام';
+};
+
 const generateRSS = () => {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
     const now = new Date().toUTCString();
     let xml = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-    <title>TechTouch</title>
+    <title>${aboutData.siteName || "TechTouch"}</title>
     <link>${BASE_URL}</link>
     <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
     <language>ar</language>
@@ -225,13 +239,17 @@ const createCardHTML = (post) => {
     if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
 
+    // Dynamic Font Size for Badge
+    const catFontSize = aboutData.categories?.fontSize || 14;
+    const badgeStyle = `font-size: ${catFontSize - 2}px;`; // Badge slightly smaller than tab font
+
     return `
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
                 <img src="${post.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${post.title}" loading="lazy" decoding="async" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 ${badgeColor} text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-lg z-10">
+                <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-lg z-10" style="${badgeStyle}">
                     <i data-lucide="${icon}" class="w-3 h-3"></i><span>${getCatLabel(post.category)}</span>
                 </div>
             </div>
@@ -244,11 +262,6 @@ const createCardHTML = (post) => {
             </div>
         </div>
     </a>`;
-};
-
-const getCatLabel = (cat) => {
-    const map = { 'articles': 'اخبار', 'apps': 'تطبيقات', 'games': 'ألعاب', 'sports': 'رياضة' };
-    return map[cat] || 'عام';
 };
 
 const updateGlobalElements = (htmlContent, fileName = '') => {
@@ -292,6 +305,31 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('#header-profile-name').text(aboutData.profileName);
     $('#header-profile-img').attr('src', aboutData.profileImage);
     
+    // --- DYNAMIC SITE NAME ---
+    // Update the logo text in the header
+    const logoLink = $('header a.text-xl.font-black, header a.text-lg.font-black');
+    if (logoLink.length) {
+        logoLink.text(aboutData.siteName || "TechTouch");
+    }
+
+    // --- DYNAMIC CATEGORY TABS ---
+    // Update labels and font sizes for category tabs in index/articles
+    const catFontSize = aboutData.categories?.fontSize || 14;
+    const catLabels = aboutData.categories?.labels || {};
+
+    const updateTabBtn = (tabId, label) => {
+        const btn = $(`button.tab-btn[data-tab="${tabId}"]`);
+        if (btn.length) {
+            btn.find('span').text(label);
+            btn.attr('style', `font-size: ${catFontSize}px;`);
+        }
+    };
+
+    updateTabBtn('articles', catLabels.articles || "اخبار");
+    updateTabBtn('apps', catLabels.apps || "تطبيقات");
+    updateTabBtn('games', catLabels.games || "ألعاب");
+    updateTabBtn('sports', catLabels.sports || "رياضة");
+
     // 5. Social Footer
     const socialLinksContainer = $('footer .flex.items-center.justify-center.gap-4').first();
     if (socialLinksContainer.length) {
@@ -316,8 +354,13 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     if (aboutData.ticker && $('#ticker-content').length) {
         $('#ticker-label').text(aboutData.ticker.label);
-        let contentHtml = `<span class="mx-4 text-sm font-medium text-gray-100">${aboutData.ticker.text}</span>`;
-        if(aboutData.ticker.url && aboutData.ticker.url !== '#') contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors">${contentHtml}</a>`;
+        
+        // Single Line Content & Font Size
+        const fontSize = aboutData.ticker.fontSize || 14;
+        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text" style="font-size:${fontSize}px;">${aboutData.ticker.text}</span>`;
+        if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
+            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors">${contentHtml}</a>`;
+        }
         $('#ticker-content').html(contentHtml);
     }
 
@@ -359,8 +402,17 @@ const updateToolsPage = () => {
     if (!fs.existsSync(filePath)) return;
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html);
+    
     const main = $('main');
     if (main.length) {
+        // Clean Text: Remove specific paragraphs and reduce margin
+        const introText = main.find('.text-center.max-w-2xl');
+        if(introText.length) {
+            introText.removeClass('mb-12').addClass('mb-4');
+            introText.find('p').remove(); // Removes the description paragraph
+        }
+
+        // Ads
         main.find('.adsbygoogle-container').remove();
         main.append(ADSENSE_BLOCK);
     }
@@ -429,22 +481,28 @@ const generateIndividualArticles = () => {
         const fullImageUrl = toAbsoluteUrl(post.image);
 
         // Map Category ID to Arabic Label for Breadcrumb
-        const catMap = { 'articles': 'اخبار', 'apps': 'تطبيقات', 'games': 'ألعاب', 'sports': 'رياضة' };
-        const catLabel = catMap[post.category] || 'اخبار';
+        // Use dynamic labels
+        const catLabel = getCatLabel(post.category);
 
-        $('title').text(`${post.title} | TechTouch`);
+        $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
+        
+        // Ensure Main Container has no huge top padding if needed, but sticky header requires it.
+        // We will adjust the nav spacing instead.
+        const main = $('main');
+        
         $('h1').first().text(post.title).addClass('break-words whitespace-normal w-full');
         $('time').text(post.date);
 
         const nav = $('nav');
         if (nav.length) {
+            nav.addClass('mb-2 flex items-center whitespace-nowrap overflow-hidden text-xs sm:text-sm');
             nav.html(`
-                <a href="index.html" class="hover:text-blue-500 transition-colors">الرئيسية</a>
-                <span class="mx-2 text-gray-300">/</span>
-                <a href="articles.html" class="hover:text-blue-500 transition-colors">${catLabel}</a>
-                <span class="mx-2 text-gray-300">/</span>
-                <span class="text-gray-800 dark:text-gray-300 truncate max-w-[150px] sm:max-w-xs inline-block align-bottom" title="${post.title}">${post.title}</span>
+                <a href="index.html" class="hover:text-blue-500 transition-colors shrink-0">الرئيسية</a>
+                <span class="mx-1 text-gray-300 shrink-0">/</span>
+                <a href="articles.html" class="hover:text-blue-500 transition-colors shrink-0">${catLabel}</a>
+                <span class="mx-1 text-gray-300 shrink-0">/</span>
+                <span class="text-gray-800 dark:text-gray-300 truncate max-w-[150px] sm:max-w-[300px] block" title="${post.title}">${post.title}</span>
             `);
         }
 
@@ -474,7 +532,7 @@ const generateIndividualArticles = () => {
             "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(),
             "dateModified": new Date(post.effectiveDate).toISOString(),
             "author": { "@type": "Person", "name": aboutData.profileName },
-            "publisher": { "@type": "Organization", "name": "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } },
+            "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } },
             "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl }
         };
         $('script[type="application/ld+json"]').remove();

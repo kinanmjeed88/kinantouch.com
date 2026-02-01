@@ -459,6 +459,20 @@ async function loadSettings() {
         cachedAbout = JSON.parse(decodeURIComponent(escape(atob(file.content))));
         cachedAbout.sha = file.sha;
 
+        // Branding & Site Name
+        document.getElementById('siteName').value = cachedAbout.siteName || "TechTouch";
+        
+        // Category Settings
+        const cats = cachedAbout.categories?.labels || { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" };
+        document.getElementById('catLabel_articles').value = cats.articles;
+        document.getElementById('catLabel_apps').value = cats.apps;
+        document.getElementById('catLabel_games').value = cats.games;
+        document.getElementById('catLabel_sports').value = cats.sports;
+        
+        const catFontSize = cachedAbout.categories?.fontSize || 14;
+        document.getElementById('catFontSize').value = catFontSize;
+        document.getElementById('catSizeVal').innerText = catFontSize;
+
         document.getElementById('valName').value = cachedAbout.profileName;
         document.getElementById('previewProfile').src = cachedAbout.profileImage.startsWith('http') ? cachedAbout.profileImage : `../${cachedAbout.profileImage}`;
         document.getElementById('valProfileImg').value = cachedAbout.profileImage;
@@ -468,6 +482,11 @@ async function loadSettings() {
             document.getElementById('tickerLabel').value = cachedAbout.ticker.label;
             document.getElementById('tickerText').value = cachedAbout.ticker.text;
             document.getElementById('tickerUrl').value = cachedAbout.ticker.url;
+            
+            // Ticker Font Size (Load existing or default 14)
+            const fontSize = cachedAbout.ticker.fontSize || 14;
+            document.getElementById('tickerSize').value = fontSize;
+            document.getElementById('tickerSizeVal').innerText = fontSize;
         }
 
         document.getElementById('valBotInfo').value = cachedAbout.botInfo || "";
@@ -544,10 +563,22 @@ window.saveSettingsData = async () => {
             searchTitle: document.getElementById('valSearchTitle').value,
             coverType: coverType,
             coverValue: coverType === 'color' ? document.getElementById('valCoverColor').value : document.getElementById('valCoverImg').value,
+            // New Fields
+            siteName: document.getElementById('siteName').value,
+            categories: {
+                labels: {
+                    articles: document.getElementById('catLabel_articles').value,
+                    apps: document.getElementById('catLabel_apps').value,
+                    games: document.getElementById('catLabel_games').value,
+                    sports: document.getElementById('catLabel_sports').value
+                },
+                fontSize: document.getElementById('catFontSize').value
+            },
             ticker: {
                 label: document.getElementById('tickerLabel').value,
                 text: document.getElementById('tickerText').value,
-                url: document.getElementById('tickerUrl').value
+                url: document.getElementById('tickerUrl').value,
+                fontSize: document.getElementById('tickerSize').value
             },
             social: {
                 facebook: document.getElementById('socFb').value,

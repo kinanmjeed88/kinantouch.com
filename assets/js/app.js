@@ -110,4 +110,22 @@ document.addEventListener('DOMContentLoaded', () => {
             installBtn.classList.add('hidden');
         });
     }
+
+    // 6. News Ticker Auto-Stop Logic
+    const tickerContainer = document.getElementById('ticker-content');
+    if (tickerContainer) {
+        // Wait for fonts to load
+        document.fonts.ready.then(() => {
+            const innerContent = tickerContainer.querySelector('span') || tickerContainer.querySelector('a');
+            const parentWidth = tickerContainer.parentElement.clientWidth;
+            
+            if (innerContent) {
+                // If content is smaller than container, center it and stop animation
+                if (innerContent.offsetWidth < parentWidth) {
+                    tickerContainer.classList.remove('animate-marquee', 'absolute', 'right-0');
+                    tickerContainer.classList.add('w-full', 'justify-center');
+                }
+            }
+        });
+    }
 });
