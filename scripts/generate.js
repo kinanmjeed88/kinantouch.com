@@ -15,17 +15,19 @@ const BASE_URL = 'https://kinantouch.com';
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
 const AD_SCRIPT = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}" crossorigin="anonymous"></script>`;
 
-// AdSense HTML Block (Responsive Unit)
+// AdSense HTML Block (Responsive Unit with Strict Overflow Protection)
 const ADSENSE_BLOCK = `
-<div class="w-full my-10 p-1 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden text-center clear-both">
+<div class="w-full my-10 p-1 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden text-center clear-both mx-auto max-w-full">
     <span class="text-[10px] text-gray-400 block mb-2 font-medium tracking-widest uppercase">إعلان</span>
-    <ins class="adsbygoogle block"
-         style="display:block"
-         data-ad-client="${AD_CLIENT_ID}"
-         data-ad-slot="auto"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <div style="width: 100%; overflow: hidden;">
+        <ins class="adsbygoogle block"
+             style="display:block; width: 100%; max-width: 100vw;"
+             data-ad-client="${AD_CLIENT_ID}"
+             data-ad-slot="auto"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
 </div>
 `;
 
@@ -92,34 +94,34 @@ const parseMarkdown = (markdown) => {
         const matchId = url.match(/(?:v=|\/)([\w-]{11})(?:\?|&|\/|$)/);
         if (matchId) videoId = matchId[1];
         if (videoId) {
-            return `<div class="video-container my-10 shadow-2xl rounded-2xl overflow-hidden border border-gray-800 w-full"><iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+            return `<div class="video-container my-10 shadow-2xl rounded-2xl overflow-hidden border border-gray-800 w-full max-w-full"><iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
         }
         return '';
     });
 
     // Images
     html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
-        return `<img src="${src}" alt="${alt}">`;
+        return `<img src="${src}" alt="${alt}" class="max-w-full h-auto">`;
     });
 
-    // Links (Button Style)
-    html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-8 w-full flex justify-center px-1 sm:px-0"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto sm:min-w-[280px] max-w-md mx-auto"><i data-lucide="external-link" class="shrink-0"></i><span class="break-words">$1</span></a></div>`);
+    // Links (Button Style - Wrapped)
+    html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-8 w-full flex justify-center px-1 sm:px-0 max-w-full"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto sm:min-w-[280px] max-w-md mx-auto whitespace-normal break-words text-center"><i data-lucide="external-link" class="shrink-0"></i><span class="break-words">$1</span></a></div>`);
 
-    // Headers
-    html = html.replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 break-words">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mt-8 mb-6 break-words">$1</h1>');
+    // Headers (With break-words)
+    html = html.replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words w-full">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 break-words w-full">$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mt-8 mb-6 break-words w-full">$1</h1>');
 
     // Formatting
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/^- (.*$)/gim, '<li class="ml-4 list-disc marker:text-blue-500">$1</li>');
-    html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm sm:text-base">$&</ul>');
+    html = html.replace(/^- (.*$)/gim, '<li class="ml-4 list-disc marker:text-blue-500 break-words">$1</li>');
+    html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm sm:text-base w-full max-w-full">$&</ul>');
 
-    // Paragraphs
+    // Paragraphs (With break-words)
     html = html.split('\n').map(line => {
         if (line.trim() === '') return '';
         if (line.match(/^<(h|ul|li|div|img|iframe|p|script)/)) return line;
-        return `<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-base sm:text-lg break-words">${line}</p>`;
+        return `<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-base sm:text-lg break-words w-full max-w-full">${line}</p>`;
     }).join('\n');
 
     return html;
@@ -206,7 +208,7 @@ const createCardHTML = (post) => {
 
     return `
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col relative">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col relative w-full">
             <div class="h-48 sm:h-52 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
                 <img src="${post.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${post.title}" loading="lazy" decoding="async" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
@@ -214,12 +216,13 @@ const createCardHTML = (post) => {
                     <i data-lucide="${icon}" class="w-3 h-3"></i><span>${getCatLabel(post.category)}</span>
                 </div>
             </div>
-            <div class="p-4 sm:p-5 flex-1 flex flex-col">
+            <div class="p-4 sm:p-5 flex-1 flex flex-col w-full">
                 <div class="flex items-center gap-2 text-[10px] text-gray-400 mb-2">
                     <i data-lucide="clock" class="w-3 h-3"></i><span>${post.date}</span>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">${post.title}</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed">${post.description}</p>
+                <!-- Title: Added break-words and whitespace-normal to ensure wrapping on small screens -->
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2" title="${post.title}">${post.title}</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed break-words w-full">${post.description}</p>
             </div>
         </div>
     </a>`;
@@ -319,7 +322,7 @@ const updateListingPages = () => {
                 // Inject AdSense AFTER the grid in listing pages
                 const adContainer = container.parent().find('.adsbygoogle-container');
                 if (adContainer.length) adContainer.remove(); // Clean old
-                container.after(`<div class="adsbygoogle-container">${ADSENSE_BLOCK}</div>`);
+                container.after(`<div class="adsbygoogle-container w-full overflow-hidden">${ADSENSE_BLOCK}</div>`);
             }
         };
 
@@ -371,10 +374,10 @@ const updateChannelsPage = () => {
     channelsData.forEach(ch => {
         const renderedIcon = renderIconHTML(ch.iconData || ch.icon, 'star', 24);
         grid.append(`
-            <a href="${ch.url}" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
+            <a href="${ch.url}" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group w-full">
                 <div class="flex items-center gap-4 h-full">
                     <div class="w-12 h-12 bg-${ch.color}-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden">${renderedIcon}</div>
-                    <div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">${ch.name}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${ch.desc}</p></div>
+                    <div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1 break-words">${ch.name}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${ch.desc}</p></div>
                     <div class="text-gray-300 group-hover:text-${ch.color}-600 shrink-0 transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></div>
                 </div>
             </a>`);
@@ -400,7 +403,8 @@ const generateIndividualArticles = () => {
 
         $('title').text(`${post.title} | TechTouch`);
         $('meta[name="description"]').attr('content', post.description);
-        $('h1').first().text(post.title);
+        // Force wrap for Article H1 to prevent overflow on mobile
+        $('h1').first().text(post.title).addClass('break-words whitespace-normal w-full');
         $('time').text(post.date);
 
         // Update Breadcrumb: Dynamic Category + Truncated Title with Responsive CSS

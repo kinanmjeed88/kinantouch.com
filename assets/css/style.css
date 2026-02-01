@@ -2,7 +2,37 @@
 /* Global Styles & Animations */
 body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    overflow-x: hidden; /* Critical: Prevent horizontal scroll */
+    width: 100%;
 }
+
+/* --- Strict Layout Protection (Mobile Fixes) --- */
+* {
+    min-width: 0; /* Prevents flex items from overflowing their container */
+}
+
+/* Force text to wrap inside containers, breaking long words if necessary */
+h1, h2, h3, h4, h5, h6, p, span, a, li, div {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+/* Ensure images and iframes never exceed container width */
+img, iframe, video {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* AdSense Containment */
+.adsbygoogle {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow: hidden !important;
+}
+
+/* --- End Layout Protection --- */
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
@@ -118,20 +148,6 @@ body {
     transform: scale(1.02);
 }
 
-/* The Google Ad (Top Layer) */
-.adsbygoogle {
-    position: relative;
-    z-index: 2; /* Just above fallback (1) but below badge (5) */
-    display: block;
-    width: 100%;
-    min-height: 100px; /* Ensure it takes space if loaded */
-    background: #ffffff; /* Default background for ad area to cover image cleanly */
-}
-
-.dark .adsbygoogle {
-    background: #1f2937; /* Match dark mode bg so fallback doesn't bleed weirdly */
-}
-
 /* Helper for iframe responsiveness */
 .video-container {
     position: relative;
@@ -142,6 +158,8 @@ body {
     margin: 2rem 0;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     background-color: #000;
+    width: 100%; /* Ensure full width */
+    max-width: 100%;
 }
 
 .video-container iframe {
@@ -194,6 +212,7 @@ body {
 
 .btn-wrapped-link span {
     word-break: break-word; /* Ensure long words break */
+    white-space: normal;
 }
 
 /* Article Images Responsive Fix */
@@ -203,4 +222,12 @@ body {
     border-radius: 0.75rem;
     margin: 1.5rem auto;
     display: block;
+}
+
+/* Table Responsiveness */
+table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    max-width: 100%;
 }
