@@ -35,7 +35,7 @@ const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
   gtag('config', '${GA_ID}');
 </script>`;
 
-// AdSense HTML Block (Strictly Contained for Mobile)
+// AdSense HTML Block
 const ADSENSE_BLOCK = `
 <div class="adsbygoogle-container w-full max-w-full overflow-hidden mx-auto my-6 bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-800 rounded-xl p-1 text-center">
     <div class="text-[9px] text-gray-400 font-bold tracking-widest uppercase mb-1">إعلان</div>
@@ -51,18 +51,18 @@ const ADSENSE_BLOCK = `
 </div>
 `;
 
-// Create directories if they don't exist
+// Ensure directories exist
 if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR, { recursive: true });
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
-// Files to update (Static Pages)
+// Static Pages Config
 const HTML_FILES = [
     'index.html', 'articles.html', 'tools.html', 'about.html', 
     'tools-sites.html', 'tools-phones.html', 'tools-compare.html', 
     'tool-analysis.html', 'privacy.html', 'site-map.html', '404.html'
 ];
 
-// 1. Load Data
+// Load Config Data
 let aboutData = { 
     profileName: "TechTouch", 
     bio: "", 
@@ -74,14 +74,10 @@ let aboutData = {
 let channelsData = [];
 
 if (fs.existsSync(path.join(DATA_DIR, 'about.json'))) {
-    try {
-        aboutData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'about.json'), 'utf8'));
-    } catch (e) { console.error("Error parsing about.json", e); }
+    try { aboutData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'about.json'), 'utf8')); } catch (e) {}
 }
 if (fs.existsSync(path.join(DATA_DIR, 'channels.json'))) {
-    try {
-        channelsData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'channels.json'), 'utf8'));
-    } catch (e) { console.error("Error parsing channels.json", e); }
+    try { channelsData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'channels.json'), 'utf8')); } catch (e) {}
 }
 
 const toAbsoluteUrl = (url) => {
@@ -89,6 +85,19 @@ const toAbsoluteUrl = (url) => {
     if (url.startsWith('http')) return url;
     const cleanPath = url.startsWith('/') ? url.substring(1) : url;
     return `${BASE_URL}/${cleanPath}`;
+};
+
+const escapeXml = (unsafe) => {
+    if (typeof unsafe !== 'string') return '';
+    return unsafe.replace(/[<>&'"]/g, (c) => {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+        }
+    });
 };
 
 const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
@@ -107,28 +116,11 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     return `<i data-lucide="${defaultIconName}" class="w-5 h-5"></i>`;
 };
 
-const escapeXml = (unsafe) => {
-    if (typeof unsafe !== 'string') return '';
-    return unsafe.replace(/[<>&'"]/g, (c) => {
-        switch (c) {
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '&': return '&amp;';
-            case '\'': return '&apos;';
-            case '"': return '&quot;';
-        }
-    });
-};
-
-// Initial Markdown Parsing - ENFORCING WRAPPING CLASSES
+// Markdown Parser
 const parseMarkdown = (markdown) => {
     if (!markdown) return '';
     let html = markdown;
-
-    // Remove artifacts
     html = html.replace(/\$1/g, '');
-
-    // YouTube Embed (Responsive Wrapper)
     html = html.replace(/@\[youtube\]\((.*?)\)/g, (match, url) => {
         let videoId = '';
         const matchId = url.match(/(?:v=|\/)([\w-]{11})(?:\?|&|\/|$)/);
@@ -138,36 +130,23 @@ const parseMarkdown = (markdown) => {
         }
         return '';
     });
-
-    // Images (Responsive Class)
-    html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
-        return `<img src="${src}" alt="${alt}" class="w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700">`;
-    });
-
-    // Links (Button Style - Wrapped)
+    html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${src}" alt="${alt}" class="w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700">`);
     html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-6 w-full flex justify-center px-2"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto"><i data-lucide="external-link" class="shrink-0 w-4 h-4"></i><span class="break-words whitespace-normal text-center">$1</span></a></div>`);
-
-    // Headers (With explicit break-words and whitespace-normal)
     html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words whitespace-normal w-full">$1</h3>');
     html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 break-words whitespace-normal w-full">$1</h2>');
     html = html.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-extrabold text-gray-900 dark:text-white mt-8 mb-6 break-words whitespace-normal w-full">$1</h1>');
-
-    // Formatting
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/^- (.*$)/gim, '<li class="ml-4 list-disc marker:text-blue-500 break-words whitespace-normal">$1</li>');
     html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm w-full">$&</ul>');
-
-    // Paragraphs (With explicit break-words)
     html = html.split('\n').map(line => {
         if (line.trim() === '') return '';
         if (line.match(/^<(h|ul|li|div|img|iframe|p|script)/)) return line;
         return `<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-base break-words whitespace-normal w-full">${line}</p>`;
     }).join('\n');
-
     return html;
 };
 
-// 2. Load All Posts
+// Load Posts
 const allPosts = [];
 if (fs.existsSync(POSTS_DIR)) {
     fs.readdirSync(POSTS_DIR).forEach(file => {
@@ -183,22 +162,20 @@ if (fs.existsSync(POSTS_DIR)) {
 }
 allPosts.sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate));
 
-// --- HELPER FUNCTIONS (Defined BEFORE usage) ---
-
 const getCatLabel = (cat) => {
-    // Dynamically fetch labels from aboutData, fallback to defaults
     const defaults = { 'articles': 'اخبار', 'apps': 'تطبيقات', 'games': 'ألعاب', 'sports': 'رياضة' };
     const configured = aboutData.categories?.labels || {};
     return configured[cat] || defaults[cat] || 'عام';
 };
 
+// RSS Generator
 const generateRSS = () => {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
     const now = new Date().toUTCString();
     let xml = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-    <title>${aboutData.siteName || "TechTouch"}</title>
+    <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>
     <link>${BASE_URL}</link>
     <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
     <language>ar</language>
@@ -222,12 +199,11 @@ const generateRSS = () => {
     fs.writeFileSync(feedPath, xml);
 };
 
-// --- ADVANCED SITEMAP GENERATION ---
+// --- DYNAMIC SITEMAP GENERATOR ---
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
     
-    // Priority Map for Static Pages
     const configMap = {
         'index.html': { priority: '1.0', freq: 'daily' },
         'articles.html': { priority: '0.9', freq: 'daily' },
@@ -244,23 +220,15 @@ const generateSitemap = () => {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
 
-    // 1. Static Pages
+    // Static Pages
     HTML_FILES.forEach(file => {
-        if (file === '404.html') return; // Don't index 404
-        
+        if (file === '404.html') return;
         const filePath = path.join(ROOT_DIR, file);
         let lastmod = today;
-        
-        // Try to get actual file modification time
         if (fs.existsSync(filePath)) {
-            try {
-                const stats = fs.statSync(filePath);
-                lastmod = stats.mtime.toISOString().split('T')[0];
-            } catch(e) {}
+            try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {}
         }
-
         const config = configMap[file] || { priority: '0.5', freq: 'monthly' };
-        
         xml += `
   <url>
     <loc>${BASE_URL}/${file}</loc>
@@ -270,12 +238,11 @@ const generateSitemap = () => {
   </url>`;
     });
 
-    // 2. Articles (Dynamic)
+    // Dynamic Articles
     allPosts.forEach(post => {
         const fullImg = toAbsoluteUrl(post.image);
         const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
         const postDate = new Date(post.effectiveDate).toISOString().split('T')[0];
-        
         xml += `
   <url>
     <loc>${pageUrl}</loc>
@@ -291,7 +258,7 @@ const generateSitemap = () => {
 
     xml += `\n</urlset>`;
     fs.writeFileSync(sitemapPath, xml);
-    console.log('✅ Advanced Sitemap Generated successfully');
+    console.log('✅ sitemap.xml regenerated');
 };
 
 const createCardHTML = (post) => {
@@ -300,8 +267,6 @@ const createCardHTML = (post) => {
     if(post.category === 'apps') { badgeColor = 'bg-green-600'; icon = 'smartphone'; }
     if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
-
-    // Dynamic Font Size for Badge
     const catFontSize = aboutData.categories?.fontSize || 14;
     const badgeStyle = `font-size: ${catFontSize - 2}px;`; 
 
@@ -329,7 +294,7 @@ const createCardHTML = (post) => {
 const updateGlobalElements = (htmlContent, fileName = '') => {
     const $ = cheerio.load(htmlContent);
 
-    // 1. Scripts
+    // Scripts & Ads
     if (!$('script[src*="adsbygoogle.js"]').length) $('head').append(AD_SCRIPT);
     $('script').each((i, el) => {
         const content = $(el).html() || '';
@@ -338,20 +303,15 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     });
     $('head').prepend(GA_SCRIPT);
 
-    // 2. Canonical
+    // Canonical & Meta
     if (fileName) {
         const canonicalUrl = `${BASE_URL}/${fileName}`;
         $('link[rel="canonical"]').remove();
         $('head').append(`<link rel="canonical" href="${canonicalUrl}">`);
     }
-
-    // 2.5 Robots Meta (Ensure Indexing)
     $('meta[name="robots"]').remove();
-    if(fileName !== '404.html') {
-        $('head').append('<meta name="robots" content="index, follow">');
-    }
+    if(fileName !== '404.html') { $('head').append('<meta name="robots" content="index, follow">'); }
 
-    // 3. Meta & Data
     const pageTitle = $('title').text() || aboutData.profileName;
     const pageDesc = $('meta[name="description"]').attr('content') || aboutData.bio;
     let pageImage = $('main img').first().attr('src');
@@ -366,83 +326,39 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     setMeta('og:description', pageDesc); setMeta('og:image', fullImageUrl);
     setName('twitter:card', 'summary_large_image'); setName('twitter:url', fullPageUrl);
     setName('twitter:title', pageTitle); setName('twitter:description', pageDesc); setName('twitter:image', fullImageUrl);
-
     $('head').append(`<link rel="alternate" type="application/rss+xml" title="TechTouch Feed" href="${BASE_URL}/feed.xml" />`);
 
-    // 4. UI Data Updates
-    
-    // --- PROFILE IMAGE FIX ---
+    // UI Updates
     const headerProfileContainer = $('div.w-10.h-10.rounded-full'); 
     if (headerProfileContainer.length) {
-        headerProfileContainer.removeClass('border-2 border-white dark:border-gray-800 shadow-md'); 
-        headerProfileContainer.addClass('bg-gray-200 dark:bg-gray-700'); 
+        headerProfileContainer.removeClass('border-2 border-white dark:border-gray-800 shadow-md').addClass('bg-gray-200 dark:bg-gray-700'); 
         headerProfileContainer.find('img').attr('src', aboutData.profileImage).addClass('object-cover w-full h-full');
     }
-    
-    const smallProfileContainer = $('div.w-8.h-8.rounded-full'); 
-    if (smallProfileContainer.length) {
-        smallProfileContainer.removeClass('border border-gray-100');
-        smallProfileContainer.find('img').attr('src', aboutData.profileImage).addClass('object-cover w-full h-full');
-    }
-
     $('#header-profile-name').text(aboutData.profileName);
-    
-    // --- DYNAMIC SITE NAME ---
     const logoLink = $('header a.text-xl.font-black, header a.text-lg.font-black');
-    if (logoLink.length) {
-        logoLink.text(aboutData.siteName || "TechTouch");
-    }
+    if (logoLink.length) logoLink.text(aboutData.siteName || "TechTouch");
 
-    // --- DYNAMIC CATEGORY TABS & NAV SCALING ---
+    // Navigation Scaling
     const catFontSize = aboutData.categories?.fontSize || 14;
     const catLabels = aboutData.categories?.labels || {};
-
-    const updateTabBtn = (tabId, label) => {
-        const btn = $(`button.tab-btn[data-tab="${tabId}"]`);
-        if (btn.length) {
-            btn.find('span').text(label);
-        }
-    };
-
+    const updateTabBtn = (tabId, label) => { const btn = $(`button.tab-btn[data-tab="${tabId}"]`); if (btn.length) btn.find('span').text(label); };
     updateTabBtn('articles', catLabels.articles || "اخبار");
     updateTabBtn('apps', catLabels.apps || "تطبيقات");
     updateTabBtn('games', catLabels.games || "ألعاب");
     updateTabBtn('sports', catLabels.sports || "رياضة");
 
-    // Apply SCALING Logic to Nav Buttons and Tab Buttons using 'em' units
-    // This allows everything (padding, gap, icon size) to scale with font-size
     const applyResponsiveScaling = (selector) => {
         $(selector).each((i, el) => {
             const $el = $(el);
-            
-            // Remove fixed tailwind classes that conflict with scaling
-            $el.removeClass('px-3 py-1.5 px-4 gap-1.5 text-xs text-sm');
-            $el.find('svg, i').removeClass('w-3 h-3 w-3.5 h-3.5 w-4 h-4 w-5 h-5');
-
-            // Apply scaling via inline styles
-            // font-size controls the scale. Padding and Gap are in 'em'.
-            $el.attr('style', `
-                font-size: ${catFontSize}px !important; 
-                padding: 0.5em 1.2em !important; 
-                gap: 0.5em !important;
-                display: inline-flex;
-                align-items: center;
-                min-height: 2.5em;
-            `);
-            
-            // Force icon size relative to font size
-            $el.find('svg, i').attr('style', `
-                width: 1.3em !important; 
-                height: 1.3em !important;
-            `);
+            $el.removeClass('px-3 py-1.5 px-4 gap-1.5 text-xs text-sm').find('svg, i').removeClass('w-3 h-3 w-3.5 h-3.5 w-4 h-4 w-5 h-5');
+            $el.attr('style', `font-size: ${catFontSize}px !important; padding: 0.5em 1.2em !important; gap: 0.5em !important; display: inline-flex; align-items: center; min-height: 2.5em;`);
+            $el.find('svg, i').attr('style', `width: 1.3em !important; height: 1.3em !important;`);
         });
     };
-
     applyResponsiveScaling('.nav-link');
     applyResponsiveScaling('.tab-btn');
 
-
-    // 5. Social Footer
+    // Social Footer
     const socialLinksContainer = $('footer .flex.items-center.justify-center.gap-4').first();
     if (socialLinksContainer.length) {
         socialLinksContainer.empty();
@@ -464,35 +380,22 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
                 } else {
                     content = renderIconHTML(iconData, net.defaultIcon, 20);
                 }
-
                 socialLinksContainer.append(`<a href="${aboutData.social[net.key]}" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 ${net.colorClass} hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700 overflow-hidden relative">${content}</a>`);
             }
         });
     }
 
-    // --- TICKER LOGIC ---
+    // Ticker Logic
     if (aboutData.ticker && $('#ticker-content').length) {
         $('#ticker-label').text(aboutData.ticker.label);
-        
         const fontSize = aboutData.ticker.fontSize || 14;
-        const isAnimated = aboutData.ticker.animated !== false; // Default true
-
+        const isAnimated = aboutData.ticker.animated !== false;
         const tickerContentDiv = $('#ticker-content');
-        
-        // Reset classes and force single-line flex container
         tickerContentDiv.removeClass().addClass('flex items-center h-full whitespace-nowrap');
-        
-        if (isAnimated) {
-            tickerContentDiv.addClass('animate-marquee absolute right-0');
-        } else {
-            // Static centered text
-            tickerContentDiv.addClass('w-full justify-center overflow-hidden');
-        }
-        
+        if (isAnimated) tickerContentDiv.addClass('animate-marquee absolute right-0');
+        else tickerContentDiv.addClass('w-full justify-center overflow-hidden');
         let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block" style="font-size:${fontSize}px;">${aboutData.ticker.text}</span>`;
-        if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
-            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block">${contentHtml}</a>`;
-        }
+        if(aboutData.ticker.url && aboutData.ticker.url !== '#') contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block">${contentHtml}</a>`;
         tickerContentDiv.html(contentHtml);
     }
 
@@ -506,25 +409,21 @@ const updateListingPages = () => {
         if (!fs.existsSync(filePath)) return;
         let html = fs.readFileSync(filePath, 'utf8');
         const $ = cheerio.load(html);
-
         const fillContainer = (catId, posts) => {
             const container = $(`#tab-${catId} .grid`);
             if (container.length) {
                 container.empty();
                 posts.slice(0, pageInfo.limit).forEach(post => container.append(createCardHTML(post)));
                 if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
-                
                 const parent = container.parent();
                 parent.find('.adsbygoogle-container').remove();
                 container.after(ADSENSE_BLOCK);
             }
         };
-
         fillContainer('articles', allPosts.filter(p => p.category === 'articles'));
         fillContainer('apps', allPosts.filter(p => p.category === 'apps'));
         fillContainer('games', allPosts.filter(p => p.category === 'games'));
         fillContainer('sports', allPosts.filter(p => p.category === 'sports'));
-
         fs.writeFileSync(filePath, updateGlobalElements($.html(), pageInfo.file));
     });
 };
@@ -534,17 +433,13 @@ const updateToolsPage = () => {
     if (!fs.existsSync(filePath)) return;
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html);
-    
     const main = $('main');
     if (main.length) {
-        // Clean Text: Remove specific paragraphs and reduce margin
         const introText = main.find('.text-center.max-w-2xl');
         if(introText.length) {
             introText.removeClass('mb-12').addClass('mb-4');
-            introText.find('p').remove(); // Removes the description paragraph
+            introText.find('p').remove();
         }
-
-        // Ads
         main.find('.adsbygoogle-container').remove();
         main.append(ADSENSE_BLOCK);
     }
@@ -556,10 +451,8 @@ const updateAboutPageDetails = () => {
     if (!fs.existsSync(aboutPath)) return;
     let html = fs.readFileSync(aboutPath, 'utf8');
     const $ = cheerio.load(html);
-
     const bioSection = $('div.prose section').first();
     if(aboutData.bio) bioSection.find('p').first().html(aboutData.bio.replace(/\n/g, '<br>'));
-
     const botList = $('#about-bot-list');
     if(botList.length) {
         botList.empty();
@@ -570,19 +463,15 @@ const updateAboutPageDetails = () => {
         searchList.empty();
         if (aboutData.searchInfo) aboutData.searchInfo.split('\n').filter(l => l.trim()).forEach(line => searchList.append(`<li class="flex items-start gap-2"><span class="text-green-500 text-lg font-bold">✪</span><span>${line}</span></li>`));
     }
-
     const coverDiv = $('div.bg-gradient-to-r, div.bg-cover').first();
     coverDiv.removeClass().addClass('h-40 relative');
     if (aboutData.coverType === 'image') { coverDiv.addClass('bg-cover bg-center').attr('style', `background-image: url('${aboutData.coverValue}');`); }
     else { coverDiv.removeAttr('style').addClass(aboutData.coverValue); }
-    
-    // Fix Profile Image in About Page
     const profileImgContainer = coverDiv.find('div.rounded-full');
     if(profileImgContainer.length) {
-        profileImgContainer.removeClass('border-[6px] border-white dark:border-gray-800'); // Remove thick borders causing gaps
+        profileImgContainer.removeClass('border-[6px] border-white dark:border-gray-800');
         profileImgContainer.find('img').attr('src', aboutData.profileImage).addClass('object-cover w-full h-full');
     }
-
     fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html'));
 };
 
@@ -611,57 +500,33 @@ const generateIndividualArticles = () => {
     const templatePath = path.join(ROOT_DIR, 'article-asus-gx10.html');
     if (!fs.existsSync(templatePath)) return;
     let template = fs.readFileSync(templatePath, 'utf8');
-
     allPosts.forEach(post => {
         const $ = cheerio.load(template);
         const pageSlug = `article-${post.slug}.html`;
         const fullUrl = `${BASE_URL}/${pageSlug}`;
         const fullImageUrl = toAbsoluteUrl(post.image);
-
         const catLabel = getCatLabel(post.category);
-
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
-        
-        const main = $('main');
-        main.removeClass('pt-20').addClass('py-6');
-        
+        $('main').removeClass('pt-20').addClass('py-6');
         $('h1').first().text(post.title).addClass('break-words whitespace-normal w-full');
         $('time').text(post.date);
-
-        const nav = $('nav');
-        if (nav.length) {
-            nav.removeClass().addClass('flex items-center text-xs text-gray-500 mb-4 w-full overflow-hidden whitespace-nowrap');
-            nav.html(`
-                <a href="index.html" class="hover:text-blue-500 shrink-0 transition-colors">الرئيسية</a>
-                <span class="mx-1 shrink-0 text-gray-300">/</span>
-                <a href="articles.html" class="hover:text-blue-500 shrink-0 transition-colors">${catLabel}</a>
-                <span class="mx-1 shrink-0 text-gray-300">/</span>
-                <span class="text-gray-800 dark:text-gray-300 truncate flex-1 min-w-0 block font-medium" title="${post.title}">${post.title}</span>
-            `);
-        }
-
+        $('nav').removeClass().addClass('flex items-center text-xs text-gray-500 mb-4 w-full overflow-hidden whitespace-nowrap').html(`
+            <a href="index.html" class="hover:text-blue-500 shrink-0 transition-colors">الرئيسية</a><span class="mx-1 shrink-0 text-gray-300">/</span>
+            <a href="articles.html" class="hover:text-blue-500 shrink-0 transition-colors">${catLabel}</a><span class="mx-1 shrink-0 text-gray-300">/</span>
+            <span class="text-gray-800 dark:text-gray-300 truncate flex-1 min-w-0 block font-medium" title="${post.title}">${post.title}</span>`);
         const $content = cheerio.load(post.content, null, false);
         $content('img').each((i, el) => {
             const $img = cheerio(el);
-            if (i === 0) {
-                $img.attr('fetchpriority', 'high').attr('loading', 'eager').attr('decoding', 'async');
-                if ($img.attr('src')) $('head').append(`<link rel="preload" as="image" href="${$img.attr('src')}" fetchpriority="high">`);
-            } else {
-                $img.attr('loading', 'lazy').attr('decoding', 'async');
-            }
+            if (i === 0) { $img.attr('fetchpriority', 'high').attr('loading', 'eager').attr('decoding', 'async'); if ($img.attr('src')) $('head').append(`<link rel="preload" as="image" href="${$img.attr('src')}" fetchpriority="high">`); } 
+            else { $img.attr('loading', 'lazy').attr('decoding', 'async'); }
             $img.addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         });
-
         const coverImg = $('img.object-cover').first();
-        if(coverImg.length) {
-            coverImg.attr('src', post.image).attr('alt', post.title).attr('fetchpriority', 'high').attr('decoding', 'async').removeAttr('loading');
-        }
-
+        if(coverImg.length) coverImg.attr('src', post.image).attr('alt', post.title).attr('fetchpriority', 'high').attr('decoding', 'async').removeAttr('loading');
         $('article').html($content.html()); 
         $('article').find('.adsbygoogle-container').remove();
         $('article').append(ADSENSE_BLOCK);
-
         const jsonLd = {
             "@context": "https://schema.org", "@type": "Article", "headline": post.title,
             "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(),
@@ -673,7 +538,6 @@ const generateIndividualArticles = () => {
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);
         $('meta[property="og:type"]').attr('content', 'article');
-
         fs.writeFileSync(path.join(ROOT_DIR, pageSlug), updateGlobalElements($.html(), pageSlug));
     });
 };
@@ -687,7 +551,7 @@ const updateSearchData = () => {
     fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
 };
 
-// Execution
+// Execution Sequence
 updateAboutPageDetails();
 updateChannelsPage();
 updateToolsPage();
@@ -699,6 +563,6 @@ updateListingPages();
 generateIndividualArticles();
 updateSearchData();
 generateRSS();
-generateSitemap(); // New Advanced Sitemap Logic
+generateSitemap(); // Auto-generates updated sitemap
 
 console.log('Build Complete. Domain updated to: ' + BASE_URL);
