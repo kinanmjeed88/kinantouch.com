@@ -2,15 +2,11 @@
 const fs = require('fs');
 const path = require('path');
 
-// --- Fix for Node 18 (GitHub Actions) ---
-// Polyfill File API if missing to prevent 'undici' ReferenceError
+// --- SAFETY FIX: Polyfill File API if missing ---
+// This prevents 'ReferenceError: File is not defined' in older Node environments
 if (typeof global.File === 'undefined') {
-    try {
-        const { File } = require('node:buffer');
-        if (File) global.File = File;
-    } catch (e) {
-        console.warn('Warning: Failed to polyfill File API for Node 18:', e);
-    }
+    const { File } = require('node:buffer');
+    if (File) global.File = File;
 }
 
 const cheerio = require('cheerio');
@@ -27,7 +23,7 @@ const BASE_URL = 'https://kinantouch.com';
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
 const AD_SCRIPT = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}" crossorigin="anonymous"></script>`;
 
-// Google Analytics Configuration (New ID)
+// Google Analytics Configuration (Updated)
 const GA_ID = 'G-63BBPLQ343';
 const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
@@ -38,7 +34,7 @@ const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
   gtag('config', '${GA_ID}');
 </script>`;
 
-// AdSense HTML Block (Responsive Unit with Strict Overflow Protection)
+// AdSense HTML Block (Responsive Unit)
 const ADSENSE_BLOCK = `
 <div class="w-full my-10 p-1 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden text-center clear-both mx-auto max-w-full adsbygoogle-container">
     <span class="text-[10px] text-gray-400 block mb-2 font-medium tracking-widest uppercase">إعلان</span>
@@ -266,13 +262,14 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     }
 
     // 2. FORCE UPDATE Google Analytics ID (Remove old, add new)
+    // Remove any existing GTM/GTAG scripts first to avoid duplication
     $('script[src*="googletagmanager.com/gtag/js"]').remove();
-    // Also remove inline gtag config script
     $('script').each((i, el) => {
         if ($(el).html().includes("gtag('config'")) {
             $(el).remove();
         }
     });
+    // Prepend the correct GA script
     $('head').prepend(GA_SCRIPT);
 
     // 3. Canonical
@@ -352,7 +349,7 @@ const updateListingPages = () => {
                 posts.slice(0, pageInfo.limit).forEach(post => container.append(createCardHTML(post)));
                 if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400">لا توجد منشورات في هذا القسم حالياً.</div>');
                 
-                // Inject AdSense AFTER the grid in listing pages
+                // Inject AdSense AFTER the grid
                 const parent = container.parent();
                 parent.find('.adsbygoogle-container').remove(); // Clean old
                 container.after(ADSENSE_BLOCK);
