@@ -325,7 +325,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         logoLink.text(aboutData.siteName || "TechTouch");
     }
 
-    // --- DYNAMIC CATEGORY TABS ---
+    // --- DYNAMIC CATEGORY TABS & NAV SCALING ---
     const catFontSize = aboutData.categories?.fontSize || 14;
     const catLabels = aboutData.categories?.labels || {};
 
@@ -333,7 +333,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         const btn = $(`button.tab-btn[data-tab="${tabId}"]`);
         if (btn.length) {
             btn.find('span').text(label);
-            btn.attr('style', `font-size: ${catFontSize}px;`);
         }
     };
 
@@ -341,6 +340,39 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     updateTabBtn('apps', catLabels.apps || "تطبيقات");
     updateTabBtn('games', catLabels.games || "ألعاب");
     updateTabBtn('sports', catLabels.sports || "رياضة");
+
+    // Apply SCALING Logic to Nav Buttons and Tab Buttons using 'em' units
+    // This allows everything (padding, gap, icon size) to scale with font-size
+    const applyResponsiveScaling = (selector) => {
+        $(selector).each((i, el) => {
+            const $el = $(el);
+            
+            // Remove fixed tailwind classes that conflict with scaling
+            $el.removeClass('px-3 py-1.5 px-4 gap-1.5 text-xs text-sm');
+            $el.find('svg, i').removeClass('w-3 h-3 w-3.5 h-3.5 w-4 h-4 w-5 h-5');
+
+            // Apply scaling via inline styles
+            // font-size controls the scale. Padding and Gap are in 'em'.
+            $el.attr('style', `
+                font-size: ${catFontSize}px !important; 
+                padding: 0.5em 1.2em !important; 
+                gap: 0.5em !important;
+                display: inline-flex;
+                align-items: center;
+                min-height: 2.5em;
+            `);
+            
+            // Force icon size relative to font size
+            $el.find('svg, i').attr('style', `
+                width: 1.3em !important; 
+                height: 1.3em !important;
+            `);
+        });
+    };
+
+    applyResponsiveScaling('.nav-link');
+    applyResponsiveScaling('.tab-btn');
+
 
     // 5. Social Footer
     const socialLinksContainer = $('footer .flex.items-center.justify-center.gap-4').first();
