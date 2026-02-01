@@ -199,58 +199,64 @@ const generateRSS = () => {
     fs.writeFileSync(feedPath, xml);
 };
 
-// --- DYNAMIC SITEMAP GENERATOR ---
+// --- DYNAMIC SITEMAP GENERATOR (OPTIMIZED) ---
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
     
-    const configMap = {
-        'index.html': { priority: '1.0', freq: 'daily' },
-        'articles.html': { priority: '0.9', freq: 'daily' },
-        'tools.html': { priority: '0.9', freq: 'weekly' },
-        'tools-sites.html': { priority: '0.8', freq: 'weekly' },
-        'tools-phones.html': { priority: '0.8', freq: 'weekly' },
-        'about.html': { priority: '0.7', freq: 'monthly' },
-        'contact.html': { priority: '0.7', freq: 'yearly' },
-        'privacy.html': { priority: '0.3', freq: 'yearly' },
-        'site-map.html': { priority: '0.5', freq: 'weekly' }
-    };
+    // Mapping Pages to Canonical URLs (Optimized: No index.html for root)
+    const staticPages = [
+        { file: 'index.html', url: '/', priority: '1.0' },
+        { file: 'articles.html', url: '/articles.html', priority: '0.9' },
+        { file: 'tools.html', url: '/tools.html', priority: '0.9' },
+        { file: 'about.html', url: '/about.html', priority: '0.7' },
+        { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
+        { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
+        { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
+        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
+        { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
+        { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
+    ];
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
 
-    // Static Pages
-    HTML_FILES.forEach(file => {
-        if (file === '404.html') return;
-        const filePath = path.join(ROOT_DIR, file);
+    // Static Pages Loop
+    staticPages.forEach(page => {
+        if (page.file === '404.html') return;
+        const filePath = path.join(ROOT_DIR, page.file);
         let lastmod = today;
+        
+        // Get actual file modification date if possible
         if (fs.existsSync(filePath)) {
             try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {}
         }
-        const config = configMap[file] || { priority: '0.5', freq: 'monthly' };
+        
+        // Construct URL: Remove trailing slash if it's not root to avoid //
+        const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`;
+
         xml += `
   <url>
-    <loc>${BASE_URL}/${file}</loc>
+    <loc>${loc}</loc>
     <lastmod>${lastmod}</lastmod>
-    <changefreq>${config.freq}</changefreq>
-    <priority>${config.priority}</priority>
+    <priority>${page.priority}</priority>
   </url>`;
     });
 
-    // Dynamic Articles
+    // Dynamic Articles Loop (Auto-detected from JSONs)
     allPosts.forEach(post => {
         const fullImg = toAbsoluteUrl(post.image);
         const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
         const postDate = new Date(post.effectiveDate).toISOString().split('T')[0];
+        
         xml += `
   <url>
     <loc>${pageUrl}</loc>
     <lastmod>${postDate}</lastmod>
-    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image>
-      <image:loc>${fullImg}</image:loc>
+      <image:loc>${escapeXml(fullImg)}</image:loc>
       <image:title>${escapeXml(post.title)}</image:title>
     </image:image>
   </url>`;
@@ -258,7 +264,7 @@ const generateSitemap = () => {
 
     xml += `\n</urlset>`;
     fs.writeFileSync(sitemapPath, xml);
-    console.log('✅ sitemap.xml regenerated');
+    console.log('✅ sitemap.xml regenerated automatically (Optimized for SEO).');
 };
 
 const createCardHTML = (post) => {
@@ -305,7 +311,8 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // Canonical & Meta
     if (fileName) {
-        const canonicalUrl = `${BASE_URL}/${fileName}`;
+        // Canonical FIX: If fileName is index.html, use root URL.
+        const canonicalUrl = fileName === 'index.html' ? `${BASE_URL}/` : `${BASE_URL}/${fileName}`;
         $('link[rel="canonical"]').remove();
         $('head').append(`<link rel="canonical" href="${canonicalUrl}">`);
     }
