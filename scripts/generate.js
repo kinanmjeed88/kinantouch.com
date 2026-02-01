@@ -37,11 +37,11 @@ const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
 
 // AdSense HTML Block (Strictly Contained for Mobile)
 const ADSENSE_BLOCK = `
-<div class="adsbygoogle-container w-full overflow-hidden mx-auto my-6 bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-800 rounded-xl p-1 text-center">
+<div class="adsbygoogle-container w-full max-w-full overflow-hidden mx-auto my-6 bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-800 rounded-xl p-1 text-center">
     <div class="text-[9px] text-gray-400 font-bold tracking-widest uppercase mb-1">إعلان</div>
     <div style="width: 100%; max-width: 100%; overflow: hidden; display: flex; justify-content: center;">
         <ins class="adsbygoogle block"
-             style="display:block; width: 100%; min-width: 250px;"
+             style="display:block; width: 100%; min-width: 250px; max-width: 100%;"
              data-ad-client="${AD_CLIENT_ID}"
              data-ad-slot="auto"
              data-ad-format="auto"
@@ -100,7 +100,7 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     return `<i data-lucide="${defaultIconName}" class="w-5 h-5"></i>`;
 };
 
-// Initial Markdown Parsing
+// Initial Markdown Parsing - ENFORCING WRAPPING CLASSES
 const parseMarkdown = (markdown) => {
     if (!markdown) return '';
     let html = markdown;
@@ -114,7 +114,7 @@ const parseMarkdown = (markdown) => {
         const matchId = url.match(/(?:v=|\/)([\w-]{11})(?:\?|&|\/|$)/);
         if (matchId) videoId = matchId[1];
         if (videoId) {
-            return `<div class="video-container shadow-lg rounded-xl overflow-hidden border border-gray-800 w-full"><iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+            return `<div class="video-container shadow-lg rounded-xl overflow-hidden border border-gray-800 w-full max-w-full"><iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
         }
         return '';
     });
@@ -125,23 +125,23 @@ const parseMarkdown = (markdown) => {
     });
 
     // Links (Button Style - Wrapped)
-    html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-6 w-full flex justify-center px-2"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto"><i data-lucide="external-link" class="shrink-0 w-4 h-4"></i><span>$1</span></a></div>`);
+    html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-6 w-full flex justify-center px-2"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto"><i data-lucide="external-link" class="shrink-0 w-4 h-4"></i><span class="break-words whitespace-normal text-center">$1</span></a></div>`);
 
-    // Headers (With break-words)
-    html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words w-full">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 break-words w-full">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-extrabold text-gray-900 dark:text-white mt-8 mb-6 break-words w-full">$1</h1>');
+    // Headers (With explicit break-words and whitespace-normal)
+    html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words whitespace-normal w-full">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 break-words whitespace-normal w-full">$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-extrabold text-gray-900 dark:text-white mt-8 mb-6 break-words whitespace-normal w-full">$1</h1>');
 
     // Formatting
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/^- (.*$)/gim, '<li class="ml-4 list-disc marker:text-blue-500 break-words">$1</li>');
+    html = html.replace(/^- (.*$)/gim, '<li class="ml-4 list-disc marker:text-blue-500 break-words whitespace-normal">$1</li>');
     html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm w-full">$&</ul>');
 
-    // Paragraphs (With break-words)
+    // Paragraphs (With explicit break-words)
     html = html.split('\n').map(line => {
         if (line.trim() === '') return '';
         if (line.match(/^<(h|ul|li|div|img|iframe|p|script)/)) return line;
-        return `<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-base break-words w-full">${line}</p>`;
+        return `<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-base break-words whitespace-normal w-full">${line}</p>`;
     }).join('\n');
 
     return html;
@@ -163,7 +163,7 @@ if (fs.existsSync(POSTS_DIR)) {
 }
 allPosts.sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate));
 
-// --- Functions Definitions (Moved UP to fix ReferenceError) ---
+// --- HELPER FUNCTIONS (Defined BEFORE usage) ---
 
 const generateRSS = () => {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
@@ -240,7 +240,7 @@ const createCardHTML = (post) => {
                     <i data-lucide="clock" class="w-3 h-3"></i><span>${post.date}</span>
                 </div>
                 <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2" title="${post.title}">${post.title}</h3>
-                <p class="text-gray-500 dark:text-gray-400 text-xs line-clamp-2 mb-0 flex-1 leading-relaxed break-words w-full">${post.description}</p>
+                <p class="text-gray-500 dark:text-gray-400 text-xs line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full">${post.description}</p>
             </div>
         </div>
     </a>`;
@@ -409,7 +409,7 @@ const updateChannelsPage = () => {
             <a href="${ch.url}" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group w-full">
                 <div class="flex items-center gap-4 h-full">
                     <div class="w-12 h-12 bg-${ch.color}-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden">${renderedIcon}</div>
-                    <div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1 break-words">${ch.name}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${ch.desc}</p></div>
+                    <div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1 break-words whitespace-normal">${ch.name}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${ch.desc}</p></div>
                     <div class="text-gray-300 group-hover:text-${ch.color}-600 shrink-0 transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></div>
                 </div>
             </a>`);
