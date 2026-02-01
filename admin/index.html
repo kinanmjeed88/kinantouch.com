@@ -20,6 +20,8 @@
         .modal-tab-btn.active { border-bottom-color: #2563eb; color: #2563eb; }
         .toggle-checkbox:checked { right: 0; border-color: #2563eb; }
         .toggle-checkbox:checked + .toggle-label { background-color: #2563eb; }
+        /* Editor Styles */
+        .ai-field { font-size: 0.8rem; background-color: #f8fafc; border-color: #e2e8f0; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
@@ -112,6 +114,18 @@
                 </div>
             </div>
         </div>
+        
+        <div id="workerModal" class="hidden fixed inset-0 bg-black/60 z-[70] flex items-center justify-center backdrop-blur-sm px-4">
+            <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl animate-fade-in">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="zap"></i> إعدادات الذكاء الاصطناعي</h2>
+                <div class="space-y-4">
+                    <p class="text-sm text-gray-500">أدخل رابط Cloudflare Worker الخاص بك للتوليد الذكي.</p>
+                    <input type="text" id="workerUrl" class="w-full p-3 border rounded-lg bg-gray-50 text-left dir-ltr" placeholder="https://your-worker.workers.dev">
+                    <button onclick="saveWorkerSettings()" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700">حفظ</button>
+                    <button onclick="document.getElementById('workerModal').classList.add('hidden')" class="w-full text-gray-500 py-2">إلغاء</button>
+                </div>
+            </div>
+        </div>
 
         <div id="toast" class="fixed top-4 left-4 z-[80] transform transition-all duration-300 translate-y-[-100%] opacity-0">
             <div class="bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-2"><i data-lucide="info" class="w-4 h-4"></i><span id="toastMsg">تم الحفظ بنجاح</span></div>
@@ -120,26 +134,52 @@
         <section id="sec-posts" class="space-y-6">
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-bold">إدارة المقالات</h2>
-                <button onclick="openPostEditor()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-200"><i data-lucide="plus"></i> <span class="hidden sm:inline">مقال جديد</span></button>
+                <div class="flex gap-2">
+                    <button onclick="document.getElementById('workerModal').classList.remove('hidden')" class="bg-purple-100 text-purple-700 hover:bg-purple-200 px-3 py-2 rounded-xl font-bold flex items-center gap-2 transition-colors"><i data-lucide="zap"></i> <span class="hidden sm:inline">Worker URL</span></button>
+                    <button onclick="openPostEditor()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-200"><i data-lucide="plus"></i> <span class="hidden sm:inline">مقال جديد</span></button>
+                </div>
             </div>
             <div id="postsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>
             <div id="postsList" class="grid grid-cols-1 gap-4"></div>
+            
+            <!-- Editor Modal -->
             <div id="postEditor" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto">
                 <div class="max-w-4xl mx-auto p-4 md:p-8">
                     <div class="flex justify-between items-center mb-8 border-b pb-4"><h2 class="text-2xl font-bold" id="editorTitle">مقال جديد</h2><button onclick="closePostEditor()" class="p-2 hover:bg-gray-100 rounded-full"><i data-lucide="x"></i></button></div>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Smart Generator Button -->
+                        <div class="col-span-2 mb-4 p-4 bg-purple-50 border border-purple-100 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-purple-800">
+                                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                                <span class="font-bold">مساعد الذكاء الاصطناعي</span>
+                            </div>
+                            <button onclick="generateAIContent()" id="btnGenerateAI" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 shadow-md transition-all">
+                                <i data-lucide="play"></i> توليد المحتوى + يوتيوب
+                            </button>
+                        </div>
+
                         <div class="col-span-2"><label class="label">العنوان</label><input type="text" id="pTitle" class="input-field" oninput="autoSlug()"></div>
                         <div><label class="label">الرابط (Slug)</label><input type="text" id="pSlug" class="input-field bg-gray-50" readonly></div>
                         <div><label class="label">القسم</label><select id="pCat" class="input-field"><option value="articles">اخبار</option><option value="apps">تطبيقات</option><option value="games">ألعاب</option><option value="sports">رياضة</option></select></div>
                         <div class="col-span-2"><label class="label">الصورة</label><div class="flex gap-2"><input type="file" id="pFile" class="hidden" onchange="handleFileSelect(this, 'pImage')"><button onclick="document.getElementById('pFile').click()" class="btn-secondary"><i data-lucide="image"></i> رفع</button><input type="text" id="pImage" class="input-field dir-ltr"></div></div>
                         <div class="col-span-2"><label class="label">الوصف</label><textarea id="pDesc" rows="2" class="input-field"></textarea></div>
-                        <div class="col-span-2"><label class="label">المحتوى</label><div class="flex flex-wrap gap-2 mb-2 bg-gray-50 p-2 rounded-lg border border-gray-100"><button onclick="insertTag('# ')" class="badge bg-white">H1</button><button onclick="insertTag('## ')" class="badge bg-white">H2</button><button onclick="insertTag('**text**')" class="badge bg-white font-bold">B</button><button onclick="insertLink()" class="badge bg-green-50 text-green-700">Link</button><button onclick="insertYoutube()" class="badge bg-red-50 text-red-700">YouTube</button></div><textarea id="pContent" rows="15" class="input-field font-mono text-sm"></textarea></div>
+                        
+                        <!-- AI Generated Data Fields (Visible for manual edit if needed) -->
+                        <div class="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+                            <div><label class="label text-xs">رابط فيديو يوتيوب (ID)</label><input type="text" id="pYoutubeId" class="input-field ai-field dir-ltr" placeholder="Ex: dQw4w9WgXcQ"></div>
+                            <div><label class="label text-xs">ملخص المقال (HTML)</label><textarea id="pSummary" rows="2" class="input-field ai-field dir-ltr"></textarea></div>
+                            <div class="col-span-2"><label class="label text-xs">نقاط رئيسية (HTML)</label><textarea id="pPoints" rows="2" class="input-field ai-field dir-ltr"></textarea></div>
+                        </div>
+
+                        <div class="col-span-2 border-t pt-4"><label class="label">المحتوى</label><div class="flex flex-wrap gap-2 mb-2 bg-gray-50 p-2 rounded-lg border border-gray-100"><button onclick="insertTag('# ')" class="badge bg-white">H1</button><button onclick="insertTag('## ')" class="badge bg-white">H2</button><button onclick="insertTag('**text**')" class="badge bg-white font-bold">B</button><button onclick="insertLink()" class="badge bg-green-50 text-green-700">Link</button><button onclick="insertYoutube()" class="badge bg-red-50 text-red-700">YouTube</button></div><textarea id="pContent" rows="15" class="input-field font-mono text-sm"></textarea></div>
                     </div>
                     <div class="mt-8 flex justify-end gap-4 pb-8"><button onclick="savePost()" id="btnSavePost" class="btn-primary w-40">حفظ ونشر</button></div>
                 </div>
             </div>
         </section>
 
+        <!-- Other sections remain same, just ensure they are present -->
         <section id="sec-channels" class="hidden-section space-y-6">
             <div class="flex justify-between items-center"><h2 class="text-2xl font-bold">القنوات والمواقع</h2><button onclick="addChannel()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2"><i data-lucide="plus"></i> إضافة</button></div>
             <div id="channelsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div></div>
@@ -147,10 +187,10 @@
         </section>
 
         <section id="sec-settings" class="hidden-section space-y-8">
+            <!-- Settings content from previous response -->
             <h2 class="text-2xl font-bold">الإعدادات والملف الشخصي</h2>
             <div id="settingsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div></div>
             <div id="settingsForm" class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100 hidden">
-                
                 <div class="mb-8 border-b pb-8 bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                     <h3 class="font-bold text-lg mb-4 text-indigo-800">هوية الموقع والتصنيفات</h3>
                     <div class="grid grid-cols-1 gap-4">
@@ -262,17 +302,6 @@
             </div>
         </section>
     </main>
-
-    <style>
-        .input-field { width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; outline: none; transition: border-color 0.2s; }
-        .input-field:focus { border-color: #2563eb; ring: 2px; ring-color: #bfdbfe; }
-        .label { display: block; font-size: 0.875rem; font-weight: 700; color: #374151; margin-bottom: 0.5rem; }
-        .btn-primary { background-color: #2563eb; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 700; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-        .btn-primary:hover { background-color: #1d4ed8; }
-        .btn-secondary { background-color: #f3f4f6; color: #374151; padding: 0.75rem 1rem; border-radius: 0.75rem; font-weight: 600; border: 1px solid #e5e7eb; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-        .badge { padding: 0.5rem 0.75rem; font-size: 0.75rem; border-radius: 0.5rem; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
-        .dir-ltr { direction: ltr; }
-    </style>
 
     <script src="admin.js"></script>
     <script>lucide.createIcons();</script>

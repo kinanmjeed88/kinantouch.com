@@ -51,6 +51,13 @@ const ADSENSE_BLOCK = `
 </div>
 `;
 
+// Back To Top Button HTML
+const BACK_TO_TOP_BTN = `
+<button id="back-to-top" aria-label="العودة للأعلى" class="fixed bottom-6 left-6 z-50 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all duration-300 transform translate-y-10 opacity-0 invisible group">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"><path d="m18 15-6-6-6 6"/></svg>
+</button>
+`;
+
 // Ensure directories exist
 if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR, { recursive: true });
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -321,6 +328,11 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // Add Favicon
     if (!$('link[rel="icon"], link[rel="shortcut icon"]').length) {
         $('head').append(`<link rel="shortcut icon" href="${toAbsoluteUrl(aboutData.profileImage)}" type="image/jpeg">`);
+    }
+
+    // Add Back to Top Button
+    if ($('#back-to-top').length === 0) {
+        $('body').append(BACK_TO_TOP_BTN);
     }
 
     $('head').prepend(GA_SCRIPT);
@@ -600,15 +612,18 @@ const generateIndividualArticles = () => {
         const fullUrl = `${BASE_URL}/${pageSlug}`;
         const fullImageUrl = toAbsoluteUrl(post.image);
         const catLabel = getCatLabel(post.category);
+        
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         $('main').removeClass('pt-20').addClass('py-6');
         $('h1').first().text(post.title).addClass('break-words whitespace-normal w-full');
         $('time').text(post.date);
+        
         $('nav').removeClass().addClass('flex items-center text-xs text-gray-500 mb-4 w-full overflow-hidden whitespace-nowrap').html(`
             <a href="index.html" class="hover:text-blue-500 shrink-0 transition-colors">الرئيسية</a><span class="mx-1 shrink-0 text-gray-300">/</span>
             <a href="articles.html" class="hover:text-blue-500 shrink-0 transition-colors">${catLabel}</a><span class="mx-1 shrink-0 text-gray-300">/</span>
             <span class="text-gray-800 dark:text-gray-300 truncate flex-1 min-w-0 block font-medium" title="${post.title}">${post.title}</span>`);
+        
         const $content = cheerio.load(post.content, null, false);
         $content('img').each((i, el) => {
             const $img = cheerio(el);
@@ -618,9 +633,80 @@ const generateIndividualArticles = () => {
         });
         const coverImg = $('img.object-cover').first();
         if(coverImg.length) coverImg.attr('src', post.image).attr('alt', post.title).attr('fetchpriority', 'high').attr('decoding', 'async').removeAttr('loading');
+        
+        // --- FEATURE INJECTION START ---
+        
+        // 1. Buttons for Summary/Points (Inject below Title)
+        if ((post.summary && post.summary.length > 10) || (post.points && post.points.length > 10)) {
+            const buttonsHtml = `
+            <div class="flex gap-2 mb-6 text-xs justify-start w-full">
+                ${post.summary ? `<button id="showSummary" class="flex items-center gap-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-all font-bold shadow-md"><i data-lucide="file-text" class="w-3 h-3"></i> تلخيص</button>` : ''}
+                ${post.points ? `<button id="showPoints" class="flex items-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full transition-all font-bold shadow-md"><i data-lucide="list" class="w-3 h-3"></i> نقاط رئيسية</button>` : ''}
+            </div>
+            
+            <div id="analysisBox" class="hidden mt-6 mb-8 w-full bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-800 transition-all duration-500 animate-fade-in">
+                <!-- Content injected via JS -->
+            </div>
+            `;
+            // Insert after Header
+            $('header').after(buttonsHtml);
+        }
+
+        // 2. YouTube Video Injection (Inject before content)
+        if (post.youtubeVideoId && post.youtubeVideoId.length > 5) {
+            const videoHtml = `
+            <div class="video-container shadow-lg rounded-xl overflow-hidden border border-gray-800 w-full max-w-full mb-8">
+                <iframe src="https://www.youtube.com/embed/${post.youtubeVideoId}" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            `;
+            // Insert before the article body or after main image
+            const mainImg = $('main > div.rounded-2xl'); 
+            if(mainImg.length) mainImg.after(videoHtml);
+            else $('header').after(videoHtml);
+        }
+
+        // 3. Inject JS Logic for Buttons (Hidden Data)
+        const jsLogic = `
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const summaryBtn = document.getElementById("showSummary");
+                const pointsBtn = document.getElementById("showPoints");
+                const box = document.getElementById("analysisBox");
+                
+                // Safe Data Injection
+                const postData = {
+                    summary: ${JSON.stringify(post.summary || '')},
+                    points: ${JSON.stringify(post.points || '')}
+                };
+
+                if(summaryBtn) {
+                    summaryBtn.onclick = () => {
+                        box.innerHTML = '<h3 class="text-lg font-bold text-blue-700 dark:text-blue-400 mb-3 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5"></i> ملخص المقال</h3>' + postData.summary;
+                        box.className = "mt-6 mb-8 w-full bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-800 transition-all duration-500 animate-fade-in block";
+                        if(window.lucide) lucide.createIcons();
+                        box.scrollIntoView({ behavior: "smooth", block: "center" });
+                    };
+                }
+
+                if(pointsBtn) {
+                    pointsBtn.onclick = () => {
+                        box.innerHTML = '<h3 class="text-lg font-bold text-green-700 dark:text-green-400 mb-3 flex items-center gap-2"><i data-lucide="list" class="w-5 h-5"></i> نقاط رئيسية</h3>' + postData.points;
+                        box.className = "mt-6 mb-8 w-full bg-green-50 dark:bg-green-900/10 p-6 rounded-2xl border border-green-100 dark:border-green-800 transition-all duration-500 animate-fade-in block";
+                        if(window.lucide) lucide.createIcons();
+                        box.scrollIntoView({ behavior: "smooth", block: "center" });
+                    };
+                }
+            });
+        </script>
+        `;
+        $('body').append(jsLogic);
+
+        // --- FEATURE INJECTION END ---
+
         $('article').html($content.html()); 
         $('article').find('.adsbygoogle-container').remove();
         $('article').append(ADSENSE_BLOCK);
+        
         const jsonLd = {
             "@context": "https://schema.org", "@type": "Article", "headline": post.title,
             "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(),
@@ -632,6 +718,7 @@ const generateIndividualArticles = () => {
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);
         $('meta[property="og:type"]').attr('content', 'article');
+        
         fs.writeFileSync(path.join(ROOT_DIR, pageSlug), updateGlobalElements($.html(), pageSlug));
     });
 };
