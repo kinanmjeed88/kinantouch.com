@@ -55,8 +55,8 @@
     },
     "telegram": {
       "type": "lucide",
-      "value": "telegram",
-      "size": 24
+      "value": "send",
+      "size": "24"
     }
   }
 }
