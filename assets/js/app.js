@@ -48,18 +48,31 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 const targetTab = btn.getAttribute('data-tab');
 
-                // Reset all buttons
+                // Reset all buttons to default outline state
                 tabButtons.forEach(b => {
-                    b.classList.remove('bg-blue-600', 'bg-green-600', 'bg-purple-600', 'bg-orange-600', 'text-white', 'shadow-lg');
-                    b.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300');
+                    // Remove ALL active colors
+                    b.classList.remove(
+                        'border-blue-600', 'text-blue-600', 
+                        'border-green-600', 'text-green-600',
+                        'border-purple-600', 'text-purple-600',
+                        'border-orange-600', 'text-orange-600',
+                        'border-2', 'bg-transparent', 'shadow-sm'
+                    );
+                    
+                    // Add default inactive state
+                    b.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300', 'border', 'border-gray-200', 'dark:border-gray-700');
                 });
 
-                // Activate clicked button
-                btn.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300');
-                if(targetTab === 'articles') btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-                else if(targetTab === 'apps') btn.classList.add('bg-green-600', 'text-white', 'shadow-lg');
-                else if(targetTab === 'games') btn.classList.add('bg-purple-600', 'text-white', 'shadow-lg');
-                else if(targetTab === 'sports') btn.classList.add('bg-orange-600', 'text-white', 'shadow-lg');
+                // Activate clicked button (Apply colored outline)
+                btn.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300', 'border', 'border-gray-200', 'dark:border-gray-700');
+                
+                // Common active base classes
+                btn.classList.add('border-2', 'bg-transparent', 'shadow-sm');
+
+                if(targetTab === 'articles') btn.classList.add('border-blue-600', 'text-blue-600');
+                else if(targetTab === 'apps') btn.classList.add('border-green-600', 'text-green-600');
+                else if(targetTab === 'games') btn.classList.add('border-purple-600', 'text-purple-600');
+                else if(targetTab === 'sports') btn.classList.add('border-orange-600', 'text-orange-600');
 
                 // Hide all contents
                 tabContents.forEach(content => content.classList.add('hidden'));

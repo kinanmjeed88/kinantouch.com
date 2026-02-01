@@ -408,9 +408,16 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         });
     }
 
-    // Ticker Logic
+    // Ticker Logic (Styling Update: Outline Only)
     if (aboutData.ticker && $('#ticker-content').length) {
-        $('#ticker-label').text(aboutData.ticker.label);
+        // Redesigned Label: Transparent background, blue border, blue text
+        const labelEl = $('#ticker-label');
+        if (labelEl.length) {
+            labelEl.text(aboutData.ticker.label);
+            // Remove old classes and apply new "Outline" style
+            labelEl.removeClass().addClass('h-6 px-3 flex items-center justify-center font-bold text-xs border border-blue-500 text-blue-500 rounded-full mx-2 shadow-[0_0_8px_rgba(59,130,246,0.4)] bg-transparent z-10 shrink-0');
+        }
+
         const fontSize = aboutData.ticker.fontSize || 14;
         const isAnimated = aboutData.ticker.animated !== false;
         const tickerContentDiv = $('#ticker-content');
