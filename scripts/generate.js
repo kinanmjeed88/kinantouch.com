@@ -346,7 +346,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     if (logoLink.length) logoLink.text(aboutData.siteName || "TechTouch");
 
     // Navigation Scaling
-    const catFontSize = aboutData.categories?.fontSize || 14;
     const catLabels = aboutData.categories?.labels || {};
     const updateTabBtn = (tabId, label) => { const btn = $(`button.tab-btn[data-tab="${tabId}"]`); if (btn.length) btn.find('span').text(label); };
     updateTabBtn('articles', catLabels.articles || "اخبار");
@@ -357,11 +356,28 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     const applyResponsiveScaling = (selector) => {
         $(selector).each((i, el) => {
             const $el = $(el);
+            // Removing Tailwind default spacing classes to enforce custom strict values
             $el.removeClass('px-3 py-1.5 px-4 gap-1.5 text-xs text-sm').find('svg, i').removeClass('w-3 h-3 w-3.5 h-3.5 w-4 h-4 w-5 h-5');
-            $el.attr('style', `font-size: ${catFontSize}px !important; padding: 0.5em 1.2em !important; gap: 0.5em !important; display: inline-flex; align-items: center; min-height: 2.5em;`);
-            $el.find('svg, i').attr('style', `width: 1.3em !important; height: 1.3em !important;`);
+            
+            // Ultra-Compact Style: 10px Font, Tight Spacing
+            const compactStyle = `
+                font-size: 10px !important; 
+                padding: 6px 12px !important; 
+                gap: 4px !important; 
+                display: inline-flex; 
+                align-items: center; 
+                min-height: 26px !important;
+                line-height: 1 !important;
+                border-radius: 9999px;
+            `;
+            
+            $el.attr('style', compactStyle.replace(/\s+/g, ' '));
+            
+            // Icons scaled to match 10px text (12px)
+            $el.find('svg, i').attr('style', `width: 12px !important; height: 12px !important; display: block;`);
         });
     };
+    
     applyResponsiveScaling('.nav-link');
     applyResponsiveScaling('.tab-btn');
 
