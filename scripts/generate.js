@@ -163,6 +163,61 @@ if (fs.existsSync(POSTS_DIR)) {
 }
 allPosts.sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate));
 
+// --- RSS Generator ---
+const generateRSS = () => {
+    const feedPath = path.join(ROOT_DIR, 'feed.xml');
+    const now = new Date().toUTCString();
+    let xml = `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>TechTouch</title>
+    <link>${BASE_URL}</link>
+    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
+    <language>ar</language>
+    <lastBuildDate>${now}</lastBuildDate>
+    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />`;
+
+    allPosts.slice(0, 20).forEach(post => {
+        const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
+        const fullImg = toAbsoluteUrl(post.image);
+        xml += `
+    <item>
+        <title><![CDATA[${post.title}]]></title>
+        <link>${fullUrl}</link>
+        <guid>${fullUrl}</guid>
+        <pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate>
+        <description><![CDATA[${post.description}]]></description>
+        <enclosure url="${fullImg}" type="image/jpeg" />
+    </item>`;
+    });
+    xml += `</channel></rss>`;
+    fs.writeFileSync(feedPath, xml);
+};
+
+// --- Sitemap Generator ---
+const generateSitemap = () => {
+    const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
+    const today = new Date().toISOString().split('T')[0];
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
+
+    HTML_FILES.forEach(file => {
+        if (file === '404.html') return;
+        let priority = '0.5';
+        if(file === 'index.html') priority = '1.0';
+        xml += `<url><loc>${BASE_URL}/${file}</loc><lastmod>${today}</lastmod><priority>${priority}</priority></url>`;
+    });
+
+    allPosts.forEach(post => {
+        const fullImg = toAbsoluteUrl(post.image);
+        const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
+        xml += `<url><loc>${pageUrl}</loc><lastmod>${new Date(post.effectiveDate).toISOString().split('T')[0]}</lastmod><priority>0.8</priority><image:image><image:loc>${fullImg}</image:loc><image:title>${post.title}</image:title></image:image></url>`;
+    });
+    xml += `</urlset>`;
+    fs.writeFileSync(sitemapPath, xml);
+};
+
 // --- HTML Generators ---
 const createCardHTML = (post) => {
     let badgeColor = 'bg-blue-600';
@@ -207,7 +262,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     }
 
     // 2. FORCE UPDATE Google Analytics ID
-    // Remove ALL existing GA/GTM scripts to prevent conflicts or old IDs
     $('script').each((i, el) => {
         const content = $(el).html() || '';
         const src = $(el).attr('src') || '';
@@ -215,7 +269,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
             $(el).remove();
         }
     });
-    // Inject the correct one immediately after <head> opening
     $('head').prepend(GA_SCRIPT);
 
     // 3. Canonical
@@ -240,6 +293,8 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     setMeta('og:description', pageDesc); setMeta('og:image', fullImageUrl);
     setName('twitter:card', 'summary_large_image'); setName('twitter:url', fullPageUrl);
     setName('twitter:title', pageTitle); setName('twitter:description', pageDesc); setName('twitter:image', fullImageUrl);
+
+    $('head').append(`<link rel="alternate" type="application/rss+xml" title="TechTouch Feed" href="${BASE_URL}/feed.xml" />`);
 
     // 5. UI Data Updates
     $('#header-profile-name').text(aboutData.profileName);
