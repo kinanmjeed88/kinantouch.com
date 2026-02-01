@@ -441,9 +441,17 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         const fontSize = aboutData.ticker.fontSize || 14;
         const isAnimated = aboutData.ticker.animated !== false;
         const tickerContentDiv = $('#ticker-content');
+        
+        // --- TICKER FIX: Alignment when stopped ---
         tickerContentDiv.removeClass().addClass('flex items-center h-full whitespace-nowrap');
-        if (isAnimated) tickerContentDiv.addClass('animate-marquee absolute right-0');
-        else tickerContentDiv.addClass('w-full justify-center overflow-hidden');
+        if (isAnimated) {
+            tickerContentDiv.addClass('animate-marquee absolute right-0');
+        } else {
+            // When stopped, use justify-start (for RTL this is right) and add padding-right
+            // This places the text close to the "New" label
+            tickerContentDiv.addClass('w-full justify-start pr-2 overflow-hidden');
+        }
+        
         let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block" style="font-size:${fontSize}px;">${aboutData.ticker.text}</span>`;
         if(aboutData.ticker.url && aboutData.ticker.url !== '#') contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block">${contentHtml}</a>`;
         tickerContentDiv.html(contentHtml);
@@ -503,16 +511,41 @@ const updateAboutPageDetails = () => {
     const $ = cheerio.load(html);
     const bioSection = $('div.prose section').first();
     if(aboutData.bio) bioSection.find('p').first().html(aboutData.bio.replace(/\n/g, '<br>'));
+    
+    // --- FIX: Update Bot Section Title + List ---
     const botList = $('#about-bot-list');
     if(botList.length) {
+        // Update Title (H2) for this section
+        const botSectionH2 = botList.parent().find('h2');
+        if (botSectionH2.length) {
+            // Preserve the icon inside the h2
+            const icon = botSectionH2.find('i, svg').clone();
+            const newTitle = aboutData.botTitle || "مركز خدمة الطلبات (Bot)";
+            botSectionH2.text(newTitle).prepend(' ').prepend(icon);
+        }
+        
+        // Update List Content
         botList.empty();
         if (aboutData.botInfo) aboutData.botInfo.split('\n').filter(l => l.trim()).forEach(line => botList.append(`<li class="flex items-start gap-2"><span class="text-blue-500 text-lg font-bold">✪</span><span>${line}</span></li>`));
     }
+
+    // --- FIX: Update Search Section Title + List ---
     const searchList = $('#about-search-list');
     if(searchList.length) {
+        // Update Title (H2) for this section
+        const searchSectionH2 = searchList.parent().find('h2');
+        if (searchSectionH2.length) {
+            // Preserve the icon inside the h2
+            const icon = searchSectionH2.find('i, svg').clone();
+            const newTitle = aboutData.searchTitle || "دليل الوصول الذكي للمحتوى";
+            searchSectionH2.text(newTitle).prepend(' ').prepend(icon);
+        }
+
+        // Update List Content
         searchList.empty();
         if (aboutData.searchInfo) aboutData.searchInfo.split('\n').filter(l => l.trim()).forEach(line => searchList.append(`<li class="flex items-start gap-2"><span class="text-green-500 text-lg font-bold">✪</span><span>${line}</span></li>`));
     }
+
     const coverDiv = $('div.bg-gradient-to-r, div.bg-cover').first();
     coverDiv.removeClass().addClass('h-40 relative');
     if (aboutData.coverType === 'image') { coverDiv.addClass('bg-cover bg-center').attr('style', `background-image: url('${aboutData.coverValue}');`); }
