@@ -107,6 +107,19 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     return `<i data-lucide="${defaultIconName}" class="w-5 h-5"></i>`;
 };
 
+const escapeXml = (unsafe) => {
+    if (typeof unsafe !== 'string') return '';
+    return unsafe.replace(/[<>&'"]/g, (c) => {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+        }
+    });
+};
+
 // Initial Markdown Parsing - ENFORCING WRAPPING CLASSES
 const parseMarkdown = (markdown) => {
     if (!markdown) return '';
@@ -209,27 +222,76 @@ const generateRSS = () => {
     fs.writeFileSync(feedPath, xml);
 };
 
+// --- ADVANCED SITEMAP GENERATION ---
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
+    
+    // Priority Map for Static Pages
+    const configMap = {
+        'index.html': { priority: '1.0', freq: 'daily' },
+        'articles.html': { priority: '0.9', freq: 'daily' },
+        'tools.html': { priority: '0.9', freq: 'weekly' },
+        'tools-sites.html': { priority: '0.8', freq: 'weekly' },
+        'tools-phones.html': { priority: '0.8', freq: 'weekly' },
+        'about.html': { priority: '0.7', freq: 'monthly' },
+        'contact.html': { priority: '0.7', freq: 'yearly' },
+        'privacy.html': { priority: '0.3', freq: 'yearly' },
+        'site-map.html': { priority: '0.5', freq: 'weekly' }
+    };
+
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
 
+    // 1. Static Pages
     HTML_FILES.forEach(file => {
-        if (file === '404.html') return;
-        let priority = '0.5';
-        if(file === 'index.html') priority = '1.0';
-        xml += `<url><loc>${BASE_URL}/${file}</loc><lastmod>${today}</lastmod><priority>${priority}</priority></url>`;
+        if (file === '404.html') return; // Don't index 404
+        
+        const filePath = path.join(ROOT_DIR, file);
+        let lastmod = today;
+        
+        // Try to get actual file modification time
+        if (fs.existsSync(filePath)) {
+            try {
+                const stats = fs.statSync(filePath);
+                lastmod = stats.mtime.toISOString().split('T')[0];
+            } catch(e) {}
+        }
+
+        const config = configMap[file] || { priority: '0.5', freq: 'monthly' };
+        
+        xml += `
+  <url>
+    <loc>${BASE_URL}/${file}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${config.freq}</changefreq>
+    <priority>${config.priority}</priority>
+  </url>`;
     });
 
+    // 2. Articles (Dynamic)
     allPosts.forEach(post => {
         const fullImg = toAbsoluteUrl(post.image);
         const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
-        xml += `<url><loc>${pageUrl}</loc><lastmod>${new Date(post.effectiveDate).toISOString().split('T')[0]}</lastmod><priority>0.8</priority><image:image><image:loc>${fullImg}</image:loc><image:title>${post.title}</image:title></image:image></url>`;
+        const postDate = new Date(post.effectiveDate).toISOString().split('T')[0];
+        
+        xml += `
+  <url>
+    <loc>${pageUrl}</loc>
+    <lastmod>${postDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>${fullImg}</image:loc>
+      <image:title>${escapeXml(post.title)}</image:title>
+    </image:image>
+  </url>`;
     });
-    xml += `</urlset>`;
+
+    xml += `\n</urlset>`;
     fs.writeFileSync(sitemapPath, xml);
+    console.log('✅ Advanced Sitemap Generated successfully');
 };
 
 const createCardHTML = (post) => {
@@ -281,6 +343,12 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         const canonicalUrl = `${BASE_URL}/${fileName}`;
         $('link[rel="canonical"]').remove();
         $('head').append(`<link rel="canonical" href="${canonicalUrl}">`);
+    }
+
+    // 2.5 Robots Meta (Ensure Indexing)
+    $('meta[name="robots"]').remove();
+    if(fileName !== '404.html') {
+        $('head').append('<meta name="robots" content="index, follow">');
     }
 
     // 3. Meta & Data
@@ -631,6 +699,6 @@ updateListingPages();
 generateIndividualArticles();
 updateSearchData();
 generateRSS();
-generateSitemap();
+generateSitemap(); // New Advanced Sitemap Logic
 
 console.log('Build Complete. Domain updated to: ' + BASE_URL);
