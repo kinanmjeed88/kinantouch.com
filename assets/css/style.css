@@ -44,13 +44,20 @@ p, li { font-size: 1rem !important; line-height: 1.8 !important; }
     }
 }
 
-/* --- Critical Text Wrapping Fixes --- */
-h1, h2, h3, h4, h5, h6, p, span, a, li, div, blockquote, pre {
-    overflow-wrap: break-word !important; /* Standard property */
-    word-wrap: break-word !important; /* Legacy support */
-    word-break: break-word !important; /* Prevents overflow */
-    white-space: normal !important; /* Force wrapping */
+/* --- Critical Text Wrapping Fixes (Scoped to Content) --- */
+/* FIX: Restrict forced wrapping to prose content only to avoid breaking UI like ticker */
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6, 
+.prose p, .prose span, .prose a, .prose li, .prose div, .prose blockquote, .prose pre {
+    overflow-wrap: break-word !important; 
+    word-wrap: break-word !important; 
+    word-break: break-word !important; 
+    white-space: normal !important; 
     max-width: 100%;
+}
+
+/* Specific Override for Ticker to ensure it never wraps */
+.ticker-text, .animate-marquee span, .whitespace-nowrap {
+    white-space: nowrap !important;
 }
 
 /* Prevent link buttons from overflowing text */
@@ -60,10 +67,15 @@ a.btn-wrapped-link span {
 }
 
 /* --- Media Containment --- */
+/* FIX: Removed global height: auto !important which broke object-fit: cover in cards */
 img, iframe, video, object, embed {
     max-width: 100% !important;
-    height: auto !important;
     display: block;
+}
+
+/* Restore height auto only for content images to maintain aspect ratio */
+.prose img {
+    height: auto !important;
 }
 
 /* --- AdSense Strict Containment --- */

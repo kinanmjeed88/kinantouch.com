@@ -145,7 +145,7 @@ async function loadPosts() {
         await Promise.all(promises);
         cachedPosts.sort((a, b) => new Date(b.updated || b.date) - new Date(a.updated || a.date));
         loader.classList.add('hidden'); renderPosts();
-    } catch (e) { console.error(e); loader.classList.add('hidden'); list.innerHTML = `<div class="text-center text-red-500">حدث خطأ.</div>`; }
+    } catch (e) { console.error(e); loader.classList.add('hidden'); list.innerHTML = `<div class="text-center text-red-500">حدث خطأ في تحميل المقالات.<br>تأكد من إعدادات الاتصال.</div>`; }
 }
 function renderPosts() {
     const list = document.getElementById('postsList');
@@ -192,9 +192,14 @@ window.saveChannels = async () => { const btn = document.getElementById('btnSave
 
 // --- SETTINGS LOGIC ---
 async function loadSettings() {
-    const loader = document.getElementById('settingsLoader'); const form = document.getElementById('settingsForm'); loader.classList.remove('hidden'); form.classList.add('hidden');
+    const loader = document.getElementById('settingsLoader'); const form = document.getElementById('settingsForm'); 
+    loader.classList.remove('hidden'); 
+    form.classList.add('hidden');
     try {
-        const file = await api.get('content/data/about.json'); cachedAbout = JSON.parse(decodeURIComponent(escape(atob(file.content)))); cachedAbout.sha = file.sha;
+        const file = await api.get('content/data/about.json'); 
+        cachedAbout = JSON.parse(decodeURIComponent(escape(atob(file.content)))); 
+        cachedAbout.sha = file.sha;
+        
         document.getElementById('siteName').value = cachedAbout.siteName || "TechTouch";
         const cats = cachedAbout.categories?.labels || { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" };
         document.getElementById('catLabel_articles').value = cats.articles; document.getElementById('catLabel_apps').value = cats.apps; document.getElementById('catLabel_games').value = cats.games; document.getElementById('catLabel_sports').value = cats.sports;
@@ -206,7 +211,6 @@ async function loadSettings() {
         if (cachedAbout.ticker) {
             document.getElementById('tickerLabel').value = cachedAbout.ticker.label; document.getElementById('tickerText').value = cachedAbout.ticker.text; document.getElementById('tickerUrl').value = cachedAbout.ticker.url;
             document.getElementById('tickerSize').value = cachedAbout.ticker.fontSize || 14; document.getElementById('tickerSizeVal').innerText = cachedAbout.ticker.fontSize || 14;
-            // Animation Checkbox
             document.getElementById('tickerAnimated').checked = cachedAbout.ticker.animated !== false; 
         }
         document.getElementById('valBotInfo').value = cachedAbout.botInfo || ""; document.getElementById('valSearchInfo').value = cachedAbout.searchInfo || "";
@@ -217,12 +221,19 @@ async function loadSettings() {
         const socialIcons = cachedAbout.socialIcons || {};
         ['facebook','instagram','tiktok','youtube','telegram'].forEach(key => {
             const btn = document.getElementById(`btnIcon_${key}`); let data = socialIcons[key]; if (!data || typeof data === 'string') data = { type: 'lucide', value: data || key, size: 24 };
-            if(key === 'tiktok' && (!socialIcons[key] || socialIcons[key].value === 'video')) data.value = 'video'; // Default fix
+            if(key === 'tiktok' && (!socialIcons[key] || socialIcons[key].value === 'video')) data.value = 'video'; 
             btn.dataset.iconInfo = JSON.stringify(data);
             if (data.type === 'image') btn.innerHTML = `<img src="${data.value}" style="width:24px; height:24px; object-fit:contain;">`; else { btn.innerHTML = `<i data-lucide="${data.value}"></i>`; }
         });
-        lucide.createIcons(); loader.classList.add('hidden'); form.classList.remove('hidden');
-    } catch(e) { console.error(e); }
+        lucide.createIcons(); 
+    } catch(e) { 
+        console.error(e); 
+        alert("حدث خطأ أثناء تحميل الإعدادات. قد يكون الملف غير موجود أو تالف.\n" + e.message);
+    } finally {
+        // Fix: Ensure loader is hidden and form is shown even if there's an error
+        loader.classList.add('hidden'); 
+        form.classList.remove('hidden');
+    }
 }
 window.toggleCoverInput = () => { const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color'; if(type === 'color') { document.getElementById('coverColorInput').classList.remove('hidden'); document.getElementById('coverImageInput').classList.add('hidden'); } else { document.getElementById('coverColorInput').classList.add('hidden'); document.getElementById('coverImageInput').classList.remove('hidden'); } };
 window.saveSettingsData = async () => {
