@@ -353,9 +353,10 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // UI Updates
     
-    // --- 1. Profile Image Fix (Universal Selector) ---
+    // --- 1. Profile Image Fix (Universal Selector - Stronger) ---
+    const profileImageUrl = aboutData.profileImage.trim();
     // Specifically target by ID for best accuracy
-    $('#header-profile-img').attr('src', aboutData.profileImage);
+    $('#header-profile-img').attr('src', profileImageUrl);
     
     // Also target container for styling to handle w-8 vs w-10 differences gracefully
     const profileImg = $('#header-profile-img');
@@ -365,16 +366,12 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         profileImg.addClass('object-cover w-full h-full');
     }
 
-    // Backup: If ID missing in some templates, use broad class search
-    $('div.rounded-full.overflow-hidden').has('img').each((i, el) => {
-        const $el = $(el);
-        // Ensure it's likely a profile image (small size)
-        if ($el.hasClass('w-8') || $el.hasClass('w-10')) {
-            $el.find('img').attr('src', aboutData.profileImage);
-        }
-    });
+    // Backup: Update any small rounded profile images found in headers
+    $('img[alt="Profile photo"]').attr('src', profileImageUrl);
 
-    $('#header-profile-name').text(aboutData.profileName);
+    $('#header-profile-name').text(aboutData.profileName); // Displays "KinanTouch" based on user input for "Display Name"
+    
+    // Update Logo (Site Name) - "كنان الصائغ" based on user input
     const logoLink = $('header a.text-xl.font-black, header a.text-lg.font-black');
     if (logoLink.length) logoLink.text(aboutData.siteName || "TechTouch");
 
@@ -528,16 +525,15 @@ const updateAboutPageDetails = () => {
     const bioSection = $('div.prose section').first();
     if(aboutData.bio) bioSection.find('p').first().html(aboutData.bio.replace(/\n/g, '<br>'));
     
-    // --- FIX: Update Bot Section Title + List ---
+    // --- FIX: Update Bot Section Title + List (Safe Method) ---
     const botList = $('#about-bot-list');
     if(botList.length) {
-        // Update Title (H2) for this section
+        // Update Title (H2) safely
         const botSectionH2 = botList.parent().find('h2');
         if (botSectionH2.length) {
-            // Preserve the icon inside the h2
-            const icon = botSectionH2.find('i, svg').clone();
+            const icon = botSectionH2.find('i, svg').clone(); // Preserve icon
             const newTitle = aboutData.botTitle || "مركز خدمة الطلبات (Bot)";
-            botSectionH2.text(newTitle).prepend(' ').prepend(icon);
+            botSectionH2.empty().append(icon).append(' ' + newTitle);
         }
         
         // Update List Content
@@ -545,16 +541,15 @@ const updateAboutPageDetails = () => {
         if (aboutData.botInfo) aboutData.botInfo.split('\n').filter(l => l.trim()).forEach(line => botList.append(`<li class="flex items-start gap-2"><span class="text-blue-500 text-lg font-bold">✪</span><span>${line}</span></li>`));
     }
 
-    // --- FIX: Update Search Section Title + List ---
+    // --- FIX: Update Search Section Title + List (Safe Method) ---
     const searchList = $('#about-search-list');
     if(searchList.length) {
-        // Update Title (H2) for this section
+        // Update Title (H2) safely
         const searchSectionH2 = searchList.parent().find('h2');
         if (searchSectionH2.length) {
-            // Preserve the icon inside the h2
-            const icon = searchSectionH2.find('i, svg').clone();
+            const icon = searchSectionH2.find('i, svg').clone(); // Preserve icon
             const newTitle = aboutData.searchTitle || "دليل الوصول الذكي للمحتوى";
-            searchSectionH2.text(newTitle).prepend(' ').prepend(icon);
+            searchSectionH2.empty().append(icon).append(' ' + newTitle);
         }
 
         // Update List Content
