@@ -302,11 +302,27 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // Scripts & Ads
     if (!$('script[src*="adsbygoogle.js"]').length) $('head').append(AD_SCRIPT);
+    
+    // --- CLEANUP: Remove ImportMap and React/Vite garbage ---
+    $('script[type="importmap"]').remove();
     $('script').each((i, el) => {
         const content = $(el).html() || '';
         const src = $(el).attr('src') || '';
-        if (src.includes('googletagmanager.com') || content.includes("gtag('config'")) $(el).remove();
+        if (src.includes('googletagmanager.com') || 
+            content.includes("gtag('config'") ||
+            content.includes("react-router-dom") ||
+            src.includes("vite") || 
+            src.includes("@vitejs")
+           ) {
+            $(el).remove();
+        }
     });
+    
+    // Add Favicon
+    if (!$('link[rel="icon"], link[rel="shortcut icon"]').length) {
+        $('head').append(`<link rel="shortcut icon" href="${toAbsoluteUrl(aboutData.profileImage)}" type="image/jpeg">`);
+    }
+
     $('head').prepend(GA_SCRIPT);
 
     // Canonical & Meta
