@@ -1,6 +1,18 @@
 
 const fs = require('fs');
 const path = require('path');
+
+// --- Fix for Node 18 (GitHub Actions) ---
+// Polyfill File API if missing to prevent 'undici' ReferenceError
+if (typeof global.File === 'undefined') {
+    try {
+        const { File } = require('node:buffer');
+        if (File) global.File = File;
+    } catch (e) {
+        console.warn('Warning: Failed to polyfill File API for Node 18:', e);
+    }
+}
+
 const cheerio = require('cheerio');
 
 // Directories
@@ -15,7 +27,7 @@ const BASE_URL = 'https://kinantouch.com';
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
 const AD_SCRIPT = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}" crossorigin="anonymous"></script>`;
 
-// Google Analytics Configuration
+// Google Analytics Configuration (New ID)
 const GA_ID = 'G-63BBPLQ343';
 const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
@@ -255,6 +267,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // 2. FORCE UPDATE Google Analytics ID (Remove old, add new)
     $('script[src*="googletagmanager.com/gtag/js"]').remove();
+    // Also remove inline gtag config script
     $('script').each((i, el) => {
         if ($(el).html().includes("gtag('config'")) {
             $(el).remove();
