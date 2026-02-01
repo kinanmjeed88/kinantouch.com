@@ -13,23 +13,17 @@
         body { font-family: 'Tajawal', sans-serif; }
         .tab-active { background-color: #eff6ff; color: #2563eb; border-right: 3px solid #2563eb; }
         .hidden-section { display: none; }
-        /* Icon Picker Grid */
         .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 0.5rem; }
         .icon-option { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer; transition: all 0.2s; }
         .icon-option:hover { background-color: #eff6ff; border-color: #2563eb; color: #2563eb; }
-        
-        /* Modal Tabs */
         .modal-tab-btn { padding: 0.5rem 1rem; border-bottom: 2px solid transparent; color: #6b7280; font-weight: 600; }
         .modal-tab-btn.active { border-bottom-color: #2563eb; color: #2563eb; }
-        
-        /* Custom Checkbox */
         .toggle-checkbox:checked { right: 0; border-color: #2563eb; }
         .toggle-checkbox:checked + .toggle-label { background-color: #2563eb; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
 
-    <!-- Mobile Header -->
     <header class="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-50">
         <h1 class="text-xl font-bold tracking-tight">TechTouch CMS</h1>
         <button onclick="document.getElementById('sidebar').classList.toggle('translate-x-full')" class="p-2 hover:bg-gray-100 rounded-lg">
@@ -37,7 +31,6 @@
         </button>
     </header>
 
-    <!-- Sidebar (Fixed Right) -->
     <aside id="sidebar" class="w-64 bg-white border-l border-gray-200 h-screen fixed right-0 top-0 z-[60] flex flex-col shadow-lg transition-transform duration-300 transform translate-x-full md:translate-x-0">
         <div class="p-6 border-b border-gray-100 flex items-center gap-3 justify-between">
             <div class="flex items-center gap-3">
@@ -71,10 +64,8 @@
         </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="flex-1 w-full md:mr-64 p-4 md:p-8 transition-all min-h-screen">
         
-        <!-- Icon/Image Picker Modal (Same as before) -->
         <div id="iconPickerModal" class="hidden fixed inset-0 bg-black/60 z-[80] flex items-center justify-center backdrop-blur-sm px-4">
             <div class="bg-white rounded-2xl p-0 w-full max-w-md shadow-2xl animate-fade-in flex flex-col max-h-[90vh] overflow-hidden">
                 <div class="p-4 border-b flex justify-between items-center bg-gray-50">
@@ -109,7 +100,6 @@
             </div>
         </div>
 
-        <!-- GitHub Settings Modal -->
         <div id="ghModal" class="hidden fixed inset-0 bg-black/60 z-[70] flex items-center justify-center backdrop-blur-sm px-4">
             <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl animate-fade-in">
                 <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="github"></i> ربط المستودع</h2>
@@ -123,12 +113,10 @@
             </div>
         </div>
 
-        <!-- Toast -->
         <div id="toast" class="fixed top-4 left-4 z-[80] transform transition-all duration-300 translate-y-[-100%] opacity-0">
             <div class="bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-2"><i data-lucide="info" class="w-4 h-4"></i><span id="toastMsg">تم الحفظ بنجاح</span></div>
         </div>
 
-        <!-- SECTION: POSTS -->
         <section id="sec-posts" class="space-y-6">
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-bold">إدارة المقالات</h2>
@@ -136,7 +124,6 @@
             </div>
             <div id="postsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>
             <div id="postsList" class="grid grid-cols-1 gap-4"></div>
-            <!-- Post Editor Modal (Reduced for brevity) -->
             <div id="postEditor" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto">
                 <div class="max-w-4xl mx-auto p-4 md:p-8">
                     <div class="flex justify-between items-center mb-8 border-b pb-4"><h2 class="text-2xl font-bold" id="editorTitle">مقال جديد</h2><button onclick="closePostEditor()" class="p-2 hover:bg-gray-100 rounded-full"><i data-lucide="x"></i></button></div>
@@ -153,20 +140,17 @@
             </div>
         </section>
 
-        <!-- SECTION: CHANNELS -->
         <section id="sec-channels" class="hidden-section space-y-6">
             <div class="flex justify-between items-center"><h2 class="text-2xl font-bold">القنوات والمواقع</h2><button onclick="addChannel()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2"><i data-lucide="plus"></i> إضافة</button></div>
             <div id="channelsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div></div>
             <div id="channelsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
-        <!-- SECTION: SETTINGS -->
         <section id="sec-settings" class="hidden-section space-y-8">
             <h2 class="text-2xl font-bold">الإعدادات والملف الشخصي</h2>
             <div id="settingsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div></div>
             <div id="settingsForm" class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100 hidden">
                 
-                <!-- Branding -->
                 <div class="mb-8 border-b pb-8 bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                     <h3 class="font-bold text-lg mb-4 text-indigo-800">هوية الموقع والتصنيفات</h3>
                     <div class="grid grid-cols-1 gap-4">
@@ -190,7 +174,6 @@
                     </div>
                 </div>
 
-                <!-- Profile -->
                 <div class="flex flex-col md:flex-row items-center gap-6 mb-8 border-b pb-8">
                     <div class="relative">
                         <img id="previewProfile" src="" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100 bg-gray-100">
@@ -203,7 +186,6 @@
                     </div>
                 </div>
 
-                <!-- Ticker -->
                 <div class="mb-8 border-b pb-8 bg-blue-50 p-4 rounded-xl border border-blue-100">
                     <h3 class="font-bold text-lg mb-4 text-blue-800">الشريط الإخباري (Ticker)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -211,7 +193,6 @@
                         <div class="md:col-span-2"><label class="label">النص</label><input type="text" id="tickerText" class="input-field"></div>
                         <div class="md:col-span-1"><label class="label">الرابط</label><input type="text" id="tickerUrl" class="input-field dir-ltr"></div>
                         
-                        <!-- Controls Row -->
                         <div class="md:col-span-4 mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="bg-white p-3 rounded-lg border border-blue-100">
                                 <label class="label flex justify-between items-center">
@@ -230,19 +211,42 @@
                     </div>
                 </div>
 
-                <!-- Bio & Cover -->
                 <div class="grid grid-cols-1 gap-6 mb-8 border-b pb-8">
                     <div><label class="label">السيرة الذاتية</label><textarea id="valBio" rows="3" class="input-field"></textarea></div>
-                    <div id="coverColorInput"><input type="text" id="valCoverColor" class="input-field" placeholder="Cover Gradient (Tailwind classes)"></div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <label class="label mb-2">غلاف صفحة "من نحن"</label>
+                        <div class="flex items-center gap-4 mb-4">
+                            <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <input type="radio" name="coverType" value="color" onchange="toggleCoverInput()" class="w-4 h-4 text-blue-600 accent-blue-600">
+                                <span>لون (تدرج)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <input type="radio" name="coverType" value="image" onchange="toggleCoverInput()" class="w-4 h-4 text-blue-600 accent-blue-600">
+                                <span>صورة</span>
+                            </label>
+                        </div>
+                        
+                        <div id="coverColorInput">
+                            <input type="text" id="valCoverColor" class="input-field dir-ltr" placeholder="مثال: bg-gradient-to-r from-blue-600 to-indigo-600">
+                            <p class="text-xs text-gray-400 mt-1">يمكنك استخدام كلاسات Tailwind CSS للتدرجات.</p>
+                        </div>
+                        
+                        <div id="coverImageInput" class="hidden">
+                            <div class="flex gap-2">
+                                <input type="file" id="fileCover" class="hidden" onchange="handleFileSelect(this, 'valCoverImg')">
+                                <button onclick="document.getElementById('fileCover').click()" class="btn-secondary shrink-0 whitespace-nowrap"><i data-lucide="image"></i> رفع</button>
+                                <input type="text" id="valCoverImg" class="input-field dir-ltr" placeholder="رابط الصورة...">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Info Sections -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 border-b pb-8">
                     <div class="bg-gray-50 p-4 rounded-xl"><label class="label">قسم البوت</label><input type="text" id="valBotTitle" class="input-field mb-2"><textarea id="valBotInfo" rows="5" class="input-field"></textarea></div>
                     <div class="bg-gray-50 p-4 rounded-xl"><label class="label">قسم البحث</label><input type="text" id="valSearchTitle" class="input-field mb-2"><textarea id="valSearchInfo" rows="5" class="input-field"></textarea></div>
                 </div>
 
-                <!-- Social -->
                 <div>
                     <h3 class="font-bold text-lg mb-4">روابط التواصل</h3>
                     <div class="grid grid-cols-1 gap-4">

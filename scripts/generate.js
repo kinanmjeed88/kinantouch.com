@@ -98,7 +98,6 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     if (iconData && typeof iconData === 'object') {
         if (iconData.type === 'image') {
             const size = iconData.size || defaultSize;
-            // Use object-fit: contain for icons inside buttons/cards
             return `<img src="${iconData.value}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
         } else {
             const size = iconData.size || defaultSize;
@@ -305,15 +304,14 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // 4. UI Data Updates
     
     // --- PROFILE IMAGE FIX ---
-    // Remove border/padding wrappers to let image fill fully via object-cover
-    const headerProfileContainer = $('div.w-10.h-10.rounded-full'); // Header Profile Container
+    const headerProfileContainer = $('div.w-10.h-10.rounded-full'); 
     if (headerProfileContainer.length) {
-        headerProfileContainer.removeClass('border-2 border-white dark:border-gray-800 shadow-md'); // Remove borders that create gaps
-        headerProfileContainer.addClass('bg-gray-200 dark:bg-gray-700'); // Add background just in case
+        headerProfileContainer.removeClass('border-2 border-white dark:border-gray-800 shadow-md'); 
+        headerProfileContainer.addClass('bg-gray-200 dark:bg-gray-700'); 
         headerProfileContainer.find('img').attr('src', aboutData.profileImage).addClass('object-cover w-full h-full');
     }
     
-    const smallProfileContainer = $('div.w-8.h-8.rounded-full'); // Another variation
+    const smallProfileContainer = $('div.w-8.h-8.rounded-full'); 
     if (smallProfileContainer.length) {
         smallProfileContainer.removeClass('border border-gray-100');
         smallProfileContainer.find('img').attr('src', aboutData.profileImage).addClass('object-cover w-full h-full');
@@ -335,8 +333,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         const btn = $(`button.tab-btn[data-tab="${tabId}"]`);
         if (btn.length) {
             btn.find('span').text(label);
-            // Apply font size directly. Padding is defined in CSS/Tailwind, so button scales with font size.
-            // Removing min-width restriction if necessary to allow shrinking.
             btn.attr('style', `font-size: ${catFontSize}px;`);
         }
     };
@@ -360,12 +356,10 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         networks.forEach(net => {
             if (aboutData.social && aboutData.social[net.key]) {
                 const iconData = (aboutData.socialIcons && aboutData.socialIcons[net.key]) || net.defaultIcon;
-                // Fix for Icon Backgrounds: Ensure button has overflow-hidden and image is object-cover
                 let content = '';
                 if (net.key === 'tiktok' && iconData === 'video') {
                      content = `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>`;
                 } else if (iconData.type === 'image') {
-                    // For Image Icons: object-cover full width/height
                     content = `<img src="${iconData.value}" style="width:100%; height:100%; object-fit:cover;">`;
                 } else {
                     content = renderIconHTML(iconData, net.defaultIcon, 20);
@@ -385,21 +379,19 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
         const tickerContentDiv = $('#ticker-content');
         
-        // Apply animation class conditionally
+        // Reset classes and force single-line flex container
+        tickerContentDiv.removeClass().addClass('flex items-center h-full whitespace-nowrap');
+        
         if (isAnimated) {
             tickerContentDiv.addClass('animate-marquee absolute right-0');
-            tickerContentDiv.removeClass('w-full justify-center');
         } else {
-            tickerContentDiv.removeClass('animate-marquee absolute right-0');
-            tickerContentDiv.addClass('w-full justify-center');
+            // Static centered text
+            tickerContentDiv.addClass('w-full justify-center overflow-hidden');
         }
-
-        // Force whitespace-nowrap and overflow-hidden on parent/child to prevent breaking lines
-        tickerContentDiv.addClass('whitespace-nowrap overflow-hidden flex items-center');
         
-        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap" style="font-size:${fontSize}px;">${aboutData.ticker.text}</span>`;
+        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block" style="font-size:${fontSize}px;">${aboutData.ticker.text}</span>`;
         if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
-            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap">${contentHtml}</a>`;
+            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block">${contentHtml}</a>`;
         }
         tickerContentDiv.html(contentHtml);
     }

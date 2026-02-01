@@ -235,7 +235,22 @@ async function loadSettings() {
         form.classList.remove('hidden');
     }
 }
-window.toggleCoverInput = () => { const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color'; if(type === 'color') { document.getElementById('coverColorInput').classList.remove('hidden'); document.getElementById('coverImageInput').classList.add('hidden'); } else { document.getElementById('coverColorInput').classList.add('hidden'); document.getElementById('coverImageInput').classList.remove('hidden'); } };
+window.toggleCoverInput = () => { 
+    const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color'; 
+    const colorInput = document.getElementById('coverColorInput');
+    const imgInput = document.getElementById('coverImageInput');
+    
+    // Safety check for null elements
+    if (colorInput && imgInput) {
+        if(type === 'color') { 
+            colorInput.classList.remove('hidden'); 
+            imgInput.classList.add('hidden'); 
+        } else { 
+            colorInput.classList.add('hidden'); 
+            imgInput.classList.remove('hidden'); 
+        } 
+    }
+};
 window.saveSettingsData = async () => {
     const btn = document.getElementById('btnSaveSettings'); btn.innerText = 'جاري الحفظ...';
     try {

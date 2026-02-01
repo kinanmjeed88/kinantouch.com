@@ -1,16 +1,12 @@
+
 [
   {
     "id": "bot_requests",
     "name": "بوت الطلبات",
     "desc": "بوت على التيليكرام لاستقبال طلبات التطبيقات والالعاب المعدلة",
     "url": "https://t.me/techtouchAI_bot",
-    "icon": "assets/images/1769955450115_IMG_20260130_132519_237.jpg",
-    "color": "purple",
-    "iconData": {
-      "type": "image",
-      "value": "assets/images/1769955450115_IMG_20260130_132519_237.jpg",
-      "size": "128"
-    }
+    "icon": "bot",
+    "color": "purple"
   },
   {
     "id": "apps_games",
