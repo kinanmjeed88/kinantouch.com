@@ -66,6 +66,7 @@
 
     <main class="flex-1 w-full md:mr-64 p-4 md:p-8 transition-all min-h-screen">
         
+        <!-- Icon/Image Picker Modal -->
         <div id="iconPickerModal" class="hidden fixed inset-0 bg-black/60 z-[80] flex items-center justify-center backdrop-blur-sm px-4">
             <div class="bg-white rounded-2xl p-0 w-full max-w-md shadow-2xl animate-fade-in flex flex-col max-h-[90vh] overflow-hidden">
                 <div class="p-4 border-b flex justify-between items-center bg-gray-50">
@@ -186,7 +187,24 @@
                 <div class="mb-8 border-b pb-8 bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                     <h3 class="font-bold text-lg mb-4 text-indigo-800">هوية الموقع والتصنيفات</h3>
                     <div class="grid grid-cols-1 gap-4">
-                        <div><label class="label">اسم الموقع</label><input type="text" id="siteName" class="input-field font-bold"></div>
+                        <div class="p-4 bg-white rounded-lg border border-indigo-100">
+                            <label class="label mb-2">اسم الموقع / الشعار</label>
+                            <div class="flex items-center gap-4 mb-3">
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="logoType" value="text" onchange="toggleLogoInput()" class="accent-indigo-600"> <span>نص</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="logoType" value="image" onchange="toggleLogoInput()" class="accent-indigo-600"> <span>صورة</span></label>
+                            </div>
+                            <input type="text" id="siteName" class="input-field font-bold" placeholder="اسم الموقع">
+                            
+                            <div id="logoImageInput" class="hidden mt-2">
+                                <div class="flex gap-2 items-center">
+                                    <input type="file" id="fileLogo" class="hidden" onchange="handleFileSelect(this, 'valLogoUrl')">
+                                    <button onclick="document.getElementById('fileLogo').click()" class="btn-secondary whitespace-nowrap"><i data-lucide="image"></i> رفع الشعار</button>
+                                    <input type="text" id="valLogoUrl" class="input-field dir-ltr text-sm" placeholder="رابط الشعار...">
+                                </div>
+                                <p class="text-xs text-red-500 mt-2 font-bold"><i data-lucide="alert-triangle" class="w-3 h-3 inline"></i> تنبيه هام: يجب أن يكون ارتفاع الصورة 40px كحد أقصى لضمان ظهورها داخل الشريط العلوي بشكل صحيح.</p>
+                            </div>
+                        </div>
+
                         <div class="bg-white p-3 rounded-lg border border-indigo-100">
                             <label class="label mb-2">أسماء الأقسام (التبويبات)</label>
                             <div class="grid grid-cols-2 gap-3">
@@ -197,31 +215,23 @@
                             </div>
                             
                             <div class="mt-4 border-t border-gray-100 pt-4">
-                                <label class="label mb-3 text-indigo-700">التحكم في حجم الخط (لكل قسم على حدة)</label>
+                                <label class="label mb-3 text-indigo-700 font-bold flex items-center gap-2"><i data-lucide="type"></i> التحكم الموحد في أحجام الخطوط</label>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">اخبار <span id="f_art_val">14</span></label>
-                                        <input type="range" id="fontSize_articles" min="10" max="24" class="w-full accent-blue-600" oninput="document.getElementById('f_art_val').innerText=this.value">
+                                        <label class="flex justify-between text-xs font-bold mb-1">القوائم والتبويبات (Nav & Tabs) <span id="f_nav_val" class="bg-blue-100 px-2 rounded text-blue-700">12</span></label>
+                                        <input type="range" id="fontSize_nav" min="10" max="20" class="w-full accent-blue-600" oninput="document.getElementById('f_nav_val').innerText=this.value">
                                     </div>
                                     <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">تطبيقات <span id="f_app_val">14</span></label>
-                                        <input type="range" id="fontSize_apps" min="10" max="24" class="w-full accent-green-600" oninput="document.getElementById('f_app_val').innerText=this.value">
+                                        <label class="flex justify-between text-xs font-bold mb-1">محتوى البطاقات والمقالات (Content) <span id="f_content_val" class="bg-green-100 px-2 rounded text-green-700">13</span></label>
+                                        <input type="range" id="fontSize_content" min="10" max="24" class="w-full accent-green-600" oninput="document.getElementById('f_content_val').innerText=this.value">
                                     </div>
                                     <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">ألعاب <span id="f_game_val">14</span></label>
-                                        <input type="range" id="fontSize_games" min="10" max="24" class="w-full accent-purple-600" oninput="document.getElementById('f_game_val').innerText=this.value">
+                                        <label class="flex justify-between text-xs font-bold mb-1">عناوين البطاقات والأقسام (Titles) <span id="f_titles_val" class="bg-purple-100 px-2 rounded text-purple-700">14</span></label>
+                                        <input type="range" id="fontSize_titles" min="10" max="30" class="w-full accent-purple-600" oninput="document.getElementById('f_titles_val').innerText=this.value">
                                     </div>
                                     <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">رياضة <span id="f_sport_val">14</span></label>
-                                        <input type="range" id="fontSize_sports" min="10" max="24" class="w-full accent-orange-600" oninput="document.getElementById('f_sport_val').innerText=this.value">
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">الأدوات <span id="f_tool_val">14</span></label>
-                                        <input type="range" id="fontSize_tools" min="10" max="24" class="w-full accent-gray-600" oninput="document.getElementById('f_tool_val').innerText=this.value">
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">من نحن (About) <span id="f_about_val">14</span></label>
-                                        <input type="range" id="fontSize_about" min="10" max="24" class="w-full accent-gray-600" oninput="document.getElementById('f_about_val').innerText=this.value">
+                                        <label class="flex justify-between text-xs font-bold mb-1">العناوين الرئيسية (Main Page Titles) <span id="f_main_val" class="bg-orange-100 px-2 rounded text-orange-700">15</span></label>
+                                        <input type="range" id="fontSize_main" min="12" max="40" class="w-full accent-orange-600" oninput="document.getElementById('f_main_val').innerText=this.value">
                                     </div>
                                 </div>
                             </div>

@@ -316,17 +316,22 @@ async function loadSettings() {
     try {
         const file = await api.get('content/data/about.json'); cachedAbout = JSON.parse(decodeURIComponent(escape(atob(file.content)))); cachedAbout.sha = file.sha;
         document.getElementById('siteName').value = cachedAbout.siteName || "TechTouch";
+        
+        // Logo Settings
+        const logoType = cachedAbout.logoType || 'text';
+        const logoRb = document.querySelector(`input[name="logoType"][value="${logoType}"]`); if(logoRb) logoRb.checked = true;
+        document.getElementById('valLogoUrl').value = cachedAbout.logoUrl || '';
+        toggleLogoInput();
+
         const cats = cachedAbout.categories?.labels || { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" };
         document.getElementById('catLabel_articles').value = cats.articles; document.getElementById('catLabel_apps').value = cats.apps; document.getElementById('catLabel_games').value = cats.games; document.getElementById('catLabel_sports').value = cats.sports;
         
-        // Granular Font Sizes Load
-        const fonts = cachedAbout.fontSizes || { articles: 14, apps: 14, games: 14, sports: 14, tools: 14, about: 14 };
-        document.getElementById('fontSize_articles').value = fonts.articles || 14; document.getElementById('f_art_val').innerText = fonts.articles || 14;
-        document.getElementById('fontSize_apps').value = fonts.apps || 14; document.getElementById('f_app_val').innerText = fonts.apps || 14;
-        document.getElementById('fontSize_games').value = fonts.games || 14; document.getElementById('f_game_val').innerText = fonts.games || 14;
-        document.getElementById('fontSize_sports').value = fonts.sports || 14; document.getElementById('f_sport_val').innerText = fonts.sports || 14;
-        document.getElementById('fontSize_tools').value = fonts.tools || 14; document.getElementById('f_tool_val').innerText = fonts.tools || 14;
-        document.getElementById('fontSize_about').value = fonts.about || 14; document.getElementById('f_about_val').innerText = fonts.about || 14;
+        // Unified Font Sizes Load
+        const fonts = cachedAbout.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
+        document.getElementById('fontSize_nav').value = fonts.nav || 12; document.getElementById('f_nav_val').innerText = fonts.nav || 12;
+        document.getElementById('fontSize_content').value = fonts.content || 13; document.getElementById('f_content_val').innerText = fonts.content || 13;
+        document.getElementById('fontSize_titles').value = fonts.titles || 14; document.getElementById('f_titles_val').innerText = fonts.titles || 14;
+        document.getElementById('fontSize_main').value = fonts.mainTitles || 15; document.getElementById('f_main_val').innerText = fonts.mainTitles || 15;
 
         document.getElementById('valName').value = cachedAbout.profileName;
         
@@ -365,24 +370,37 @@ async function loadSettings() {
     } catch(e) { console.error(e); alert("خطأ في تحميل الإعدادات: " + e.message); } finally { loader.classList.add('hidden'); form.classList.remove('hidden'); }
 }
 window.toggleCoverInput = () => { const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color'; const colorInput = document.getElementById('coverColorInput'); const imgInput = document.getElementById('coverImageInput'); if (colorInput && imgInput) { if(type === 'color') { colorInput.classList.remove('hidden'); imgInput.classList.add('hidden'); } else { colorInput.classList.add('hidden'); imgInput.classList.remove('hidden'); } } };
+window.toggleLogoInput = () => { 
+    const type = document.querySelector('input[name="logoType"]:checked')?.value || 'text'; 
+    const logoInput = document.getElementById('logoImageInput'); 
+    const siteNameInput = document.getElementById('siteName');
+    if (type === 'image') { 
+        logoInput.classList.remove('hidden'); 
+        siteNameInput.classList.add('opacity-50'); 
+    } else { 
+        logoInput.classList.add('hidden'); 
+        siteNameInput.classList.remove('opacity-50'); 
+    } 
+};
+
 window.saveSettingsData = async () => {
     const btn = document.getElementById('btnSaveSettings'); btn.innerText = 'جاري الحفظ...';
     try {
         const coverType = document.querySelector('input[name="coverType"]:checked').value;
+        const logoType = document.querySelector('input[name="logoType"]:checked').value;
         const getIconData = (key) => JSON.parse(document.getElementById(`btnIcon_${key}`).dataset.iconInfo || '{}');
         const newSettings = {
             profileName: document.getElementById('valName').value, profileImage: document.getElementById('valProfileImg').value, bio: document.getElementById('valBio').value,
             botInfo: document.getElementById('valBotInfo').value, searchInfo: document.getElementById('valSearchInfo').value, botTitle: document.getElementById('valBotTitle').value, searchTitle: document.getElementById('valSearchTitle').value,
             coverType: coverType, coverValue: coverType === 'color' ? document.getElementById('valCoverColor').value : document.getElementById('valCoverImg').value,
             siteName: document.getElementById('siteName').value,
+            logoType: logoType, logoUrl: document.getElementById('valLogoUrl').value,
             categories: { labels: { articles: document.getElementById('catLabel_articles').value, apps: document.getElementById('catLabel_apps').value, games: document.getElementById('catLabel_games').value, sports: document.getElementById('catLabel_sports').value } },
-            fontSizes: {
-                articles: parseInt(document.getElementById('fontSize_articles').value),
-                apps: parseInt(document.getElementById('fontSize_apps').value),
-                games: parseInt(document.getElementById('fontSize_games').value),
-                sports: parseInt(document.getElementById('fontSize_sports').value),
-                tools: parseInt(document.getElementById('fontSize_tools').value),
-                about: parseInt(document.getElementById('fontSize_about').value)
+            globalFonts: {
+                nav: parseInt(document.getElementById('fontSize_nav').value),
+                content: parseInt(document.getElementById('fontSize_content').value),
+                titles: parseInt(document.getElementById('fontSize_titles').value),
+                mainTitles: parseInt(document.getElementById('fontSize_main').value)
             },
             ticker: { label: document.getElementById('tickerLabel').value, text: document.getElementById('tickerText').value, url: document.getElementById('tickerUrl').value, fontSize: parseInt(document.getElementById('tickerSize').value), animated: document.getElementById('tickerAnimated').checked },
             social: { facebook: document.getElementById('socFb').value, instagram: document.getElementById('socInsta').value, tiktok: document.getElementById('socTikTok').value, youtube: document.getElementById('socYt').value, telegram: document.getElementById('socTg').value },

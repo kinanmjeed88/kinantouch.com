@@ -80,7 +80,7 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 const WORKER_CONTENT = `importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");`;
 fs.writeFileSync(path.join(ROOT_DIR, 'OneSignalSDKWorker.js'), WORKER_CONTENT);
 
-// Files to Process - REMOVED tool-analysis.html
+// Files to Process
 const HTML_FILES = [
     'index.html', 'articles.html', 'tools.html', 'about.html', 
     'tools-sites.html', 'tools-phones.html', 'tools-compare.html',
@@ -93,8 +93,10 @@ let aboutData = {
     bio: "", 
     profileImage: "assets/images/me.jpg", 
     siteName: "TechTouch",
+    logoType: "text",
+    logoUrl: "",
     categories: { labels: { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" } },
-    fontSizes: { articles: 14, apps: 14, games: 14, sports: 14, tools: 14, about: 14 },
+    globalFonts: { nav: 12, content: 13, titles: 14, mainTitles: 15 },
     social: {} 
 };
 let channelsData = [];
@@ -262,7 +264,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // 4. Common UI Updates - PROFESSIONAL FIX
     
-    // A. Profile Image Logic (Robust Cleaning & Application)
+    // A. Profile Image
     let profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
     profileImgSrc = cleanPath(profileImgSrc);
     
@@ -271,58 +273,59 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('link[rel*="icon"]').attr('href', profileImgSrc);
     $('meta[property="og:image"]').attr('content', toAbsoluteUrl(profileImgSrc));
     
-    // B. Profile Name & Site Title
+    // B. Profile Name
     $('#header-profile-name').text(aboutData.profileName);
-    $('header .tracking-tight').text(aboutData.siteName || 'TechTouch');
+    
+    // C. Site Title / Logo (UPDATED LOGIC)
+    const siteTitleEl = $('header a.text-xl');
+    if (aboutData.logoType === 'image' && aboutData.logoUrl) {
+        const logoUrl = cleanPath(aboutData.logoUrl);
+        // Replace text with Image, enforcing max-height to fit header
+        siteTitleEl.html(`<img src="${logoUrl}" alt="${aboutData.siteName}" style="max-height: 40px; width: auto; display: block;" />`);
+        siteTitleEl.removeClass('text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight'); // Remove text styling
+        siteTitleEl.addClass('flex items-center'); // Center alignment
+    } else {
+        siteTitleEl.text(aboutData.siteName || 'TechTouch');
+        siteTitleEl.addClass('text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight');
+    }
 
-    // C. Page Identification Class (For scoped CSS)
-    const pageClass = 'page-' + fileName.replace('.html', '');
-    $('body').addClass(pageClass);
-
-    // D. GRANULAR DYNAMIC CSS INJECTION
-    const sizes = aboutData.fontSizes || {};
-    // Defaults to 14 if not set
-    const s_art = sizes.articles || 14;
-    const s_app = sizes.apps || 14;
-    const s_game = sizes.games || 14;
-    const s_sport = sizes.sports || 14;
-    const s_tool = sizes.tools || 14;
-    const s_about = sizes.about || 14;
+    // D. UNIFIED DYNAMIC CSS INJECTION
+    const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
+    const fNav = fonts.nav || 12;
+    const fContent = fonts.content || 13;
+    const fTitle = fonts.titles || 14;
+    const fMainTitle = fonts.mainTitles || 15;
 
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
-        /* Scoped Font Sizes by Section */
+        /* 1. Navigation & Tabs (Unified) */
+        nav .nav-link, nav .nav-link span,
+        .tab-btn, .tab-btn span {
+            font-size: ${fNav}px !important;
+        }
         
-        /* Articles Section */
-        #tab-articles .custom-title-size { font-size: ${s_art + 2}px !important; line-height: 1.4 !important; }
-        #tab-articles .custom-desc-size { font-size: ${s_art}px !important; line-height: 1.6 !important; }
-        #tab-articles .custom-meta-size { font-size: ${Math.max(10, s_art - 2)}px !important; }
-
-        /* Apps Section */
-        #tab-apps .custom-title-size { font-size: ${s_app + 2}px !important; line-height: 1.4 !important; }
-        #tab-apps .custom-desc-size { font-size: ${s_app}px !important; line-height: 1.6 !important; }
-        #tab-apps .custom-meta-size { font-size: ${Math.max(10, s_app - 2)}px !important; }
-
-        /* Games Section */
-        #tab-games .custom-title-size { font-size: ${s_game + 2}px !important; line-height: 1.4 !important; }
-        #tab-games .custom-desc-size { font-size: ${s_game}px !important; line-height: 1.6 !important; }
-        #tab-games .custom-meta-size { font-size: ${Math.max(10, s_game - 2)}px !important; }
-
-        /* Sports Section */
-        #tab-sports .custom-title-size { font-size: ${s_sport + 2}px !important; line-height: 1.4 !important; }
-        #tab-sports .custom-desc-size { font-size: ${s_sport}px !important; line-height: 1.6 !important; }
-        #tab-sports .custom-meta-size { font-size: ${Math.max(10, s_sport - 2)}px !important; }
-
-        /* Tools Page */
-        .page-tools h3 { font-size: ${s_tool + 2}px !important; }
-        .page-tools p { font-size: ${s_tool}px !important; }
-        .page-tools-sites h3, .page-tools-phones h3, .page-tools-compare h3 { font-size: ${s_tool + 2}px !important; }
-        .page-tools-sites p, .page-tools-phones p, .page-tools-compare p { font-size: ${s_tool}px !important; }
-
-        /* About Page */
-        .page-about .prose p, .page-about .prose li { font-size: ${s_about}px !important; }
+        /* 2. Content Body (Unified) */
+        body, p, li, 
+        .post-card .custom-desc-size,
+        .prose p, .prose li {
+            font-size: ${fContent}px !important;
+            line-height: 1.6 !important;
+        }
         
-        /* Ticker */
+        /* 3. Card Titles & Sub-Headings (Unified) */
+        .post-card .custom-title-size,
+        h2, h3, h4, 
+        .prose h2, .prose h3 {
+            font-size: ${fTitle}px !important;
+            line-height: 1.4 !important;
+        }
+        
+        /* 4. Main Page Titles (H1) (Unified) */
+        h1, .text-3xl, .text-4xl {
+            font-size: ${fMainTitle}px !important;
+        }
+
+        /* 5. Ticker */
         .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
     </style>
     `;
@@ -522,7 +525,7 @@ const generateRSS = () => {
     fs.writeFileSync(feedPath, xml);
 };
 
-// Sitemap Generator - AI tool removed
+// Sitemap Generator
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
