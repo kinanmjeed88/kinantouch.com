@@ -257,7 +257,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     
     // A. Profile Image (Everywhere) - Matches ID or Class
     const profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
-    // This looks for #header-profile-img AND anything with class .profile-img-display
     $('#header-profile-img, .profile-img-display').attr('src', profileImgSrc);
     
     // B. Profile Name (Everywhere)
@@ -266,42 +265,38 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // C. Site Title
     $('header .tracking-tight').text(aboutData.siteName || 'TechTouch');
 
-    // D. DYNAMIC CSS INJECTION (FORCE SIZES)
-    // Ensures user preference (e.g. 9px) forces all elements to resize
+    // D. DYNAMIC CSS INJECTION (FIXED: Targeted Scope)
+    // We only change the size of specific elements (Tabs, Card Titles, Ticker)
+    // We DO NOT change the global 'a', 'button' or ':root' size.
     const baseSize = parseInt(aboutData.categories?.fontSize) || 14;
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
-        :root {
-            --base-font-size: ${baseSize}px;
-        }
-        /* Force fonts for navigation and buttons */
-        .nav-link, .tab-btn, .btn-wrapped-link, button, .text-sm, .text-xs, a, footer p, footer a {
+        /* 1. Category Tabs Only */
+        .tab-btn {
             font-size: ${baseSize}px !important;
         }
-        
-        /* Force headers to scale relative to base size */
-        h1 { font-size: ${baseSize + 10}px !important; }
-        h2 { font-size: ${baseSize + 6}px !important; }
-        h3 { font-size: ${baseSize + 4}px !important; }
-        .text-xl { font-size: ${baseSize + 4}px !important; }
-        .text-2xl { font-size: ${baseSize + 6}px !important; }
-        .text-3xl { font-size: ${baseSize + 10}px !important; }
-        .text-lg { font-size: ${baseSize + 2}px !important; }
-
-        /* Card Titles specific override */
-        .custom-title-size { font-size: ${baseSize + 2}px !important; }
-        
-        /* Content text */
-        .custom-desc-size, p, .prose p, .prose li { 
-            font-size: ${Math.max(12, baseSize + 1)}px !important; 
+        /* Icon inside tab */
+        .tab-btn svg {
+            width: ${baseSize + 2}px !important;
+            height: ${baseSize + 2}px !important;
         }
-        
-        /* Meta Data & Badges */
-        .custom-meta-size, .custom-badge-size { 
+
+        /* 2. Post Cards (The Grid Content) */
+        .custom-title-size { 
+            font-size: ${baseSize + 3}px !important; /* Titles slightly larger than base */
+            line-height: 1.4 !important;
+        }
+        .custom-desc-size { 
+            font-size: ${baseSize}px !important; 
+        }
+        .custom-meta-size { 
             font-size: ${Math.max(10, baseSize - 2)}px !important; 
         }
-        
-        /* Ticker */
+        .custom-badge-size { 
+            font-size: ${Math.max(10, baseSize - 2)}px !important; 
+        }
+
+        /* 3. Ticker (Separate setting) */
         .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
     </style>
     `;
