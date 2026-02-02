@@ -195,12 +195,35 @@
                                 <div><span class="text-xs text-gray-400">قسم 3</span><input type="text" id="catLabel_games" class="input-field"></div>
                                 <div><span class="text-xs text-gray-400">قسم 4</span><input type="text" id="catLabel_sports" class="input-field"></div>
                             </div>
-                            <div class="mt-3 border-t border-gray-100 pt-3">
-                                <label class="label flex justify-between items-center">
-                                    <span>حجم خط وحجم البطاقات (تلقائي)</span>
-                                    <span id="catSizeVal" class="text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded text-xs">14</span>
-                                </label>
-                                <input type="range" id="catFontSize" min="5" max="24" step="1" value="14" class="w-full accent-indigo-600 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="document.getElementById('catSizeVal').innerText = this.value">
+                            
+                            <div class="mt-4 border-t border-gray-100 pt-4">
+                                <label class="label mb-3 text-indigo-700">التحكم في حجم الخط (لكل قسم على حدة)</label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <label class="flex justify-between text-xs font-bold mb-1">اخبار <span id="f_art_val">14</span></label>
+                                        <input type="range" id="fontSize_articles" min="10" max="24" class="w-full accent-blue-600" oninput="document.getElementById('f_art_val').innerText=this.value">
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <label class="flex justify-between text-xs font-bold mb-1">تطبيقات <span id="f_app_val">14</span></label>
+                                        <input type="range" id="fontSize_apps" min="10" max="24" class="w-full accent-green-600" oninput="document.getElementById('f_app_val').innerText=this.value">
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <label class="flex justify-between text-xs font-bold mb-1">ألعاب <span id="f_game_val">14</span></label>
+                                        <input type="range" id="fontSize_games" min="10" max="24" class="w-full accent-purple-600" oninput="document.getElementById('f_game_val').innerText=this.value">
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <label class="flex justify-between text-xs font-bold mb-1">رياضة <span id="f_sport_val">14</span></label>
+                                        <input type="range" id="fontSize_sports" min="10" max="24" class="w-full accent-orange-600" oninput="document.getElementById('f_sport_val').innerText=this.value">
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <label class="flex justify-between text-xs font-bold mb-1">الأدوات <span id="f_tool_val">14</span></label>
+                                        <input type="range" id="fontSize_tools" min="10" max="24" class="w-full accent-gray-600" oninput="document.getElementById('f_tool_val').innerText=this.value">
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <label class="flex justify-between text-xs font-bold mb-1">من نحن (About) <span id="f_about_val">14</span></label>
+                                        <input type="range" id="fontSize_about" min="10" max="24" class="w-full accent-gray-600" oninput="document.getElementById('f_about_val').innerText=this.value">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

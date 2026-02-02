@@ -80,10 +80,10 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 const WORKER_CONTENT = `importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");`;
 fs.writeFileSync(path.join(ROOT_DIR, 'OneSignalSDKWorker.js'), WORKER_CONTENT);
 
-// Files to Process
+// Files to Process - REMOVED tool-analysis.html
 const HTML_FILES = [
     'index.html', 'articles.html', 'tools.html', 'about.html', 
-    'tools-sites.html', 'tools-phones.html', 'tools-compare.html', 'tool-analysis.html',
+    'tools-sites.html', 'tools-phones.html', 'tools-compare.html',
     'privacy.html', 'site-map.html', '404.html'
 ];
 
@@ -93,7 +93,8 @@ let aboutData = {
     bio: "", 
     profileImage: "assets/images/me.jpg", 
     siteName: "TechTouch",
-    categories: { labels: { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" }, fontSize: 14 },
+    categories: { labels: { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" } },
+    fontSizes: { articles: 14, apps: 14, games: 14, sports: 14, tools: 14, about: 14 },
     social: {} 
 };
 let channelsData = [];
@@ -106,7 +107,6 @@ if (fs.existsSync(path.join(DATA_DIR, 'channels.json'))) {
 }
 
 // --- UTILITY: Clean Path Function ---
-// Removes ../, ./, and leading / to ensure path works from root
 const cleanPath = (p) => {
     if (!p) return '';
     if (p.startsWith('http')) return p;
@@ -266,54 +266,64 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     let profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
     profileImgSrc = cleanPath(profileImgSrc);
     
-    // Apply to Header ID
     $('#header-profile-img').attr('src', profileImgSrc);
-    // Apply to all display classes (About page, mobile navs, etc)
     $('.profile-img-display').attr('src', profileImgSrc);
-    // Update Favicons
     $('link[rel*="icon"]').attr('href', profileImgSrc);
-    // Update Open Graph Image
     $('meta[property="og:image"]').attr('content', toAbsoluteUrl(profileImgSrc));
     
-    // B. Profile Name (Everywhere)
+    // B. Profile Name & Site Title
     $('#header-profile-name').text(aboutData.profileName);
-    
-    // C. Site Title
     $('header .tracking-tight').text(aboutData.siteName || 'TechTouch');
 
-    // D. DYNAMIC CSS INJECTION (STRICTLY SCOPED)
-    // This logic ensures only cards and tabs are affected by the size setting.
-    const baseSize = parseInt(aboutData.categories?.fontSize) || 14;
-    // Calculate derived sizes
-    const titleSize = baseSize + 2; 
-    const metaSize = Math.max(10, baseSize - 2);
+    // C. Page Identification Class (For scoped CSS)
+    const pageClass = 'page-' + fileName.replace('.html', '');
+    $('body').addClass(pageClass);
 
-    // We use !important to ensure CMS settings override default CSS, 
-    // but strict selectors prevent bleeding into other elements.
+    // D. GRANULAR DYNAMIC CSS INJECTION
+    const sizes = aboutData.fontSizes || {};
+    // Defaults to 14 if not set
+    const s_art = sizes.articles || 14;
+    const s_app = sizes.apps || 14;
+    const s_game = sizes.games || 14;
+    const s_sport = sizes.sports || 14;
+    const s_tool = sizes.tools || 14;
+    const s_about = sizes.about || 14;
+
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
-        /* 1. Category Tabs Only */
-        button.tab-btn { font-size: ${baseSize}px !important; }
-        button.tab-btn span { font-size: ${baseSize}px !important; }
-        button.tab-btn svg { width: ${baseSize + 2}px !important; height: ${baseSize + 2}px !important; }
+        /* Scoped Font Sizes by Section */
         
-        /* 2. Post Cards (The Grid Content ONLY) */
-        .post-card .custom-title-size { 
-            font-size: ${titleSize}px !important; 
-            line-height: 1.4 !important;
-        }
-        .post-card .custom-desc-size { 
-            font-size: ${baseSize}px !important; 
-            line-height: 1.6 !important;
-        }
-        .post-card .custom-meta-size, .post-card .custom-badge-size { 
-            font-size: ${metaSize}px !important; 
-        }
+        /* Articles Section */
+        #tab-articles .custom-title-size { font-size: ${s_art + 2}px !important; line-height: 1.4 !important; }
+        #tab-articles .custom-desc-size { font-size: ${s_art}px !important; line-height: 1.6 !important; }
+        #tab-articles .custom-meta-size { font-size: ${Math.max(10, s_art - 2)}px !important; }
 
-        /* 3. Ticker (Specific Class) */
-        .ticker-text, .ticker-text a { 
-            font-size: ${aboutData.ticker?.fontSize || 14}px !important; 
-        }
+        /* Apps Section */
+        #tab-apps .custom-title-size { font-size: ${s_app + 2}px !important; line-height: 1.4 !important; }
+        #tab-apps .custom-desc-size { font-size: ${s_app}px !important; line-height: 1.6 !important; }
+        #tab-apps .custom-meta-size { font-size: ${Math.max(10, s_app - 2)}px !important; }
+
+        /* Games Section */
+        #tab-games .custom-title-size { font-size: ${s_game + 2}px !important; line-height: 1.4 !important; }
+        #tab-games .custom-desc-size { font-size: ${s_game}px !important; line-height: 1.6 !important; }
+        #tab-games .custom-meta-size { font-size: ${Math.max(10, s_game - 2)}px !important; }
+
+        /* Sports Section */
+        #tab-sports .custom-title-size { font-size: ${s_sport + 2}px !important; line-height: 1.4 !important; }
+        #tab-sports .custom-desc-size { font-size: ${s_sport}px !important; line-height: 1.6 !important; }
+        #tab-sports .custom-meta-size { font-size: ${Math.max(10, s_sport - 2)}px !important; }
+
+        /* Tools Page */
+        .page-tools h3 { font-size: ${s_tool + 2}px !important; }
+        .page-tools p { font-size: ${s_tool}px !important; }
+        .page-tools-sites h3, .page-tools-phones h3, .page-tools-compare h3 { font-size: ${s_tool + 2}px !important; }
+        .page-tools-sites p, .page-tools-phones p, .page-tools-compare p { font-size: ${s_tool}px !important; }
+
+        /* About Page */
+        .page-about .prose p, .page-about .prose li { font-size: ${s_about}px !important; }
+        
+        /* Ticker */
+        .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
     </style>
     `;
     $('#dynamic-theme-styles').remove();
@@ -360,14 +370,11 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         if (coverContainer.length) {
             coverContainer.attr('style', ''); 
             if (aboutData.coverType === 'image' && aboutData.coverValue) {
-                // Clean styles
+                const coverUrl = cleanPath(aboutData.coverValue);
+                coverContainer.css('background', `url('${coverUrl}') center/cover no-repeat`);
                 coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
                 coverContainer.removeClass((i, c) => (c.match(/from-\S+/g) || []).join(' '));
                 coverContainer.removeClass((i, c) => (c.match(/to-\S+/g) || []).join(' '));
-                
-                // IMPORTANT: Use cleaned path for cover image
-                const coverUrl = cleanPath(aboutData.coverValue);
-                coverContainer.css('background', `url('${coverUrl}') center/cover no-repeat`);
             } else {
                 coverContainer.css('background', ''); 
                 coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
@@ -420,7 +427,7 @@ const updateListingPages = () => {
     });
 };
 
-const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.append(ADSENSE_BLOCK); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
+const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.find('a[href="tool-analysis.html"]').remove(); main.append(ADSENSE_BLOCK); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
 const updateAboutPageDetails = () => { const aboutPath = path.join(ROOT_DIR, 'about.html'); if (!fs.existsSync(aboutPath)) return; let html = fs.readFileSync(aboutPath, 'utf8'); const $ = cheerio.load(html); fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html')); };
 const updateChannelsPage = () => {
     const toolsPath = path.join(ROOT_DIR, 'tools-sites.html'); if (!fs.existsSync(toolsPath)) return; let html = fs.readFileSync(toolsPath, 'utf8'); const $ = cheerio.load(html); const grid = $('main .grid'); grid.empty();
@@ -484,7 +491,7 @@ const updateSearchData = () => {
     fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
 };
 
-// RSS Generator (Restored)
+// RSS Generator
 const generateRSS = () => {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
     const now = new Date().toUTCString();
@@ -515,7 +522,7 @@ const generateRSS = () => {
     fs.writeFileSync(feedPath, xml);
 };
 
-// Sitemap Generator (Restored)
+// Sitemap Generator - AI tool removed
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
@@ -528,7 +535,6 @@ const generateSitemap = () => {
         { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
         { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
         { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
-        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
         { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
         { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
     ];

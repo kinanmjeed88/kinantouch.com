@@ -318,7 +318,16 @@ async function loadSettings() {
         document.getElementById('siteName').value = cachedAbout.siteName || "TechTouch";
         const cats = cachedAbout.categories?.labels || { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" };
         document.getElementById('catLabel_articles').value = cats.articles; document.getElementById('catLabel_apps').value = cats.apps; document.getElementById('catLabel_games').value = cats.games; document.getElementById('catLabel_sports').value = cats.sports;
-        document.getElementById('catFontSize').value = cachedAbout.categories?.fontSize || 14; document.getElementById('catSizeVal').innerText = cachedAbout.categories?.fontSize || 14;
+        
+        // Granular Font Sizes Load
+        const fonts = cachedAbout.fontSizes || { articles: 14, apps: 14, games: 14, sports: 14, tools: 14, about: 14 };
+        document.getElementById('fontSize_articles').value = fonts.articles || 14; document.getElementById('f_art_val').innerText = fonts.articles || 14;
+        document.getElementById('fontSize_apps').value = fonts.apps || 14; document.getElementById('f_app_val').innerText = fonts.apps || 14;
+        document.getElementById('fontSize_games').value = fonts.games || 14; document.getElementById('f_game_val').innerText = fonts.games || 14;
+        document.getElementById('fontSize_sports').value = fonts.sports || 14; document.getElementById('f_sport_val').innerText = fonts.sports || 14;
+        document.getElementById('fontSize_tools').value = fonts.tools || 14; document.getElementById('f_tool_val').innerText = fonts.tools || 14;
+        document.getElementById('fontSize_about').value = fonts.about || 14; document.getElementById('f_about_val').innerText = fonts.about || 14;
+
         document.getElementById('valName').value = cachedAbout.profileName;
         
         // Handle profile image preview correctly for Admin UI
@@ -366,7 +375,15 @@ window.saveSettingsData = async () => {
             botInfo: document.getElementById('valBotInfo').value, searchInfo: document.getElementById('valSearchInfo').value, botTitle: document.getElementById('valBotTitle').value, searchTitle: document.getElementById('valSearchTitle').value,
             coverType: coverType, coverValue: coverType === 'color' ? document.getElementById('valCoverColor').value : document.getElementById('valCoverImg').value,
             siteName: document.getElementById('siteName').value,
-            categories: { labels: { articles: document.getElementById('catLabel_articles').value, apps: document.getElementById('catLabel_apps').value, games: document.getElementById('catLabel_games').value, sports: document.getElementById('catLabel_sports').value }, fontSize: parseInt(document.getElementById('catFontSize').value) },
+            categories: { labels: { articles: document.getElementById('catLabel_articles').value, apps: document.getElementById('catLabel_apps').value, games: document.getElementById('catLabel_games').value, sports: document.getElementById('catLabel_sports').value } },
+            fontSizes: {
+                articles: parseInt(document.getElementById('fontSize_articles').value),
+                apps: parseInt(document.getElementById('fontSize_apps').value),
+                games: parseInt(document.getElementById('fontSize_games').value),
+                sports: parseInt(document.getElementById('fontSize_sports').value),
+                tools: parseInt(document.getElementById('fontSize_tools').value),
+                about: parseInt(document.getElementById('fontSize_about').value)
+            },
             ticker: { label: document.getElementById('tickerLabel').value, text: document.getElementById('tickerText').value, url: document.getElementById('tickerUrl').value, fontSize: parseInt(document.getElementById('tickerSize').value), animated: document.getElementById('tickerAnimated').checked },
             social: { facebook: document.getElementById('socFb').value, instagram: document.getElementById('socInsta').value, tiktok: document.getElementById('socTikTok').value, youtube: document.getElementById('socYt').value, telegram: document.getElementById('socTg').value },
             socialIcons: { facebook: getIconData('facebook'), instagram: getIconData('instagram'), tiktok: getIconData('tiktok'), youtube: getIconData('youtube'), telegram: getIconData('telegram') }
