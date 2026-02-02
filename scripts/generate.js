@@ -195,6 +195,96 @@ const getCatLabel = (cat) => {
     return configured[cat] || defaults[cat] || 'عام';
 };
 
+// RSS Generator
+const generateRSS = () => {
+    const feedPath = path.join(ROOT_DIR, 'feed.xml');
+    const now = new Date().toUTCString();
+    let xml = `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>
+    <link>${BASE_URL}</link>
+    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
+    <language>ar</language>
+    <lastBuildDate>${now}</lastBuildDate>
+    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />`;
+
+    allPosts.slice(0, 20).forEach(post => {
+        const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
+        const fullImg = toAbsoluteUrl(post.image);
+        xml += `
+    <item>
+        <title><![CDATA[${post.title}]]></title>
+        <link>${fullUrl}</link>
+        <guid>${fullUrl}</guid>
+        <pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate>
+        <description><![CDATA[${post.description}]]></description>
+        <enclosure url="${fullImg}" type="image/jpeg" />
+    </item>`;
+    });
+    xml += `</channel></rss>`;
+    fs.writeFileSync(feedPath, xml);
+};
+
+// Sitemap Generator
+const generateSitemap = () => {
+    const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
+    const today = new Date().toISOString().split('T')[0];
+    
+    const staticPages = [
+        { file: 'index.html', url: '/', priority: '1.0' },
+        { file: 'articles.html', url: '/articles.html', priority: '0.9' },
+        { file: 'tools.html', url: '/tools.html', priority: '0.9' },
+        { file: 'about.html', url: '/about.html', priority: '0.7' },
+        { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
+        { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
+        { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
+        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
+        { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
+        { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
+    ];
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
+
+    staticPages.forEach(page => {
+        if (page.file === '404.html') return;
+        const filePath = path.join(ROOT_DIR, page.file);
+        let lastmod = today;
+        if (fs.existsSync(filePath)) {
+            try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {}
+        }
+        const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`;
+        xml += `
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <priority>${page.priority}</priority>
+  </url>`;
+    });
+
+    allPosts.forEach(post => {
+        const fullImg = toAbsoluteUrl(post.image);
+        const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
+        const postDate = new Date(post.effectiveDate).toISOString().split('T')[0];
+        xml += `
+  <url>
+    <loc>${pageUrl}</loc>
+    <lastmod>${postDate}</lastmod>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>${escapeXml(fullImg)}</image:loc>
+      <image:title>${escapeXml(post.title)}</image:title>
+    </image:image>
+  </url>`;
+    });
+
+    xml += `\n</urlset>`;
+    fs.writeFileSync(sitemapPath, xml);
+    console.log('✅ sitemap.xml regenerated automatically.');
+};
+
 const createCardHTML = (post) => {
     let badgeColor = 'bg-blue-600';
     let icon = 'file-text';
@@ -399,7 +489,6 @@ const updateListingPages = () => {
     });
 };
 
-// ... [Previous updateToolsPage, updateAboutPageDetails, updateChannelsPage remain mostly the same but call updateGlobalElements] ...
 const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.append(ADSENSE_BLOCK); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
 const updateAboutPageDetails = () => { const aboutPath = path.join(ROOT_DIR, 'about.html'); if (!fs.existsSync(aboutPath)) return; let html = fs.readFileSync(aboutPath, 'utf8'); const $ = cheerio.load(html); fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html')); };
 const updateChannelsPage = () => {
