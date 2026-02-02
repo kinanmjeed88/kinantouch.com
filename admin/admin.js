@@ -208,7 +208,7 @@ function renderPosts() {
 }
 window.openPostEditor = () => { 
     document.getElementById('postEditor').classList.remove('hidden'); 
-    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pSummary', 'pPoints', 'pYoutubeId'].forEach(id => {
+    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId'].forEach(id => {
         const el = document.getElementById(id);
         if(el) el.value = '';
     }); 
@@ -238,9 +238,7 @@ window.editPost = (slug) => {
     setVal('pContent', p.content);
     setVal('pImage', p.image);
     
-    // Fill AI Fields (Safely)
-    setVal('pSummary', p.summary || '');
-    setVal('pPoints', p.points || '');
+    // Set Extras
     setVal('pYoutubeId', p.youtubeVideoId || '');
 
     document.getElementById('editorTitle').innerText = 'تعديل مقال'; 
@@ -269,9 +267,7 @@ window.savePost = async () => {
             updated: (isEdit) ? now : undefined, 
             image: getVal('pImage'), 
             content: getVal('pContent'),
-            // New AI Fields
-            summary: getVal('pSummary'),
-            points: getVal('pPoints'),
+            // Removed AI fields (summary, points)
             youtubeVideoId: getVal('pYoutubeId')
         };
         // Clean undefined updated
@@ -285,50 +281,6 @@ window.deletePost = async (slug) => { if(!confirm('حذف؟')) return; const p =
 
 window.insertYoutube = () => { const url = prompt("رابط يوتيوب:"); if (url) window.insertTag(`\n@[youtube](${url})\n`); };
 window.insertLink = () => { const url = prompt("الرابط:"); const text = prompt("النص:"); if(url) window.insertTag(`[${text || 'اضغط هنا'}](${url})`); };
-
-// --- AI GENERATION LOGIC ---
-const API_ENDPOINT = 'https://kinantouch.com/api/';
-
-window.generateAIContent = async () => {
-    const title = document.getElementById('pTitle').value;
-    const rawContent = document.getElementById('pContent').value;
-    const btn = document.getElementById('btnGenerateAI');
-    
-    if(!title) { alert('يجب كتابة عنوان المقال أولاً.'); return; }
-
-    const originalText = btn.innerHTML;
-    btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin"></i> جاري التوليد...`;
-    btn.disabled = true;
-
-    try {
-        const response = await fetch(API_ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, content: rawContent || title })
-        });
-
-        if (!response.ok) throw new Error(`Server Error: ${response.status}`);
-
-        const data = await response.json();
-
-        // Safely set values
-        const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
-
-        if(data.content) setVal('pContent', data.content);
-        if(data.summary) setVal('pSummary', data.summary);
-        if(data.points) setVal('pPoints', data.points);
-        if(data.youtubeVideoId) setVal('pYoutubeId', data.youtubeVideoId);
-
-        showToast('تم التوليد بنجاح!');
-    } catch (e) {
-        alert('حدث خطأ أثناء التوليد: ' + e.message);
-        console.error(e);
-    } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        lucide.createIcons();
-    }
-};
 
 // --- CHANNELS LOGIC ---
 async function loadChannels() {

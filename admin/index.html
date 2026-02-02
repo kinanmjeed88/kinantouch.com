@@ -141,16 +141,11 @@
                         <div class="col-span-2 md:col-span-1"><label class="label">الصورة</label><div class="flex gap-2"><input type="file" id="pFile" class="hidden" onchange="handleFileSelect(this, 'pImage')"><button onclick="document.getElementById('pFile').click()" class="btn-secondary whitespace-nowrap"><i data-lucide="image"></i> رفع</button><input type="text" id="pImage" class="input-field dir-ltr" placeholder="رابط الصورة أو المسار..."></div></div>
                         <div class="col-span-2"><label class="label">الوصف المختصر</label><textarea id="pDesc" rows="2" class="input-field" placeholder="وصف يظهر في بطاقات الصفحة الرئيسية..."></textarea></div>
                         
-                        <!-- AI & Extras Section -->
-                        <div class="col-span-2 bg-purple-50 p-4 rounded-xl border border-purple-100">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-purple-800 flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4"></i> الميزات المتقدمة & الذكاء الاصطناعي</h3>
-                                <button onclick="generateAIContent()" id="btnGenerateAI" class="text-xs bg-purple-600 text-white px-3 py-1.5 rounded-lg hover:bg-purple-700 flex items-center gap-1 transition-colors">توليد المحتوى بالذكاء الاصطناعي ✨</button>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Media & Extras -->
+                        <div class="col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i data-lucide="play-circle" class="w-4 h-4"></i> الوسائط</h3>
+                            <div class="grid grid-cols-1 gap-4">
                                 <div><label class="label text-xs">رابط يوتيوب (ID فقط)</label><input type="text" id="pYoutubeId" class="input-field text-sm dir-ltr" placeholder="مثال: dQw4w9WgXcQ"></div>
-                                <div><label class="label text-xs">تلخيص المقال (AI Summary)</label><textarea id="pSummary" rows="2" class="input-field text-sm" placeholder="ملخص سريع يظهر عند الضغط على زر التلخيص..."></textarea></div>
-                                <div class="md:col-span-2"><label class="label text-xs">النقاط الرئيسية (AI Points)</label><textarea id="pPoints" rows="2" class="input-field text-sm" placeholder="<ul><li>نقطة 1</li><li>نقطة 2</li></ul> (يقبل HTML)"></textarea></div>
                             </div>
                         </div>
 

@@ -85,10 +85,11 @@ const WORKER_CONTENT = `importScripts("https://cdn.onesignal.com/sdks/web/v16/On
 fs.writeFileSync(path.join(ROOT_DIR, 'OneSignalSDKWorker.js'), WORKER_CONTENT);
 
 // Static Pages Config
+// REMOVED tool-analysis.html from list
 const HTML_FILES = [
     'index.html', 'articles.html', 'tools.html', 'about.html', 
     'tools-sites.html', 'tools-phones.html', 'tools-compare.html', 
-    'tool-analysis.html', 'privacy.html', 'site-map.html', '404.html'
+    'privacy.html', 'site-map.html', '404.html'
 ];
 
 // Load Config Data
@@ -242,7 +243,7 @@ const generateSitemap = () => {
         { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
         { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
         { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
-        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
+        // REMOVED tool-analysis.html
         { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
         { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
     ];
@@ -660,21 +661,7 @@ const generateIndividualArticles = () => {
         
         // --- FEATURE INJECTION START ---
         
-        // 1. Buttons for Summary/Points (Inject below Title)
-        if ((post.summary && post.summary.length > 10) || (post.points && post.points.length > 10)) {
-            const buttonsHtml = `
-            <div class="flex gap-2 mb-6 text-xs justify-start w-full">
-                ${post.summary ? `<button id="showSummary" class="flex items-center gap-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-all font-bold shadow-md"><i data-lucide="file-text" class="w-3 h-3"></i> تلخيص</button>` : ''}
-                ${post.points ? `<button id="showPoints" class="flex items-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-full transition-all font-bold shadow-md"><i data-lucide="list" class="w-3 h-3"></i> نقاط رئيسية</button>` : ''}
-            </div>
-            
-            <div id="analysisBox" class="hidden mt-6 mb-8 w-full bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-800 transition-all duration-500 animate-fade-in">
-                <!-- Content injected via JS -->
-            </div>
-            `;
-            // Insert after Header
-            $('header').after(buttonsHtml);
-        }
+        // REMOVED AI Summary/Points logic
 
         // 2. YouTube Video Injection (Inject before content)
         if (post.youtubeVideoId && post.youtubeVideoId.length > 5) {
@@ -723,42 +710,6 @@ const generateIndividualArticles = () => {
         </script>
         `;
         $('article').after(shareHtml);
-
-        // 4. Inject JS Logic for Buttons (Hidden Data)
-        const jsLogic = `
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const summaryBtn = document.getElementById("showSummary");
-                const pointsBtn = document.getElementById("showPoints");
-                const box = document.getElementById("analysisBox");
-                
-                // Safe Data Injection
-                const postData = {
-                    summary: ${JSON.stringify(post.summary || '')},
-                    points: ${JSON.stringify(post.points || '')}
-                };
-
-                if(summaryBtn) {
-                    summaryBtn.onclick = () => {
-                        box.innerHTML = '<h3 class="text-lg font-bold text-blue-700 dark:text-blue-400 mb-3 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5"></i> ملخص المقال</h3>' + postData.summary;
-                        box.className = "mt-6 mb-8 w-full bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-800 transition-all duration-500 animate-fade-in block";
-                        if(window.lucide) lucide.createIcons();
-                        box.scrollIntoView({ behavior: "smooth", block: "center" });
-                    };
-                }
-
-                if(pointsBtn) {
-                    pointsBtn.onclick = () => {
-                        box.innerHTML = '<h3 class="text-lg font-bold text-green-700 dark:text-green-400 mb-3 flex items-center gap-2"><i data-lucide="list" class="w-5 h-5"></i> نقاط رئيسية</h3>' + postData.points;
-                        box.className = "mt-6 mb-8 w-full bg-green-50 dark:bg-green-900/10 p-6 rounded-2xl border border-green-100 dark:border-green-800 transition-all duration-500 animate-fade-in block";
-                        if(window.lucide) lucide.createIcons();
-                        box.scrollIntoView({ behavior: "smooth", block: "center" });
-                    };
-                }
-            });
-        </script>
-        `;
-        $('body').append(jsLogic);
 
         // --- FEATURE INJECTION END ---
 
