@@ -494,7 +494,7 @@ const updateSearchData = () => {
     fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
 };
 
-// RSS Generator
+// RSS Generator (Restored)
 const generateRSS = () => {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
     const now = new Date().toUTCString();
@@ -525,7 +525,7 @@ const generateRSS = () => {
     fs.writeFileSync(feedPath, xml);
 };
 
-// Sitemap Generator
+// Sitemap Generator (Restored)
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
@@ -538,6 +538,7 @@ const generateSitemap = () => {
         { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
         { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
         { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
+        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
         { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
         { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
     ];
