@@ -220,6 +220,9 @@ async function loadPosts() {
         cachedPosts.sort((a, b) => {
             const dateA = new Date(a.updated || a.date).getTime();
             const dateB = new Date(b.updated || b.date).getTime();
+            // Handle NaN dates safely
+            if (isNaN(dateA)) return 1;
+            if (isNaN(dateB)) return -1;
             return dateB - dateA;
         });
         
@@ -231,9 +234,9 @@ function renderPosts() {
     const list = document.getElementById('postsList');
     list.innerHTML = cachedPosts.map(p => {
         const dateDisplay = (p.updated && p.updated !== p.date) ? `<span class="text-blue-500 font-bold" title="تم التحديث">♻ ${p.updated}</span>` : `<span>${p.date}</span>`;
-        // Escape slug for onclick to prevent syntax errors
-        const safeSlug = p.slug.replace(/'/g, "\\'"); 
-        return `<div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all"><div class="flex items-center gap-4"><img src="${p.image.startsWith('http') ? p.image : '../'+p.image}" class="w-16 h-10 object-cover rounded-md bg-gray-100"><div class="flex-1 min-w-0"><h3 class="font-bold text-gray-800 line-clamp-1">${p.title}</h3><div class="text-xs text-gray-400 flex gap-2 items-center">${dateDisplay}<span>•</span><span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category}</span></div></div></div><div class="flex gap-2 shrink-0"><button onclick="editPost('${safeSlug}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deletePost('${safeSlug}')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg"><i data-lucide="trash" class="w-4 h-4"></i></button></div></div>`;
+        // Safe Slug Encoding for OnClick
+        const encodedSlug = encodeURIComponent(p.slug);
+        return `<div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all"><div class="flex items-center gap-4"><img src="${p.image.startsWith('http') ? p.image : '../'+p.image}" class="w-16 h-10 object-cover rounded-md bg-gray-100"><div class="flex-1 min-w-0"><h3 class="font-bold text-gray-800 line-clamp-1">${p.title}</h3><div class="text-xs text-gray-400 flex gap-2 items-center">${dateDisplay}<span>•</span><span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category}</span></div></div></div><div class="flex gap-2 shrink-0"><button onclick="editPost('${encodedSlug}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deletePost('${encodedSlug}')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg"><i data-lucide="trash" class="w-4 h-4"></i></button></div></div>`;
     }).join(''); 
     lucide.createIcons();
 }
@@ -251,35 +254,41 @@ window.openPostEditor = () => {
 
 window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
 
-window.editPost = (slug) => { 
-    const p = cachedPosts.find(x => x.slug === slug); 
-    if (!p) {
-        alert("عذراً، لم يتم العثور على بيانات هذا المقال. يرجى تحديث الصفحة.");
-        return; 
-    }
-    
-    // Safely set values checking if elements exist
-    const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
-    
-    setVal('pTitle', p.title);
-    setVal('pSlug', p.slug);
-    
-    const slugEl = document.getElementById('pSlug');
-    if(slugEl) {
-        slugEl.readOnly = true; 
-        slugEl.dataset.mode = 'edit';
-    }
-    
-    setVal('pCat', p.category);
-    setVal('pDesc', p.description);
-    setVal('pContent', p.content);
-    setVal('pImage', p.image);
-    
-    // Set Extras
-    setVal('pYoutubeId', p.youtubeVideoId);
+window.editPost = (encodedSlug) => { 
+    try {
+        const slug = decodeURIComponent(encodedSlug);
+        const p = cachedPosts.find(x => x.slug === slug); 
+        if (!p) {
+            alert("عذراً، لم يتم العثور على بيانات هذا المقال. يرجى تحديث الصفحة.");
+            return; 
+        }
+        
+        // Safely set values checking if elements exist
+        const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+        
+        setVal('pTitle', p.title);
+        setVal('pSlug', p.slug);
+        
+        const slugEl = document.getElementById('pSlug');
+        if(slugEl) {
+            slugEl.readOnly = true; 
+            slugEl.dataset.mode = 'edit';
+        }
+        
+        setVal('pCat', p.category);
+        setVal('pDesc', p.description);
+        setVal('pContent', p.content);
+        setVal('pImage', p.image);
+        
+        // Set Extras
+        setVal('pYoutubeId', p.youtubeVideoId);
 
-    document.getElementById('editorTitle').innerText = 'تعديل مقال'; 
-    document.getElementById('postEditor').classList.remove('hidden'); 
+        document.getElementById('editorTitle').innerText = 'تعديل مقال'; 
+        document.getElementById('postEditor').classList.remove('hidden'); 
+    } catch (e) {
+        console.error("Edit Error:", e);
+        alert("حدث خطأ غير متوقع عند فتح المحرر: " + e.message);
+    }
 };
 
 window.savePost = async () => {
@@ -316,7 +325,20 @@ window.savePost = async () => {
     } catch (e) { alert('خطأ في الحفظ: ' + e.message); } finally { btn.innerText = 'حفظ ونشر'; btn.disabled = false; }
 };
 
-window.deletePost = async (slug) => { if(!confirm('حذف؟')) return; const p = cachedPosts.find(x => x.slug === slug); try { await api.delete(p.path, p.sha, `Delete Post: ${slug}`); showToast('تم الحذف'); loadPosts(); } catch(e) { alert(e.message); } };
+window.deletePost = async (encodedSlug) => { 
+    if(!confirm('هل أنت متأكد من الحذف؟')) return; 
+    try {
+        const slug = decodeURIComponent(encodedSlug);
+        const p = cachedPosts.find(x => x.slug === slug); 
+        if(!p) throw new Error("المقال غير موجود");
+        
+        await api.delete(p.path, p.sha, `Delete Post: ${slug}`); 
+        showToast('تم الحذف'); 
+        loadPosts(); 
+    } catch(e) { 
+        alert(e.message); 
+    } 
+};
 
 window.insertYoutube = () => { const url = prompt("رابط يوتيوب:"); if (url) window.insertTag(`\n@[youtube](${url})\n`); };
 window.insertLink = () => { const url = prompt("الرابط:"); const text = prompt("النص:"); if(url) window.insertTag(`[${text || 'اضغط هنا'}](${url})`); };
