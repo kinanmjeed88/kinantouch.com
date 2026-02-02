@@ -32,9 +32,9 @@ const GOOGLE_SITE_VERIFICATION = '';
 
 // --- SCRIPTS TEMPLATES ---
 
-// PROFESSIONAL GA4 SNIPPET
+// PROFESSIONAL GA4 SNIPPET (Added Automatically to Head)
 const GA_SCRIPT = `
-<!-- Google Analytics 4 (Professional) -->
+<!-- Google Analytics 4 (Auto-Injected) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -65,7 +65,7 @@ const ONESIGNAL_SCRIPT = `
 </script>
 `;
 
-// Responsive Ad Unit
+// Responsive Ad Unit (Injected Automatically inside Content)
 const ADSENSE_BLOCK = `
 <div class="adsbygoogle-container w-full mx-auto my-8 py-4 bg-gray-50 dark:bg-gray-900/30 border-y border-gray-100 dark:border-gray-800 text-center overflow-hidden">
     <div class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-2">إعلان</div>
@@ -209,7 +209,7 @@ const getCatLabel = (cat) => {
     return configured[cat] || defaults[cat] || 'عام';
 };
 
-// RSS
+// RSS Generator
 const generateRSS = () => {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
     const now = new Date().toUTCString();
@@ -240,7 +240,7 @@ const generateRSS = () => {
     fs.writeFileSync(feedPath, xml);
 };
 
-// Sitemap
+// Sitemap Generator
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
@@ -329,61 +329,47 @@ const createCardHTML = (post) => {
     </a>`;
 };
 
+// --- GLOBAL SCRIPT INJECTOR ---
 const updateGlobalElements = (htmlContent, fileName = '') => {
     const $ = cheerio.load(htmlContent);
 
-    // Clean old/broken scripts including malformed relative GA
+    // 1. Clean old scripts
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
         const content = $(el).html() || '';
         
-        // CRITICAL FIX: Remove relative GA scripts causing 404
-        if (src.match(/js\?id=G-/) && !src.includes('googletagmanager.com')) {
-             $(el).remove();
-        }
-
-        if (src.includes('googletagmanager.com') || 
-            content.includes("gtag('config'") ||
-            src.includes("pagead2.googlesyndication.com") ||
-            content.includes("adsbygoogle") ||
-            src.includes("cdn.onesignal.com")) {
+        if (src.match(/js\?id=G-/) && !src.includes('googletagmanager.com')) { $(el).remove(); }
+        if (src.includes('googletagmanager.com') || content.includes("gtag('config'") || src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle") || src.includes("cdn.onesignal.com")) {
             $(el).remove();
         }
     });
 
-    // Inject Correct Scripts
+    // 2. Inject Fresh Tracking Scripts
     $('head').prepend(GA_SCRIPT);
     $('head').append(AD_SCRIPT);
     $('head').append(ONESIGNAL_SCRIPT);
     
-    // Inject Search Console Meta if provided
+    // 3. Search Console Meta
     if (GOOGLE_SITE_VERIFICATION) {
         $('meta[name="google-site-verification"]').remove();
         $('head').append(`<meta name="google-site-verification" content="${GOOGLE_SITE_VERIFICATION}" />`);
     }
 
-    // Add Favicon
+    // 4. Common UI Updates
     if (!$('link[rel="icon"], link[rel="shortcut icon"]').length) {
         $('head').append(`<link rel="shortcut icon" href="${toAbsoluteUrl(aboutData.profileImage)}" type="image/jpeg">`);
     }
-
-    // Add Back to Top Button
     if ($('#back-to-top').length === 0) {
         $('body').append(BACK_TO_TOP_BTN);
     }
-
-    // Canonical & Meta
     if (fileName) {
         const canonicalUrl = fileName === 'index.html' ? `${BASE_URL}/` : `${BASE_URL}/${fileName}`;
         $('link[rel="canonical"]').remove();
         $('head').append(`<link rel="canonical" href="${canonicalUrl}">`);
     }
-    
-    // UI Updates
     $('#header-profile-img').attr('src', aboutData.profileImage);
     $('#header-profile-name').text(aboutData.profileName);
     
-    // Ticker Logic
     if (aboutData.ticker && $('#ticker-content').length) {
         $('#ticker-label').text(aboutData.ticker.label);
         const tickerContentDiv = $('#ticker-content');
@@ -470,52 +456,57 @@ const updateChannelsPage = () => {
     fs.writeFileSync(toolsPath, updateGlobalElements($.html(), 'tools-sites.html'));
 };
 
+// --- CORE: GENERATE INDIVIDUAL ARTICLES ---
 const generateIndividualArticles = () => {
     const templatePath = path.join(ROOT_DIR, 'article-asus-gx10.html');
-    if (!fs.existsSync(templatePath)) return;
-    let template = fs.readFileSync(templatePath, 'utf8');
+    
+    // Fallback template string if file missing (Robustness)
+    let template = '';
+    if (fs.existsSync(templatePath)) {
+        template = fs.readFileSync(templatePath, 'utf8');
+    } else {
+        console.warn("Template file missing, using minimal fallback.");
+        template = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>Article</title></head><body><main><article></article></main></body></html>`;
+    }
+
     allPosts.forEach(post => {
         const $ = cheerio.load(template);
         const pageSlug = `article-${post.slug}.html`;
         const fullUrl = `${BASE_URL}/${pageSlug}`;
         const fullImageUrl = toAbsoluteUrl(post.image);
         
+        // 1. Meta Data
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         $('h1').first().text(post.title);
         $('time').text(post.date);
         
+        // 2. Content Injection
         const $content = cheerio.load(post.content, null, false);
         
-        // Clean manually placed ads to prevent duplicates
+        // 3. AUTO-INJECT ADSENSE
+        // Clean existing to prevent duplicates
         $content('.adsbygoogle-container, .ad-placeholder').remove();
 
-        // --- PRECISE MIDDLE AD INJECTION ---
-        // Get direct children of the content root
+        // Precise Middle Injection Logic
         const children = $content.root().children();
-        
-        // Filter mainly visual block elements to determine "middle"
-        // This avoids counting empty text nodes or small formatting tags
         const blockElements = children.filter('p, h2, h3, h4, ul, ol, div, img');
         const totalBlocks = blockElements.length;
 
         if (totalBlocks >= 2) {
-            // Find the middle index among significant blocks
             const midIndex = Math.floor(totalBlocks / 2);
-            // Get the actual DOM element at this index and insert after it
             blockElements.eq(Math.max(0, midIndex - 1)).after(ADSENSE_BLOCK);
         } else {
-            // Fallback for very short content
             $content.root().append(ADSENSE_BLOCK);
         }
 
-        // Image & Video processing
+        // Image Styling
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         
-        // Update Article Body
+        // Update Article Body in Template
         $('article').html($content.html()); 
         
-        // JSON-LD Update
+        // 4. Schema.org JSON-LD
         const jsonLd = {
             "@context": "https://schema.org", "@type": "Article", "headline": post.title,
             "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(),
@@ -527,6 +518,7 @@ const generateIndividualArticles = () => {
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);
         
+        // 5. Finalize with Header Scripts (GA, etc.)
         fs.writeFileSync(path.join(ROOT_DIR, pageSlug), updateGlobalElements($.html(), pageSlug));
     });
 };
