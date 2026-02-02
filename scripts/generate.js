@@ -21,7 +21,7 @@ const DATA_DIR = path.join(__dirname, '../content/data');
 const BASE_URL = 'https://kinantouch.com';
 
 // --- INTEGRATION CONFIGURATION ---
-// 1. Google Analytics (Using Absolute URL to fix 404)
+// 1. Google Analytics (Professional Setup)
 const GA_ID = 'G-63BBPLQ343'; 
 // 2. Google AdSense
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
@@ -32,15 +32,19 @@ const GOOGLE_SITE_VERIFICATION = '';
 
 // --- SCRIPTS TEMPLATES ---
 
-// FIXED: Ensure src is absolute https://...
+// PROFESSIONAL GA4 SNIPPET
 const GA_SCRIPT = `
-<!-- Google tag (gtag.js) -->
+<!-- Google Analytics 4 (Professional) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', '${GA_ID}');
+
+  gtag('config', '${GA_ID}', {
+    anonymize_ip: true,
+    send_page_view: true
+  });
 </script>`;
 
 const AD_SCRIPT = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}" crossorigin="anonymous"></script>`;
@@ -95,7 +99,7 @@ fs.writeFileSync(path.join(ROOT_DIR, 'OneSignalSDKWorker.js'), WORKER_CONTENT);
 // Files to Process
 const HTML_FILES = [
     'index.html', 'articles.html', 'tools.html', 'about.html', 
-    'tools-sites.html', 'tools-phones.html', 'tools-compare.html', 
+    'tools-sites.html', 'tools-phones.html', 'tools-compare.html', 'tool-analysis.html',
     'privacy.html', 'site-map.html', '404.html'
 ];
 
@@ -249,6 +253,7 @@ const generateSitemap = () => {
         { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
         { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
         { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
+        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
         { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
         { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
     ];
@@ -327,7 +332,7 @@ const createCardHTML = (post) => {
 const updateGlobalElements = (htmlContent, fileName = '') => {
     const $ = cheerio.load(htmlContent);
 
-    // Clean old/broken scripts
+    // Clean old/broken scripts including malformed relative GA
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
         const content = $(el).html() || '';
