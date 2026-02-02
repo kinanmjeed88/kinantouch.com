@@ -257,6 +257,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     
     // A. Profile Image (Everywhere) - Matches ID or Class
     const profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
+    // This looks for #header-profile-img AND anything with class .profile-img-display
     $('#header-profile-img, .profile-img-display').attr('src', profileImgSrc);
     
     // B. Profile Name (Everywhere)
@@ -273,22 +274,33 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         :root {
             --base-font-size: ${baseSize}px;
         }
-        /* Buttons, Tabs, Nav */
-        .nav-link, .tab-btn, .btn-wrapped-link, button, .text-sm, .text-xs, a {
+        /* Force fonts for navigation and buttons */
+        .nav-link, .tab-btn, .btn-wrapped-link, button, .text-sm, .text-xs, a, footer p, footer a {
             font-size: ${baseSize}px !important;
         }
-        /* Headers & Card Titles */
-        .custom-title-size, h1, h2, h3, .text-xl, .text-2xl, .text-3xl { 
-            font-size: ${baseSize + 4}px !important; 
-        }
-        /* Descriptions & Body Text */
-        .custom-desc-size, p, .prose p { 
+        
+        /* Force headers to scale relative to base size */
+        h1 { font-size: ${baseSize + 10}px !important; }
+        h2 { font-size: ${baseSize + 6}px !important; }
+        h3 { font-size: ${baseSize + 4}px !important; }
+        .text-xl { font-size: ${baseSize + 4}px !important; }
+        .text-2xl { font-size: ${baseSize + 6}px !important; }
+        .text-3xl { font-size: ${baseSize + 10}px !important; }
+        .text-lg { font-size: ${baseSize + 2}px !important; }
+
+        /* Card Titles specific override */
+        .custom-title-size { font-size: ${baseSize + 2}px !important; }
+        
+        /* Content text */
+        .custom-desc-size, p, .prose p, .prose li { 
             font-size: ${Math.max(12, baseSize + 1)}px !important; 
         }
+        
         /* Meta Data & Badges */
         .custom-meta-size, .custom-badge-size { 
             font-size: ${Math.max(10, baseSize - 2)}px !important; 
         }
+        
         /* Ticker */
         .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
     </style>
