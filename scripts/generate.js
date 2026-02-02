@@ -265,39 +265,33 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // C. Site Title
     $('header .tracking-tight').text(aboutData.siteName || 'TechTouch');
 
-    // D. DYNAMIC CSS INJECTION (FIXED: Targeted Scope)
-    // We only change the size of specific elements (Tabs, Card Titles, Ticker)
-    // We DO NOT change the global 'a', 'button' or ':root' size.
+    // D. DYNAMIC CSS INJECTION (FIXED SCOPE)
+    // Only targets specific components (Tabs, Cards, Ticker) to avoid breaking global site layout
     const baseSize = parseInt(aboutData.categories?.fontSize) || 14;
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
         /* 1. Category Tabs Only */
-        .tab-btn {
+        .tab-btn, .tab-btn span {
             font-size: ${baseSize}px !important;
         }
-        /* Icon inside tab */
-        .tab-btn svg {
-            width: ${baseSize + 2}px !important;
-            height: ${baseSize + 2}px !important;
-        }
-
+        
         /* 2. Post Cards (The Grid Content) */
         .custom-title-size { 
-            font-size: ${baseSize + 3}px !important; /* Titles slightly larger than base */
+            font-size: ${baseSize + 2}px !important; 
             line-height: 1.4 !important;
         }
         .custom-desc-size { 
             font-size: ${baseSize}px !important; 
+            line-height: 1.6 !important;
         }
-        .custom-meta-size { 
-            font-size: ${Math.max(10, baseSize - 2)}px !important; 
-        }
-        .custom-badge-size { 
+        .custom-meta-size, .custom-badge-size { 
             font-size: ${Math.max(10, baseSize - 2)}px !important; 
         }
 
-        /* 3. Ticker (Separate setting) */
-        .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
+        /* 3. Ticker */
+        .ticker-text, .ticker-text a { 
+            font-size: ${aboutData.ticker?.fontSize || 14}px !important; 
+        }
     </style>
     `;
     $('#dynamic-theme-styles').remove();
