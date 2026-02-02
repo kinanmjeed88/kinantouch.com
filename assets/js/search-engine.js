@@ -1,15 +1,32 @@
 
 import { searchIndex } from './search-data.js';
+// Import Fuse.js from CDN
+import Fuse from 'https://esm.sh/fuse.js@7.0.0';
 
 class TechTouchSearch {
     constructor() {
+        this.fuse = null;
         this.init();
     }
 
     init() {
+        this.initFuse();
         this.injectSearchButton();
         this.injectSearchModal();
         this.bindEvents();
+    }
+
+    initFuse() {
+        const options = {
+            includeScore: true,
+            threshold: 0.4, // 0.0 = perfect match, 1.0 = match anything. 0.4 is good for typos.
+            keys: [
+                { name: 'title', weight: 0.7 },
+                { name: 'desc', weight: 0.2 },
+                { name: 'category', weight: 0.1 }
+            ]
+        };
+        this.fuse = new Fuse(searchIndex, options);
     }
 
     injectSearchButton() {
@@ -48,7 +65,7 @@ class TechTouchSearch {
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
-                        <input type="text" id="search-input" placeholder="ابحث عن مقالات، هواتف، أو أدوات..." 
+                        <input type="text" id="search-input" placeholder="ابحث عن مقالات، هواتف (مثال: ايفون 16)..." 
                             class="flex-1 bg-transparent text-lg text-gray-900 dark:text-white placeholder-gray-400 outline-none h-10" autocomplete="off">
                         <button id="close-search" class="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors">
                             <span class="text-xs font-bold bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">ESC</span>
@@ -67,7 +84,7 @@ class TechTouchSearch {
                     
                     <!-- Footer -->
                     <div class="p-3 bg-gray-50 dark:bg-gray-800/50 text-center text-xs text-gray-400 border-t border-gray-100 dark:border-gray-800">
-                        نتائج البحث من TechTouch
+                        نتائج البحث الذكي من TechTouch
                     </div>
                 </div>
             </div>
@@ -130,9 +147,9 @@ class TechTouchSearch {
             }
         });
 
-        // Search Logic
+        // Search Logic with Fuse.js
         input.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
+            const query = e.target.value.trim();
             
             if (query.length === 0) {
                 resultsContainer.innerHTML = `
@@ -146,11 +163,9 @@ class TechTouchSearch {
                 return;
             }
 
-            const results = searchIndex.filter(item => 
-                item.title.toLowerCase().includes(query) || 
-                item.desc.toLowerCase().includes(query) ||
-                item.category.toLowerCase().includes(query)
-            );
+            // Perform Fuzzy Search
+            const fuseResults = this.fuse.search(query);
+            const results = fuseResults.map(r => r.item).slice(0, 10); // Limit to top 10 matches
 
             this.renderResults(results, resultsContainer);
         });

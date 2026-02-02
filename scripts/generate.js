@@ -35,6 +35,24 @@ const GA_SCRIPT = `<!-- Google tag (gtag.js) -->
   gtag('config', '${GA_ID}');
 </script>`;
 
+// OneSignal Configuration
+const ONESIGNAL_APP_ID = "YOUR_ONESIGNAL_APP_ID"; // Replace with real ID
+const ONESIGNAL_SCRIPT = `
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(function(OneSignal) {
+    OneSignal.init({
+      appId: "${ONESIGNAL_APP_ID}",
+      safari_web_id: "web.onesignal.auto.xxxxx",
+      notifyButton: {
+        enable: true,
+      },
+    });
+  });
+</script>
+`;
+
 // AdSense HTML Block
 const ADSENSE_BLOCK = `
 <div class="adsbygoogle-container w-full max-w-full overflow-hidden mx-auto my-6 bg-gray-50 dark:bg-gray-900/30 border border-gray-100 dark:border-gray-800 rounded-xl p-1 text-center">
@@ -61,6 +79,10 @@ const BACK_TO_TOP_BTN = `
 // Ensure directories exist
 if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR, { recursive: true });
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
+// Generate OneSignal Worker
+const WORKER_CONTENT = `importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");`;
+fs.writeFileSync(path.join(ROOT_DIR, 'OneSignalSDKWorker.js'), WORKER_CONTENT);
 
 // Static Pages Config
 const HTML_FILES = [
@@ -309,6 +331,8 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // Scripts & Ads
     if (!$('script[src*="adsbygoogle.js"]').length) $('head').append(AD_SCRIPT);
+    // Inject OneSignal
+    if (!$('script[src*="OneSignalSDK.page.js"]').length) $('head').append(ONESIGNAL_SCRIPT);
     
     // --- CLEANUP: Remove ImportMap and React/Vite garbage ---
     $('script[type="importmap"]').remove();
@@ -665,7 +689,42 @@ const generateIndividualArticles = () => {
             else $('header').after(videoHtml);
         }
 
-        // 3. Inject JS Logic for Buttons (Hidden Data)
+        // 3. Share Button Injection
+        const shareHtml = `
+        <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-center w-full">
+            <button id="nativeShareBtn" class="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-full font-bold shadow-lg hover:scale-105 transition-transform w-full sm:w-auto justify-center">
+                <i data-lucide="share-2" class="w-5 h-5"></i>
+                <span>مشاركة المقال عبر التطبيقات</span>
+            </button>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const shareBtn = document.getElementById('nativeShareBtn');
+                if(shareBtn) {
+                    shareBtn.addEventListener('click', async () => {
+                        const shareData = {
+                            title: '${escapeXml(post.title)}',
+                            text: '${escapeXml(post.description)}',
+                            url: window.location.href
+                        };
+                        if (navigator.share) {
+                            try {
+                                await navigator.share(shareData);
+                            } catch (err) {
+                                console.log('Error sharing', err);
+                            }
+                        } else {
+                            // Fallback for desktop/unsupported
+                            alert('انسخ الرابط للمشاركة: ' + window.location.href);
+                        }
+                    });
+                }
+            });
+        </script>
+        `;
+        $('article').after(shareHtml);
+
+        // 4. Inject JS Logic for Buttons (Hidden Data)
         const jsLogic = `
         <script>
             document.addEventListener('DOMContentLoaded', () => {

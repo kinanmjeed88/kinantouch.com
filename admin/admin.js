@@ -43,6 +43,44 @@ window.switchTab = (tabName) => {
     if (tabName === 'settings') loadSettings();
 };
 
+// --- IMAGE COMPRESSION LOGIC (WebP) ---
+async function compressAndConvertToWebP(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 1200; // Limit max width
+                const scaleSize = MAX_WIDTH / img.width;
+                
+                let width = img.width;
+                let height = img.height;
+
+                // Resize if too big
+                if (scaleSize < 1) {
+                    width = MAX_WIDTH;
+                    height = img.height * scaleSize;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Convert to WebP with 0.8 quality
+                const webpData = canvas.toDataURL('image/webp', 0.8);
+                // Return base64 string without prefix for GitHub API
+                resolve(webpData.split(',')[1]); 
+            };
+            img.onerror = (error) => reject(error);
+        };
+        reader.onerror = (error) => reject(error);
+    });
+}
+
 // --- GitHub API Helpers ---
 const api = {
     base: () => `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents`,
@@ -64,16 +102,23 @@ const api = {
         if (!res.ok) throw new Error('Delete Failed');
     },
     async uploadImage(file) {
-        const reader = new FileReader();
-        return new Promise((resolve, reject) => {
-            reader.onload = async () => {
-                const b64 = reader.result.split(',')[1];
-                const fileName = `assets/images/${Date.now()}_${file.name.replace(/\s/g, '_')}`;
-                await fetch(`${this.base()}/${fileName}`, { method: 'PUT', headers: this.headers(), body: JSON.stringify({ message: 'Upload Image via CMS', content: b64 }) });
-                resolve(fileName);
-            };
-            reader.readAsDataURL(file);
-        });
+        try {
+            // Compress image to WebP before uploading
+            const b64 = await compressAndConvertToWebP(file);
+            // Change extension to .webp
+            const originalName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+            const fileName = `assets/images/${Date.now()}_${originalName.replace(/\s/g, '_')}.webp`;
+            
+            await fetch(`${this.base()}/${fileName}`, { 
+                method: 'PUT', 
+                headers: this.headers(), 
+                body: JSON.stringify({ message: 'Upload Compressed WebP via CMS', content: b64 }) 
+            });
+            return fileName;
+        } catch (e) {
+            console.error("Compression/Upload Error:", e);
+            throw e;
+        }
     }
 };
 
@@ -114,7 +159,7 @@ window.updateSizeDisplay = (val) => { document.getElementById('sizeDisplay').inn
 window.selectLucideIcon = (iconName) => { const size = document.getElementById('pickerSize').value; applyIconChange({ type: 'lucide', value: iconName, size: size }); };
 window.handlePickerFileSelect = async (input) => {
     if (input.files && input.files[0]) {
-        const btn = document.getElementById('btnUploadPicker'); btn.innerText = 'جاري الرفع...'; btn.disabled = true;
+        const btn = document.getElementById('btnUploadPicker'); btn.innerText = 'جاري الضغط والرفع...'; btn.disabled = true;
         try { const url = await api.uploadImage(input.files[0]); document.getElementById('pickerUrl').value = url; updatePickerPreview(url); } catch(e) { alert('Upload failed: ' + e.message); }
         btn.innerHTML = '<i data-lucide="upload"></i> رفع صورة'; btn.disabled = false; lucide.createIcons();
     }
@@ -154,14 +199,51 @@ function renderPosts() {
         return `<div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all"><div class="flex items-center gap-4"><img src="${p.image.startsWith('http') ? p.image : '../'+p.image}" class="w-16 h-10 object-cover rounded-md bg-gray-100"><div class="flex-1 min-w-0"><h3 class="font-bold text-gray-800 line-clamp-1">${p.title}</h3><div class="text-xs text-gray-400 flex gap-2 items-center">${dateDisplay}<span>•</span><span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category}</span></div></div></div><div class="flex gap-2 shrink-0"><button onclick="editPost('${p.slug}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deletePost('${p.slug}')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg"><i data-lucide="trash" class="w-4 h-4"></i></button></div></div>`;
     }).join(''); lucide.createIcons();
 }
-window.openPostEditor = () => { document.getElementById('postEditor').classList.remove('hidden'); ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage'].forEach(id => document.getElementById(id).value = ''); document.getElementById('pSlug').dataset.mode = 'new'; document.getElementById('pSlug').readOnly = false; document.getElementById('editorTitle').innerText = 'مقال جديد'; };
+window.openPostEditor = () => { 
+    document.getElementById('postEditor').classList.remove('hidden'); 
+    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pSummary', 'pPoints', 'pYoutubeId'].forEach(id => document.getElementById(id).value = ''); 
+    document.getElementById('pSlug').dataset.mode = 'new'; 
+    document.getElementById('pSlug').readOnly = false; 
+    document.getElementById('editorTitle').innerText = 'مقال جديد'; 
+};
 window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
-window.editPost = (slug) => { const p = cachedPosts.find(x => x.slug === slug); if (!p) return; document.getElementById('pTitle').value = p.title; document.getElementById('pSlug').value = p.slug; document.getElementById('pSlug').readOnly = true; document.getElementById('pSlug').dataset.mode = 'edit'; document.getElementById('pCat').value = p.category; document.getElementById('pDesc').value = p.description; document.getElementById('pContent').value = p.content; document.getElementById('pImage').value = p.image; document.getElementById('editorTitle').innerText = 'تعديل مقال'; document.getElementById('postEditor').classList.remove('hidden'); };
+window.editPost = (slug) => { 
+    const p = cachedPosts.find(x => x.slug === slug); 
+    if (!p) return; 
+    document.getElementById('pTitle').value = p.title; 
+    document.getElementById('pSlug').value = p.slug; 
+    document.getElementById('pSlug').readOnly = true; 
+    document.getElementById('pSlug').dataset.mode = 'edit'; 
+    document.getElementById('pCat').value = p.category; 
+    document.getElementById('pDesc').value = p.description; 
+    document.getElementById('pContent').value = p.content; 
+    document.getElementById('pImage').value = p.image; 
+    // Fill AI Fields
+    document.getElementById('pSummary').value = p.summary || '';
+    document.getElementById('pPoints').value = p.points || '';
+    document.getElementById('pYoutubeId').value = p.youtubeVideoId || '';
+
+    document.getElementById('editorTitle').innerText = 'تعديل مقال'; 
+    document.getElementById('postEditor').classList.remove('hidden'); 
+};
 window.savePost = async () => {
     const btn = document.getElementById('btnSavePost'); btn.innerText = 'جاري الحفظ...'; btn.disabled = true;
     try {
         const slug = document.getElementById('pSlug').value.trim() || 'untitled'; const isEdit = document.getElementById('pSlug').dataset.mode === 'edit'; const existingPost = isEdit ? cachedPosts.find(p => p.slug === slug) : null; const now = new Date().toISOString().split('T')[0];
-        const postData = { title: document.getElementById('pTitle').value, slug: slug, description: document.getElementById('pDesc').value, category: document.getElementById('pCat').value, date: isEdit ? existingPost.date : now, updated: isEdit ? now : undefined, image: document.getElementById('pImage').value, content: document.getElementById('pContent').value };
+        const postData = { 
+            title: document.getElementById('pTitle').value, 
+            slug: slug, 
+            description: document.getElementById('pDesc').value, 
+            category: document.getElementById('pCat').value, 
+            date: isEdit ? existingPost.date : now, 
+            updated: isEdit ? now : undefined, 
+            image: document.getElementById('pImage').value, 
+            content: document.getElementById('pContent').value,
+            // New AI Fields
+            summary: document.getElementById('pSummary').value,
+            points: document.getElementById('pPoints').value,
+            youtubeVideoId: document.getElementById('pYoutubeId').value
+        };
         if(!postData.updated) delete postData.updated;
         await api.put(`content/posts/${slug}.json`, JSON.stringify(postData, null, 2), `Update Post: ${postData.title}`, existingPost ? existingPost.sha : null);
         showToast('تم حفظ المقال بنجاح!'); closePostEditor(); loadPosts();
@@ -171,6 +253,47 @@ window.deletePost = async (slug) => { if(!confirm('حذف؟')) return; const p =
 
 window.insertYoutube = () => { const url = prompt("رابط يوتيوب:"); if (url) window.insertTag(`\n@[youtube](${url})\n`); };
 window.insertLink = () => { const url = prompt("الرابط:"); const text = prompt("النص:"); if(url) window.insertTag(`[${text || 'اضغط هنا'}](${url})`); };
+
+// --- AI GENERATION LOGIC ---
+const API_ENDPOINT = 'https://kinantouch.com/api/';
+
+window.generateAIContent = async () => {
+    const title = document.getElementById('pTitle').value;
+    const rawContent = document.getElementById('pContent').value;
+    const btn = document.getElementById('btnGenerateAI');
+    
+    if(!title) { alert('يجب كتابة عنوان المقال أولاً.'); return; }
+
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin"></i> جاري التوليد...`;
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(API_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, content: rawContent || title })
+        });
+
+        if (!response.ok) throw new Error(`Server Error: ${response.status}`);
+
+        const data = await response.json();
+
+        if(data.content) document.getElementById('pContent').value = data.content;
+        if(data.summary) document.getElementById('pSummary').value = data.summary;
+        if(data.points) document.getElementById('pPoints').value = data.points;
+        if(data.youtubeVideoId) document.getElementById('pYoutubeId').value = data.youtubeVideoId;
+
+        showToast('تم التوليد بنجاح!');
+    } catch (e) {
+        alert('حدث خطأ أثناء التوليد: ' + e.message);
+        console.error(e);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        lucide.createIcons();
+    }
+};
 
 // --- CHANNELS LOGIC ---
 async function loadChannels() {
@@ -230,7 +353,6 @@ async function loadSettings() {
         console.error(e); 
         alert("حدث خطأ أثناء تحميل الإعدادات. قد يكون الملف غير موجود أو تالف.\n" + e.message);
     } finally {
-        // Fix: Ensure loader is hidden and form is shown even if there's an error
         loader.classList.add('hidden'); 
         form.classList.remove('hidden');
     }
@@ -274,6 +396,22 @@ window.toggleGithubSettings = () => document.getElementById('ghModal').classList
 window.saveGhSettings = () => { localStorage.setItem('gh_owner', document.getElementById('ghOwner').value.trim()); localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim()); localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim()); location.reload(); };
 function arabicToLatin(str) { const map = {'أ':'a','إ':'e','آ':'a','ا':'a','ب':'b','ت':'t','ث':'th','ج':'j','ح':'h','خ':'kh','د':'d','ذ':'th','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'w','ي':'y','ى':'a','ة':'h','ء':'a','ئ':'e','ؤ':'o'}; return str.split('').map(char => map[char] || char).join(''); }
 window.autoSlug = () => { const title = document.getElementById('pTitle').value; if (document.getElementById('pSlug').dataset.mode === 'new') { let slug = arabicToLatin(title).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-'); if(slug.length < 2) slug = 'post-' + Date.now(); document.getElementById('pSlug').value = slug.substring(0, 60); } };
-window.handleFileSelect = async (input, targetId, previewId = null) => { if (input.files && input.files[0]) { const btn = input.nextElementSibling; btn.innerText = '...'; btn.disabled = true; try { const url = await api.uploadImage(input.files[0]); document.getElementById(targetId).value = url; if(previewId) document.getElementById(previewId).src = '../' + url; } catch(e) { alert('Upload failed: ' + e.message); } btn.innerText = 'رفع'; btn.disabled = false; } };
+window.handleFileSelect = async (input, targetId, previewId = null) => { 
+    if (input.files && input.files[0]) { 
+        const btn = input.nextElementSibling; 
+        const originalText = btn.innerText;
+        btn.innerText = 'جاري الضغط...'; 
+        btn.disabled = true; 
+        try { 
+            const url = await api.uploadImage(input.files[0]); 
+            document.getElementById(targetId).value = url; 
+            if(previewId) document.getElementById(previewId).src = '../' + url; 
+        } catch(e) { 
+            alert('Upload failed: ' + e.message); 
+        } 
+        btn.innerText = originalText; 
+        btn.disabled = false; 
+    } 
+};
 window.insertTag = (tag) => { const ta = document.getElementById('pContent'); const start = ta.selectionStart; const end = ta.selectionEnd; ta.value = ta.value.substring(0, start) + tag + ta.value.substring(end); ta.focus(); ta.selectionStart = ta.selectionEnd = start + tag.length; };
 function showToast(msg) { const t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('translate-y-[-100%]', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-[-100%]', 'opacity-0'), 3000); }
