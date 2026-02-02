@@ -315,135 +315,71 @@ async function loadSettings() {
     loader.classList.remove('hidden'); form.classList.add('hidden');
     try {
         const file = await api.get('content/data/about.json'); cachedAbout = JSON.parse(decodeURIComponent(escape(atob(file.content)))); cachedAbout.sha = file.sha;
+        document.getElementById('siteName').value = cachedAbout.siteName || "TechTouch";
         
-        // Basic Info
-        const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
-        setVal('siteName', cachedAbout.siteName || "TechTouch");
-        setVal('valName', cachedAbout.profileName);
-        setVal('valProfileImg', cachedAbout.profileImage);
-        setVal('valBio', cachedAbout.bio);
-        setVal('valLogoUrl', cachedAbout.logoUrl);
-
         // Logo Settings
         const logoType = cachedAbout.logoType || 'text';
-        const logoRb = document.querySelector(`input[name="logoType"][value="${logoType}"]`); 
-        if(logoRb) logoRb.checked = true;
+        const logoRb = document.querySelector(`input[name="logoType"][value="${logoType}"]`); if(logoRb) logoRb.checked = true;
+        document.getElementById('valLogoUrl').value = cachedAbout.logoUrl || '';
         toggleLogoInput();
 
-        // Categories
-        const cats = cachedAbout.categories?.labels || {};
-        setVal('catLabel_articles', cats.articles || "اخبار");
-        setVal('catLabel_apps', cats.apps || "تطبيقات");
-        setVal('catLabel_games', cats.games || "ألعاب");
-        setVal('catLabel_sports', cats.sports || "رياضة");
+        const cats = cachedAbout.categories?.labels || { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" };
+        document.getElementById('catLabel_articles').value = cats.articles; document.getElementById('catLabel_apps').value = cats.apps; document.getElementById('catLabel_games').value = cats.games; document.getElementById('catLabel_sports').value = cats.sports;
         
-        // Unified Font Sizes Load (With Safe Defaults)
+        // Unified Font Sizes Load
         const fonts = cachedAbout.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
+        document.getElementById('fontSize_nav').value = fonts.nav || 12; document.getElementById('f_nav_val').innerText = fonts.nav || 12;
+        document.getElementById('fontSize_content').value = fonts.content || 13; document.getElementById('f_content_val').innerText = fonts.content || 13;
+        document.getElementById('fontSize_titles').value = fonts.titles || 14; document.getElementById('f_titles_val').innerText = fonts.titles || 14;
+        document.getElementById('fontSize_main').value = fonts.mainTitles || 15; document.getElementById('f_main_val').innerText = fonts.mainTitles || 15;
+
+        document.getElementById('valName').value = cachedAbout.profileName;
         
-        const setFont = (id, val, displayId) => {
-            const el = document.getElementById(id);
-            const disp = document.getElementById(displayId);
-            if(el) { el.value = val; }
-            if(disp) { disp.innerText = val; }
-        };
-
-        setFont('fontSize_nav', fonts.nav || 12, 'f_nav_val');
-        setFont('fontSize_content', fonts.content || 13, 'f_content_val');
-        setFont('fontSize_titles', fonts.titles || 14, 'f_titles_val');
-        setFont('fontSize_main', fonts.mainTitles || 15, 'f_main_val');
-
         // Handle profile image preview correctly for Admin UI
         let profileSrc = cachedAbout.profileImage;
         if (profileSrc && !profileSrc.startsWith('http')) {
              profileSrc = profileSrc.replace(/^(\.\.\/)+/, '');
              profileSrc = '../' + profileSrc;
         }
-        const previewEl = document.getElementById('previewProfile');
-        if(previewEl) previewEl.src = profileSrc || '../assets/images/me.jpg';
+        document.getElementById('previewProfile').src = profileSrc || '../assets/images/me.jpg';
         
-        // Ticker
+        document.getElementById('valProfileImg').value = cachedAbout.profileImage;
+        document.getElementById('valBio').value = cachedAbout.bio;
         if (cachedAbout.ticker) {
-            setVal('tickerLabel', cachedAbout.ticker.label);
-            setVal('tickerText', cachedAbout.ticker.text);
-            setVal('tickerUrl', cachedAbout.ticker.url);
-            setFont('tickerSize', cachedAbout.ticker.fontSize || 14, 'tickerSizeVal');
-            const tickCheck = document.getElementById('tickerAnimated');
-            if(tickCheck) tickCheck.checked = cachedAbout.ticker.animated !== false; 
+            document.getElementById('tickerLabel').value = cachedAbout.ticker.label; document.getElementById('tickerText').value = cachedAbout.ticker.text; document.getElementById('tickerUrl').value = cachedAbout.ticker.url;
+            document.getElementById('tickerSize').value = cachedAbout.ticker.fontSize || 14; document.getElementById('tickerSizeVal').innerText = cachedAbout.ticker.fontSize || 14;
+            document.getElementById('tickerAnimated').checked = cachedAbout.ticker.animated !== false; 
         }
-
-        // Info Sections
-        setVal('valBotInfo', cachedAbout.botInfo || "");
-        setVal('valSearchInfo', cachedAbout.searchInfo || "");
-        setVal('valBotTitle', cachedAbout.botTitle || "مركز خدمة الطلبات (Bot)");
-        setVal('valSearchTitle', cachedAbout.searchTitle || "دليل الوصول الذكي للمحتوى");
-        
-        // Cover
-        const coverType = cachedAbout.coverType || 'color';
-        const coverRb = document.querySelector(`input[name="coverType"][value="${coverType}"]`);
-        if(coverRb) coverRb.checked = true;
-        
-        if(coverType === 'color') setVal('valCoverColor', cachedAbout.coverValue);
-        else setVal('valCoverImg', cachedAbout.coverValue);
-        toggleCoverInput();
-
-        // Social
-        const social = cachedAbout.social || {};
-        setVal('socFb', social.facebook);
-        setVal('socInsta', social.instagram);
-        setVal('socTikTok', social.tiktok);
-        setVal('socYt', social.youtube);
-        setVal('socTg', social.telegram);
-
-        // Social Icons
+        document.getElementById('valBotInfo').value = cachedAbout.botInfo || ""; document.getElementById('valSearchInfo').value = cachedAbout.searchInfo || "";
+        document.getElementById('valBotTitle').value = cachedAbout.botTitle || "مركز خدمة الطلبات (Bot)"; document.getElementById('valSearchTitle').value = cachedAbout.searchTitle || "دليل الوصول الذكي للمحتوى";
+        const coverType = cachedAbout.coverType || 'color'; const rb = document.querySelector(`input[name="coverType"][value="${coverType}"]`); if(rb) rb.checked = true;
+        if(coverType === 'color') document.getElementById('valCoverColor').value = cachedAbout.coverValue; else document.getElementById('valCoverImg').value = cachedAbout.coverValue; toggleCoverInput();
+        document.getElementById('socFb').value = cachedAbout.social.facebook; document.getElementById('socInsta').value = cachedAbout.social.instagram; document.getElementById('socTikTok').value = cachedAbout.social.tiktok; document.getElementById('socYt').value = cachedAbout.social.youtube; document.getElementById('socTg').value = cachedAbout.social.telegram;
         const socialIcons = cachedAbout.socialIcons || {};
         ['facebook','instagram','tiktok','youtube','telegram'].forEach(key => {
-            const btn = document.getElementById(`btnIcon_${key}`);
-            if(!btn) return;
-            
-            let data = socialIcons[key]; 
-            if (!data || typeof data === 'string') data = { type: 'lucide', value: data || key, size: 24 };
+            const btn = document.getElementById(`btnIcon_${key}`); let data = socialIcons[key]; if (!data || typeof data === 'string') data = { type: 'lucide', value: data || key, size: 24 };
             if(key === 'tiktok' && (!socialIcons[key] || socialIcons[key].value === 'video')) data.value = 'video'; 
-            
             btn.dataset.iconInfo = JSON.stringify(data);
             if (data.type === 'image') {
                 let sUrl = data.value;
                 if(sUrl && !sUrl.startsWith('http')) sUrl = '../' + sUrl.replace(/^(\.\.\/)+/, '');
                 btn.innerHTML = `<img src="${sUrl}" style="width:24px; height:24px; object-fit:contain;">`; 
-            } else { 
-                btn.innerHTML = `<i data-lucide="${data.value}"></i>`; 
-            }
+            } else { btn.innerHTML = `<i data-lucide="${data.value}"></i>`; }
         });
-        
         lucide.createIcons(); 
-    } catch(e) { 
-        console.error(e); 
-        alert("خطأ في تحميل الإعدادات: " + e.message); 
-    } finally { 
-        loader.classList.add('hidden'); 
-        form.classList.remove('hidden'); 
-    }
+    } catch(e) { console.error(e); alert("خطأ في تحميل الإعدادات: " + e.message); } finally { loader.classList.add('hidden'); form.classList.remove('hidden'); }
 }
-
-window.toggleCoverInput = () => { 
-    const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color'; 
-    const colorInput = document.getElementById('coverColorInput'); 
-    const imgInput = document.getElementById('coverImageInput'); 
-    if (colorInput && imgInput) { 
-        if(type === 'color') { colorInput.classList.remove('hidden'); imgInput.classList.add('hidden'); } 
-        else { colorInput.classList.add('hidden'); imgInput.classList.remove('hidden'); } 
-    } 
-};
-
+window.toggleCoverInput = () => { const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color'; const colorInput = document.getElementById('coverColorInput'); const imgInput = document.getElementById('coverImageInput'); if (colorInput && imgInput) { if(type === 'color') { colorInput.classList.remove('hidden'); imgInput.classList.add('hidden'); } else { colorInput.classList.add('hidden'); imgInput.classList.remove('hidden'); } } };
 window.toggleLogoInput = () => { 
     const type = document.querySelector('input[name="logoType"]:checked')?.value || 'text'; 
     const logoInput = document.getElementById('logoImageInput'); 
     const siteNameInput = document.getElementById('siteName');
     if (type === 'image') { 
-        if(logoInput) logoInput.classList.remove('hidden'); 
-        if(siteNameInput) siteNameInput.classList.add('opacity-50'); 
+        logoInput.classList.remove('hidden'); 
+        siteNameInput.classList.add('opacity-50'); 
     } else { 
-        if(logoInput) logoInput.classList.add('hidden'); 
-        if(siteNameInput) siteNameInput.classList.remove('opacity-50'); 
+        logoInput.classList.add('hidden'); 
+        siteNameInput.classList.remove('opacity-50'); 
     } 
 };
 
@@ -452,66 +388,26 @@ window.saveSettingsData = async () => {
     try {
         const coverType = document.querySelector('input[name="coverType"]:checked').value;
         const logoType = document.querySelector('input[name="logoType"]:checked').value;
-        const getIconData = (key) => {
-            const el = document.getElementById(`btnIcon_${key}`);
-            return el ? JSON.parse(el.dataset.iconInfo || '{}') : {};
-        };
-        
+        const getIconData = (key) => JSON.parse(document.getElementById(`btnIcon_${key}`).dataset.iconInfo || '{}');
         const newSettings = {
-            profileName: document.getElementById('valName').value, 
-            profileImage: document.getElementById('valProfileImg').value, 
-            bio: document.getElementById('valBio').value,
-            botInfo: document.getElementById('valBotInfo').value, 
-            searchInfo: document.getElementById('valSearchInfo').value, 
-            botTitle: document.getElementById('valBotTitle').value, 
-            searchTitle: document.getElementById('valSearchTitle').value,
-            coverType: coverType, 
-            coverValue: coverType === 'color' ? document.getElementById('valCoverColor').value : document.getElementById('valCoverImg').value,
+            profileName: document.getElementById('valName').value, profileImage: document.getElementById('valProfileImg').value, bio: document.getElementById('valBio').value,
+            botInfo: document.getElementById('valBotInfo').value, searchInfo: document.getElementById('valSearchInfo').value, botTitle: document.getElementById('valBotTitle').value, searchTitle: document.getElementById('valSearchTitle').value,
+            coverType: coverType, coverValue: coverType === 'color' ? document.getElementById('valCoverColor').value : document.getElementById('valCoverImg').value,
             siteName: document.getElementById('siteName').value,
-            logoType: logoType, 
-            logoUrl: document.getElementById('valLogoUrl').value,
-            categories: { 
-                labels: { 
-                    articles: document.getElementById('catLabel_articles').value, 
-                    apps: document.getElementById('catLabel_apps').value, 
-                    games: document.getElementById('catLabel_games').value, 
-                    sports: document.getElementById('catLabel_sports').value 
-                } 
-            },
+            logoType: logoType, logoUrl: document.getElementById('valLogoUrl').value,
+            categories: { labels: { articles: document.getElementById('catLabel_articles').value, apps: document.getElementById('catLabel_apps').value, games: document.getElementById('catLabel_games').value, sports: document.getElementById('catLabel_sports').value } },
             globalFonts: {
-                nav: parseInt(document.getElementById('fontSize_nav').value) || 12,
-                content: parseInt(document.getElementById('fontSize_content').value) || 13,
-                titles: parseInt(document.getElementById('fontSize_titles').value) || 14,
-                mainTitles: parseInt(document.getElementById('fontSize_main').value) || 15
+                nav: parseInt(document.getElementById('fontSize_nav').value),
+                content: parseInt(document.getElementById('fontSize_content').value),
+                titles: parseInt(document.getElementById('fontSize_titles').value),
+                mainTitles: parseInt(document.getElementById('fontSize_main').value)
             },
-            ticker: { 
-                label: document.getElementById('tickerLabel').value, 
-                text: document.getElementById('tickerText').value, 
-                url: document.getElementById('tickerUrl').value, 
-                fontSize: parseInt(document.getElementById('tickerSize').value) || 14, 
-                animated: document.getElementById('tickerAnimated').checked 
-            },
-            social: { 
-                facebook: document.getElementById('socFb').value, 
-                instagram: document.getElementById('socInsta').value, 
-                tiktok: document.getElementById('socTikTok').value, 
-                youtube: document.getElementById('socYt').value, 
-                telegram: document.getElementById('socTg').value 
-            },
-            socialIcons: { 
-                facebook: getIconData('facebook'), 
-                instagram: getIconData('instagram'), 
-                tiktok: getIconData('tiktok'), 
-                youtube: getIconData('youtube'), 
-                telegram: getIconData('telegram') 
-            }
+            ticker: { label: document.getElementById('tickerLabel').value, text: document.getElementById('tickerText').value, url: document.getElementById('tickerUrl').value, fontSize: parseInt(document.getElementById('tickerSize').value), animated: document.getElementById('tickerAnimated').checked },
+            social: { facebook: document.getElementById('socFb').value, instagram: document.getElementById('socInsta').value, tiktok: document.getElementById('socTikTok').value, youtube: document.getElementById('socYt').value, telegram: document.getElementById('socTg').value },
+            socialIcons: { facebook: getIconData('facebook'), instagram: getIconData('instagram'), tiktok: getIconData('tiktok'), youtube: getIconData('youtube'), telegram: getIconData('telegram') }
         };
-        await api.put('content/data/about.json', JSON.stringify(newSettings, null, 2), 'Update Settings', cachedAbout.sha); 
-        showToast('تم تحديث الإعدادات'); 
-        const file = await api.get('content/data/about.json'); 
-        cachedAbout.sha = file.sha;
-    } catch(e) { alert(e.message); } 
-    btn.innerText = 'حفظ التغييرات';
+        await api.put('content/data/about.json', JSON.stringify(newSettings, null, 2), 'Update Settings', cachedAbout.sha); showToast('تم تحديث الإعدادات'); const file = await api.get('content/data/about.json'); cachedAbout.sha = file.sha;
+    } catch(e) { alert(e.message); } btn.innerText = 'حفظ التغييرات';
 };
 
 window.toggleGithubSettings = () => document.getElementById('ghModal').classList.toggle('hidden');
