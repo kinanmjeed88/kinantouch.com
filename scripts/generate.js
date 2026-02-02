@@ -255,9 +255,19 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // 4. Common UI Updates - PROFESSIONAL FIX
     
-    // A. Profile Image (Everywhere) - Matches ID or Class
-    const profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
+    // A. Profile Image Logic (Robust Cleaning)
+    let profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
+    
+    // Safety Clean: Remove any '../' or leading '/' that might break relative pathing in root files
+    // This ensures that if CMS saves '../assets/images/x.webp', it becomes 'assets/images/x.webp'
+    profileImgSrc = profileImgSrc.replace(/^(\.\.\/)+/, '').replace(/^\/+/, '');
+    
+    // Apply to Header ID and Display Class (Used in Header and About Hero)
     $('#header-profile-img, .profile-img-display').attr('src', profileImgSrc);
+    
+    // Update Favicon (Important for branding)
+    $('link[rel="shortcut icon"]').attr('href', profileImgSrc);
+    $('link[rel="icon"]').attr('href', profileImgSrc);
     
     // B. Profile Name (Everywhere)
     $('#header-profile-name').text(aboutData.profileName);
@@ -265,7 +275,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // C. Site Title
     $('header .tracking-tight').text(aboutData.siteName || 'TechTouch');
 
-    // D. DYNAMIC CSS INJECTION (FIXED SCOPE)
+    // D. DYNAMIC CSS INJECTION (FIXED SCOPE - DO NOT TOUCH)
     // Only targets specific components (Tabs, Cards, Ticker) to avoid breaking global site layout
     const baseSize = parseInt(aboutData.categories?.fontSize) || 14;
     const dynamicStyle = `
