@@ -276,17 +276,33 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // B. Profile Name
     $('#header-profile-name').text(aboutData.profileName);
     
-    // C. Site Title / Logo (UPDATED LOGIC)
-    const siteTitleEl = $('header a.text-xl');
-    if (aboutData.logoType === 'image' && aboutData.logoUrl) {
-        const logoUrl = cleanPath(aboutData.logoUrl);
-        // Replace text with Image, enforcing max-height to fit header
-        siteTitleEl.html(`<img src="${logoUrl}" alt="${aboutData.siteName}" style="max-height: 40px; width: auto; display: block;" />`);
-        siteTitleEl.removeClass('text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight'); // Remove text styling
-        siteTitleEl.addClass('flex items-center'); // Center alignment
-    } else {
-        siteTitleEl.text(aboutData.siteName || 'TechTouch');
-        siteTitleEl.addClass('text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight');
+    // C. Site Title / Logo (FIXED LOGIC)
+    // Find the logo link. It's the one pointing to index.html inside the header, but NOT the one with icons (like nav links or back button)
+    // We look for an anchor inside header that links to index.html and either contains text or an image.
+    let siteTitleEl = $('header a[href="index.html"]').filter((i, el) => {
+        // Exclude buttons that are purely icons (often have p-2 padding or rounded-lg)
+        const cls = $(el).attr('class') || '';
+        const content = $(el).html() || '';
+        return !cls.includes('p-2') && (content.includes(aboutData.siteName) || content.includes('<img') || cls.includes('font-black'));
+    }).first();
+
+    if (siteTitleEl.length) {
+        if (aboutData.logoType === 'image' && aboutData.logoUrl) {
+            const logoUrl = cleanPath(aboutData.logoUrl);
+            // Replace text with Image, enforcing max-height to fit header
+            siteTitleEl.html(`<img src="${logoUrl}" alt="${aboutData.siteName}" style="max-height: 40px; width: auto; display: block;" />`);
+            // Remove text classes to prevent layout issues
+            siteTitleEl.removeClass('text-xl text-lg font-black text-blue-600 dark:text-blue-400 tracking-tight truncate'); 
+            siteTitleEl.addClass('flex items-center'); // Center alignment
+        } else {
+            // Restore Text Mode
+            siteTitleEl.html(aboutData.siteName || 'TechTouch');
+            // Remove image classes if any
+            siteTitleEl.removeClass('flex items-center');
+            // Add proper text classes based on page context (index usually has text-xl or text-lg)
+            // We'll enforce text-xl for consistency across most pages, or preserve what was there if we could detect it, but enforcing is safer.
+            siteTitleEl.addClass('text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight truncate');
+        }
     }
 
     // D. UNIFIED DYNAMIC CSS INJECTION
@@ -494,7 +510,7 @@ const updateSearchData = () => {
     fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
 };
 
-// RSS Generator (Restored)
+// RSS Generator
 const generateRSS = () => {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
     const now = new Date().toUTCString();
@@ -525,7 +541,7 @@ const generateRSS = () => {
     fs.writeFileSync(feedPath, xml);
 };
 
-// Sitemap Generator (Restored)
+// Sitemap Generator
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
