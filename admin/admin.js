@@ -167,7 +167,13 @@ window.handlePickerFileSelect = async (input) => {
 };
 window.updatePickerPreview = (url) => {
     const img = document.getElementById('pickerPreviewImg'); const ph = document.getElementById('pickerPlaceholder');
-    if (url) { img.src = url.startsWith('http') ? url : `../${url}`; img.classList.remove('hidden'); ph.classList.add('hidden'); const size = document.getElementById('pickerSize').value; img.style.width = size + 'px'; img.style.height = size + 'px'; } else { img.classList.add('hidden'); ph.classList.remove('hidden'); }
+    if (url) { 
+        // CLEANUP: Ensure no double dots or slashes if it's a relative path
+        let displayUrl = url.startsWith('http') ? url : url.replace(/^(\.\.\/)+/, '');
+        displayUrl = '../' + displayUrl; 
+        img.src = displayUrl; 
+        img.classList.remove('hidden'); ph.classList.add('hidden'); const size = document.getElementById('pickerSize').value; img.style.width = size + 'px'; img.style.height = size + 'px'; 
+    } else { img.classList.add('hidden'); ph.classList.remove('hidden'); }
 };
 window.confirmImageSelection = () => { const url = document.getElementById('pickerUrl').value; const size = document.getElementById('pickerSize').value; if(!url) return alert('يرجى اختيار صورة أو رابط'); applyIconChange({ type: 'image', value: url, size: size }); };
 
@@ -213,7 +219,15 @@ function renderPosts() {
     if (!list) return;
     list.innerHTML = '';
     cachedPosts.forEach((p, index) => {
-        const safeImage = p.image ? (p.image.startsWith('http') ? p.image : '../' + p.image) : 'https://via.placeholder.com/300x200?text=No+Image';
+        // Fix image path for preview
+        let safeImage = p.image || '';
+        if (safeImage && !safeImage.startsWith('http')) {
+             safeImage = safeImage.replace(/^(\.\.\/)+/, ''); // clean relative
+             safeImage = '../' + safeImage;
+        } else if (!safeImage) {
+            safeImage = 'https://via.placeholder.com/300x200?text=No+Image';
+        }
+
         const dateDisplay = (p.updated && p.updated !== p.date) ? `<span class="text-blue-500 font-bold" title="تم التحديث">♻ ${p.updated}</span>` : `<span>${p.date || ''}</span>`;
         const card = document.createElement('div');
         card.className = 'bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all';
@@ -298,7 +312,15 @@ async function loadSettings() {
         document.getElementById('catLabel_articles').value = cats.articles; document.getElementById('catLabel_apps').value = cats.apps; document.getElementById('catLabel_games').value = cats.games; document.getElementById('catLabel_sports').value = cats.sports;
         document.getElementById('catFontSize').value = cachedAbout.categories?.fontSize || 14; document.getElementById('catSizeVal').innerText = cachedAbout.categories?.fontSize || 14;
         document.getElementById('valName').value = cachedAbout.profileName;
-        document.getElementById('previewProfile').src = cachedAbout.profileImage.startsWith('http') ? cachedAbout.profileImage : `../${cachedAbout.profileImage}`;
+        
+        // Handle profile image preview correctly
+        let profileSrc = cachedAbout.profileImage;
+        if (profileSrc && !profileSrc.startsWith('http')) {
+             profileSrc = profileSrc.replace(/^(\.\.\/)+/, '');
+             profileSrc = '../' + profileSrc;
+        }
+        document.getElementById('previewProfile').src = profileSrc || '../assets/images/me.jpg';
+        
         document.getElementById('valProfileImg').value = cachedAbout.profileImage;
         document.getElementById('valBio').value = cachedAbout.bio;
         if (cachedAbout.ticker) {
@@ -346,6 +368,6 @@ window.saveGhSettings = () => { localStorage.setItem('gh_owner', document.getEle
 
 function arabicToLatin(str) { if(!str) return ''; const map = { 'أ':'a','إ':'e','آ':'a','ا':'a','ب':'b','ت':'t','ث':'th','ج':'j','ح':'h','خ':'kh','د':'d','ذ':'th','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'w','ي':'y','ى':'a','ة':'h','ء':'a','ئ':'e','ؤ':'o', '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9', ' ': '-' }; return str.split('').map(char => map[char] || char).join(''); }
 window.autoSlug = () => { const title = document.getElementById('pTitle').value; if (document.getElementById('pSlug').dataset.mode === 'new') { let slug = arabicToLatin(title).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-'); if(slug.length < 2) slug = 'post-' + Date.now(); document.getElementById('pSlug').value = slug.substring(0, 60); } };
-window.handleFileSelect = async (input, targetId, previewId = null) => { if (input.files && input.files[0]) { const btn = input.nextElementSibling; const originalText = btn.innerText; btn.innerText = 'جاري الضغط...'; btn.disabled = true; try { const url = await api.uploadImage(input.files[0]); document.getElementById(targetId).value = url; if(previewId) document.getElementById(previewId).src = '../' + url; } catch(e) { alert('Upload failed: ' + e.message); } btn.innerText = originalText; btn.disabled = false; } };
+window.handleFileSelect = async (input, targetId, previewId = null) => { if (input.files && input.files[0]) { const btn = input.nextElementSibling; const originalText = btn.innerText; btn.innerText = 'جاري الضغط...'; btn.disabled = true; try { const url = await api.uploadImage(input.files[0]); document.getElementById(targetId).value = url; if(previewId) { let pUrl = url.startsWith('http') ? url : '../' + url; document.getElementById(previewId).src = pUrl; } } catch(e) { alert('Upload failed: ' + e.message); } btn.innerText = originalText; btn.disabled = false; } };
 window.insertTag = (tag) => { const ta = document.getElementById('pContent'); const start = ta.selectionStart; const end = ta.selectionEnd; ta.value = ta.value.substring(0, start) + tag + ta.value.substring(end); ta.focus(); ta.selectionStart = ta.selectionEnd = start + tag.length; };
 function showToast(msg) { const t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('translate-y-[-100%]', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-[-100%]', 'opacity-0'), 3000); }
