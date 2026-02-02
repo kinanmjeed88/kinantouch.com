@@ -28,18 +28,16 @@ const GOOGLE_SITE_VERIFICATION = '';
 
 // --- SCRIPTS TEMPLATES ---
 
+// UPDATED: Simplified GA4 Snippet as requested
 const GA_SCRIPT = `
-<!-- Google Analytics 4 (Auto-Injected) -->
+<!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', '${GA_ID}', {
-    anonymize_ip: true,
-    send_page_view: true
-  });
+  gtag('config', '${GA_ID}');
 </script>`;
 
 const AD_SCRIPT = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}" crossorigin="anonymous"></script>`;
@@ -134,7 +132,7 @@ const escapeXml = (unsafe) => {
     });
 };
 
-// --- FIX: Restore renderIconHTML Definition ---
+// --- Helper Functions ---
 const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     if (typeof iconData === 'string') {
         return `<i data-lucide="${iconData || defaultIconName}" class="w-5 h-5"></i>`;
@@ -331,18 +329,32 @@ const createCardHTML = (post) => {
 const updateGlobalElements = (htmlContent, fileName = '') => {
     const $ = cheerio.load(htmlContent);
 
-    // 1. Clean old scripts
+    // 1. Clean old scripts - Aggressively remove ANY gtag/analytics script to avoid duplication
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
         const content = $(el).html() || '';
-        if (src.match(/js\?id=G-/) && !src.includes('googletagmanager.com')) { $(el).remove(); }
-        if (src.includes('googletagmanager.com') || content.includes("gtag('config'") || src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle") || src.includes("cdn.onesignal.com")) {
+        
+        // Remove Google Analytics (Specific and Generic)
+        if (src.includes('googletagmanager.com') || content.includes("gtag('config'") || content.includes("gtag('js'") || src.includes('G-')) { 
+            $(el).remove(); 
+        }
+        
+        // Remove AdSense
+        if (src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle")) {
+            $(el).remove();
+        }
+        
+        // Remove OneSignal
+        if (src.includes("cdn.onesignal.com")) {
             $(el).remove();
         }
     });
 
     // 2. Inject Fresh Tracking Scripts
+    // Prepend GA4 immediately to head
     $('head').prepend(GA_SCRIPT);
+    
+    // Append others
     $('head').append(AD_SCRIPT);
     $('head').append(ONESIGNAL_SCRIPT);
     
@@ -352,10 +364,9 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('head').append(`<meta name="google-site-verification" content="${GOOGLE_SITE_VERIFICATION}" />`);
     }
 
-    // 4. Common UI Updates - FIXES FOR USER
+    // 4. Common UI Updates
     
     // Fix Profile Image in Header & About Page
-    // Only use direct assets link for simplicity and compatibility
     const profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
     $('#header-profile-img').attr('src', profileImgSrc);
     
@@ -418,22 +429,11 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         
         // Cover Image/Color
         if (aboutData.coverType === 'image' && aboutData.coverValue) {
-            // Apply background image style
             $('.bg-gradient-to-r, .bg-cover').css('background', `url(${aboutData.coverValue}) center/cover no-repeat`);
         } else if (aboutData.coverValue) {
-             // For gradients (Tailwind classes), we need to replace classes. 
-             // Since we can't easily remove old gradient classes without knowing them, we reset the style attribute and try to add class.
-             // But cheerio `addClass` appends. 
-             // Best approach for static site: clear style background and assume the class is correct in HTML or we replace the class attribute.
-             // Let's find the container.
              const coverContainer = $('.rounded-2xl > div').first();
-             // Reset style in case image was previously used
              coverContainer.attr('style', '');
-             // We can't easily swap Tailwind classes dynamically in cheerio without regex.
-             // Simplest fix: Just use style for everything or ensure coverValue is a valid CSS background property if it's a gradient? No, user uses classes.
-             // Let's try to overwrite the class attribute for the gradient part.
              const existingClasses = coverContainer.attr('class') || '';
-             // Remove any existing bg-gradient or from- to- classes roughly
              const baseClasses = existingClasses.replace(/bg-gradient-[^ ]+|from-[^ ]+|to-[^ ]+|bg-cover|bg-center/g, '').trim();
              coverContainer.attr('class', `${baseClasses} ${aboutData.coverValue} h-40 relative`);
         }
