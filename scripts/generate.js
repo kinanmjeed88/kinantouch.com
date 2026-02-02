@@ -21,13 +21,9 @@ const DATA_DIR = path.join(__dirname, '../content/data');
 const BASE_URL = 'https://kinantouch.com';
 
 // --- INTEGRATION CONFIGURATION ---
-// 1. Google Analytics
 const GA_ID = 'G-63BBPLQ343'; 
-// 2. Google AdSense
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
-// 3. OneSignal
 const ONESIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID'; 
-// 4. Google Verification
 const GOOGLE_SITE_VERIFICATION = ''; 
 
 // --- SCRIPTS TEMPLATES ---
@@ -138,6 +134,23 @@ const escapeXml = (unsafe) => {
     });
 };
 
+// --- FIX: Restore renderIconHTML Definition ---
+const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
+    if (typeof iconData === 'string') {
+        return `<i data-lucide="${iconData || defaultIconName}" class="w-5 h-5"></i>`;
+    }
+    if (iconData && typeof iconData === 'object') {
+        if (iconData.type === 'image') {
+            const size = iconData.size || defaultSize;
+            return `<img src="${iconData.value}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
+        } else {
+            const size = iconData.size || defaultSize;
+            return `<i data-lucide="${iconData.value}" style="width:${size}px; height:${size}px;"></i>`;
+        }
+    }
+    return `<i data-lucide="${defaultIconName}" class="w-5 h-5"></i>`;
+};
+
 // Markdown Parser
 const parseMarkdown = (markdown) => {
     if (!markdown) return '';
@@ -188,6 +201,96 @@ const getCatLabel = (cat) => {
     const defaults = { 'articles': 'اخبار', 'apps': 'تطبيقات', 'games': 'ألعاب', 'sports': 'رياضة' };
     const configured = aboutData.categories?.labels || {};
     return configured[cat] || defaults[cat] || 'عام';
+};
+
+// RSS Generator
+const generateRSS = () => {
+    const feedPath = path.join(ROOT_DIR, 'feed.xml');
+    const now = new Date().toUTCString();
+    let xml = `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>
+    <link>${BASE_URL}</link>
+    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
+    <language>ar</language>
+    <lastBuildDate>${now}</lastBuildDate>
+    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />`;
+
+    allPosts.slice(0, 20).forEach(post => {
+        const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
+        const fullImg = toAbsoluteUrl(post.image);
+        xml += `
+    <item>
+        <title><![CDATA[${post.title}]]></title>
+        <link>${fullUrl}</link>
+        <guid>${fullUrl}</guid>
+        <pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate>
+        <description><![CDATA[${post.description}]]></description>
+        <enclosure url="${fullImg}" type="image/jpeg" />
+    </item>`;
+    });
+    xml += `</channel></rss>`;
+    fs.writeFileSync(feedPath, xml);
+};
+
+// Sitemap Generator
+const generateSitemap = () => {
+    const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
+    const today = new Date().toISOString().split('T')[0];
+    
+    const staticPages = [
+        { file: 'index.html', url: '/', priority: '1.0' },
+        { file: 'articles.html', url: '/articles.html', priority: '0.9' },
+        { file: 'tools.html', url: '/tools.html', priority: '0.9' },
+        { file: 'about.html', url: '/about.html', priority: '0.7' },
+        { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
+        { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
+        { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
+        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
+        { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
+        { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
+    ];
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
+
+    staticPages.forEach(page => {
+        if (page.file === '404.html') return;
+        const filePath = path.join(ROOT_DIR, page.file);
+        let lastmod = today;
+        if (fs.existsSync(filePath)) {
+            try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {}
+        }
+        const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`;
+        xml += `
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <priority>${page.priority}</priority>
+  </url>`;
+    });
+
+    allPosts.forEach(post => {
+        const fullImg = toAbsoluteUrl(post.image);
+        const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
+        const postDate = new Date(post.effectiveDate).toISOString().split('T')[0];
+        xml += `
+  <url>
+    <loc>${pageUrl}</loc>
+    <lastmod>${postDate}</lastmod>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>${escapeXml(fullImg)}</image:loc>
+      <image:title>${escapeXml(post.title)}</image:title>
+    </image:image>
+  </url>`;
+    });
+
+    xml += `\n</urlset>`;
+    fs.writeFileSync(sitemapPath, xml);
+    console.log('✅ sitemap.xml regenerated automatically.');
 };
 
 const createCardHTML = (post) => {
@@ -252,9 +355,9 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // 4. Common UI Updates - FIXES FOR USER
     
     // Fix Profile Image in Header & About Page
+    // Only use direct assets link for simplicity and compatibility
     const profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
     $('#header-profile-img').attr('src', profileImgSrc);
-    $('.profile-img-display').attr('src', profileImgSrc); // Target generic class if used elsewhere
     
     // Fix Profile Name
     $('#header-profile-name').text(aboutData.profileName);
@@ -264,13 +367,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // Fix Social Links (Footer)
     if (aboutData.social) {
-        const updateLink = (selector, url) => {
-            if (url) $(selector).attr('href', url).removeClass('hidden');
-            else $(selector).addClass('hidden');
-        };
-        // Assuming footer has links with specific lucide icons or classes.
-        // We select by href matching known patterns or specific structure if available.
-        // Since we are updating specific files later, we can target them broadly here.
         $('footer a[href*="facebook"]').attr('href', aboutData.social.facebook || '#');
         $('footer a[href*="instagram"]').attr('href', aboutData.social.instagram || '#');
         $('footer a[href*="tiktok"]').attr('href', aboutData.social.tiktok || '#');
@@ -322,14 +418,24 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         
         // Cover Image/Color
         if (aboutData.coverType === 'image' && aboutData.coverValue) {
-            $('.bg-gradient-to-r').css('background', `url(${aboutData.coverValue}) center/cover no-repeat`).removeClass('bg-gradient-to-r');
+            // Apply background image style
+            $('.bg-gradient-to-r, .bg-cover').css('background', `url(${aboutData.coverValue}) center/cover no-repeat`);
         } else if (aboutData.coverValue) {
-             // If it's a class string like 'bg-gradient...', cheerio might struggle with addClass dynamically if we don't know the old class.
-             // Simplest is to set style background if it looks like a CSS value, or assume it's a class and hope for the best.
-             // Given the user input 'bg-gradient-to-r...', we should apply classes.
-             // Reset classes first
-             const headerDiv = $('.rounded-2xl > div').first();
-             headerDiv.attr('class', `h-40 relative ${aboutData.coverValue}`);
+             // For gradients (Tailwind classes), we need to replace classes. 
+             // Since we can't easily remove old gradient classes without knowing them, we reset the style attribute and try to add class.
+             // But cheerio `addClass` appends. 
+             // Best approach for static site: clear style background and assume the class is correct in HTML or we replace the class attribute.
+             // Let's find the container.
+             const coverContainer = $('.rounded-2xl > div').first();
+             // Reset style in case image was previously used
+             coverContainer.attr('style', '');
+             // We can't easily swap Tailwind classes dynamically in cheerio without regex.
+             // Simplest fix: Just use style for everything or ensure coverValue is a valid CSS background property if it's a gradient? No, user uses classes.
+             // Let's try to overwrite the class attribute for the gradient part.
+             const existingClasses = coverContainer.attr('class') || '';
+             // Remove any existing bg-gradient or from- to- classes roughly
+             const baseClasses = existingClasses.replace(/bg-gradient-[^ ]+|from-[^ ]+|to-[^ ]+|bg-cover|bg-center/g, '').trim();
+             coverContainer.attr('class', `${baseClasses} ${aboutData.coverValue} h-40 relative`);
         }
         
         $('.prose p:first').text(aboutData.bio);
@@ -364,23 +470,56 @@ const updateListingPages = () => {
     });
 };
 
-// ... [Rest of functions: updateToolsPage, updateChannelsPage, updateAboutPageDetails same as before] ...
-const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.append(ADSENSE_BLOCK); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
-const updateAboutPageDetails = () => { const aboutPath = path.join(ROOT_DIR, 'about.html'); if (!fs.existsSync(aboutPath)) return; let html = fs.readFileSync(aboutPath, 'utf8'); const $ = cheerio.load(html); fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html')); };
+const updateToolsPage = () => {
+    const filePath = path.join(ROOT_DIR, 'tools.html');
+    if (!fs.existsSync(filePath)) return;
+    let html = fs.readFileSync(filePath, 'utf8');
+    const $ = cheerio.load(html);
+    const main = $('main');
+    if (main.length) {
+        main.find('.adsbygoogle-container').remove();
+        main.append(ADSENSE_BLOCK);
+    }
+    fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html'));
+};
+
+const updateAboutPageDetails = () => {
+    const aboutPath = path.join(ROOT_DIR, 'about.html');
+    if (!fs.existsSync(aboutPath)) return;
+    let html = fs.readFileSync(aboutPath, 'utf8');
+    const $ = cheerio.load(html);
+    fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html'));
+};
+
 const updateChannelsPage = () => {
-    const toolsPath = path.join(ROOT_DIR, 'tools-sites.html'); if (!fs.existsSync(toolsPath)) return; let html = fs.readFileSync(toolsPath, 'utf8'); const $ = cheerio.load(html); const grid = $('main .grid'); grid.empty();
+    const toolsPath = path.join(ROOT_DIR, 'tools-sites.html');
+    if (!fs.existsSync(toolsPath)) return;
+    let html = fs.readFileSync(toolsPath, 'utf8');
+    const $ = cheerio.load(html);
+    const grid = $('main .grid');
+    grid.empty();
     channelsData.forEach(ch => {
         const renderedIcon = renderIconHTML(ch.iconData || ch.icon, 'star', 24);
-        grid.append(`<a href="${ch.url}" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group w-full"><div class="flex items-center gap-4 h-full"><div class="w-12 h-12 bg-${ch.color}-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden">${renderedIcon}</div><div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1 break-words whitespace-normal">${ch.name}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${ch.desc}</p></div><div class="text-gray-300 group-hover:text-${ch.color}-600 shrink-0 transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></div></div></a>`);
+        grid.append(`
+            <a href="${ch.url}" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group w-full">
+                <div class="flex items-center gap-4 h-full">
+                    <div class="w-12 h-12 bg-${ch.color}-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden">${renderedIcon}</div>
+                    <div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1 break-words whitespace-normal">${ch.name}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${ch.desc}</p></div>
+                    <div class="text-gray-300 group-hover:text-${ch.color}-600 shrink-0 transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></div>
+                </div>
+            </a>`);
     });
     fs.writeFileSync(toolsPath, updateGlobalElements($.html(), 'tools-sites.html'));
 };
 
-// --- CORE: GENERATE INDIVIDUAL ARTICLES ---
 const generateIndividualArticles = () => {
     const templatePath = path.join(ROOT_DIR, 'article-asus-gx10.html');
     let template = '';
-    if (fs.existsSync(templatePath)) { template = fs.readFileSync(templatePath, 'utf8'); } else { template = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>Article</title></head><body><main><article></article></main></body></html>`; }
+    if (fs.existsSync(templatePath)) {
+        template = fs.readFileSync(templatePath, 'utf8');
+    } else {
+        template = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>Article</title></head><body><main><article></article></main></body></html>`;
+    }
 
     allPosts.forEach(post => {
         const $ = cheerio.load(template);
@@ -396,14 +535,11 @@ const generateIndividualArticles = () => {
         const $content = cheerio.load(post.content, null, false);
         $content('.adsbygoogle-container, .ad-placeholder').remove();
 
-        // --- INTELLIGENT ADSENSE INJECTION ---
-        // Automatically inserts ad block after 1st paragraph or heading
         const children = $content.root().children();
         const blockElements = children.filter('p, h2, h3, h4, ul, ol, div, img');
         const totalBlocks = blockElements.length;
 
         if (totalBlocks >= 2) {
-            // Inject after 30% of content, roughly middle-top
             const midIndex = Math.floor(totalBlocks * 0.3);
             blockElements.eq(Math.max(0, midIndex)).after(ADSENSE_BLOCK);
         } else {
@@ -413,7 +549,14 @@ const generateIndividualArticles = () => {
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         $('article').html($content.html()); 
         
-        const jsonLd = { "@context": "https://schema.org", "@type": "Article", "headline": post.title, "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(), "dateModified": new Date(post.effectiveDate).toISOString(), "author": { "@type": "Person", "name": aboutData.profileName }, "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } }, "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } };
+        const jsonLd = {
+            "@context": "https://schema.org", "@type": "Article", "headline": post.title,
+            "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(),
+            "dateModified": new Date(post.effectiveDate).toISOString(),
+            "author": { "@type": "Person", "name": aboutData.profileName },
+            "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } },
+            "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl }
+        };
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);
         
@@ -423,10 +566,14 @@ const generateIndividualArticles = () => {
 
 const updateSearchData = () => {
     const searchPath = path.join(ROOT_DIR, 'assets/js/search-data.js');
-    const searchItems = [ ...allPosts.map(p => ({ title: p.title, desc: p.description, url: `article-${p.slug}.html`, category: p.category.charAt(0).toUpperCase() + p.category.slice(1), image: p.image })), ...channelsData.map(c => ({ title: c.name, desc: c.desc, url: c.url, category: 'Channels', image: 'assets/images/me.jpg' })) ];
+    const searchItems = [
+        ...allPosts.map(p => ({ title: p.title, desc: p.description, url: `article-${p.slug}.html`, category: p.category.charAt(0).toUpperCase() + p.category.slice(1), image: p.image })),
+        ...channelsData.map(c => ({ title: c.name, desc: c.desc, url: c.url, category: 'Channels', image: 'assets/images/me.jpg' }))
+    ];
     fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
 };
 
+// Execution Sequence
 updateAboutPageDetails();
 updateChannelsPage();
 updateToolsPage();
