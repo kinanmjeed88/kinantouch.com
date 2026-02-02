@@ -188,7 +188,14 @@ async function loadPosts() {
         const files = await api.get('content/posts'); cachedPosts = [];
         const promises = files.map(async file => { if (!file.name.endsWith('.json')) return; const data = await api.get(file.path); const content = JSON.parse(decodeURIComponent(escape(atob(data.content)))); cachedPosts.push({ ...content, sha: data.sha, path: file.path }); });
         await Promise.all(promises);
-        cachedPosts.sort((a, b) => new Date(b.updated || b.date) - new Date(a.updated || a.date));
+        
+        // Robust Date Sorting
+        cachedPosts.sort((a, b) => {
+            const dateA = new Date(a.updated || a.date).getTime();
+            const dateB = new Date(b.updated || b.date).getTime();
+            return dateB - dateA;
+        });
+        
         loader.classList.add('hidden'); renderPosts();
     } catch (e) { console.error(e); loader.classList.add('hidden'); list.innerHTML = `<div class="text-center text-red-500">حدث خطأ في تحميل المقالات.<br>تأكد من إعدادات الاتصال.</div>`; }
 }
@@ -229,14 +236,21 @@ window.editPost = (slug) => {
 window.savePost = async () => {
     const btn = document.getElementById('btnSavePost'); btn.innerText = 'جاري الحفظ...'; btn.disabled = true;
     try {
-        const slug = document.getElementById('pSlug').value.trim() || 'untitled'; const isEdit = document.getElementById('pSlug').dataset.mode === 'edit'; const existingPost = isEdit ? cachedPosts.find(p => p.slug === slug) : null; const now = new Date().toISOString().split('T')[0];
+        let slug = document.getElementById('pSlug').value.trim();
+        // Fallback slug if empty
+        if (!slug) slug = 'post-' + Date.now();
+        
+        const isEdit = document.getElementById('pSlug').dataset.mode === 'edit'; 
+        const existingPost = isEdit ? cachedPosts.find(p => p.slug === slug) : null; 
+        const now = new Date().toISOString().split('T')[0];
+        
         const postData = { 
             title: document.getElementById('pTitle').value, 
             slug: slug, 
             description: document.getElementById('pDesc').value, 
             category: document.getElementById('pCat').value, 
-            date: isEdit ? existingPost.date : now, 
-            updated: isEdit ? now : undefined, 
+            date: (isEdit && existingPost) ? existingPost.date : now, 
+            updated: (isEdit) ? now : undefined, 
             image: document.getElementById('pImage').value, 
             content: document.getElementById('pContent').value,
             // New AI Fields
@@ -244,9 +258,11 @@ window.savePost = async () => {
             points: document.getElementById('pPoints').value,
             youtubeVideoId: document.getElementById('pYoutubeId').value
         };
+        // Clean undefined updated
         if(!postData.updated) delete postData.updated;
+        
         await api.put(`content/posts/${slug}.json`, JSON.stringify(postData, null, 2), `Update Post: ${postData.title}`, existingPost ? existingPost.sha : null);
-        showToast('تم حفظ المقال بنجاح!'); closePostEditor(); loadPosts();
+        showToast('تم حفظ المقال! انتظر 2-3 دقائق للتحديث.'); closePostEditor(); loadPosts();
     } catch (e) { alert('خطأ في الحفظ: ' + e.message); } finally { btn.innerText = 'حفظ ونشر'; btn.disabled = false; }
 };
 window.deletePost = async (slug) => { if(!confirm('حذف؟')) return; const p = cachedPosts.find(x => x.slug === slug); try { await api.delete(p.path, p.sha, `Delete Post: ${slug}`); showToast('تم الحذف'); loadPosts(); } catch(e) { alert(e.message); } };
@@ -394,8 +410,33 @@ window.saveSettingsData = async () => {
 
 window.toggleGithubSettings = () => document.getElementById('ghModal').classList.toggle('hidden');
 window.saveGhSettings = () => { localStorage.setItem('gh_owner', document.getElementById('ghOwner').value.trim()); localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim()); localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim()); location.reload(); };
-function arabicToLatin(str) { const map = {'أ':'a','إ':'e','آ':'a','ا':'a','ب':'b','ت':'t','ث':'th','ج':'j','ح':'h','خ':'kh','د':'d','ذ':'th','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'w','ي':'y','ى':'a','ة':'h','ء':'a','ئ':'e','ؤ':'o'}; return str.split('').map(char => map[char] || char).join(''); }
-window.autoSlug = () => { const title = document.getElementById('pTitle').value; if (document.getElementById('pSlug').dataset.mode === 'new') { let slug = arabicToLatin(title).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-'); if(slug.length < 2) slug = 'post-' + Date.now(); document.getElementById('pSlug').value = slug.substring(0, 60); } };
+
+// --- Better Arabic Slug Generation ---
+function arabicToLatin(str) { 
+    if(!str) return '';
+    const map = {
+        'أ':'a','إ':'e','آ':'a','ا':'a','ب':'b','ت':'t','ث':'th','ج':'j','ح':'h','خ':'kh','د':'d','ذ':'th','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'w','ي':'y','ى':'a','ة':'h','ء':'a','ئ':'e','ؤ':'o',
+        '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9',
+        ' ': '-'
+    }; 
+    return str.split('').map(char => map[char] || char).join(''); 
+}
+
+window.autoSlug = () => { 
+    const title = document.getElementById('pTitle').value; 
+    if (document.getElementById('pSlug').dataset.mode === 'new') { 
+        let slug = arabicToLatin(title).toLowerCase()
+            .replace(/[^\w\s-]/g, '') // Remove non-word chars
+            .replace(/\s+/g, '-') // Replace spaces with -
+            .replace(/-+/g, '-'); // Remove duplicate -
+        
+        // Fallback if slug becomes empty
+        if(slug.length < 2) slug = 'post-' + Date.now(); 
+        
+        document.getElementById('pSlug').value = slug.substring(0, 60); 
+    } 
+};
+
 window.handleFileSelect = async (input, targetId, previewId = null) => { 
     if (input.files && input.files[0]) { 
         const btn = input.nextElementSibling; 
