@@ -11,7 +11,7 @@ let cachedChannels = [];
 let cachedAbout = {};
 
 // Icon Picker State
-let iconPickerTarget = null; // { type: 'channel'|'social', id: index|key }
+let iconPickerTarget = null;
 const commonIcons = [
     'star', 'heart', 'globe', 'link', 'home', 'user', 'settings', 'search', 'menu', 'x', 
     'check', 'alert-circle', 'info', 'mail', 'phone', 'map-pin', 'camera', 'image', 'video', 
@@ -22,17 +22,14 @@ const commonIcons = [
     'bot', 'folder', 'folder-plus', 'file-text', 'file', 'scissors', 'wand-2'
 ];
 
-// --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     initIconPicker();
     if (!ghConfig.token) {
         document.getElementById('ghModal').classList.remove('hidden');
     } else {
-        loadPosts(); // Load initial tab data
+        loadPosts();
     }
     
-    // --- EVENT DELEGATION FOR POSTS ---
-    // This fixes the "Edit button not responding" issue permanently
     document.addEventListener('click', function (e) {
         const editBtn = e.target.closest('.btn-edit');
         if (editBtn) {
@@ -40,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
             openEditByIndex(index);
             return;
         }
-
         const deleteBtn = e.target.closest('.btn-delete');
         if (deleteBtn) {
             const index = deleteBtn.dataset.index;
@@ -50,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// --- Tab Switching ---
 window.switchTab = (tabName) => {
     document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('tab-active'));
     document.getElementById(`nav-${tabName}`).classList.add('tab-active');
@@ -61,7 +56,6 @@ window.switchTab = (tabName) => {
     if (tabName === 'settings') loadSettings();
 };
 
-// --- IMAGE COMPRESSION LOGIC (WebP) ---
 async function compressAndConvertToWebP(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -71,26 +65,19 @@ async function compressAndConvertToWebP(file) {
             img.src = event.target.result;
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 1200; // Limit max width
+                const MAX_WIDTH = 1200;
                 const scaleSize = MAX_WIDTH / img.width;
-                
                 let width = img.width;
                 let height = img.height;
-
-                // Resize if too big
                 if (scaleSize < 1) {
                     width = MAX_WIDTH;
                     height = img.height * scaleSize;
                 }
-
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-
-                // Convert to WebP with 0.8 quality
                 const webpData = canvas.toDataURL('image/webp', 0.8);
-                // Return base64 string without prefix for GitHub API
                 resolve(webpData.split(',')[1]); 
             };
             img.onerror = (error) => reject(error);
@@ -99,7 +86,6 @@ async function compressAndConvertToWebP(file) {
     });
 }
 
-// --- GitHub API Helpers ---
 const api = {
     base: () => `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents`,
     headers: () => ({ 'Authorization': `token ${ghConfig.token}`, 'Content-Type': 'application/json' }),
@@ -121,9 +107,7 @@ const api = {
     },
     async uploadImage(file) {
         try {
-            // Compress image to WebP before uploading
             const b64 = await compressAndConvertToWebP(file);
-            // Change extension to .webp
             const originalName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
             const fileName = `assets/images/${Date.now()}_${originalName.replace(/\s/g, '_')}.webp`;
             
@@ -140,7 +124,6 @@ const api = {
     }
 };
 
-// --- ICON PICKER LOGIC ---
 function initIconPicker() {
     const grid = document.getElementById('iconGrid');
     commonIcons.forEach(iconName => {
@@ -198,49 +181,29 @@ function applyIconChange(iconData) {
     closeIconPicker();
 }
 
-// --- POSTS LOGIC ---
 async function loadPosts() {
     const list = document.getElementById('postsList'); const loader = document.getElementById('postsLoader');
     list.innerHTML = ''; loader.classList.remove('hidden');
     try {
         const files = await api.get('content/posts'); cachedPosts = [];
-        
-        // Load files individually
         const promises = files.map(async file => { 
             if (!file.name.endsWith('.json')) return; 
             try {
                 const data = await api.get(file.path); 
                 let decodedContent = '';
-                try {
-                    decodedContent = decodeURIComponent(escape(atob(data.content)));
-                } catch(e) {
-                    console.error("Decoding error for " + file.name, e);
-                    return; 
-                }
-                
+                try { decodedContent = decodeURIComponent(escape(atob(data.content))); } catch(e) { console.error("Decoding error for " + file.name, e); return; }
                 const content = JSON.parse(decodedContent); 
-                
-                if (!content.slug) {
-                    content.slug = file.name.replace('.json', '');
-                }
-                
+                if (!content.slug) { content.slug = file.name.replace('.json', ''); }
                 cachedPosts.push({ ...content, sha: data.sha, path: file.path }); 
-            } catch (err) {
-                console.error("Error loading post: " + file.name, err);
-            }
+            } catch (err) { console.error("Error loading post: " + file.name, err); }
         });
-        
         await Promise.all(promises);
-        
-        // Robust Date Sorting
         cachedPosts.sort((a, b) => {
             const dateA = new Date(a.updated || a.date).getTime();
             const dateB = new Date(b.updated || b.date).getTime();
-            if (isNaN(dateA)) return 1;
-            if (isNaN(dateB)) return -1;
+            if (isNaN(dateA)) return 1; if (isNaN(dateB)) return -1;
             return dateB - dateA;
         });
-        
         loader.classList.add('hidden'); renderPosts();
     } catch (e) { console.error(e); loader.classList.add('hidden'); list.innerHTML = `<div class="text-center text-red-500">حدث خطأ في تحميل المقالات.<br>تأكد من إعدادات الاتصال.</div>`; }
 }
@@ -248,19 +211,10 @@ async function loadPosts() {
 function renderPosts() {
     const list = document.getElementById('postsList');
     if (!list) return;
-
     list.innerHTML = '';
-
     cachedPosts.forEach((p, index) => {
-
-        const safeImage = p.image
-            ? (p.image.startsWith('http') ? p.image : '../' + p.image)
-            : 'https://via.placeholder.com/300x200?text=No+Image';
-
-        const dateDisplay = (p.updated && p.updated !== p.date)
-            ? `<span class="text-blue-500 font-bold" title="تم التحديث">♻ ${p.updated}</span>`
-            : `<span>${p.date || ''}</span>`;
-
+        const safeImage = p.image ? (p.image.startsWith('http') ? p.image : '../' + p.image) : 'https://via.placeholder.com/300x200?text=No+Image';
+        const dateDisplay = (p.updated && p.updated !== p.date) ? `<span class="text-blue-500 font-bold" title="تم التحديث">♻ ${p.updated}</span>` : `<span>${p.date || ''}</span>`;
         const card = document.createElement('div');
         card.className = 'bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all';
         card.innerHTML = `
@@ -269,122 +223,54 @@ function renderPosts() {
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-gray-800 line-clamp-1">${p.title || ''}</h3>
                     <div class="text-xs text-gray-400 flex gap-2 items-center">
-                        ${dateDisplay}
-                        <span>•</span>
-                        <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category || ''}</span>
+                        ${dateDisplay} <span>•</span> <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category || ''}</span>
                     </div>
                 </div>
             </div>
             <div class="flex gap-2 shrink-0">
-                <button class="btn-edit p-2 text-blue-600 hover:bg-blue-50 rounded-lg" data-index="${index}">
-                    <i data-lucide="edit-2" class="w-4 h-4"></i>
-                </button>
-                <button class="btn-delete p-2 text-red-600 hover:bg-red-50 rounded-lg" data-index="${index}">
-                    <i data-lucide="trash" class="w-4 h-4"></i>
-                </button>
-            </div>
-        `;
-
+                <button class="btn-edit p-2 text-blue-600 hover:bg-blue-50 rounded-lg" data-index="${index}"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                <button class="btn-delete p-2 text-red-600 hover:bg-red-50 rounded-lg" data-index="${index}"><i data-lucide="trash" class="w-4 h-4"></i></button>
+            </div>`;
         list.appendChild(card);
     });
-
     lucide.createIcons();
 }
 
 window.openPostEditor = () => { 
     document.getElementById('postEditor').classList.remove('hidden'); 
-    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.value = '';
-    }); 
-    document.getElementById('pSlug').dataset.mode = 'new'; 
-    document.getElementById('pSlug').readOnly = false; 
-    document.getElementById('editorTitle').innerText = 'مقال جديد'; 
+    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
+    document.getElementById('pSlug').dataset.mode = 'new'; document.getElementById('pSlug').readOnly = false; document.getElementById('editorTitle').innerText = 'مقال جديد'; 
 };
-
 window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
-
-// NEW: Index based edit function
 window.openEditByIndex = (index) => {
-    const p = cachedPosts[index];
-    if (!p) return alert('المقال غير موجود');
-
-    const setVal = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.value = val || '';
-    };
-
-    setVal('pTitle', p.title);
-    setVal('pSlug', p.slug);
-    setVal('pCat', p.category);
-    setVal('pDesc', p.description);
-    setVal('pContent', p.content);
-    setVal('pImage', p.image);
-    setVal('pYoutubeId', p.youtubeVideoId);
-
-    const slugEl = document.getElementById('pSlug');
-    if(slugEl) {
-        slugEl.readOnly = true;
-        slugEl.dataset.mode = 'edit';
-    }
-
-    document.getElementById('editorTitle').innerText = 'تعديل مقال';
-    document.getElementById('postEditor').classList.remove('hidden');
+    const p = cachedPosts[index]; if (!p) return alert('المقال غير موجود');
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+    setVal('pTitle', p.title); setVal('pSlug', p.slug); setVal('pCat', p.category); setVal('pDesc', p.description); setVal('pContent', p.content); setVal('pImage', p.image); setVal('pYoutubeId', p.youtubeVideoId);
+    const slugEl = document.getElementById('pSlug'); if(slugEl) { slugEl.readOnly = true; slugEl.dataset.mode = 'edit'; }
+    document.getElementById('editorTitle').innerText = 'تعديل مقال'; document.getElementById('postEditor').classList.remove('hidden');
 };
-
-// NEW: Index based delete function
 window.deleteByIndex = async (index) => {
     if (!confirm('هل أنت متأكد من الحذف؟')) return;
-
-    const p = cachedPosts[index];
-    if (!p) return;
-
-    try {
-        await api.delete(p.path, p.sha, `Delete Post: ${p.slug}`);
-        showToast('تم الحذف بنجاح');
-        loadPosts();
-    } catch (e) {
-        alert(e.message);
-    }
+    const p = cachedPosts[index]; if (!p) return;
+    try { await api.delete(p.path, p.sha, `Delete Post: ${p.slug}`); showToast('تم الحذف بنجاح'); loadPosts(); } catch (e) { alert(e.message); }
 };
-
 window.savePost = async () => {
     const btn = document.getElementById('btnSavePost'); btn.innerText = 'جاري الحفظ...'; btn.disabled = true;
     try {
-        let slug = document.getElementById('pSlug').value.trim();
-        // Fallback slug if empty
-        if (!slug) slug = 'post-' + Date.now();
-        
+        let slug = document.getElementById('pSlug').value.trim(); if (!slug) slug = 'post-' + Date.now();
         const isEdit = document.getElementById('pSlug').dataset.mode === 'edit'; 
         const existingPost = isEdit ? cachedPosts.find(p => p.slug === slug) : null; 
         const now = new Date().toISOString().split('T')[0];
-        
-        // Helper to get value safely
         const getVal = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
-
-        const postData = { 
-            title: getVal('pTitle'), 
-            slug: slug, 
-            description: getVal('pDesc'), 
-            category: getVal('pCat'), 
-            date: (isEdit && existingPost) ? existingPost.date : now, 
-            updated: (isEdit) ? now : undefined, 
-            image: getVal('pImage'), 
-            content: getVal('pContent'),
-            youtubeVideoId: getVal('pYoutubeId')
-        };
-        // Clean undefined updated
+        const postData = { title: getVal('pTitle'), slug: slug, description: getVal('pDesc'), category: getVal('pCat'), date: (isEdit && existingPost) ? existingPost.date : now, updated: (isEdit) ? now : undefined, image: getVal('pImage'), content: getVal('pContent'), youtubeVideoId: getVal('pYoutubeId') };
         if(!postData.updated) delete postData.updated;
-        
         await api.put(`content/posts/${slug}.json`, JSON.stringify(postData, null, 2), `Update Post: ${postData.title}`, existingPost ? existingPost.sha : null);
-        showToast('تم حفظ المقال! انتظر 2-3 دقائق للتحديث.'); closePostEditor(); loadPosts();
+        showToast('تم حفظ المقال!'); closePostEditor(); loadPosts();
     } catch (e) { alert('خطأ في الحفظ: ' + e.message); } finally { btn.innerText = 'حفظ ونشر'; btn.disabled = false; }
 };
-
 window.insertYoutube = () => { const url = prompt("رابط يوتيوب:"); if (url) window.insertTag(`\n@[youtube](${url})\n`); };
 window.insertLink = () => { const url = prompt("الرابط:"); const text = prompt("النص:"); if(url) window.insertTag(`[${text || 'اضغط هنا'}](${url})`); };
 
-// --- CHANNELS LOGIC ---
 async function loadChannels() {
     const loader = document.getElementById('channelsLoader'); loader.classList.remove('hidden');
     try { const file = await api.get('content/data/channels.json'); cachedChannels = JSON.parse(decodeURIComponent(escape(atob(file.content)))); cachedChannels.sha = file.sha; renderChannels(); } catch(e) { console.error(e); } loader.classList.add('hidden');
@@ -402,16 +288,11 @@ window.updateChannel = (index, field, value) => { cachedChannels[index][field] =
 window.removeChannel = (index) => { if(!confirm('حذف؟')) return; cachedChannels.splice(index, 1); renderChannels(); };
 window.saveChannels = async () => { const btn = document.getElementById('btnSaveChannels'); btn.innerText = 'جاري الحفظ...'; try { const dataToSave = cachedChannels.filter(x => x); await api.put('content/data/channels.json', JSON.stringify(dataToSave, null, 2), 'Update Channels', cachedChannels.sha); showToast('تم تحديث القنوات'); const file = await api.get('content/data/channels.json'); cachedChannels.sha = file.sha; } catch(e) { alert(e.message); } btn.innerText = 'حفظ التغييرات على القنوات'; };
 
-// --- SETTINGS LOGIC ---
 async function loadSettings() {
     const loader = document.getElementById('settingsLoader'); const form = document.getElementById('settingsForm'); 
-    loader.classList.remove('hidden'); 
-    form.classList.add('hidden');
+    loader.classList.remove('hidden'); form.classList.add('hidden');
     try {
-        const file = await api.get('content/data/about.json'); 
-        cachedAbout = JSON.parse(decodeURIComponent(escape(atob(file.content)))); 
-        cachedAbout.sha = file.sha;
-        
+        const file = await api.get('content/data/about.json'); cachedAbout = JSON.parse(decodeURIComponent(escape(atob(file.content)))); cachedAbout.sha = file.sha;
         document.getElementById('siteName').value = cachedAbout.siteName || "TechTouch";
         const cats = cachedAbout.categories?.labels || { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" };
         document.getElementById('catLabel_articles').value = cats.articles; document.getElementById('catLabel_apps').value = cats.apps; document.getElementById('catLabel_games').value = cats.games; document.getElementById('catLabel_sports').value = cats.sports;
@@ -438,30 +319,9 @@ async function loadSettings() {
             if (data.type === 'image') btn.innerHTML = `<img src="${data.value}" style="width:24px; height:24px; object-fit:contain;">`; else { btn.innerHTML = `<i data-lucide="${data.value}"></i>`; }
         });
         lucide.createIcons(); 
-    } catch(e) { 
-        console.error(e); 
-        alert("حدث خطأ أثناء تحميل الإعدادات. قد يكون الملف غير موجود أو تالف.\n" + e.message);
-    } finally {
-        loader.classList.add('hidden'); 
-        form.classList.remove('hidden');
-    }
+    } catch(e) { console.error(e); alert("خطأ في تحميل الإعدادات: " + e.message); } finally { loader.classList.add('hidden'); form.classList.remove('hidden'); }
 }
-window.toggleCoverInput = () => { 
-    const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color'; 
-    const colorInput = document.getElementById('coverColorInput');
-    const imgInput = document.getElementById('coverImageInput');
-    
-    // Safety check for null elements
-    if (colorInput && imgInput) {
-        if(type === 'color') { 
-            colorInput.classList.remove('hidden'); 
-            imgInput.classList.add('hidden'); 
-        } else { 
-            colorInput.classList.add('hidden'); 
-            imgInput.classList.remove('hidden'); 
-        } 
-    }
-};
+window.toggleCoverInput = () => { const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color'; const colorInput = document.getElementById('coverColorInput'); const imgInput = document.getElementById('coverImageInput'); if (colorInput && imgInput) { if(type === 'color') { colorInput.classList.remove('hidden'); imgInput.classList.add('hidden'); } else { colorInput.classList.add('hidden'); imgInput.classList.remove('hidden'); } } };
 window.saveSettingsData = async () => {
     const btn = document.getElementById('btnSaveSettings'); btn.innerText = 'جاري الحفظ...';
     try {
@@ -472,8 +332,8 @@ window.saveSettingsData = async () => {
             botInfo: document.getElementById('valBotInfo').value, searchInfo: document.getElementById('valSearchInfo').value, botTitle: document.getElementById('valBotTitle').value, searchTitle: document.getElementById('valSearchTitle').value,
             coverType: coverType, coverValue: coverType === 'color' ? document.getElementById('valCoverColor').value : document.getElementById('valCoverImg').value,
             siteName: document.getElementById('siteName').value,
-            categories: { labels: { articles: document.getElementById('catLabel_articles').value, apps: document.getElementById('catLabel_apps').value, games: document.getElementById('catLabel_games').value, sports: document.getElementById('catLabel_sports').value }, fontSize: document.getElementById('catFontSize').value },
-            ticker: { label: document.getElementById('tickerLabel').value, text: document.getElementById('tickerText').value, url: document.getElementById('tickerUrl').value, fontSize: document.getElementById('tickerSize').value, animated: document.getElementById('tickerAnimated').checked },
+            categories: { labels: { articles: document.getElementById('catLabel_articles').value, apps: document.getElementById('catLabel_apps').value, games: document.getElementById('catLabel_games').value, sports: document.getElementById('catLabel_sports').value }, fontSize: parseInt(document.getElementById('catFontSize').value) },
+            ticker: { label: document.getElementById('tickerLabel').value, text: document.getElementById('tickerText').value, url: document.getElementById('tickerUrl').value, fontSize: parseInt(document.getElementById('tickerSize').value), animated: document.getElementById('tickerAnimated').checked },
             social: { facebook: document.getElementById('socFb').value, instagram: document.getElementById('socInsta').value, tiktok: document.getElementById('socTikTok').value, youtube: document.getElementById('socYt').value, telegram: document.getElementById('socTg').value },
             socialIcons: { facebook: getIconData('facebook'), instagram: getIconData('instagram'), tiktok: getIconData('tiktok'), youtube: getIconData('youtube'), telegram: getIconData('telegram') }
         };
@@ -484,48 +344,8 @@ window.saveSettingsData = async () => {
 window.toggleGithubSettings = () => document.getElementById('ghModal').classList.toggle('hidden');
 window.saveGhSettings = () => { localStorage.setItem('gh_owner', document.getElementById('ghOwner').value.trim()); localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim()); localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim()); location.reload(); };
 
-// --- Better Arabic Slug Generation ---
-function arabicToLatin(str) { 
-    if(!str) return '';
-    const map = {
-        'أ':'a','إ':'e','آ':'a','ا':'a','ب':'b','ت':'t','ث':'th','ج':'j','ح':'h','خ':'kh','د':'d','ذ':'th','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'w','ي':'y','ى':'a','ة':'h','ء':'a','ئ':'e','ؤ':'o',
-        '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9',
-        ' ': '-'
-    }; 
-    return str.split('').map(char => map[char] || char).join(''); 
-}
-
-window.autoSlug = () => { 
-    const title = document.getElementById('pTitle').value; 
-    if (document.getElementById('pSlug').dataset.mode === 'new') { 
-        let slug = arabicToLatin(title).toLowerCase()
-            .replace(/[^\w\s-]/g, '') // Remove non-word chars
-            .replace(/\s+/g, '-') // Replace spaces with -
-            .replace(/-+/g, '-'); // Remove duplicate -
-        
-        // Fallback if slug becomes empty
-        if(slug.length < 2) slug = 'post-' + Date.now(); 
-        
-        document.getElementById('pSlug').value = slug.substring(0, 60); 
-    } 
-};
-
-window.handleFileSelect = async (input, targetId, previewId = null) => { 
-    if (input.files && input.files[0]) { 
-        const btn = input.nextElementSibling; 
-        const originalText = btn.innerText;
-        btn.innerText = 'جاري الضغط...'; 
-        btn.disabled = true; 
-        try { 
-            const url = await api.uploadImage(input.files[0]); 
-            document.getElementById(targetId).value = url; 
-            if(previewId) document.getElementById(previewId).src = '../' + url; 
-        } catch(e) { 
-            alert('Upload failed: ' + e.message); 
-        } 
-        btn.innerText = originalText; 
-        btn.disabled = false; 
-    } 
-};
+function arabicToLatin(str) { if(!str) return ''; const map = { 'أ':'a','إ':'e','آ':'a','ا':'a','ب':'b','ت':'t','ث':'th','ج':'j','ح':'h','خ':'kh','د':'d','ذ':'th','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'w','ي':'y','ى':'a','ة':'h','ء':'a','ئ':'e','ؤ':'o', '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9', ' ': '-' }; return str.split('').map(char => map[char] || char).join(''); }
+window.autoSlug = () => { const title = document.getElementById('pTitle').value; if (document.getElementById('pSlug').dataset.mode === 'new') { let slug = arabicToLatin(title).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-'); if(slug.length < 2) slug = 'post-' + Date.now(); document.getElementById('pSlug').value = slug.substring(0, 60); } };
+window.handleFileSelect = async (input, targetId, previewId = null) => { if (input.files && input.files[0]) { const btn = input.nextElementSibling; const originalText = btn.innerText; btn.innerText = 'جاري الضغط...'; btn.disabled = true; try { const url = await api.uploadImage(input.files[0]); document.getElementById(targetId).value = url; if(previewId) document.getElementById(previewId).src = '../' + url; } catch(e) { alert('Upload failed: ' + e.message); } btn.innerText = originalText; btn.disabled = false; } };
 window.insertTag = (tag) => { const ta = document.getElementById('pContent'); const start = ta.selectionStart; const end = ta.selectionEnd; ta.value = ta.value.substring(0, start) + tag + ta.value.substring(end); ta.focus(); ta.selectionStart = ta.selectionEnd = start + tag.length; };
 function showToast(msg) { const t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('translate-y-[-100%]', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-[-100%]', 'opacity-0'), 3000); }

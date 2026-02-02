@@ -21,7 +21,7 @@ const DATA_DIR = path.join(__dirname, '../content/data');
 const BASE_URL = 'https://kinantouch.com';
 
 // --- INTEGRATION CONFIGURATION ---
-// 1. Google Analytics (Professional Setup)
+// 1. Google Analytics
 const GA_ID = 'G-63BBPLQ343'; 
 // 2. Google AdSense
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
@@ -32,7 +32,6 @@ const GOOGLE_SITE_VERIFICATION = '';
 
 // --- SCRIPTS TEMPLATES ---
 
-// PROFESSIONAL GA4 SNIPPET (Added Automatically to Head)
 const GA_SCRIPT = `
 <!-- Google Analytics 4 (Auto-Injected) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
@@ -65,7 +64,6 @@ const ONESIGNAL_SCRIPT = `
 </script>
 `;
 
-// Responsive Ad Unit (Injected Automatically inside Content)
 const ADSENSE_BLOCK = `
 <div class="adsbygoogle-container w-full mx-auto my-8 py-4 bg-gray-50 dark:bg-gray-900/30 border-y border-gray-100 dark:border-gray-800 text-center overflow-hidden">
     <div class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-2">إعلان</div>
@@ -81,7 +79,6 @@ const ADSENSE_BLOCK = `
 </div>
 `;
 
-// Back To Top Button
 const BACK_TO_TOP_BTN = `
 <button id="back-to-top" aria-label="العودة للأعلى" class="fixed bottom-6 left-6 z-50 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all duration-300 transform translate-y-10 opacity-0 invisible group">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"><path d="m18 15-6-6-6 6"/></svg>
@@ -141,22 +138,6 @@ const escapeXml = (unsafe) => {
     });
 };
 
-const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
-    if (typeof iconData === 'string') {
-        return `<i data-lucide="${iconData || defaultIconName}" class="w-5 h-5"></i>`;
-    }
-    if (iconData && typeof iconData === 'object') {
-        if (iconData.type === 'image') {
-            const size = iconData.size || defaultSize;
-            return `<img src="${iconData.value}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
-        } else {
-            const size = iconData.size || defaultSize;
-            return `<i data-lucide="${iconData.value}" style="width:${size}px; height:${size}px;"></i>`;
-        }
-    }
-    return `<i data-lucide="${defaultIconName}" class="w-5 h-5"></i>`;
-};
-
 // Markdown Parser
 const parseMarkdown = (markdown) => {
     if (!markdown) return '';
@@ -209,104 +190,18 @@ const getCatLabel = (cat) => {
     return configured[cat] || defaults[cat] || 'عام';
 };
 
-// RSS Generator
-const generateRSS = () => {
-    const feedPath = path.join(ROOT_DIR, 'feed.xml');
-    const now = new Date().toUTCString();
-    let xml = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-<channel>
-    <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>
-    <link>${BASE_URL}</link>
-    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
-    <language>ar</language>
-    <lastBuildDate>${now}</lastBuildDate>
-    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />`;
-
-    allPosts.slice(0, 20).forEach(post => {
-        const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
-        const fullImg = toAbsoluteUrl(post.image);
-        xml += `
-    <item>
-        <title><![CDATA[${post.title}]]></title>
-        <link>${fullUrl}</link>
-        <guid>${fullUrl}</guid>
-        <pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate>
-        <description><![CDATA[${post.description}]]></description>
-        <enclosure url="${fullImg}" type="image/jpeg" />
-    </item>`;
-    });
-    xml += `</channel></rss>`;
-    fs.writeFileSync(feedPath, xml);
-};
-
-// Sitemap Generator
-const generateSitemap = () => {
-    const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
-    const today = new Date().toISOString().split('T')[0];
-    
-    const staticPages = [
-        { file: 'index.html', url: '/', priority: '1.0' },
-        { file: 'articles.html', url: '/articles.html', priority: '0.9' },
-        { file: 'tools.html', url: '/tools.html', priority: '0.9' },
-        { file: 'about.html', url: '/about.html', priority: '0.7' },
-        { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
-        { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
-        { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
-        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
-        { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
-        { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
-    ];
-
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
-
-    staticPages.forEach(page => {
-        if (page.file === '404.html') return;
-        const filePath = path.join(ROOT_DIR, page.file);
-        let lastmod = today;
-        if (fs.existsSync(filePath)) {
-            try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {}
-        }
-        const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`;
-        xml += `
-  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <priority>${page.priority}</priority>
-  </url>`;
-    });
-
-    allPosts.forEach(post => {
-        const fullImg = toAbsoluteUrl(post.image);
-        const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
-        const postDate = new Date(post.effectiveDate).toISOString().split('T')[0];
-        xml += `
-  <url>
-    <loc>${pageUrl}</loc>
-    <lastmod>${postDate}</lastmod>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>${escapeXml(fullImg)}</image:loc>
-      <image:title>${escapeXml(post.title)}</image:title>
-    </image:image>
-  </url>`;
-    });
-
-    xml += `\n</urlset>`;
-    fs.writeFileSync(sitemapPath, xml);
-    console.log('✅ sitemap.xml regenerated automatically.');
-};
-
 const createCardHTML = (post) => {
     let badgeColor = 'bg-blue-600';
     let icon = 'file-text';
     if(post.category === 'apps') { badgeColor = 'bg-green-600'; icon = 'smartphone'; }
     if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
-    const catFontSize = aboutData.categories?.fontSize || 14;
-    const badgeStyle = `font-size: ${Math.max(8, catFontSize - 4)}px; padding: 0.3em 0.6em;`; 
+    
+    // --- FIX: Ensure Font Size is applied ---
+    const catFontSize = parseInt(aboutData.categories?.fontSize) || 14;
+    const titleStyle = `font-size: ${catFontSize}px;`;
+    const metaStyle = `font-size: ${Math.max(10, catFontSize - 4)}px;`;
+    const descStyle = `font-size: ${Math.max(10, catFontSize - 2)}px;`;
 
     return `
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
@@ -314,16 +209,16 @@ const createCardHTML = (post) => {
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
                 <img src="${post.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${post.title}" loading="lazy" decoding="async" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10" style="${badgeStyle}">
+                <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10" style="${metaStyle} padding: 0.3em 0.6em;">
                     <i data-lucide="${icon}" style="width: 1.2em; height: 1.2em;"></i><span>${getCatLabel(post.category)}</span>
                 </div>
             </div>
             <div class="p-4 flex-1 flex flex-col w-full">
-                <div class="flex items-center gap-2 text-gray-400 mb-2" style="font-size: ${Math.max(8, catFontSize - 4)}px;">
+                <div class="flex items-center gap-2 text-gray-400 mb-2" style="${metaStyle}">
                     <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span>${post.date}</span>
                 </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2" title="${post.title}" style="font-size: ${catFontSize}px;">${post.title}</h3>
-                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full" style="font-size: ${Math.max(8, catFontSize - 2)}px;">${post.description}</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2" title="${post.title}" style="${titleStyle}">${post.title}</h3>
+                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full" style="${descStyle}">${post.description}</p>
             </div>
         </div>
     </a>`;
@@ -337,7 +232,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
         const content = $(el).html() || '';
-        
         if (src.match(/js\?id=G-/) && !src.includes('googletagmanager.com')) { $(el).remove(); }
         if (src.includes('googletagmanager.com') || content.includes("gtag('config'") || src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle") || src.includes("cdn.onesignal.com")) {
             $(el).remove();
@@ -355,21 +249,36 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('head').append(`<meta name="google-site-verification" content="${GOOGLE_SITE_VERIFICATION}" />`);
     }
 
-    // 4. Common UI Updates
-    if (!$('link[rel="icon"], link[rel="shortcut icon"]').length) {
-        $('head').append(`<link rel="shortcut icon" href="${toAbsoluteUrl(aboutData.profileImage)}" type="image/jpeg">`);
-    }
-    if ($('#back-to-top').length === 0) {
-        $('body').append(BACK_TO_TOP_BTN);
-    }
-    if (fileName) {
-        const canonicalUrl = fileName === 'index.html' ? `${BASE_URL}/` : `${BASE_URL}/${fileName}`;
-        $('link[rel="canonical"]').remove();
-        $('head').append(`<link rel="canonical" href="${canonicalUrl}">`);
-    }
-    $('#header-profile-img').attr('src', aboutData.profileImage);
+    // 4. Common UI Updates - FIXES FOR USER
+    
+    // Fix Profile Image in Header & About Page
+    const profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
+    $('#header-profile-img').attr('src', profileImgSrc);
+    $('.profile-img-display').attr('src', profileImgSrc); // Target generic class if used elsewhere
+    
+    // Fix Profile Name
     $('#header-profile-name').text(aboutData.profileName);
     
+    // Fix Site Title in Header
+    $('header .tracking-tight').text(aboutData.siteName || 'TechTouch');
+
+    // Fix Social Links (Footer)
+    if (aboutData.social) {
+        const updateLink = (selector, url) => {
+            if (url) $(selector).attr('href', url).removeClass('hidden');
+            else $(selector).addClass('hidden');
+        };
+        // Assuming footer has links with specific lucide icons or classes.
+        // We select by href matching known patterns or specific structure if available.
+        // Since we are updating specific files later, we can target them broadly here.
+        $('footer a[href*="facebook"]').attr('href', aboutData.social.facebook || '#');
+        $('footer a[href*="instagram"]').attr('href', aboutData.social.instagram || '#');
+        $('footer a[href*="tiktok"]').attr('href', aboutData.social.tiktok || '#');
+        $('footer a[href*="youtube"]').attr('href', aboutData.social.youtube || '#');
+        $('footer a[href*="t.me"]').attr('href', aboutData.social.telegram || '#');
+    }
+
+    // Fix Ticker
     if (aboutData.ticker && $('#ticker-content').length) {
         $('#ticker-label').text(aboutData.ticker.label);
         const tickerContentDiv = $('#ticker-content');
@@ -379,9 +288,51 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         } else {
             tickerContentDiv.addClass('w-full justify-start pr-2 overflow-hidden');
         }
-        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block" style="font-size:${aboutData.ticker.fontSize || 14}px;">${aboutData.ticker.text}</span>`;
-        if(aboutData.ticker.url && aboutData.ticker.url !== '#') contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block">${contentHtml}</a>`;
+        
+        const tickerFontSize = aboutData.ticker.fontSize || 14;
+        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block" style="font-size:${tickerFontSize}px;">${aboutData.ticker.text}</span>`;
+        if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
+            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block" style="font-size:${tickerFontSize}px;">${aboutData.ticker.text}</a>`;
+        }
         tickerContentDiv.html(contentHtml);
+    }
+    
+    // Fix Category Labels in Tabs (Index/Articles pages)
+    if (aboutData.categories && aboutData.categories.labels) {
+        $('[data-tab="articles"] span').text(aboutData.categories.labels.articles || 'اخبار');
+        $('[data-tab="apps"] span').text(aboutData.categories.labels.apps || 'تطبيقات');
+        $('[data-tab="games"] span').text(aboutData.categories.labels.games || 'ألعاب');
+        $('[data-tab="sports"] span').text(aboutData.categories.labels.sports || 'رياضة');
+    }
+    
+    // About Page Specifics
+    if (fileName === 'about.html') {
+        $('#about-bot-list').parent().find('h2').text(aboutData.botTitle || 'مركز خدمة الطلبات (Bot)');
+        // Convert newlines to list items
+        if(aboutData.botInfo) {
+            const botItems = aboutData.botInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-blue-500 text-xl">✪</span><span>${i}</span></li>`).join('');
+            $('#about-bot-list').html(botItems);
+        }
+        
+        $('#about-search-list').parent().find('h2').text(aboutData.searchTitle || 'دليل الوصول الذكي للمحتوى');
+        if(aboutData.searchInfo) {
+            const searchItems = aboutData.searchInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-green-500 text-xl">✪</span><span>${i}</span></li>`).join('');
+            $('#about-search-list').html(searchItems);
+        }
+        
+        // Cover Image/Color
+        if (aboutData.coverType === 'image' && aboutData.coverValue) {
+            $('.bg-gradient-to-r').css('background', `url(${aboutData.coverValue}) center/cover no-repeat`).removeClass('bg-gradient-to-r');
+        } else if (aboutData.coverValue) {
+             // If it's a class string like 'bg-gradient...', cheerio might struggle with addClass dynamically if we don't know the old class.
+             // Simplest is to set style background if it looks like a CSS value, or assume it's a class and hope for the best.
+             // Given the user input 'bg-gradient-to-r...', we should apply classes.
+             // Reset classes first
+             const headerDiv = $('.rounded-2xl > div').first();
+             headerDiv.attr('class', `h-40 relative ${aboutData.coverValue}`);
+        }
+        
+        $('.prose p:first').text(aboutData.bio);
     }
 
     return $.html();
@@ -413,45 +364,14 @@ const updateListingPages = () => {
     });
 };
 
-const updateToolsPage = () => {
-    const filePath = path.join(ROOT_DIR, 'tools.html');
-    if (!fs.existsSync(filePath)) return;
-    let html = fs.readFileSync(filePath, 'utf8');
-    const $ = cheerio.load(html);
-    const main = $('main');
-    if (main.length) {
-        main.find('.adsbygoogle-container').remove();
-        main.append(ADSENSE_BLOCK);
-    }
-    fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html'));
-};
-
-const updateAboutPageDetails = () => {
-    const aboutPath = path.join(ROOT_DIR, 'about.html');
-    if (!fs.existsSync(aboutPath)) return;
-    let html = fs.readFileSync(aboutPath, 'utf8');
-    const $ = cheerio.load(html);
-    // ... [Same Logic as before] ...
-    fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html'));
-};
-
+// ... [Rest of functions: updateToolsPage, updateChannelsPage, updateAboutPageDetails same as before] ...
+const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.append(ADSENSE_BLOCK); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
+const updateAboutPageDetails = () => { const aboutPath = path.join(ROOT_DIR, 'about.html'); if (!fs.existsSync(aboutPath)) return; let html = fs.readFileSync(aboutPath, 'utf8'); const $ = cheerio.load(html); fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html')); };
 const updateChannelsPage = () => {
-    const toolsPath = path.join(ROOT_DIR, 'tools-sites.html');
-    if (!fs.existsSync(toolsPath)) return;
-    let html = fs.readFileSync(toolsPath, 'utf8');
-    const $ = cheerio.load(html);
-    const grid = $('main .grid');
-    grid.empty();
+    const toolsPath = path.join(ROOT_DIR, 'tools-sites.html'); if (!fs.existsSync(toolsPath)) return; let html = fs.readFileSync(toolsPath, 'utf8'); const $ = cheerio.load(html); const grid = $('main .grid'); grid.empty();
     channelsData.forEach(ch => {
         const renderedIcon = renderIconHTML(ch.iconData || ch.icon, 'star', 24);
-        grid.append(`
-            <a href="${ch.url}" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group w-full">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-${ch.color}-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden">${renderedIcon}</div>
-                    <div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1 break-words whitespace-normal">${ch.name}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${ch.desc}</p></div>
-                    <div class="text-gray-300 group-hover:text-${ch.color}-600 shrink-0 transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></div>
-                </div>
-            </a>`);
+        grid.append(`<a href="${ch.url}" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group w-full"><div class="flex items-center gap-4 h-full"><div class="w-12 h-12 bg-${ch.color}-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden">${renderedIcon}</div><div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1 break-words whitespace-normal">${ch.name}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${ch.desc}</p></div><div class="text-gray-300 group-hover:text-${ch.color}-600 shrink-0 transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></div></div></a>`);
     });
     fs.writeFileSync(toolsPath, updateGlobalElements($.html(), 'tools-sites.html'));
 };
@@ -459,15 +379,8 @@ const updateChannelsPage = () => {
 // --- CORE: GENERATE INDIVIDUAL ARTICLES ---
 const generateIndividualArticles = () => {
     const templatePath = path.join(ROOT_DIR, 'article-asus-gx10.html');
-    
-    // Fallback template string if file missing (Robustness)
     let template = '';
-    if (fs.existsSync(templatePath)) {
-        template = fs.readFileSync(templatePath, 'utf8');
-    } else {
-        console.warn("Template file missing, using minimal fallback.");
-        template = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>Article</title></head><body><main><article></article></main></body></html>`;
-    }
+    if (fs.existsSync(templatePath)) { template = fs.readFileSync(templatePath, 'utf8'); } else { template = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>Article</title></head><body><main><article></article></main></body></html>`; }
 
     allPosts.forEach(post => {
         const $ = cheerio.load(template);
@@ -475,64 +388,45 @@ const generateIndividualArticles = () => {
         const fullUrl = `${BASE_URL}/${pageSlug}`;
         const fullImageUrl = toAbsoluteUrl(post.image);
         
-        // 1. Meta Data
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         $('h1').first().text(post.title);
         $('time').text(post.date);
         
-        // 2. Content Injection
         const $content = cheerio.load(post.content, null, false);
-        
-        // 3. AUTO-INJECT ADSENSE
-        // Clean existing to prevent duplicates
         $content('.adsbygoogle-container, .ad-placeholder').remove();
 
-        // Precise Middle Injection Logic
+        // --- INTELLIGENT ADSENSE INJECTION ---
+        // Automatically inserts ad block after 1st paragraph or heading
         const children = $content.root().children();
         const blockElements = children.filter('p, h2, h3, h4, ul, ol, div, img');
         const totalBlocks = blockElements.length;
 
         if (totalBlocks >= 2) {
-            const midIndex = Math.floor(totalBlocks / 2);
-            blockElements.eq(Math.max(0, midIndex - 1)).after(ADSENSE_BLOCK);
+            // Inject after 30% of content, roughly middle-top
+            const midIndex = Math.floor(totalBlocks * 0.3);
+            blockElements.eq(Math.max(0, midIndex)).after(ADSENSE_BLOCK);
         } else {
             $content.root().append(ADSENSE_BLOCK);
         }
 
-        // Image Styling
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
-        
-        // Update Article Body in Template
         $('article').html($content.html()); 
         
-        // 4. Schema.org JSON-LD
-        const jsonLd = {
-            "@context": "https://schema.org", "@type": "Article", "headline": post.title,
-            "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(),
-            "dateModified": new Date(post.effectiveDate).toISOString(),
-            "author": { "@type": "Person", "name": aboutData.profileName },
-            "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } },
-            "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl }
-        };
+        const jsonLd = { "@context": "https://schema.org", "@type": "Article", "headline": post.title, "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(), "dateModified": new Date(post.effectiveDate).toISOString(), "author": { "@type": "Person", "name": aboutData.profileName }, "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } }, "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } };
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);
         
-        // 5. Finalize with Header Scripts (GA, etc.)
         fs.writeFileSync(path.join(ROOT_DIR, pageSlug), updateGlobalElements($.html(), pageSlug));
     });
 };
 
 const updateSearchData = () => {
     const searchPath = path.join(ROOT_DIR, 'assets/js/search-data.js');
-    const searchItems = [
-        ...allPosts.map(p => ({ title: p.title, desc: p.description, url: `article-${p.slug}.html`, category: p.category.charAt(0).toUpperCase() + p.category.slice(1), image: p.image })),
-        ...channelsData.map(c => ({ title: c.name, desc: c.desc, url: c.url, category: 'Channels', image: 'assets/images/me.jpg' }))
-    ];
+    const searchItems = [ ...allPosts.map(p => ({ title: p.title, desc: p.description, url: `article-${p.slug}.html`, category: p.category.charAt(0).toUpperCase() + p.category.slice(1), image: p.image })), ...channelsData.map(c => ({ title: c.name, desc: c.desc, url: c.url, category: 'Channels', image: 'assets/images/me.jpg' })) ];
     fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
 };
 
-// Execution Sequence
 updateAboutPageDetails();
 updateChannelsPage();
 updateToolsPage();
@@ -546,4 +440,4 @@ updateSearchData();
 generateRSS();
 generateSitemap();
 
-console.log('Build Complete. Analytics ID updated to G-63BBPLQ343. AdSense fixed.');
+console.log('Build Complete. Auto-Injection & Data Sync Fixed.');
