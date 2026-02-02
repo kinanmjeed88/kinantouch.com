@@ -30,6 +30,24 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         loadPosts(); // Load initial tab data
     }
+    
+    // --- EVENT DELEGATION FOR POSTS ---
+    // This fixes the "Edit button not responding" issue permanently
+    document.addEventListener('click', function (e) {
+        const editBtn = e.target.closest('.btn-edit');
+        if (editBtn) {
+            const index = editBtn.dataset.index;
+            openEditByIndex(index);
+            return;
+        }
+
+        const deleteBtn = e.target.closest('.btn-delete');
+        if (deleteBtn) {
+            const index = deleteBtn.dataset.index;
+            deleteByIndex(index);
+            return;
+        }
+    });
 });
 
 // --- Tab Switching ---
@@ -187,23 +205,21 @@ async function loadPosts() {
     try {
         const files = await api.get('content/posts'); cachedPosts = [];
         
-        // Load files individually to prevent one bad file from breaking everything
+        // Load files individually
         const promises = files.map(async file => { 
             if (!file.name.endsWith('.json')) return; 
             try {
                 const data = await api.get(file.path); 
-                // Robust decoding
                 let decodedContent = '';
                 try {
                     decodedContent = decodeURIComponent(escape(atob(data.content)));
                 } catch(e) {
                     console.error("Decoding error for " + file.name, e);
-                    return; // Skip bad file
+                    return; 
                 }
                 
                 const content = JSON.parse(decodedContent); 
                 
-                // Fallback if slug is missing in JSON
                 if (!content.slug) {
                     content.slug = file.name.replace('.json', '');
                 }
@@ -220,7 +236,6 @@ async function loadPosts() {
         cachedPosts.sort((a, b) => {
             const dateA = new Date(a.updated || a.date).getTime();
             const dateB = new Date(b.updated || b.date).getTime();
-            // Handle NaN dates safely
             if (isNaN(dateA)) return 1;
             if (isNaN(dateB)) return -1;
             return dateB - dateA;
@@ -232,12 +247,47 @@ async function loadPosts() {
 
 function renderPosts() {
     const list = document.getElementById('postsList');
-    list.innerHTML = cachedPosts.map(p => {
-        const dateDisplay = (p.updated && p.updated !== p.date) ? `<span class="text-blue-500 font-bold" title="تم التحديث">♻ ${p.updated}</span>` : `<span>${p.date}</span>`;
-        // Safe Slug Encoding for OnClick
-        const encodedSlug = encodeURIComponent(p.slug);
-        return `<div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all"><div class="flex items-center gap-4"><img src="${p.image.startsWith('http') ? p.image : '../'+p.image}" class="w-16 h-10 object-cover rounded-md bg-gray-100"><div class="flex-1 min-w-0"><h3 class="font-bold text-gray-800 line-clamp-1">${p.title}</h3><div class="text-xs text-gray-400 flex gap-2 items-center">${dateDisplay}<span>•</span><span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category}</span></div></div></div><div class="flex gap-2 shrink-0"><button onclick="editPost('${encodedSlug}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><i data-lucide="edit-2" class="w-4 h-4"></i></button><button onclick="deletePost('${encodedSlug}')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg"><i data-lucide="trash" class="w-4 h-4"></i></button></div></div>`;
-    }).join(''); 
+    if (!list) return;
+
+    list.innerHTML = '';
+
+    cachedPosts.forEach((p, index) => {
+
+        const safeImage = p.image
+            ? (p.image.startsWith('http') ? p.image : '../' + p.image)
+            : 'https://via.placeholder.com/300x200?text=No+Image';
+
+        const dateDisplay = (p.updated && p.updated !== p.date)
+            ? `<span class="text-blue-500 font-bold" title="تم التحديث">♻ ${p.updated}</span>`
+            : `<span>${p.date || ''}</span>`;
+
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all';
+        card.innerHTML = `
+            <div class="flex items-center gap-4">
+                <img src="${safeImage}" class="w-16 h-10 object-cover rounded-md bg-gray-100">
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-gray-800 line-clamp-1">${p.title || ''}</h3>
+                    <div class="text-xs text-gray-400 flex gap-2 items-center">
+                        ${dateDisplay}
+                        <span>•</span>
+                        <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category || ''}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2 shrink-0">
+                <button class="btn-edit p-2 text-blue-600 hover:bg-blue-50 rounded-lg" data-index="${index}">
+                    <i data-lucide="edit-2" class="w-4 h-4"></i>
+                </button>
+                <button class="btn-delete p-2 text-red-600 hover:bg-red-50 rounded-lg" data-index="${index}">
+                    <i data-lucide="trash" class="w-4 h-4"></i>
+                </button>
+            </div>
+        `;
+
+        list.appendChild(card);
+    });
+
     lucide.createIcons();
 }
 
@@ -254,40 +304,47 @@ window.openPostEditor = () => {
 
 window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
 
-window.editPost = (encodedSlug) => { 
-    try {
-        const slug = decodeURIComponent(encodedSlug);
-        const p = cachedPosts.find(x => x.slug === slug); 
-        if (!p) {
-            alert("عذراً، لم يتم العثور على بيانات هذا المقال. يرجى تحديث الصفحة.");
-            return; 
-        }
-        
-        // Safely set values checking if elements exist
-        const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
-        
-        setVal('pTitle', p.title);
-        setVal('pSlug', p.slug);
-        
-        const slugEl = document.getElementById('pSlug');
-        if(slugEl) {
-            slugEl.readOnly = true; 
-            slugEl.dataset.mode = 'edit';
-        }
-        
-        setVal('pCat', p.category);
-        setVal('pDesc', p.description);
-        setVal('pContent', p.content);
-        setVal('pImage', p.image);
-        
-        // Set Extras
-        setVal('pYoutubeId', p.youtubeVideoId);
+// NEW: Index based edit function
+window.openEditByIndex = (index) => {
+    const p = cachedPosts[index];
+    if (!p) return alert('المقال غير موجود');
 
-        document.getElementById('editorTitle').innerText = 'تعديل مقال'; 
-        document.getElementById('postEditor').classList.remove('hidden'); 
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val || '';
+    };
+
+    setVal('pTitle', p.title);
+    setVal('pSlug', p.slug);
+    setVal('pCat', p.category);
+    setVal('pDesc', p.description);
+    setVal('pContent', p.content);
+    setVal('pImage', p.image);
+    setVal('pYoutubeId', p.youtubeVideoId);
+
+    const slugEl = document.getElementById('pSlug');
+    if(slugEl) {
+        slugEl.readOnly = true;
+        slugEl.dataset.mode = 'edit';
+    }
+
+    document.getElementById('editorTitle').innerText = 'تعديل مقال';
+    document.getElementById('postEditor').classList.remove('hidden');
+};
+
+// NEW: Index based delete function
+window.deleteByIndex = async (index) => {
+    if (!confirm('هل أنت متأكد من الحذف؟')) return;
+
+    const p = cachedPosts[index];
+    if (!p) return;
+
+    try {
+        await api.delete(p.path, p.sha, `Delete Post: ${p.slug}`);
+        showToast('تم الحذف بنجاح');
+        loadPosts();
     } catch (e) {
-        console.error("Edit Error:", e);
-        alert("حدث خطأ غير متوقع عند فتح المحرر: " + e.message);
+        alert(e.message);
     }
 };
 
@@ -314,7 +371,6 @@ window.savePost = async () => {
             updated: (isEdit) ? now : undefined, 
             image: getVal('pImage'), 
             content: getVal('pContent'),
-            // Removed AI fields (summary, points)
             youtubeVideoId: getVal('pYoutubeId')
         };
         // Clean undefined updated
@@ -323,21 +379,6 @@ window.savePost = async () => {
         await api.put(`content/posts/${slug}.json`, JSON.stringify(postData, null, 2), `Update Post: ${postData.title}`, existingPost ? existingPost.sha : null);
         showToast('تم حفظ المقال! انتظر 2-3 دقائق للتحديث.'); closePostEditor(); loadPosts();
     } catch (e) { alert('خطأ في الحفظ: ' + e.message); } finally { btn.innerText = 'حفظ ونشر'; btn.disabled = false; }
-};
-
-window.deletePost = async (encodedSlug) => { 
-    if(!confirm('هل أنت متأكد من الحذف؟')) return; 
-    try {
-        const slug = decodeURIComponent(encodedSlug);
-        const p = cachedPosts.find(x => x.slug === slug); 
-        if(!p) throw new Error("المقال غير موجود");
-        
-        await api.delete(p.path, p.sha, `Delete Post: ${slug}`); 
-        showToast('تم الحذف'); 
-        loadPosts(); 
-    } catch(e) { 
-        alert(e.message); 
-    } 
 };
 
 window.insertYoutube = () => { const url = prompt("رابط يوتيوب:"); if (url) window.insertTag(`\n@[youtube](${url})\n`); };
