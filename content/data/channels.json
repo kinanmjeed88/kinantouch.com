@@ -1,4 +1,3 @@
-
 [
   {
     "id": "bot_requests",
@@ -11,7 +10,7 @@
   {
     "id": "apps_games",
     "name": "Techtouch7",
-    "desc": "قناة نشر تطبيقات والعاب اندرويد",
+    "desc": "نشر تطبيقات والعاب اندرويد",
     "url": "https://t.me/techtouch7",
     "icon": "smartphone",
     "color": "green"
