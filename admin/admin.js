@@ -223,7 +223,7 @@ function renderPosts() {
         let safeImage = p.image || '';
         if (safeImage && !safeImage.startsWith('http')) {
              safeImage = safeImage.replace(/^(\.\.\/)+/, ''); // clean relative
-             safeImage = '../' + safeImage;
+             safeImage = '../' + safeImage; // Add relative for admin
         } else if (!safeImage) {
             safeImage = 'https://via.placeholder.com/300x200?text=No+Image';
         }
@@ -292,7 +292,15 @@ async function loadChannels() {
 function renderChannels() {
     const list = document.getElementById('channelsList');
     list.innerHTML = cachedChannels.map((ch, index) => {
-        let iconHtml = ''; if (ch.iconData && ch.iconData.type === 'image') { iconHtml = `<img src="${ch.iconData.value}" style="width:${ch.iconData.size||24}px; height:${ch.iconData.size||24}px; object-fit:contain;">`; } else { iconHtml = `<i data-lucide="${(ch.iconData && ch.iconData.value) ? ch.iconData.value : ch.icon || 'star'}"></i>`; }
+        let iconHtml = ''; 
+        if (ch.iconData && ch.iconData.type === 'image') { 
+            // Fix icon preview for admin
+            let iUrl = ch.iconData.value;
+            if(iUrl && !iUrl.startsWith('http')) iUrl = '../' + iUrl.replace(/^(\.\.\/)+/, '');
+            iconHtml = `<img src="${iUrl}" style="width:${ch.iconData.size||24}px; height:${ch.iconData.size||24}px; object-fit:contain;">`; 
+        } else { 
+            iconHtml = `<i data-lucide="${(ch.iconData && ch.iconData.value) ? ch.iconData.value : ch.icon || 'star'}"></i>`; 
+        }
         return `<div class="bg-white p-4 rounded-xl border border-gray-100 flex items-center gap-4 group"><button onclick="openIconPickerForChannel(${index})" class="w-12 h-12 flex items-center justify-center bg-${ch.color || 'blue'}-100 text-${ch.color || 'blue'}-600 rounded-lg hover:bg-gray-200 transition-colors overflow-hidden">${iconHtml}</button><div class="flex-1"><input type="text" value="${ch.name}" class="font-bold text-gray-800 w-full bg-transparent mb-1 outline-none focus:border-b border-blue-500" onchange="updateChannel(${index}, 'name', this.value)"><input type="text" value="${ch.desc}" class="text-xs text-gray-400 w-full bg-transparent outline-none focus:border-b border-blue-500" onchange="updateChannel(${index}, 'desc', this.value)"><input type="text" value="${ch.url}" class="text-xs text-blue-400 w-full bg-transparent outline-none focus:border-b border-blue-500 mt-1" onchange="updateChannel(${index}, 'url', this.value)"></div><div class="opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="removeChannel(${index})" class="text-red-500 p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
     }).join('');
     if(!document.getElementById('btnSaveChannels')) { const btn = document.createElement('button'); btn.id = 'btnSaveChannels'; btn.className = 'w-full bg-purple-600 text-white py-3 rounded-xl font-bold mt-4'; btn.innerText = 'حفظ التغييرات على القنوات'; btn.onclick = saveChannels; list.parentElement.appendChild(btn); } lucide.createIcons();
@@ -313,7 +321,7 @@ async function loadSettings() {
         document.getElementById('catFontSize').value = cachedAbout.categories?.fontSize || 14; document.getElementById('catSizeVal').innerText = cachedAbout.categories?.fontSize || 14;
         document.getElementById('valName').value = cachedAbout.profileName;
         
-        // Handle profile image preview correctly
+        // Handle profile image preview correctly for Admin UI
         let profileSrc = cachedAbout.profileImage;
         if (profileSrc && !profileSrc.startsWith('http')) {
              profileSrc = profileSrc.replace(/^(\.\.\/)+/, '');
@@ -338,7 +346,11 @@ async function loadSettings() {
             const btn = document.getElementById(`btnIcon_${key}`); let data = socialIcons[key]; if (!data || typeof data === 'string') data = { type: 'lucide', value: data || key, size: 24 };
             if(key === 'tiktok' && (!socialIcons[key] || socialIcons[key].value === 'video')) data.value = 'video'; 
             btn.dataset.iconInfo = JSON.stringify(data);
-            if (data.type === 'image') btn.innerHTML = `<img src="${data.value}" style="width:24px; height:24px; object-fit:contain;">`; else { btn.innerHTML = `<i data-lucide="${data.value}"></i>`; }
+            if (data.type === 'image') {
+                let sUrl = data.value;
+                if(sUrl && !sUrl.startsWith('http')) sUrl = '../' + sUrl.replace(/^(\.\.\/)+/, '');
+                btn.innerHTML = `<img src="${sUrl}" style="width:24px; height:24px; object-fit:contain;">`; 
+            } else { btn.innerHTML = `<i data-lucide="${data.value}"></i>`; }
         });
         lucide.createIcons(); 
     } catch(e) { console.error(e); alert("خطأ في تحميل الإعدادات: " + e.message); } finally { loader.classList.add('hidden'); form.classList.remove('hidden'); }

@@ -99,17 +99,24 @@ let aboutData = {
 let channelsData = [];
 
 if (fs.existsSync(path.join(DATA_DIR, 'about.json'))) {
-    try { aboutData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'about.json'), 'utf8')); } catch (e) {}
+    try { aboutData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'about.json'), 'utf8')); } catch (e) { console.error("Error parsing about.json", e); }
 }
 if (fs.existsSync(path.join(DATA_DIR, 'channels.json'))) {
-    try { channelsData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'channels.json'), 'utf8')); } catch (e) {}
+    try { channelsData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'channels.json'), 'utf8')); } catch (e) { console.error("Error parsing channels.json", e); }
 }
 
+// --- UTILITY: Clean Path Function ---
+// Removes ../, ./, and leading / to ensure path works from root
+const cleanPath = (p) => {
+    if (!p) return '';
+    if (p.startsWith('http')) return p;
+    return p.replace(/^(\.\.\/)+/, '').replace(/^\/+/, '');
+};
+
 const toAbsoluteUrl = (url) => {
-    if (!url) return `${BASE_URL}/assets/images/me.jpg`;
-    if (url.startsWith('http')) return url;
-    const cleanPath = url.startsWith('/') ? url.substring(1) : url;
-    return `${BASE_URL}/${cleanPath}`;
+    const clean = cleanPath(url || 'assets/images/me.jpg');
+    if (clean.startsWith('http')) return clean;
+    return `${BASE_URL}/${clean}`;
 };
 
 const escapeXml = (unsafe) => {
@@ -133,7 +140,7 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     if (iconData && typeof iconData === 'object') {
         if (iconData.type === 'image') {
             const size = iconData.size || defaultSize;
-            return `<img src="${iconData.value}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
+            return `<img src="${cleanPath(iconData.value)}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
         } else {
             const size = iconData.size || defaultSize;
             return `<i data-lucide="${iconData.value}" style="width:${size}px; height:${size}px;"></i>`;
@@ -201,12 +208,12 @@ const createCardHTML = (post) => {
     if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
     
-    // Explicit sizing classes for dynamic control
+    // Usage of custom classes ensures the scoped CSS applies here
     return `
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="${post.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${post.title}" loading="lazy" decoding="async" />
+                <img src="${cleanPath(post.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${post.title}" loading="lazy" decoding="async" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                 <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
                     <i data-lucide="${icon}" style="width: 1.2em; height: 1.2em;"></i><span>${getCatLabel(post.category)}</span>
@@ -255,19 +262,18 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // 4. Common UI Updates - PROFESSIONAL FIX
     
-    // A. Profile Image Logic (Robust Cleaning)
+    // A. Profile Image Logic (Robust Cleaning & Application)
     let profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
+    profileImgSrc = cleanPath(profileImgSrc);
     
-    // Safety Clean: Remove any '../' or leading '/' that might break relative pathing in root files
-    // This ensures that if CMS saves '../assets/images/x.webp', it becomes 'assets/images/x.webp'
-    profileImgSrc = profileImgSrc.replace(/^(\.\.\/)+/, '').replace(/^\/+/, '');
-    
-    // Apply to Header ID and Display Class (Used in Header and About Hero)
-    $('#header-profile-img, .profile-img-display').attr('src', profileImgSrc);
-    
-    // Update Favicon (Important for branding)
-    $('link[rel="shortcut icon"]').attr('href', profileImgSrc);
-    $('link[rel="icon"]').attr('href', profileImgSrc);
+    // Apply to Header ID
+    $('#header-profile-img').attr('src', profileImgSrc);
+    // Apply to all display classes (About page, mobile navs, etc)
+    $('.profile-img-display').attr('src', profileImgSrc);
+    // Update Favicons
+    $('link[rel*="icon"]').attr('href', profileImgSrc);
+    // Update Open Graph Image
+    $('meta[property="og:image"]').attr('content', toAbsoluteUrl(profileImgSrc));
     
     // B. Profile Name (Everywhere)
     $('#header-profile-name').text(aboutData.profileName);
@@ -275,30 +281,36 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // C. Site Title
     $('header .tracking-tight').text(aboutData.siteName || 'TechTouch');
 
-    // D. DYNAMIC CSS INJECTION (FIXED SCOPE - DO NOT TOUCH)
-    // Only targets specific components (Tabs, Cards, Ticker) to avoid breaking global site layout
+    // D. DYNAMIC CSS INJECTION (STRICTLY SCOPED)
+    // This logic ensures only cards and tabs are affected by the size setting.
     const baseSize = parseInt(aboutData.categories?.fontSize) || 14;
+    // Calculate derived sizes
+    const titleSize = baseSize + 2; 
+    const metaSize = Math.max(10, baseSize - 2);
+
+    // We use !important to ensure CMS settings override default CSS, 
+    // but strict selectors prevent bleeding into other elements.
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
         /* 1. Category Tabs Only */
-        .tab-btn, .tab-btn span {
-            font-size: ${baseSize}px !important;
-        }
+        button.tab-btn { font-size: ${baseSize}px !important; }
+        button.tab-btn span { font-size: ${baseSize}px !important; }
+        button.tab-btn svg { width: ${baseSize + 2}px !important; height: ${baseSize + 2}px !important; }
         
-        /* 2. Post Cards (The Grid Content) */
-        .custom-title-size { 
-            font-size: ${baseSize + 2}px !important; 
+        /* 2. Post Cards (The Grid Content ONLY) */
+        .post-card .custom-title-size { 
+            font-size: ${titleSize}px !important; 
             line-height: 1.4 !important;
         }
-        .custom-desc-size { 
+        .post-card .custom-desc-size { 
             font-size: ${baseSize}px !important; 
             line-height: 1.6 !important;
         }
-        .custom-meta-size, .custom-badge-size { 
-            font-size: ${Math.max(10, baseSize - 2)}px !important; 
+        .post-card .custom-meta-size, .post-card .custom-badge-size { 
+            font-size: ${metaSize}px !important; 
         }
 
-        /* 3. Ticker */
+        /* 3. Ticker (Specific Class) */
         .ticker-text, .ticker-text a { 
             font-size: ${aboutData.ticker?.fontSize || 14}px !important; 
         }
@@ -348,10 +360,14 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         if (coverContainer.length) {
             coverContainer.attr('style', ''); 
             if (aboutData.coverType === 'image' && aboutData.coverValue) {
+                // Clean styles
                 coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
                 coverContainer.removeClass((i, c) => (c.match(/from-\S+/g) || []).join(' '));
                 coverContainer.removeClass((i, c) => (c.match(/to-\S+/g) || []).join(' '));
-                coverContainer.css('background', `url('${aboutData.coverValue}') center/cover no-repeat`);
+                
+                // IMPORTANT: Use cleaned path for cover image
+                const coverUrl = cleanPath(aboutData.coverValue);
+                coverContainer.css('background', `url('${coverUrl}') center/cover no-repeat`);
             } else {
                 coverContainer.css('background', ''); 
                 coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
@@ -445,6 +461,12 @@ const generateIndividualArticles = () => {
             $content.root().append(ADSENSE_BLOCK);
         }
 
+        // Apply cleaning to article images as well
+        $content('img').each((i, img) => {
+            const originalSrc = $content(img).attr('src');
+            if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
+        });
+        
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         $('article').html($content.html()); 
         
@@ -458,7 +480,7 @@ const generateIndividualArticles = () => {
 
 const updateSearchData = () => {
     const searchPath = path.join(ROOT_DIR, 'assets/js/search-data.js');
-    const searchItems = [ ...allPosts.map(p => ({ title: p.title, desc: p.description, url: `article-${p.slug}.html`, category: p.category.charAt(0).toUpperCase() + p.category.slice(1), image: p.image })), ...channelsData.map(c => ({ title: c.name, desc: c.desc, url: c.url, category: 'Channels', image: 'assets/images/me.jpg' })) ];
+    const searchItems = [ ...allPosts.map(p => ({ title: p.title, desc: p.description, url: `article-${p.slug}.html`, category: p.category.charAt(0).toUpperCase() + p.category.slice(1), image: cleanPath(p.image) })), ...channelsData.map(c => ({ title: c.name, desc: c.desc, url: c.url, category: 'Channels', image: 'assets/images/me.jpg' })) ];
     fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
 };
 
