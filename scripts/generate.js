@@ -21,17 +21,18 @@ const DATA_DIR = path.join(__dirname, '../content/data');
 const BASE_URL = 'https://kinantouch.com';
 
 // --- INTEGRATION CONFIGURATION ---
-// 1. Google Analytics (Verified from Dashboard)
+// 1. Google Analytics (Using Absolute URL to fix 404)
 const GA_ID = 'G-63BBPLQ343'; 
-// 2. Google AdSense (Verified from Dashboard)
+// 2. Google AdSense
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
-// 3. OneSignal (Placeholder - Replace with actual ID if available)
+// 3. OneSignal
 const ONESIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID'; 
-// 4. Google Verification (Optional)
+// 4. Google Verification
 const GOOGLE_SITE_VERIFICATION = ''; 
 
 // --- SCRIPTS TEMPLATES ---
 
+// FIXED: Ensure src is absolute https://...
 const GA_SCRIPT = `
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
@@ -330,6 +331,12 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
         const content = $(el).html() || '';
+        
+        // CRITICAL FIX: Remove relative GA scripts causing 404
+        if (src.match(/js\?id=G-/) && !src.includes('googletagmanager.com')) {
+             $(el).remove();
+        }
+
         if (src.includes('googletagmanager.com') || 
             content.includes("gtag('config'") ||
             src.includes("pagead2.googlesyndication.com") ||
