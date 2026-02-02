@@ -6,278 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>دليل القنوات والمواقع | TechTouch</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: { extend: { fontFamily: { sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'] } } }
-        }
-    </script>
+    <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Segoe UI','Tahoma','Geneva','Verdana','sans-serif']}}}}</script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Google Analytics 4 (Professional Setup) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-63BBPLQ343"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-63BBPLQ343', {
-        anonymize_ip: true,
-        send_page_view: true
-      });
-    </script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-63BBPLQ343',{anonymize_ip:true,send_page_view:true});</script>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col min-h-screen">
-    
     <header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-md">
-                    <img src="assets/images/me.jpg" alt="Profile photo" class="w-full h-full object-cover" />
+                    <img id="header-profile-img" src="assets/images/me.jpg" alt="Profile photo" class="w-full h-full object-cover profile-img-display" />
                 </div>
-                <span class="font-bold text-lg text-gray-800 dark:text-gray-100 hidden sm:block">كنان الصائغ</span>
+                <span id="header-profile-name" class="font-bold text-lg text-gray-800 dark:text-gray-100 hidden sm:block">كنان الصائغ</span>
             </div>
             <a href="index.html" class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight">TechTouch</a>
             <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
-                <i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
+                <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i><i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
             </button>
         </div>
     </header>
-
     <nav class="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-16 z-30 overflow-x-auto">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-center space-x-reverse space-x-2 h-10 min-w-max">
-                 <a href="index.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="home" class="w-3.5 h-3.5"></i><span>الرئيسية</span>
-                </a>
-                 <a href="tools.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="wrench" class="w-3.5 h-3.5"></i><span>الأدوات</span>
-                </a>
-                <a href="about.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="info" class="w-3.5 h-3.5"></i><span>حول</span>
-                </a>
+                 <a href="index.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i data-lucide="home" class="w-3.5 h-3.5"></i><span>الرئيسية</span></a>
+                 <a href="tools.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i data-lucide="wrench" class="w-3.5 h-3.5"></i><span>الأدوات</span></a>
+                <a href="about.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i data-lucide="info" class="w-3.5 h-3.5"></i><span>حول</span></a>
             </div>
         </div>
     </nav>
-
     <main class="max-w-4xl mx-auto px-4 py-12 animate-fade-in">
         <h1 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">دليل القنوات والمواقع</h1>
-        
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            <!-- 1. CapCut -->
-            <a href="https://t.me/techtouch7/3287" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="scissors" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">كاب كات</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">تعديل الفيديو</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-blue-600 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 2. Bot Requests -->
-            <a href="https://t.me/techtouchAI_bot" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="bot" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">بوت الطلبات</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">بوت على التيليكرام لاستقبال طلبات التطبيقات والالعاب المعدلة</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-purple-600 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 3. Techtouch7 (Apps) -->
-            <a href="https://t.me/techtouch7" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="smartphone" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Techtouch7</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">قناة نشر تطبيقات والعاب اندرويد</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-green-600 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 4. Discussions -->
-            <a href="https://t.me/techtouch6" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="message-circle" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">مناقشات Techtouch</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">تعليقات لحل المشاكل وغيرها</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-gray-600 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 5. Games Channel -->
-            <a href="https://t.me/techtouch0" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="gamepad-2" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">قناة الالعاب</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">نشر العاب اندرو معدلة</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-red-600 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 6. Games Discuss -->
-            <a href="https://t.me/+pScKzHOQwslhMmJi" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-rose-500 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="message-square" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">مناقشات الالعاب</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">كروب مناقشة الالعاب</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-rose-500 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 7. PC & PS -->
-            <a href="https://t.me/techtouch4" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="monitor" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">قناة PC & PS</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">قناة لنشر مايخص البليستيشن وبرامج الوندوز</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-indigo-600 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 8. PC & PS Discuss -->
-            <a href="https://t.me/+J1Up1q8AYgs2MWU6" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="message-square" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">مناقشات PC & PS</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">مناقشات حول الكمبيوتر والبليستيشن</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-indigo-500 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 9. iPhone -->
-            <a href="https://t.me/+yqBOH5BBBEM0MTQ6" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="smartphone" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">قناة الايفون</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">نشر مايخص الايفون تطبيقات وغيرها</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-slate-900 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 10. iPhone Discuss -->
-            <a href="https://t.me/+t1W3_jSUjOw0ZDYy" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-slate-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="message-square" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">مناقشات الايفون</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">حل بعض المشاكل للايفون ومناقشتها</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-slate-600 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
-             <!-- 11. AI -->
-             <a href="https://t.me/techtouch_AI" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">قناة الذكاء الاصطناعي AI</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">نشر اخبار تقنية واخر اخبار الذكاء الاصطناعي</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-teal-600 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-            
-             <!-- 12. Live -->
-             <a href="https://t.me/techtouch9" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm">
-                        <i data-lucide="tv" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1">قناة البث المباشر</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">توفير روابط مباشره لكرة القدم</p>
-                    </div>
-                    <div class="text-gray-300 group-hover:text-orange-600 shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-            
-            <!-- 13. Folder -->
-            <a href="https://t.me/addlist/Gxcy1FFJONhkMjFi" target="_blank" class="block bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-3 shadow-md border border-transparent hover:opacity-95 transition-all group text-white col-span-1 md:col-span-2">
-                <div class="flex items-center gap-4 h-full">
-                    <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center shrink-0 shadow-sm backdrop-blur-sm">
-                        <i data-lucide="folder-plus" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-white text-sm mb-1">المجلد الكامل</h3>
-                        <p class="text-xs text-blue-100 truncate">للاشتراك بجميع القنوات دفعة واحدة</p>
-                    </div>
-                    <div class="text-white/70 group-hover:text-white shrink-0 transition-colors">
-                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </div>
-                </div>
-            </a>
-
+            <!-- Items injected by generator -->
         </div>
     </main>
-
     <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
             <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>

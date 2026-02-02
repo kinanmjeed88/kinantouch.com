@@ -28,7 +28,6 @@ const GOOGLE_SITE_VERIFICATION = '';
 
 // --- SCRIPTS TEMPLATES ---
 
-// UPDATED: Simplified GA4 Snippet
 const GA_SCRIPT = `
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
@@ -195,96 +194,6 @@ const getCatLabel = (cat) => {
     return configured[cat] || defaults[cat] || 'عام';
 };
 
-// RSS Generator
-const generateRSS = () => {
-    const feedPath = path.join(ROOT_DIR, 'feed.xml');
-    const now = new Date().toUTCString();
-    let xml = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-<channel>
-    <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>
-    <link>${BASE_URL}</link>
-    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
-    <language>ar</language>
-    <lastBuildDate>${now}</lastBuildDate>
-    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />`;
-
-    allPosts.slice(0, 20).forEach(post => {
-        const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
-        const fullImg = toAbsoluteUrl(post.image);
-        xml += `
-    <item>
-        <title><![CDATA[${post.title}]]></title>
-        <link>${fullUrl}</link>
-        <guid>${fullUrl}</guid>
-        <pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate>
-        <description><![CDATA[${post.description}]]></description>
-        <enclosure url="${fullImg}" type="image/jpeg" />
-    </item>`;
-    });
-    xml += `</channel></rss>`;
-    fs.writeFileSync(feedPath, xml);
-};
-
-// Sitemap Generator
-const generateSitemap = () => {
-    const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
-    const today = new Date().toISOString().split('T')[0];
-    
-    const staticPages = [
-        { file: 'index.html', url: '/', priority: '1.0' },
-        { file: 'articles.html', url: '/articles.html', priority: '0.9' },
-        { file: 'tools.html', url: '/tools.html', priority: '0.9' },
-        { file: 'about.html', url: '/about.html', priority: '0.7' },
-        { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
-        { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
-        { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
-        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
-        { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
-        { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
-    ];
-
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
-
-    staticPages.forEach(page => {
-        if (page.file === '404.html') return;
-        const filePath = path.join(ROOT_DIR, page.file);
-        let lastmod = today;
-        if (fs.existsSync(filePath)) {
-            try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {}
-        }
-        const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`;
-        xml += `
-  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <priority>${page.priority}</priority>
-  </url>`;
-    });
-
-    allPosts.forEach(post => {
-        const fullImg = toAbsoluteUrl(post.image);
-        const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
-        const postDate = new Date(post.effectiveDate).toISOString().split('T')[0];
-        xml += `
-  <url>
-    <loc>${pageUrl}</loc>
-    <lastmod>${postDate}</lastmod>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>${escapeXml(fullImg)}</image:loc>
-      <image:title>${escapeXml(post.title)}</image:title>
-    </image:image>
-  </url>`;
-    });
-
-    xml += `\n</urlset>`;
-    fs.writeFileSync(sitemapPath, xml);
-    console.log('✅ sitemap.xml regenerated automatically.');
-};
-
 const createCardHTML = (post) => {
     let badgeColor = 'bg-blue-600';
     let icon = 'file-text';
@@ -292,6 +201,7 @@ const createCardHTML = (post) => {
     if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
     
+    // Explicit sizing classes for dynamic control
     return `
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
@@ -345,9 +255,8 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // 4. Common UI Updates - PROFESSIONAL FIX
     
-    // A. Profile Image (Everywhere)
+    // A. Profile Image (Everywhere) - Matches ID or Class
     const profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
-    // Target both the specific header ID AND a generic class for profile images throughout the site
     $('#header-profile-img, .profile-img-display').attr('src', profileImgSrc);
     
     // B. Profile Name (Everywhere)
@@ -356,29 +265,35 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // C. Site Title
     $('header .tracking-tight').text(aboutData.siteName || 'TechTouch');
 
-    // D. DYNAMIC CSS INJECTION (For Button & Font Sizes)
-    // This solves "Buttons don't resize". We inject a style block controlling sizes.
+    // D. DYNAMIC CSS INJECTION (FORCE SIZES)
+    // Ensures user preference (e.g. 9px) forces all elements to resize
     const baseSize = parseInt(aboutData.categories?.fontSize) || 14;
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
         :root {
             --base-font-size: ${baseSize}px;
         }
-        /* Buttons and Navigation */
-        .nav-link, .tab-btn, .btn-wrapped-link, button {
+        /* Buttons, Tabs, Nav */
+        .nav-link, .tab-btn, .btn-wrapped-link, button, .text-sm, .text-xs, a {
             font-size: ${baseSize}px !important;
         }
-        /* Card Titles */
-        .custom-title-size { font-size: ${baseSize + 2}px !important; }
-        .custom-meta-size { font-size: ${Math.max(10, baseSize - 2)}px !important; }
-        .custom-desc-size { font-size: ${Math.max(11, baseSize - 1)}px !important; }
-        .custom-badge-size { font-size: ${Math.max(10, baseSize - 3)}px !important; }
-        
+        /* Headers & Card Titles */
+        .custom-title-size, h1, h2, h3, .text-xl, .text-2xl, .text-3xl { 
+            font-size: ${baseSize + 4}px !important; 
+        }
+        /* Descriptions & Body Text */
+        .custom-desc-size, p, .prose p { 
+            font-size: ${Math.max(12, baseSize + 1)}px !important; 
+        }
+        /* Meta Data & Badges */
+        .custom-meta-size, .custom-badge-size { 
+            font-size: ${Math.max(10, baseSize - 2)}px !important; 
+        }
         /* Ticker */
         .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
     </style>
     `;
-    $('#dynamic-theme-styles').remove(); // Remove old if exists
+    $('#dynamic-theme-styles').remove();
     $('head').append(dynamicStyle);
 
     // E. Social Links
@@ -416,9 +331,25 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('[data-tab="sports"] span').text(aboutData.categories.labels.sports || 'رياضة');
     }
     
-    // H. About Page Specifics (Cover & Lists)
+    // H. About Page Specifics
     if (fileName === 'about.html') {
-        // List Updates
+        const coverContainer = $('#about-cover-section');
+        if (coverContainer.length) {
+            coverContainer.attr('style', ''); 
+            if (aboutData.coverType === 'image' && aboutData.coverValue) {
+                coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
+                coverContainer.removeClass((i, c) => (c.match(/from-\S+/g) || []).join(' '));
+                coverContainer.removeClass((i, c) => (c.match(/to-\S+/g) || []).join(' '));
+                coverContainer.css('background', `url('${aboutData.coverValue}') center/cover no-repeat`);
+            } else {
+                coverContainer.css('background', ''); 
+                coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
+                coverContainer.removeClass((i, c) => (c.match(/from-\S+/g) || []).join(' '));
+                coverContainer.removeClass((i, c) => (c.match(/to-\S+/g) || []).join(' '));
+                coverContainer.addClass(aboutData.coverValue || 'bg-gradient-to-r from-blue-700 to-blue-500');
+            }
+        }
+        
         $('#about-bot-list').parent().find('h2').contents().last().replaceWith(' ' + (aboutData.botTitle || 'مركز خدمة الطلبات (Bot)'));
         if(aboutData.botInfo) {
             const botItems = aboutData.botInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-blue-500 text-xl">✪</span><span>${i}</span></li>`).join('');
@@ -429,33 +360,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         if(aboutData.searchInfo) {
             const searchItems = aboutData.searchInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-green-500 text-xl">✪</span><span>${i}</span></li>`).join('');
             $('#about-search-list').html(searchItems);
-        }
-        
-        // --- ROBUST COVER IMAGE/COLOR LOGIC ---
-        // We target the specific container ID #about-cover-section
-        const coverContainer = $('#about-cover-section');
-        if (coverContainer.length) {
-            // Reset everything first
-            coverContainer.attr('style', ''); 
-            
-            if (aboutData.coverType === 'image' && aboutData.coverValue) {
-                // Image Mode: Remove gradient classes, set background style
-                coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
-                coverContainer.removeClass((i, c) => (c.match(/from-\S+/g) || []).join(' '));
-                coverContainer.removeClass((i, c) => (c.match(/to-\S+/g) || []).join(' '));
-                coverContainer.css('background', `url('${aboutData.coverValue}') center/cover no-repeat`);
-            } else {
-                // Color/Gradient Mode: Remove inline style, add classes
-                coverContainer.css('background', ''); 
-                // We assume coverValue contains full Tailwind classes e.g., "bg-gradient-to-r from-blue-700 to-blue-500"
-                // First strip old gradient classes just in case
-                coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
-                coverContainer.removeClass((i, c) => (c.match(/from-\S+/g) || []).join(' '));
-                coverContainer.removeClass((i, c) => (c.match(/to-\S+/g) || []).join(' '));
-                
-                // Add new classes
-                coverContainer.addClass(aboutData.coverValue || 'bg-gradient-to-r from-blue-700 to-blue-500');
-            }
         }
         
         $('.prose p:first').text(aboutData.bio);
@@ -545,6 +449,96 @@ const updateSearchData = () => {
     const searchPath = path.join(ROOT_DIR, 'assets/js/search-data.js');
     const searchItems = [ ...allPosts.map(p => ({ title: p.title, desc: p.description, url: `article-${p.slug}.html`, category: p.category.charAt(0).toUpperCase() + p.category.slice(1), image: p.image })), ...channelsData.map(c => ({ title: c.name, desc: c.desc, url: c.url, category: 'Channels', image: 'assets/images/me.jpg' })) ];
     fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
+};
+
+// RSS Generator (Restored)
+const generateRSS = () => {
+    const feedPath = path.join(ROOT_DIR, 'feed.xml');
+    const now = new Date().toUTCString();
+    let xml = `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>
+    <link>${BASE_URL}</link>
+    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
+    <language>ar</language>
+    <lastBuildDate>${now}</lastBuildDate>
+    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />`;
+
+    allPosts.slice(0, 20).forEach(post => {
+        const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
+        const fullImg = toAbsoluteUrl(post.image);
+        xml += `
+    <item>
+        <title><![CDATA[${post.title}]]></title>
+        <link>${fullUrl}</link>
+        <guid>${fullUrl}</guid>
+        <pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate>
+        <description><![CDATA[${post.description}]]></description>
+        <enclosure url="${fullImg}" type="image/jpeg" />
+    </item>`;
+    });
+    xml += `</channel></rss>`;
+    fs.writeFileSync(feedPath, xml);
+};
+
+// Sitemap Generator (Restored)
+const generateSitemap = () => {
+    const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
+    const today = new Date().toISOString().split('T')[0];
+    
+    const staticPages = [
+        { file: 'index.html', url: '/', priority: '1.0' },
+        { file: 'articles.html', url: '/articles.html', priority: '0.9' },
+        { file: 'tools.html', url: '/tools.html', priority: '0.9' },
+        { file: 'about.html', url: '/about.html', priority: '0.7' },
+        { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
+        { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
+        { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
+        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
+        { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
+        { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
+    ];
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
+
+    staticPages.forEach(page => {
+        if (page.file === '404.html') return;
+        const filePath = path.join(ROOT_DIR, page.file);
+        let lastmod = today;
+        if (fs.existsSync(filePath)) {
+            try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {}
+        }
+        const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`;
+        xml += `
+  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <priority>${page.priority}</priority>
+  </url>`;
+    });
+
+    allPosts.forEach(post => {
+        const fullImg = toAbsoluteUrl(post.image);
+        const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
+        const postDate = new Date(post.effectiveDate).toISOString().split('T')[0];
+        xml += `
+  <url>
+    <loc>${pageUrl}</loc>
+    <lastmod>${postDate}</lastmod>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>${escapeXml(fullImg)}</image:loc>
+      <image:title>${escapeXml(post.title)}</image:title>
+    </image:image>
+  </url>`;
+    });
+
+    xml += `\n</urlset>`;
+    fs.writeFileSync(sitemapPath, xml);
+    console.log('✅ sitemap.xml regenerated automatically.');
 };
 
 // Execution Sequence

@@ -6,114 +6,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>الأدوات التقنية | TechTouch</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: { extend: { fontFamily: { sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'] } } }
-        }
-    </script>
+    <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Segoe UI','Tahoma','Geneva','Verdana','sans-serif']}}}}</script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Google Analytics 4 (Professional Setup) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-63BBPLQ343"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-63BBPLQ343', {
-        anonymize_ip: true,
-        send_page_view: true
-      });
-    </script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-63BBPLQ343',{anonymize_ip:true,send_page_view:true});</script>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col min-h-screen">
-    
     <header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-md">
-                    <img src="assets/images/me.jpg" alt="Profile photo" class="w-full h-full object-cover" />
+                    <img id="header-profile-img" src="assets/images/me.jpg" alt="Profile photo" class="w-full h-full object-cover profile-img-display" />
                 </div>
-                <span class="font-bold text-lg text-gray-800 dark:text-gray-100 hidden sm:block">كنان الصائغ</span>
+                <span id="header-profile-name" class="font-bold text-lg text-gray-800 dark:text-gray-100 hidden sm:block">كنان الصائغ</span>
             </div>
             <a href="index.html" class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight">TechTouch</a>
             <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
-                <i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
+                <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i><i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
             </button>
         </div>
     </header>
-
     <nav class="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-16 z-30 overflow-x-auto">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-center space-x-reverse space-x-2 h-10 min-w-max">
-                 <a href="index.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="home" class="w-3.5 h-3.5"></i><span>الرئيسية</span>
-                </a>
-                 <a href="tools.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="wrench" class="w-3.5 h-3.5"></i><span>الأدوات</span>
-                </a>
-                <a href="about.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="info" class="w-3.5 h-3.5"></i><span>حول</span>
-                </a>
+                 <a href="index.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i data-lucide="home" class="w-3.5 h-3.5"></i><span>الرئيسية</span></a>
+                 <a href="tools.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i data-lucide="wrench" class="w-3.5 h-3.5"></i><span>الأدوات</span></a>
+                <a href="about.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"><i data-lucide="info" class="w-3.5 h-3.5"></i><span>حول</span></a>
             </div>
         </div>
     </nav>
-
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
         <div class="text-center max-w-2xl mx-auto mb-12">
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">الأدوات التقنية</h1>
             <p class="text-gray-600 dark:text-gray-400">تصفح أدواتنا المتخصصة لتحليل السوق ومقارنة الهواتف.</p>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            <!-- Sites Directory -->
             <a href="tools-sites.html" class="flex items-start p-6 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-blue-50 dark:bg-blue-900/20 hover:shadow-lg w-full">
-                <div class="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                    <i data-lucide="globe" class="w-8 h-8 text-blue-500"></i>
-                </div>
+                <div class="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm"><i data-lucide="globe" class="w-8 h-8 text-blue-500"></i></div>
                 <div class="mr-4 flex-1">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">جميع المواقع والقنوات</h3>
-                        <i data-lucide="chevron-left" class="w-4 h-4 text-gray-400"></i>
-                    </div>
+                    <div class="flex justify-between items-center"><h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">جميع المواقع والقنوات</h3><i data-lucide="chevron-left" class="w-4 h-4 text-gray-400"></i></div>
                     <p class="text-gray-600 dark:text-gray-300 text-sm">دليل لأهم المواقع التقنية وقنوات التيليجرام.</p>
                 </div>
             </a>
-
-            <!-- Phones DB -->
             <a href="tools-phones.html" class="flex items-start p-6 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-purple-50 dark:bg-purple-900/20 hover:shadow-lg w-full">
-                <div class="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                    <i data-lucide="smartphone" class="w-8 h-8 text-purple-500"></i>
-                </div>
+                <div class="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm"><i data-lucide="smartphone" class="w-8 h-8 text-purple-500"></i></div>
                 <div class="mr-4 flex-1">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">الهواتف</h3>
-                        <i data-lucide="chevron-left" class="w-4 h-4 text-gray-400"></i>
-                    </div>
+                    <div class="flex justify-between items-center"><h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">الهواتف</h3><i data-lucide="chevron-left" class="w-4 h-4 text-gray-400"></i></div>
                     <p class="text-gray-600 dark:text-gray-300 text-sm">أحدث أخبار ومواصفات الهواتف الذكية.</p>
                 </div>
             </a>
-
-            <!-- Compare Tool -->
             <a href="tools-compare.html" class="flex items-start p-6 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-orange-50 dark:bg-orange-900/20 hover:shadow-lg w-full">
-                <div class="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                    <i data-lucide="scale" class="w-8 h-8 text-orange-500"></i>
-                </div>
+                <div class="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm"><i data-lucide="scale" class="w-8 h-8 text-orange-500"></i></div>
                 <div class="mr-4 flex-1">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">مقارنة الهواتف</h3>
-                        <i data-lucide="chevron-left" class="w-4 h-4 text-gray-400"></i>
-                    </div>
+                    <div class="flex justify-between items-center"><h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">مقارنة الهواتف</h3><i data-lucide="chevron-left" class="w-4 h-4 text-gray-400"></i></div>
                     <p class="text-gray-600 dark:text-gray-300 text-sm">قارن بين المواصفات والأسعار جنباً إلى جنب.</p>
                 </div>
             </a>
-            
+             <a href="tool-analysis.html" class="flex items-start p-6 rounded-xl border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all bg-green-50 dark:bg-green-900/20 hover:shadow-lg w-full">
+                <div class="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm"><i data-lucide="sparkles" class="w-8 h-8 text-green-500"></i></div>
+                <div class="mr-4 flex-1">
+                    <div class="flex justify-between items-center"><h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">تحليل AI</h3><i data-lucide="chevron-left" class="w-4 h-4 text-gray-400"></i></div>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm">مقارنة وتحليل احترافي باستخدام الذكاء الاصطناعي.</p>
+                </div>
+            </a>
         </div>
     </main>
-
     <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
             <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
