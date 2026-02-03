@@ -474,6 +474,38 @@ const generateIndividualArticles = () => {
 
     allPosts.forEach(post => {
         const $ = cheerio.load(template);
+        // ================================
+// Dynamic Breadcrumb Generator
+// ================================
+
+// 1️⃣ تحديد اسم القسم والرابط بناءً على تصنيف المقال
+const categoryLabel = getCatLabel(post.category);
+
+let breadcrumbLinkMap = {
+    articles: 'articles.html',
+    apps: 'index.html#tab-apps',
+    games: 'index.html#tab-games',
+    sports: 'index.html#tab-sports'
+};
+
+const categoryLink = breadcrumbLinkMap[post.category] || 'articles.html';
+
+// 2️⃣ البحث عن عنصر الـ breadcrumb داخل القالب
+// نحاول أولاً البحث عن الرابط الافتراضي
+let breadcrumbElement = $('nav a[href="articles.html"]');
+
+// إذا لم يجده نحاول إيجاده بالنص
+if (!breadcrumbElement.length) {
+    breadcrumbElement = $('nav a').filter((i, el) => {
+        return $(el).text().trim() === 'اخبار';
+    }).first();
+}
+
+// 3️⃣ تحديث النص والرابط إذا وُجد العنصر
+if (breadcrumbElement.length) {
+    breadcrumbElement.text(categoryLabel);
+    breadcrumbElement.attr('href', categoryLink);
+}
         const pageSlug = `article-${post.slug}.html`;
         const fullUrl = `${BASE_URL}/${pageSlug}`;
         const fullImageUrl = toAbsoluteUrl(post.image);
