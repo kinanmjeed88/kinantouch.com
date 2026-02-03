@@ -23,7 +23,7 @@ const BASE_URL = 'https://kinantouch.com';
 // --- INTEGRATION CONFIGURATION ---
 const GA_ID = 'G-NZVS1EN9RG'; 
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
-const ONESIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID'; 
+const ONESIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID'; // IMPORTANT: Replace with real ID in production
 const GOOGLE_SITE_VERIFICATION = ''; 
 
 // --- SCRIPTS TEMPLATES ---
@@ -35,7 +35,6 @@ const GA_SCRIPT = `
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', '${GA_ID}');
 </script>`;
 
@@ -46,13 +45,17 @@ const ONESIGNAL_SCRIPT = `
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(function(OneSignal) {
-    OneSignal.init({
-      appId: "${ONESIGNAL_APP_ID}",
-      safari_web_id: "web.onesignal.auto.xxxxx",
-      notifyButton: {
-        enable: true,
-      },
-    });
+    // Check if already initialized to prevent errors
+    if (!OneSignal.initialized) {
+        OneSignal.init({
+          appId: "${ONESIGNAL_APP_ID}",
+          safari_web_id: "web.onesignal.auto.xxxxx",
+          notifyButton: {
+            enable: true,
+          },
+        });
+        OneSignal.initialized = true;
+    }
   });
 </script>
 `;
@@ -233,27 +236,34 @@ const createCardHTML = (post) => {
 
 // --- GLOBAL SCRIPT INJECTOR ---
 const updateGlobalElements = (htmlContent, fileName = '') => {
-    const $ = cheerio.load(htmlContent);
+    // Prevent Cheerio from stripping the DOCTYPE
+    const $ = cheerio.load(htmlContent, { decodeEntities: false });
 
-    // 1. Clean old scripts
+    // 1. Clean old scripts (Aggressive Cleanup)
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
         const content = $(el).html() || '';
-        if (src.includes('googletagmanager.com') || content.includes("gtag('config'") || content.includes("gtag('js'") || src.includes('G-')) { 
+        
+        // Remove existing OneSignal to prevent duplicates
+        if (src.includes("cdn.onesignal.com") || content.includes("OneSignal")) {
+            $(el).remove();
+        }
+        // Remove existing Analytics/Ads to prevent duplicates
+        if (src.includes('googletagmanager.com') || content.includes("gtag(") || src.includes('G-')) { 
             $(el).remove(); 
         }
         if (src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle")) {
             $(el).remove();
         }
-        if (src.includes("cdn.onesignal.com")) {
-            $(el).remove();
-        }
     });
 
-    // 2. Inject Fresh Tracking Scripts
-    $('head').prepend(GA_SCRIPT);
-    $('head').append(AD_SCRIPT);
+    // 2. Inject Fresh Scripts
+    // OneSignal & AdSense go to HEAD
     $('head').append(ONESIGNAL_SCRIPT);
+    $('head').append(AD_SCRIPT);
+    
+    // Analytics goes first
+    $('head').prepend(GA_SCRIPT);
     
     // 3. Search Console Meta
     if (GOOGLE_SITE_VERIFICATION) {
@@ -417,7 +427,12 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         `);
     }
 
-    return $.html();
+    // IMPORTANT: Ensure DOCTYPE is present for Quirks Mode Fix
+    let finalHtml = $.html();
+    if (!finalHtml.trim().toLowerCase().startsWith('<!doctype html>')) {
+        finalHtml = '<!DOCTYPE html>\n' + finalHtml;
+    }
+    return finalHtml;
 };
 
 const updateListingPages = () => {
