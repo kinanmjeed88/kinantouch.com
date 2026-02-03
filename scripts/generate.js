@@ -483,6 +483,11 @@ const generateIndividualArticles = () => {
         $('h1').first().text(post.title);
         $('time').text(post.date);
         
+        // --- FIX: UPDATE MAIN FEATURED IMAGE ---
+        $('main > div.rounded-2xl > img').attr('src', cleanPath(post.image));
+        $('main > div.rounded-2xl > img').attr('alt', post.title);
+        // ---------------------------------------
+
         const $content = cheerio.load(post.content, null, false);
         $content('.adsbygoogle-container, .ad-placeholder').remove();
 
