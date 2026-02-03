@@ -168,7 +168,6 @@ window.handlePickerFileSelect = async (input) => {
 window.updatePickerPreview = (url) => {
     const img = document.getElementById('pickerPreviewImg'); const ph = document.getElementById('pickerPlaceholder');
     if (url) { 
-        // CLEANUP: Ensure no double dots or slashes if it's a relative path
         let displayUrl = url.startsWith('http') ? url : url.replace(/^(\.\.\/)+/, '');
         displayUrl = '../' + displayUrl; 
         img.src = displayUrl; 
@@ -219,11 +218,10 @@ function renderPosts() {
     if (!list) return;
     list.innerHTML = '';
     cachedPosts.forEach((p, index) => {
-        // Fix image path for preview
         let safeImage = p.image || '';
         if (safeImage && !safeImage.startsWith('http')) {
-             safeImage = safeImage.replace(/^(\.\.\/)+/, ''); // clean relative
-             safeImage = '../' + safeImage; // Add relative for admin
+             safeImage = safeImage.replace(/^(\.\.\/)+/, '');
+             safeImage = '../' + safeImage;
         } else if (!safeImage) {
             safeImage = 'https://via.placeholder.com/300x200?text=No+Image';
         }
@@ -294,7 +292,6 @@ function renderChannels() {
     list.innerHTML = cachedChannels.map((ch, index) => {
         let iconHtml = ''; 
         if (ch.iconData && ch.iconData.type === 'image') { 
-            // Fix icon preview for admin
             let iUrl = ch.iconData.value;
             if(iUrl && !iUrl.startsWith('http')) iUrl = '../' + iUrl.replace(/^(\.\.\/)+/, '');
             iconHtml = `<img src="${iUrl}" style="width:${ch.iconData.size||24}px; height:${ch.iconData.size||24}px; object-fit:contain;">`; 
@@ -310,13 +307,23 @@ window.updateChannel = (index, field, value) => { cachedChannels[index][field] =
 window.removeChannel = (index) => { if(!confirm('حذف؟')) return; cachedChannels.splice(index, 1); renderChannels(); };
 window.saveChannels = async () => { const btn = document.getElementById('btnSaveChannels'); btn.innerText = 'جاري الحفظ...'; try { const dataToSave = cachedChannels.filter(x => x); await api.put('content/data/channels.json', JSON.stringify(dataToSave, null, 2), 'Update Channels', cachedChannels.sha); showToast('تم تحديث القنوات'); const file = await api.get('content/data/channels.json'); cachedChannels.sha = file.sha; } catch(e) { alert(e.message); } btn.innerText = 'حفظ التغييرات على القنوات'; };
 
+// New Function to Toggle Visual State
+window.toggleTickerOpacity = () => {
+    const enabled = document.getElementById('tickerEnabled').checked;
+    const container = document.getElementById('tickerInputsContainer');
+    if (enabled) {
+        container.classList.remove('opacity-disabled');
+    } else {
+        container.classList.add('opacity-disabled');
+    }
+};
+
 async function loadSettings() {
     const loader = document.getElementById('settingsLoader'); const form = document.getElementById('settingsForm'); 
     loader.classList.remove('hidden'); form.classList.add('hidden');
     try {
         const file = await api.get('content/data/about.json'); cachedAbout = JSON.parse(decodeURIComponent(escape(atob(file.content)))); cachedAbout.sha = file.sha;
         
-        // Basic Info
         const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
         setVal('siteName', cachedAbout.siteName || "TechTouch");
         setVal('valName', cachedAbout.profileName);
@@ -324,44 +331,28 @@ async function loadSettings() {
         setVal('valBio', cachedAbout.bio);
         setVal('valLogoUrl', cachedAbout.logoUrl);
 
-        // Logo Settings
         const logoType = cachedAbout.logoType || 'text';
         const logoRb = document.querySelector(`input[name="logoType"][value="${logoType}"]`); 
         if(logoRb) logoRb.checked = true;
         toggleLogoInput();
 
-        // Categories
         const cats = cachedAbout.categories?.labels || {};
         setVal('catLabel_articles', cats.articles || "اخبار");
         setVal('catLabel_apps', cats.apps || "تطبيقات");
         setVal('catLabel_games', cats.games || "ألعاب");
         setVal('catLabel_sports', cats.sports || "رياضة");
         
-        // Unified Font Sizes Load (With Safe Defaults)
         const fonts = cachedAbout.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
-        
-        const setFont = (id, val, displayId) => {
-            const el = document.getElementById(id);
-            const disp = document.getElementById(displayId);
-            if(el) { el.value = val; }
-            if(disp) { disp.innerText = val; }
-        };
-
+        const setFont = (id, val, displayId) => { const el = document.getElementById(id); const disp = document.getElementById(displayId); if(el) { el.value = val; } if(disp) { disp.innerText = val; } };
         setFont('fontSize_nav', fonts.nav || 12, 'f_nav_val');
         setFont('fontSize_content', fonts.content || 13, 'f_content_val');
         setFont('fontSize_titles', fonts.titles || 14, 'f_titles_val');
         setFont('fontSize_main', fonts.mainTitles || 15, 'f_main_val');
 
-        // Handle profile image preview correctly for Admin UI
         let profileSrc = cachedAbout.profileImage;
-        if (profileSrc && !profileSrc.startsWith('http')) {
-             profileSrc = profileSrc.replace(/^(\.\.\/)+/, '');
-             profileSrc = '../' + profileSrc;
-        }
-        const previewEl = document.getElementById('previewProfile');
-        if(previewEl) previewEl.src = profileSrc || '../assets/images/me.jpg';
+        if (profileSrc && !profileSrc.startsWith('http')) { profileSrc = profileSrc.replace(/^(\.\.\/)+/, ''); profileSrc = '../' + profileSrc; }
+        const previewEl = document.getElementById('previewProfile'); if(previewEl) previewEl.src = profileSrc || '../assets/images/me.jpg';
         
-        // Ticker
         if (cachedAbout.ticker) {
             setVal('tickerLabel', cachedAbout.ticker.label);
             setVal('tickerText', cachedAbout.ticker.text);
@@ -371,27 +362,25 @@ async function loadSettings() {
             const tickCheck = document.getElementById('tickerAnimated');
             if(tickCheck) tickCheck.checked = cachedAbout.ticker.animated !== false;
             
-            // New: Enabled State
             const enabledCheck = document.getElementById('tickerEnabled');
-            if(enabledCheck) enabledCheck.checked = cachedAbout.ticker.enabled !== false; 
+            // Default to true if undefined, otherwise use value
+            const isEnabled = cachedAbout.ticker.enabled !== false; 
+            if(enabledCheck) enabledCheck.checked = isEnabled;
+            toggleTickerOpacity(); // Apply visual state
         }
 
-        // Info Sections
         setVal('valBotInfo', cachedAbout.botInfo || "");
         setVal('valSearchInfo', cachedAbout.searchInfo || "");
         setVal('valBotTitle', cachedAbout.botTitle || "مركز خدمة الطلبات (Bot)");
         setVal('valSearchTitle', cachedAbout.searchTitle || "دليل الوصول الذكي للمحتوى");
         
-        // Cover
         const coverType = cachedAbout.coverType || 'color';
         const coverRb = document.querySelector(`input[name="coverType"][value="${coverType}"]`);
         if(coverRb) coverRb.checked = true;
-        
         if(coverType === 'color') setVal('valCoverColor', cachedAbout.coverValue);
         else setVal('valCoverImg', cachedAbout.coverValue);
         toggleCoverInput();
 
-        // Social
         const social = cachedAbout.social || {};
         setVal('socFb', social.facebook);
         setVal('socInsta', social.instagram);
@@ -399,57 +388,35 @@ async function loadSettings() {
         setVal('socYt', social.youtube);
         setVal('socTg', social.telegram);
 
-        // Social Icons
         const socialIcons = cachedAbout.socialIcons || {};
         ['facebook','instagram','tiktok','youtube','telegram'].forEach(key => {
             const btn = document.getElementById(`btnIcon_${key}`);
             if(!btn) return;
-            
             let data = socialIcons[key]; 
             if (!data || typeof data === 'string') data = { type: 'lucide', value: data || key, size: 24 };
             if(key === 'tiktok' && (!socialIcons[key] || socialIcons[key].value === 'video')) data.value = 'video'; 
-            
             btn.dataset.iconInfo = JSON.stringify(data);
             if (data.type === 'image') {
                 let sUrl = data.value;
                 if(sUrl && !sUrl.startsWith('http')) sUrl = '../' + sUrl.replace(/^(\.\.\/)+/, '');
                 btn.innerHTML = `<img src="${sUrl}" style="width:24px; height:24px; object-fit:contain;">`; 
-            } else { 
-                btn.innerHTML = `<i data-lucide="${data.value}"></i>`; 
-            }
+            } else { btn.innerHTML = `<i data-lucide="${data.value}"></i>`; }
         });
         
         lucide.createIcons(); 
-    } catch(e) { 
-        console.error(e); 
-        alert("خطأ في تحميل الإعدادات: " + e.message); 
-    } finally { 
-        loader.classList.add('hidden'); 
-        form.classList.remove('hidden'); 
-    }
+    } catch(e) { console.error(e); alert("خطأ في تحميل الإعدادات: " + e.message); } finally { loader.classList.add('hidden'); form.classList.remove('hidden'); }
 }
 
 window.toggleCoverInput = () => { 
     const type = document.querySelector('input[name="coverType"]:checked')?.value || 'color'; 
-    const colorInput = document.getElementById('coverColorInput'); 
-    const imgInput = document.getElementById('coverImageInput'); 
-    if (colorInput && imgInput) { 
-        if(type === 'color') { colorInput.classList.remove('hidden'); imgInput.classList.add('hidden'); } 
-        else { colorInput.classList.add('hidden'); imgInput.classList.remove('hidden'); } 
-    } 
+    const colorInput = document.getElementById('coverColorInput'); const imgInput = document.getElementById('coverImageInput'); 
+    if (colorInput && imgInput) { if(type === 'color') { colorInput.classList.remove('hidden'); imgInput.classList.add('hidden'); } else { colorInput.classList.add('hidden'); imgInput.classList.remove('hidden'); } } 
 };
 
 window.toggleLogoInput = () => { 
     const type = document.querySelector('input[name="logoType"]:checked')?.value || 'text'; 
-    const logoInput = document.getElementById('logoImageInput'); 
-    const siteNameInput = document.getElementById('siteName');
-    if (type === 'image') { 
-        if(logoInput) logoInput.classList.remove('hidden'); 
-        if(siteNameInput) siteNameInput.classList.add('opacity-50'); 
-    } else { 
-        if(logoInput) logoInput.classList.add('hidden'); 
-        if(siteNameInput) siteNameInput.classList.remove('opacity-50'); 
-    } 
+    const logoInput = document.getElementById('logoImageInput'); const siteNameInput = document.getElementById('siteName');
+    if (type === 'image') { if(logoInput) logoInput.classList.remove('hidden'); if(siteNameInput) siteNameInput.classList.add('opacity-50'); } else { if(logoInput) logoInput.classList.add('hidden'); if(siteNameInput) siteNameInput.classList.remove('opacity-50'); } 
 };
 
 window.saveSettingsData = async () => {
@@ -457,10 +424,7 @@ window.saveSettingsData = async () => {
     try {
         const coverType = document.querySelector('input[name="coverType"]:checked').value;
         const logoType = document.querySelector('input[name="logoType"]:checked').value;
-        const getIconData = (key) => {
-            const el = document.getElementById(`btnIcon_${key}`);
-            return el ? JSON.parse(el.dataset.iconInfo || '{}') : {};
-        };
+        const getIconData = (key) => { const el = document.getElementById(`btnIcon_${key}`); return el ? JSON.parse(el.dataset.iconInfo || '{}') : {}; };
         
         const newSettings = {
             profileName: document.getElementById('valName').value, 
@@ -475,20 +439,8 @@ window.saveSettingsData = async () => {
             siteName: document.getElementById('siteName').value,
             logoType: logoType, 
             logoUrl: document.getElementById('valLogoUrl').value,
-            categories: { 
-                labels: { 
-                    articles: document.getElementById('catLabel_articles').value, 
-                    apps: document.getElementById('catLabel_apps').value, 
-                    games: document.getElementById('catLabel_games').value, 
-                    sports: document.getElementById('catLabel_sports').value 
-                } 
-            },
-            globalFonts: {
-                nav: parseInt(document.getElementById('fontSize_nav').value) || 12,
-                content: parseInt(document.getElementById('fontSize_content').value) || 13,
-                titles: parseInt(document.getElementById('fontSize_titles').value) || 14,
-                mainTitles: parseInt(document.getElementById('fontSize_main').value) || 15
-            },
+            categories: { labels: { articles: document.getElementById('catLabel_articles').value, apps: document.getElementById('catLabel_apps').value, games: document.getElementById('catLabel_games').value, sports: document.getElementById('catLabel_sports').value } },
+            globalFonts: { nav: parseInt(document.getElementById('fontSize_nav').value) || 12, content: parseInt(document.getElementById('fontSize_content').value) || 13, titles: parseInt(document.getElementById('fontSize_titles').value) || 14, mainTitles: parseInt(document.getElementById('fontSize_main').value) || 15 },
             ticker: { 
                 label: document.getElementById('tickerLabel').value, 
                 text: document.getElementById('tickerText').value, 
@@ -497,25 +449,12 @@ window.saveSettingsData = async () => {
                 animated: document.getElementById('tickerAnimated').checked,
                 enabled: document.getElementById('tickerEnabled').checked
             },
-            social: { 
-                facebook: document.getElementById('socFb').value, 
-                instagram: document.getElementById('socInsta').value, 
-                tiktok: document.getElementById('socTikTok').value, 
-                youtube: document.getElementById('socYt').value, 
-                telegram: document.getElementById('socTg').value 
-            },
-            socialIcons: { 
-                facebook: getIconData('facebook'), 
-                instagram: getIconData('instagram'), 
-                tiktok: getIconData('tiktok'), 
-                youtube: getIconData('youtube'), 
-                telegram: getIconData('telegram') 
-            }
+            social: { facebook: document.getElementById('socFb').value, instagram: document.getElementById('socInsta').value, tiktok: document.getElementById('socTikTok').value, youtube: document.getElementById('socYt').value, telegram: document.getElementById('socTg').value },
+            socialIcons: { facebook: getIconData('facebook'), instagram: getIconData('instagram'), tiktok: getIconData('tiktok'), youtube: getIconData('youtube'), telegram: getIconData('telegram') }
         };
         await api.put('content/data/about.json', JSON.stringify(newSettings, null, 2), 'Update Settings', cachedAbout.sha); 
         showToast('تم تحديث الإعدادات'); 
-        const file = await api.get('content/data/about.json'); 
-        cachedAbout.sha = file.sha;
+        const file = await api.get('content/data/about.json'); cachedAbout.sha = file.sha;
     } catch(e) { alert(e.message); } 
     btn.innerText = 'حفظ التغييرات';
 };

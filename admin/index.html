@@ -20,6 +20,7 @@
         .modal-tab-btn.active { border-bottom-color: #2563eb; color: #2563eb; }
         .toggle-checkbox:checked { right: 0; border-color: #2563eb; }
         .toggle-checkbox:checked + .toggle-label { background-color: #2563eb; }
+        .opacity-disabled { opacity: 0.4; pointer-events: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
@@ -101,6 +102,7 @@
             </div>
         </div>
 
+        <!-- GitHub Modal (Same as before) -->
         <div id="ghModal" class="hidden fixed inset-0 bg-black/60 z-[70] flex items-center justify-center backdrop-blur-sm px-4">
             <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl animate-fade-in">
                 <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="github"></i> ربط المستودع</h2>
@@ -126,7 +128,6 @@
             <div id="postsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>
             <div id="postsList" class="grid grid-cols-1 gap-4"></div>
             
-            <!-- Post Editor Modal -->
             <div id="postEditor" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto">
                 <div class="max-w-4xl mx-auto p-4 md:p-8">
                     <div class="flex justify-between items-center mb-8 border-b pb-4">
@@ -135,14 +136,12 @@
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Basic Info -->
                         <div class="col-span-2 md:col-span-1"><label class="label">العنوان</label><input type="text" id="pTitle" class="input-field" oninput="autoSlug()"></div>
                         <div class="col-span-2 md:col-span-1"><label class="label">الرابط (Slug)</label><input type="text" id="pSlug" class="input-field bg-gray-50" readonly></div>
                         <div class="col-span-2 md:col-span-1"><label class="label">القسم</label><select id="pCat" class="input-field"><option value="articles">اخبار</option><option value="apps">تطبيقات</option><option value="games">ألعاب</option><option value="sports">رياضة</option></select></div>
                         <div class="col-span-2 md:col-span-1"><label class="label">الصورة</label><div class="flex gap-2"><input type="file" id="pFile" class="hidden" onchange="handleFileSelect(this, 'pImage')"><button onclick="document.getElementById('pFile').click()" class="btn-secondary whitespace-nowrap"><i data-lucide="image"></i> رفع</button><input type="text" id="pImage" class="input-field dir-ltr" placeholder="رابط الصورة أو المسار..."></div></div>
                         <div class="col-span-2"><label class="label">الوصف المختصر</label><textarea id="pDesc" rows="2" class="input-field" placeholder="وصف يظهر في بطاقات الصفحة الرئيسية..."></textarea></div>
                         
-                        <!-- Media & Extras -->
                         <div class="col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-200">
                             <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2"><i data-lucide="play-circle" class="w-4 h-4"></i> الوسائط</h3>
                             <div class="grid grid-cols-1 gap-4">
@@ -150,10 +149,9 @@
                             </div>
                         </div>
 
-                        <!-- Content Editor -->
                         <div class="col-span-2">
                             <label class="label">المحتوى الكامل (Markdown/HTML)</label>
-                            <p class="text-xs text-green-600 mb-2 font-bold bg-green-50 p-2 rounded border border-green-200"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> سيتم إضافة إعلانات Google وتتبع Analytics تلقائياً عند النشر. لا داعي لإضافتها يدوياً.</p>
+                            <p class="text-xs text-green-600 mb-2 font-bold bg-green-50 p-2 rounded border border-green-200"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> سيتم إضافة إعلانات Google وتتبع Analytics تلقائياً عند النشر.</p>
                             <div class="flex flex-wrap gap-2 mb-2 bg-gray-50 p-2 rounded-lg border border-gray-100">
                                 <button onclick="insertTag('# ')" class="badge bg-white">H1</button>
                                 <button onclick="insertTag('## ')" class="badge bg-white">H2</button>
@@ -201,16 +199,6 @@
                                     <button onclick="document.getElementById('fileLogo').click()" class="btn-secondary whitespace-nowrap"><i data-lucide="image"></i> رفع الشعار</button>
                                     <input type="text" id="valLogoUrl" class="input-field dir-ltr text-sm" placeholder="رابط الشعار...">
                                 </div>
-                                
-                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs text-yellow-800 leading-relaxed">
-                                    <strong class="block mb-1 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> مواصفات الشعار المثالية:</strong>
-                                    <ul class="list-disc list-inside space-y-1 text-yellow-700">
-                                        <li><b>الارتفاع (Height):</b> يجب ألا يتجاوز <b>40 بكسل</b> (40px) ليتناسب مع الشريط العلوي.</li>
-                                        <li><b>العرض (Width):</b> يفضل أن يكون بين <b>120px إلى 160px</b>.</li>
-                                        <li><b>الصيغة (Format):</b> يفضل <b>PNG</b> بخلفية شفافة أو <b>WebP</b>.</li>
-                                        <li><b>الدقة (Resolution):</b> 72 DPI كافية للعرض، حجم الملف يفضل أن يكون أقل من 50KB.</li>
-                                    </ul>
-                                </div>
                             </div>
                         </div>
 
@@ -226,22 +214,10 @@
                             <div class="mt-4 border-t border-gray-100 pt-4">
                                 <label class="label mb-3 text-indigo-700 font-bold flex items-center gap-2"><i data-lucide="type"></i> التحكم الموحد في أحجام الخطوط</label>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">القوائم والتبويبات (Nav & Tabs) <span id="f_nav_val" class="bg-blue-100 px-2 rounded text-blue-700">12</span></label>
-                                        <input type="range" id="fontSize_nav" min="10" max="20" class="w-full accent-blue-600" oninput="document.getElementById('f_nav_val').innerText=this.value">
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">محتوى البطاقات والمقالات (Content) <span id="f_content_val" class="bg-green-100 px-2 rounded text-green-700">13</span></label>
-                                        <input type="range" id="fontSize_content" min="10" max="24" class="w-full accent-green-600" oninput="document.getElementById('f_content_val').innerText=this.value">
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">عناوين البطاقات والأقسام (Titles) <span id="f_titles_val" class="bg-purple-100 px-2 rounded text-purple-700">14</span></label>
-                                        <input type="range" id="fontSize_titles" min="10" max="30" class="w-full accent-purple-600" oninput="document.getElementById('f_titles_val').innerText=this.value">
-                                    </div>
-                                    <div class="bg-gray-50 p-3 rounded-lg">
-                                        <label class="flex justify-between text-xs font-bold mb-1">العناوين الرئيسية (Main Page Titles) <span id="f_main_val" class="bg-orange-100 px-2 rounded text-orange-700">15</span></label>
-                                        <input type="range" id="fontSize_main" min="12" max="40" class="w-full accent-orange-600" oninput="document.getElementById('f_main_val').innerText=this.value">
-                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg"><label class="flex justify-between text-xs font-bold mb-1">القوائم (Nav) <span id="f_nav_val" class="bg-blue-100 px-2 rounded text-blue-700">12</span></label><input type="range" id="fontSize_nav" min="10" max="20" class="w-full accent-blue-600" oninput="document.getElementById('f_nav_val').innerText=this.value"></div>
+                                    <div class="bg-gray-50 p-3 rounded-lg"><label class="flex justify-between text-xs font-bold mb-1">المحتوى (Content) <span id="f_content_val" class="bg-green-100 px-2 rounded text-green-700">13</span></label><input type="range" id="fontSize_content" min="10" max="24" class="w-full accent-green-600" oninput="document.getElementById('f_content_val').innerText=this.value"></div>
+                                    <div class="bg-gray-50 p-3 rounded-lg"><label class="flex justify-between text-xs font-bold mb-1">العناوين (Titles) <span id="f_titles_val" class="bg-purple-100 px-2 rounded text-purple-700">14</span></label><input type="range" id="fontSize_titles" min="10" max="30" class="w-full accent-purple-600" oninput="document.getElementById('f_titles_val').innerText=this.value"></div>
+                                    <div class="bg-gray-50 p-3 rounded-lg"><label class="flex justify-between text-xs font-bold mb-1">العناوين الرئيسية (H1) <span id="f_main_val" class="bg-orange-100 px-2 rounded text-orange-700">15</span></label><input type="range" id="fontSize_main" min="12" max="40" class="w-full accent-orange-600" oninput="document.getElementById('f_main_val').innerText=this.value"></div>
                                 </div>
                             </div>
                         </div>
@@ -266,12 +242,12 @@
                     <div class="bg-white p-3 rounded-lg border border-blue-100 flex items-center justify-between mb-4">
                         <label class="label m-0 text-blue-800">تفعيل/إظهار الشريط في الموقع</label>
                         <div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
-                            <input type="checkbox" name="toggle" id="tickerEnabled" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300"/>
+                            <input type="checkbox" name="toggle" id="tickerEnabled" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300" onchange="toggleTickerOpacity()"/>
                             <label for="tickerEnabled" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div id="tickerInputsContainer" class="grid grid-cols-1 md:grid-cols-4 gap-4 transition-opacity duration-300">
                         <div class="md:col-span-1"><label class="label">العنوان (Tag)</label><input type="text" id="tickerLabel" class="input-field"></div>
                         <div class="md:col-span-2"><label class="label">النص</label><input type="text" id="tickerText" class="input-field"></div>
                         <div class="md:col-span-1"><label class="label">الرابط</label><input type="text" id="tickerUrl" class="input-field dir-ltr"></div>
@@ -296,32 +272,14 @@
 
                 <div class="grid grid-cols-1 gap-6 mb-8 border-b pb-8">
                     <div><label class="label">السيرة الذاتية</label><textarea id="valBio" rows="3" class="input-field"></textarea></div>
-                    
                     <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
                         <label class="label mb-2">غلاف صفحة "من نحن"</label>
                         <div class="flex items-center gap-4 mb-4">
-                            <label class="flex items-center gap-2 cursor-pointer select-none">
-                                <input type="radio" name="coverType" value="color" onchange="toggleCoverInput()" class="w-4 h-4 text-blue-600 accent-blue-600">
-                                <span>لون (تدرج)</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer select-none">
-                                <input type="radio" name="coverType" value="image" onchange="toggleCoverInput()" class="w-4 h-4 text-blue-600 accent-blue-600">
-                                <span>صورة</span>
-                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer select-none"><input type="radio" name="coverType" value="color" onchange="toggleCoverInput()" class="w-4 h-4 text-blue-600 accent-blue-600"> <span>لون (تدرج)</span></label>
+                            <label class="flex items-center gap-2 cursor-pointer select-none"><input type="radio" name="coverType" value="image" onchange="toggleCoverInput()" class="w-4 h-4 text-blue-600 accent-blue-600"> <span>صورة</span></label>
                         </div>
-                        
-                        <div id="coverColorInput">
-                            <input type="text" id="valCoverColor" class="input-field dir-ltr" placeholder="مثال: bg-gradient-to-r from-blue-600 to-indigo-600">
-                            <p class="text-xs text-gray-400 mt-1">يمكنك استخدام كلاسات Tailwind CSS للتدرجات.</p>
-                        </div>
-                        
-                        <div id="coverImageInput" class="hidden">
-                            <div class="flex gap-2">
-                                <input type="file" id="fileCover" class="hidden" onchange="handleFileSelect(this, 'valCoverImg')">
-                                <button onclick="document.getElementById('fileCover').click()" class="btn-secondary shrink-0 whitespace-nowrap"><i data-lucide="image"></i> رفع</button>
-                                <input type="text" id="valCoverImg" class="input-field dir-ltr" placeholder="رابط الصورة...">
-                            </div>
-                        </div>
+                        <div id="coverColorInput"><input type="text" id="valCoverColor" class="input-field dir-ltr" placeholder="مثال: bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+                        <div id="coverImageInput" class="hidden"><div class="flex gap-2"><input type="file" id="fileCover" class="hidden" onchange="handleFileSelect(this, 'valCoverImg')"><button onclick="document.getElementById('fileCover').click()" class="btn-secondary shrink-0 whitespace-nowrap"><i data-lucide="image"></i> رفع</button><input type="text" id="valCoverImg" class="input-field dir-ltr" placeholder="رابط الصورة..."></div></div>
                     </div>
                 </div>
 
