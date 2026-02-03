@@ -262,8 +262,17 @@
 
                 <div class="mb-8 border-b pb-8 bg-blue-50 p-4 rounded-xl border border-blue-100">
                     <h3 class="font-bold text-lg mb-4 text-blue-800">الشريط الإخباري (Ticker)</h3>
+                    
+                    <div class="bg-white p-3 rounded-lg border border-blue-100 flex items-center justify-between mb-4">
+                        <label class="label m-0 text-blue-800">تفعيل/إظهار الشريط في الموقع</label>
+                        <div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="toggle" id="tickerEnabled" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300"/>
+                            <label for="tickerEnabled" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="md:col-span-1"><label class="label">العنوان</label><input type="text" id="tickerLabel" class="input-field"></div>
+                        <div class="md:col-span-1"><label class="label">العنوان (Tag)</label><input type="text" id="tickerLabel" class="input-field"></div>
                         <div class="md:col-span-2"><label class="label">النص</label><input type="text" id="tickerText" class="input-field"></div>
                         <div class="md:col-span-1"><label class="label">الرابط</label><input type="text" id="tickerUrl" class="input-field dir-ltr"></div>
                         

@@ -367,8 +367,13 @@ async function loadSettings() {
             setVal('tickerText', cachedAbout.ticker.text);
             setVal('tickerUrl', cachedAbout.ticker.url);
             setFont('tickerSize', cachedAbout.ticker.fontSize || 14, 'tickerSizeVal');
+            
             const tickCheck = document.getElementById('tickerAnimated');
-            if(tickCheck) tickCheck.checked = cachedAbout.ticker.animated !== false; 
+            if(tickCheck) tickCheck.checked = cachedAbout.ticker.animated !== false;
+            
+            // New: Enabled State
+            const enabledCheck = document.getElementById('tickerEnabled');
+            if(enabledCheck) enabledCheck.checked = cachedAbout.ticker.enabled !== false; 
         }
 
         // Info Sections
@@ -489,7 +494,8 @@ window.saveSettingsData = async () => {
                 text: document.getElementById('tickerText').value, 
                 url: document.getElementById('tickerUrl').value, 
                 fontSize: parseInt(document.getElementById('tickerSize').value) || 14, 
-                animated: document.getElementById('tickerAnimated').checked 
+                animated: document.getElementById('tickerAnimated').checked,
+                enabled: document.getElementById('tickerEnabled').checked
             },
             social: { 
                 facebook: document.getElementById('socFb').value, 

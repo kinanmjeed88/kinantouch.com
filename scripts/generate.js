@@ -23,7 +23,7 @@ const BASE_URL = 'https://kinantouch.com';
 // --- INTEGRATION CONFIGURATION ---
 const GA_ID = 'G-NZVS1EN9RG'; 
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
-const ONESIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID'; // IMPORTANT: Replace with real ID in production
+const ONESIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID'; 
 const GOOGLE_SITE_VERIFICATION = ''; 
 
 // --- SCRIPTS TEMPLATES ---
@@ -35,6 +35,7 @@ const GA_SCRIPT = `
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', '${GA_ID}');
 </script>`;
 
@@ -357,22 +358,28 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('footer a[href*="t.me"]').attr('href', aboutData.social.telegram || '#');
     }
 
-    // F. Ticker
-    if (aboutData.ticker && $('#ticker-content').length) {
-        $('#ticker-label').text(aboutData.ticker.label);
-        const tickerContentDiv = $('#ticker-content');
-        tickerContentDiv.removeClass().addClass('flex items-center h-full whitespace-nowrap');
-        if (aboutData.ticker.animated !== false) {
-            tickerContentDiv.addClass('animate-marquee absolute right-0');
-        } else {
-            tickerContentDiv.addClass('w-full justify-start pr-2 overflow-hidden');
+    // F. Ticker Logic
+    if (aboutData.ticker) {
+        // If explicitly disabled via CMS, remove the entire bar
+        if (aboutData.ticker.enabled === false) {
+            $('#news-ticker-bar').remove();
+        } else if ($('#ticker-content').length) {
+            // Otherwise, update content
+            $('#ticker-label').text(aboutData.ticker.label);
+            const tickerContentDiv = $('#ticker-content');
+            tickerContentDiv.removeClass().addClass('flex items-center h-full whitespace-nowrap');
+            if (aboutData.ticker.animated !== false) {
+                tickerContentDiv.addClass('animate-marquee absolute right-0');
+            } else {
+                tickerContentDiv.addClass('w-full justify-start pr-2 overflow-hidden');
+            }
+            
+            let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block">${aboutData.ticker.text}</span>`;
+            if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
+                contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block ticker-text text-gray-100">${aboutData.ticker.text}</a>`;
+            }
+            tickerContentDiv.html(contentHtml);
         }
-        
-        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block">${aboutData.ticker.text}</span>`;
-        if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
-            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block ticker-text text-gray-100">${aboutData.ticker.text}</a>`;
-        }
-        tickerContentDiv.html(contentHtml);
     }
     
     // G. Category Labels
