@@ -76,6 +76,20 @@ const ADSENSE_BLOCK = `
 </div>
 `;
 
+// Ticker HTML Template (Used for Re-injection)
+const TICKER_HTML_TEMPLATE = `
+<div id="news-ticker-bar" class="w-full bg-gray-900 text-white h-9 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
+    <div id="ticker-label" class="h-full px-4 bg-blue-600 flex items-center justify-center font-bold text-sm shadow-[0_0_15px_rgba(255,255,255,0.8)] z-10 shrink-0 relative">
+      جديد
+    </div>
+    <div class="flex-1 overflow-hidden relative h-full flex items-center bg-gray-900">
+      <div id="ticker-content" class="animate-marquee whitespace-nowrap absolute right-0 flex items-center">
+        <span class="mx-4 text-sm font-medium text-gray-100"></span>
+      </div>
+    </div>
+</div>
+`;
+
 // Ensure directories exist
 if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR, { recursive: true });
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -101,7 +115,8 @@ let aboutData = {
     logoUrl: "",
     categories: { labels: { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" } },
     globalFonts: { nav: 12, content: 13, titles: 14, mainTitles: 15 },
-    social: {} 
+    social: {},
+    ticker: { enabled: true, text: "Welcome", label: "New", url: "#" }
 };
 let channelsData = [];
 
@@ -240,30 +255,18 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // Prevent Cheerio from stripping the DOCTYPE
     const $ = cheerio.load(htmlContent, { decodeEntities: false });
 
-    // 1. Clean old scripts (Aggressive Cleanup)
+    // 1. Clean old scripts
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
         const content = $(el).html() || '';
-        
-        // Remove existing OneSignal to prevent duplicates
-        if (src.includes("cdn.onesignal.com") || content.includes("OneSignal")) {
-            $(el).remove();
-        }
-        // Remove existing Analytics/Ads to prevent duplicates
-        if (src.includes('googletagmanager.com') || content.includes("gtag(") || src.includes('G-')) { 
-            $(el).remove(); 
-        }
-        if (src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle")) {
-            $(el).remove();
-        }
+        if (src.includes("cdn.onesignal.com") || content.includes("OneSignal")) { $(el).remove(); }
+        if (src.includes('googletagmanager.com') || content.includes("gtag(") || src.includes('G-')) { $(el).remove(); }
+        if (src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle")) { $(el).remove(); }
     });
 
     // 2. Inject Fresh Scripts
-    // OneSignal & AdSense go to HEAD
     $('head').append(ONESIGNAL_SCRIPT);
     $('head').append(AD_SCRIPT);
-    
-    // Analytics goes first
     $('head').prepend(GA_SCRIPT);
     
     // 3. Search Console Meta
@@ -286,7 +289,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     // B. Profile Name
     $('#header-profile-name').text(aboutData.profileName);
     
-    // C. Site Title / Logo (FIXED LOGIC)
+    // C. Site Title / Logo
     let siteTitleEl = $('header a[href="index.html"]').filter((i, el) => {
         const cls = $(el).attr('class') || '';
         const content = $(el).html() || '';
@@ -306,43 +309,14 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
     }
 
-    // D. UNIFIED DYNAMIC CSS INJECTION
+    // D. DYNAMIC STYLES
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
-    const fNav = fonts.nav || 12;
-    const fContent = fonts.content || 13;
-    const fTitle = fonts.titles || 14;
-    const fMainTitle = fonts.mainTitles || 15;
-
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
-        /* 1. Navigation & Tabs (Unified) */
-        nav .nav-link, nav .nav-link span,
-        .tab-btn, .tab-btn span {
-            font-size: ${fNav}px !important;
-        }
-        
-        /* 2. Content Body (Unified) */
-        body, p, li, 
-        .post-card .custom-desc-size,
-        .prose p, .prose li {
-            font-size: ${fContent}px !important;
-            line-height: 1.6 !important;
-        }
-        
-        /* 3. Card Titles & Sub-Headings (Unified) */
-        .post-card .custom-title-size,
-        h2, h3, h4, 
-        .prose h2, .prose h3 {
-            font-size: ${fTitle}px !important;
-            line-height: 1.4 !important;
-        }
-        
-        /* 4. Main Page Titles (H1) (Unified) */
-        h1, .text-3xl, .text-4xl {
-            font-size: ${fMainTitle}px !important;
-        }
-
-        /* 5. Ticker */
+        nav .nav-link, nav .nav-link span, .tab-btn, .tab-btn span { font-size: ${fonts.nav || 12}px !important; }
+        body, p, li, .post-card .custom-desc-size, .prose p, .prose li { font-size: ${fonts.content || 13}px !important; line-height: 1.6 !important; }
+        .post-card .custom-title-size, h2, h3, h4, .prose h2, .prose h3 { font-size: ${fonts.titles || 14}px !important; line-height: 1.4 !important; }
+        h1, .text-3xl, .text-4xl { font-size: ${fonts.mainTitles || 15}px !important; }
         .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
     </style>
     `;
@@ -358,29 +332,31 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('footer a[href*="t.me"]').attr('href', aboutData.social.telegram || '#');
     }
 
-    // F. Ticker Logic
-    if (aboutData.ticker) {
-        // If explicitly disabled via CMS, remove the entire bar
-        const isEnabled = aboutData.ticker.enabled !== false; // Default true if undefined
-        if (!isEnabled) {
-            $('#news-ticker-bar').remove();
-        } else if ($('#ticker-content').length) {
-            // Otherwise, update content
-            $('#ticker-label').text(aboutData.ticker.label);
-            const tickerContentDiv = $('#ticker-content');
-            tickerContentDiv.removeClass().addClass('flex items-center h-full whitespace-nowrap');
-            if (aboutData.ticker.animated !== false) {
-                tickerContentDiv.addClass('animate-marquee absolute right-0');
-            } else {
-                tickerContentDiv.addClass('w-full justify-start pr-2 overflow-hidden');
-            }
-            
-            let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block">${aboutData.ticker.text}</span>`;
-            if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
-                contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block ticker-text text-gray-100">${aboutData.ticker.text}</a>`;
-            }
-            tickerContentDiv.html(contentHtml);
+    // F. TICKER LOGIC (RE-WRITTEN FOR RELIABILITY)
+    // 1. Force remove existing ticker from HTML source
+    $('#news-ticker-bar').remove();
+
+    // 2. If enabled in JSON, Inject fresh HTML
+    if (aboutData.ticker && aboutData.ticker.enabled !== false) {
+        $('header').after(TICKER_HTML_TEMPLATE);
+        
+        // 3. Update the content of the newly injected ticker
+        $('#ticker-label').text(aboutData.ticker.label);
+        
+        const tickerContentDiv = $('#ticker-content');
+        tickerContentDiv.removeClass().addClass('flex items-center h-full whitespace-nowrap');
+        
+        if (aboutData.ticker.animated !== false) {
+            tickerContentDiv.addClass('animate-marquee absolute right-0');
+        } else {
+            tickerContentDiv.addClass('w-full justify-start pr-2 overflow-hidden');
         }
+        
+        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block">${aboutData.ticker.text}</span>`;
+        if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
+            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block ticker-text text-gray-100">${aboutData.ticker.text}</a>`;
+        }
+        tickerContentDiv.html(contentHtml);
     }
     
     // G. Category Labels
@@ -426,7 +402,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('.prose p:first').text(aboutData.bio);
     }
 
-    // I. Inject Back to Top Button if missing
+    // I. Inject Back to Top Button
     if ($('#back-to-top').length === 0) {
         $('body').append(`
         <button id="back-to-top" class="fixed bottom-6 right-6 z-50 bg-gray-900/60 hover:bg-gray-900/80 backdrop-blur-md text-white p-2 rounded-full shadow-lg transition-all duration-300 transform translate-y-10 opacity-0 invisible hover:scale-110 hover:-translate-y-1 focus:outline-none border border-white/10 group" aria-label="العودة للأعلى">
@@ -435,7 +411,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         `);
     }
 
-    // IMPORTANT: Ensure DOCTYPE is present for Quirks Mode Fix
+    // Ensure DOCTYPE
     let finalHtml = $.html();
     if (!finalHtml.trim().toLowerCase().startsWith('<!doctype html>')) {
         finalHtml = '<!DOCTYPE html>\n' + finalHtml;
