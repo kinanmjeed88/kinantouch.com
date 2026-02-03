@@ -76,15 +76,16 @@ const ADSENSE_BLOCK = `
 </div>
 `;
 
-// Ticker HTML Template (Used for Re-injection)
+// Ticker HTML Template (Updated Style)
 const TICKER_HTML_TEMPLATE = `
-<div id="news-ticker-bar" class="w-full bg-gray-900 text-white h-9 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
-    <div id="ticker-label" class="h-full px-4 bg-blue-600 flex items-center justify-center font-bold text-sm shadow-[0_0_15px_rgba(255,255,255,0.8)] z-10 shrink-0 relative">
-      جديد
+<div id="news-ticker-bar" class="w-full bg-gray-900 text-white h-10 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
+    <div class="h-full flex items-center justify-center px-4 relative z-10 shrink-0">
+        <div id="ticker-label" class="border-2 border-blue-500 text-blue-500 px-3 py-0.5 rounded-md font-bold text-xs shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+          جديد
+        </div>
     </div>
     <div class="flex-1 overflow-hidden relative h-full flex items-center bg-gray-900">
       <div id="ticker-content" class="animate-marquee whitespace-nowrap absolute right-0 flex items-center">
-        <span class="mx-4 text-sm font-medium text-gray-100"></span>
       </div>
     </div>
 </div>
@@ -332,12 +333,12 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('footer a[href*="t.me"]').attr('href', aboutData.social.telegram || '#');
     }
 
-    // F. TICKER LOGIC (RE-WRITTEN FOR RELIABILITY)
-    // 1. Force remove existing ticker from HTML source
+    // F. TICKER LOGIC (RESTRICTED TO INDEX.HTML)
+    // 1. Always remove any existing ticker first
     $('#news-ticker-bar').remove();
 
-    // 2. If enabled in JSON, Inject fresh HTML
-    if (aboutData.ticker && aboutData.ticker.enabled !== false) {
+    // 2. Check if this is the Home Page AND Ticker is enabled
+    if (fileName === 'index.html' && aboutData.ticker && aboutData.ticker.enabled !== false) {
         $('header').after(TICKER_HTML_TEMPLATE);
         
         // 3. Update the content of the newly injected ticker
@@ -352,11 +353,22 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
             tickerContentDiv.addClass('w-full justify-start pr-2 overflow-hidden');
         }
         
-        let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block">${aboutData.ticker.text}</span>`;
-        if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
-            contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block ticker-text text-gray-100">${aboutData.ticker.text}</a>`;
+        // Handle Content Type (Image vs Text)
+        if (aboutData.ticker.type === 'image' && aboutData.ticker.imageUrl) {
+            // Image Content
+            const imgUrl = cleanPath(aboutData.ticker.imageUrl);
+            const contentHtml = `<img src="${imgUrl}" alt="Ticker Banner" class="h-full object-contain mx-auto" style="max-height: 40px; width: auto;" />`;
+            // Remove animation for image typically, or keep if scrolling banner is desired. 
+            // For better UX, usually banner images are static or marquee. Let's keep marquee structure but ensure image fits.
+            tickerContentDiv.html(contentHtml);
+        } else {
+            // Text Content
+            let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block">${aboutData.ticker.text}</span>`;
+            if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
+                contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block ticker-text text-gray-100">${aboutData.ticker.text}</a>`;
+            }
+            tickerContentDiv.html(contentHtml);
         }
-        tickerContentDiv.html(contentHtml);
     }
     
     // G. Category Labels

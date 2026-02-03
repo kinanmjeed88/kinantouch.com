@@ -318,6 +318,20 @@ window.toggleTickerOpacity = () => {
     }
 };
 
+window.toggleTickerContent = () => {
+    const type = document.querySelector('input[name="tickerType"]:checked')?.value || 'text';
+    const textGroup = document.getElementById('tickerTextGroup');
+    const imageGroup = document.getElementById('tickerImageGroup');
+    
+    if (type === 'text') {
+        textGroup.classList.remove('hidden');
+        imageGroup.classList.add('hidden');
+    } else {
+        textGroup.classList.add('hidden');
+        imageGroup.classList.remove('hidden');
+    }
+};
+
 async function loadSettings() {
     const loader = document.getElementById('settingsLoader'); const form = document.getElementById('settingsForm'); 
     loader.classList.remove('hidden'); form.classList.add('hidden');
@@ -357,16 +371,23 @@ async function loadSettings() {
             setVal('tickerLabel', cachedAbout.ticker.label);
             setVal('tickerText', cachedAbout.ticker.text);
             setVal('tickerUrl', cachedAbout.ticker.url);
+            setVal('tickerImageUrl', cachedAbout.ticker.imageUrl);
             setFont('tickerSize', cachedAbout.ticker.fontSize || 14, 'tickerSizeVal');
             
             const tickCheck = document.getElementById('tickerAnimated');
             if(tickCheck) tickCheck.checked = cachedAbout.ticker.animated !== false;
             
             const enabledCheck = document.getElementById('tickerEnabled');
-            // Default to true if undefined, otherwise use value
             const isEnabled = cachedAbout.ticker.enabled !== false; 
             if(enabledCheck) enabledCheck.checked = isEnabled;
-            toggleTickerOpacity(); // Apply visual state
+            
+            // Set Content Type
+            const tickerType = cachedAbout.ticker.type || 'text';
+            const typeRb = document.querySelector(`input[name="tickerType"][value="${tickerType}"]`);
+            if(typeRb) typeRb.checked = true;
+
+            toggleTickerOpacity(); 
+            toggleTickerContent();
         }
 
         setVal('valBotInfo', cachedAbout.botInfo || "");
@@ -424,6 +445,7 @@ window.saveSettingsData = async () => {
     try {
         const coverType = document.querySelector('input[name="coverType"]:checked').value;
         const logoType = document.querySelector('input[name="logoType"]:checked').value;
+        const tickerType = document.querySelector('input[name="tickerType"]:checked').value;
         const getIconData = (key) => { const el = document.getElementById(`btnIcon_${key}`); return el ? JSON.parse(el.dataset.iconInfo || '{}') : {}; };
         
         const newSettings = {
@@ -445,6 +467,8 @@ window.saveSettingsData = async () => {
                 label: document.getElementById('tickerLabel').value, 
                 text: document.getElementById('tickerText').value, 
                 url: document.getElementById('tickerUrl').value, 
+                type: tickerType,
+                imageUrl: document.getElementById('tickerImageUrl').value,
                 fontSize: parseInt(document.getElementById('tickerSize').value) || 14, 
                 animated: document.getElementById('tickerAnimated').checked,
                 enabled: document.getElementById('tickerEnabled').checked

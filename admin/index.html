@@ -102,7 +102,6 @@
             </div>
         </div>
 
-        <!-- GitHub Modal (Same as before) -->
         <div id="ghModal" class="hidden fixed inset-0 bg-black/60 z-[70] flex items-center justify-center backdrop-blur-sm px-4">
             <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl animate-fade-in">
                 <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="github"></i> ربط المستودع</h2>
@@ -240,7 +239,7 @@
                     <h3 class="font-bold text-lg mb-4 text-blue-800">الشريط الإخباري (Ticker)</h3>
                     
                     <div class="bg-white p-3 rounded-lg border border-blue-100 flex items-center justify-between mb-4">
-                        <label class="label m-0 text-blue-800">تفعيل/إظهار الشريط في الموقع</label>
+                        <label class="label m-0 text-blue-800">تفعيل/إظهار الشريط في الصفحة الرئيسية فقط</label>
                         <div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
                             <input type="checkbox" name="toggle" id="tickerEnabled" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300" onchange="toggleTickerOpacity()"/>
                             <label for="tickerEnabled" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
@@ -249,8 +248,29 @@
 
                     <div id="tickerInputsContainer" class="grid grid-cols-1 md:grid-cols-4 gap-4 transition-opacity duration-300">
                         <div class="md:col-span-1"><label class="label">العنوان (Tag)</label><input type="text" id="tickerLabel" class="input-field"></div>
-                        <div class="md:col-span-2"><label class="label">النص</label><input type="text" id="tickerText" class="input-field"></div>
-                        <div class="md:col-span-1"><label class="label">الرابط</label><input type="text" id="tickerUrl" class="input-field dir-ltr"></div>
+                        
+                        <!-- NEW: Content Type Selector -->
+                        <div class="md:col-span-3 flex gap-4 items-center mb-2">
+                            <span class="label mb-0">نوع المحتوى:</span>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="tickerType" value="text" checked onchange="toggleTickerContent()" class="accent-blue-600"> <span>نص</span></label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="tickerType" value="image" onchange="toggleTickerContent()" class="accent-blue-600"> <span>صورة</span></label>
+                        </div>
+
+                        <!-- Text Inputs -->
+                        <div id="tickerTextGroup" class="md:col-span-3 grid grid-cols-3 gap-4">
+                            <div class="col-span-2"><label class="label">النص</label><input type="text" id="tickerText" class="input-field"></div>
+                            <div class="col-span-1"><label class="label">الرابط</label><input type="text" id="tickerUrl" class="input-field dir-ltr"></div>
+                        </div>
+
+                        <!-- Image Inputs -->
+                        <div id="tickerImageGroup" class="md:col-span-3 hidden">
+                            <label class="label">رابط الصورة (Banner)</label>
+                            <div class="flex gap-2">
+                                <input type="file" id="fileTickerImg" class="hidden" onchange="handleFileSelect(this, 'tickerImageUrl')">
+                                <button onclick="document.getElementById('fileTickerImg').click()" class="btn-secondary whitespace-nowrap"><i data-lucide="image"></i> رفع صورة</button>
+                                <input type="text" id="tickerImageUrl" class="input-field dir-ltr" placeholder="رابط الصورة...">
+                            </div>
+                        </div>
                         
                         <div class="md:col-span-4 mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="bg-white p-3 rounded-lg border border-blue-100">
