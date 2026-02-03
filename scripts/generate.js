@@ -21,7 +21,7 @@ const DATA_DIR = path.join(__dirname, '../content/data');
 const BASE_URL = 'https://kinantouch.com';
 
 // --- INTEGRATION CONFIGURATION ---
-const GA_ID = 'G-63BBPLQ343'; 
+const GA_ID = 'G-NZVS1EN9RG'; 
 const AD_CLIENT_ID = 'ca-pub-7355327732066930';
 const ONESIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID'; 
 const GOOGLE_SITE_VERIFICATION = ''; 
