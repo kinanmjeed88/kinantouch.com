@@ -84,7 +84,7 @@ fs.writeFileSync(path.join(ROOT_DIR, 'OneSignalSDKWorker.js'), WORKER_CONTENT);
 const HTML_FILES = [
     'index.html', 'articles.html', 'tools.html', 'about.html', 
     'tools-sites.html', 'tools-phones.html', 'tools-compare.html',
-    'privacy.html', 'site-map.html', '404.html'
+    'tool-analysis.html', 'privacy.html', 'site-map.html', '404.html'
 ];
 
 // Load Data
@@ -262,7 +262,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('head').append(`<meta name="google-site-verification" content="${GOOGLE_SITE_VERIFICATION}" />`);
     }
 
-    // 4. Common UI Updates - PROFESSIONAL FIX
+    // 4. Common UI Updates
     
     // A. Profile Image
     let profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
@@ -277,10 +277,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('#header-profile-name').text(aboutData.profileName);
     
     // C. Site Title / Logo (FIXED LOGIC)
-    // Find the logo link. It's the one pointing to index.html inside the header, but NOT the one with icons (like nav links or back button)
-    // We look for an anchor inside header that links to index.html and either contains text or an image.
     let siteTitleEl = $('header a[href="index.html"]').filter((i, el) => {
-        // Exclude buttons that are purely icons (often have p-2 padding or rounded-lg)
         const cls = $(el).attr('class') || '';
         const content = $(el).html() || '';
         return !cls.includes('p-2') && (content.includes(aboutData.siteName) || content.includes('<img') || cls.includes('font-black'));
@@ -289,18 +286,12 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     if (siteTitleEl.length) {
         if (aboutData.logoType === 'image' && aboutData.logoUrl) {
             const logoUrl = cleanPath(aboutData.logoUrl);
-            // Replace text with Image, enforcing max-height to fit header
             siteTitleEl.html(`<img src="${logoUrl}" alt="${aboutData.siteName}" style="max-height: 40px; width: auto; display: block;" />`);
-            // Remove text classes to prevent layout issues
             siteTitleEl.removeClass('text-xl text-lg font-black text-blue-600 dark:text-blue-400 tracking-tight truncate'); 
-            siteTitleEl.addClass('flex items-center'); // Center alignment
+            siteTitleEl.addClass('flex items-center');
         } else {
-            // Restore Text Mode
             siteTitleEl.html(aboutData.siteName || 'TechTouch');
-            // Remove image classes if any
             siteTitleEl.removeClass('flex items-center');
-            // Add proper text classes based on page context (index usually has text-xl or text-lg)
-            // We'll enforce text-xl for consistency across most pages, or preserve what was there if we could detect it, but enforcing is safer.
             siteTitleEl.addClass('text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight truncate');
         }
     }
@@ -416,6 +407,15 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
         
         $('.prose p:first').text(aboutData.bio);
+    }
+
+    // I. Inject Back to Top Button if missing
+    if ($('#back-to-top').length === 0) {
+        $('body').append(`
+        <button id="back-to-top" class="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white p-3.5 rounded-full shadow-xl shadow-blue-500/30 transition-all duration-300 transform translate-y-10 opacity-0 invisible hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-300/50 group" aria-label="العودة للأعلى">
+            <i data-lucide="arrow-up" class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-300"></i>
+        </button>
+        `);
     }
 
     return $.html();
