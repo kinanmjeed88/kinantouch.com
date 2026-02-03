@@ -1,6 +1,6 @@
 {
   "profileName": "كنان الصائغ",
-  "profileImage": "assets/images/me.jpg",
+  "profileImage": "assets/images/1770109336308_IMG_20260131_212644_606.webp",
   "bio": "أنا كنان مجيد الصائغ، من مواليد 1988، مهتم بالأخبار والمعلومات التقنية والذكاء الاصطناعي. أعمل على نشر المحتوى التقني، وأدوات وتقنيات الذكاء الاصطناعي، والتطبيقات المعدلة.",
   "botInfo": "",
   "searchInfo": "",
@@ -26,12 +26,12 @@
     "mainTitles": 15
   },
   "ticker": {
-    "label": "جديد",
-    "text": "أهلاً بكم في موقعنا المختص بنشر المقالات التقنية والتطبيقات والمزيد ..",
-    "url": "#",
-    "fontSize": 14,
-    "animated": true,
-    "enabled": false
+    "label": "ملاحظة:",
+    "text": "للدخول الى قنوات التيليكرام اضغط هنا",
+    "url": "https://kinantouch.com/tools-sites.html",
+    "fontSize": 13,
+    "animated": false,
+    "enabled": true
   },
   "social": {
     "facebook": "https://www.facebook.com/share/1EsapVHA6W/",
