@@ -1,103 +1,16 @@
-
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="TechTouch - المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات." />
-    <title>الرئيسية | TechTouch</title>
-    <link rel="shortcut icon" href="assets/images/me.jpg" type="image/jpeg">
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZVS1EN9RG"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-NZVS1EN9RG');
-    </script>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(function(OneSignal) {
-        OneSignal.init({
-          appId: "YOUR_ONESIGNAL_APP_ID",
-          safari_web_id: "web.onesignal.auto.xxxxx",
-          notifyButton: { enable: true },
-        });
-      });
-    </script>
-    <link rel="canonical" href="https://kinantouch.com/">
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"TechTouch","url":"https://kinantouch.com/"}</script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Segoe UI','Tahoma','Geneva','Verdana','sans-serif']}}}}</script>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
 <script type="importmap">
 {
   "imports": {
     "react/": "https://esm.sh/react@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
     "vite": "https://esm.sh/vite@^7.3.1",
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.3",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0"
   }
 }
 </script>
-</head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col min-h-screen overflow-x-hidden">
-    <header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 h-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm shrink-0">
-                    <img id="header-profile-img" src="assets/images/me.jpg" alt="Profile photo" class="w-full h-full object-cover profile-img-display" />
-                </div>
-                <span id="header-profile-name" class="font-bold text-sm text-gray-800 dark:text-gray-100 hidden sm:block">كنان الصائغ</span>
-            </div>
-            <a href="index.html" class="text-lg font-black text-blue-600 dark:text-blue-400 tracking-tight truncate">TechTouch</a>
-            <div class="flex items-center gap-2">
-                <button id="install-app-btn" class="hidden items-center gap-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-full transition-colors shadow-sm shrink-0">
-                    <i data-lucide="download" class="w-3 h-3"></i><span class="hidden sm:inline">تثبيت</span>
-                </button>
-                <button id="theme-toggle" class="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shrink-0">
-                    <i data-lucide="moon" class="w-4 h-4 text-gray-600 dark:hidden"></i><i data-lucide="sun" class="w-4 h-4 text-yellow-500 hidden dark:block"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-    <div class="w-full bg-gray-900 text-white h-9 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
-        <div id="ticker-label" class="h-6 px-3 flex items-center justify-center font-bold text-xs border border-blue-500 text-blue-500 rounded-full mx-2 shadow-[0_0_8px_rgba(59,130,246,0.4)] bg-transparent z-10 shrink-0">جديد</div>
-        <div class="flex-1 overflow-hidden relative h-full flex items-center bg-gray-900">
-          <div id="ticker-content" class="animate-marquee whitespace-nowrap absolute right-0 flex items-center"><span class="mx-4 text-sm font-medium text-gray-100">أهلاً بكم في موقعنا المختص بنشر المقالات التقنية والتطبيقات والمزيد ..</span></div>
-        </div>
-    </div>
-    <div class="sticky top-16 z-30 w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 transition-all">
-        <nav class="w-full overflow-x-auto no-scrollbar h-12 border-b border-gray-50 dark:border-gray-800">
-            <div class="max-w-7xl mx-auto px-2 h-full">
-                <div class="flex items-center justify-center space-x-reverse space-x-4 h-full min-w-max">
-                     <a href="index.html" class="nav-link flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"><i data-lucide="home" class="w-4 h-4"></i><span>الرئيسية</span></a>
-                     <a href="tools.html" class="nav-link flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"><i data-lucide="wrench" class="w-4 h-4"></i><span>الأدوات</span></a>
-                    <a href="about.html" class="nav-link flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"><i data-lucide="info" class="w-4 h-4"></i><span>حول</span></a>
-                </div>
-            </div>
-        </nav>
-        <div class="w-full py-2 bg-white dark:bg-gray-900">
-            <div class="max-w-7xl mx-auto px-2 overflow-x-auto no-scrollbar">
-              <div class="flex md:justify-center items-center gap-2 min-w-max">
-                <button class="tab-btn flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 border-2 border-blue-600 text-blue-600 bg-transparent shadow-sm" data-tab="articles"><i data-lucide="file-text" class="w-3.5 h-3.5"></i><span>اخبار</span></button>
-                <button class="tab-btn flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700" data-tab="apps"><i data-lucide="smartphone" class="w-3.5 h-3.5"></i><span>تطبيقات</span></button>
-                <button class="tab-btn flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700" data-tab="games"><i data-lucide="gamepad-2" class="w-3.5 h-3.5"></i><span>ألعاب</span></button>
-                 <button class="tab-btn flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-300 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700" data-tab="sports"><i data-lucide="trophy" class="w-3.5 h-3.5"></i><span>رياضة</span></button>
-              </div>
-            </div>
-        </div>
-    </div>
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24 overflow-x-hidden">
-        <div id="tab-articles" class="tab-content animate-fade-in w-full"><div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 w-full"></div></div>
-         <div id="tab-apps" class="tab-content hidden w-full"><div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 w-full"></div></div>
-        <div id="tab-games" class="tab-content hidden w-full"><div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 w-full"></div></div>
-         <div id="tab-sports" class="tab-content hidden w-full"><div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 w-full"></div></div>
-    </main>
+
     <footer class="bg-gray-900 text-gray-300 py-6 mt-auto border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
             <div class="flex items-center justify-center gap-4 mb-4">
@@ -110,6 +23,12 @@
             <p class="text-xs text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white p-3.5 rounded-full shadow-xl shadow-blue-500/30 transition-all duration-300 transform translate-y-10 opacity-0 invisible hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-300/50 group" aria-label="العودة للأعلى">
+        <i data-lucide="arrow-up" class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-300"></i>
+    </button>
+
     <script src="assets/js/app.js"></script>
     <script src="assets/js/search-engine.js" type="module"></script>
 </body>
