@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,44 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>مراجعة Asus ROG Zephyrus G16 | TechTouch</title>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZVS1EN9RG"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NZVS1EN9RG');</script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config','G-NZVS1EN9RG');
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Segoe UI','Tahoma','Geneva','Verdana','sans-serif']}}}}</script>
+    <script>
+        tailwind.config = {
+            darkMode:'class',
+            theme:{
+                extend:{
+                    fontFamily:{
+                        sans:['Segoe UI','Tahoma','Geneva','Verdana','sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col min-h-screen">
-    <header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight">TechTouch</a>
+
+<header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight">
+                TechTouch
+            </a>
+        </div>
+        <a href="index.html" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </a>
+    </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-4 py-6 animate-fade-in">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center text-xs text-gray-500 mb-4 w-full overflow-hidden whitespace-nowrap">
+        <a href="index.html" class="hover:text-blue-500 shrink-0">الرئيسية</a>
+        <span class="mx-1 shrink-0">/</span>
+
+        <!-- 👇 هذا هو الرابط الذي سيعدله السكربت -->
+        <a href="articles.html"
+           data-breadcrumb-category
+           class="hover:text-blue-500 shrink-0">
+            اخبار
+        </a>
+
+        <span class="mx-1 shrink-0">/</span>
+        <span class="text-gray-800 dark:text-gray-300 truncate flex-1 min-w-0 block">
+            Asus ROG Zephyrus G16
+        </span>
+    </nav>
+
+    <header class="mb-8">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight mb-4 break-words w-full">
+            وحش الألعاب الجديد: مراجعة Asus ROG Zephyrus G16
+        </h1>
+        <div class="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-400 text-sm">
+            <div class="flex items-center gap-1">
+                <i data-lucide="calendar" class="w-4 h-4"></i>
+                <time>2024-05-15</time>
             </div>
-            <a href="index.html" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><i data-lucide="arrow-right" class="w-5 h-5"></i></a>
+            <div class="flex items-center gap-1">
+                <i data-lucide="user" class="w-4 h-4"></i>
+                <span>TechTouch Team</span>
+            </div>
         </div>
     </header>
-    <main class="max-w-4xl mx-auto px-4 py-6 animate-fade-in">
-        <nav class="flex items-center text-xs text-gray-500 mb-4 w-full overflow-hidden whitespace-nowrap">
-            <a href="index.html" class="hover:text-blue-500 shrink-0">الرئيسية</a><span class="mx-1 shrink-0">/</span><a href="articles.html" class="hover:text-blue-500 shrink-0">اخبار</a><span class="mx-1 shrink-0">/</span><span class="text-gray-800 dark:text-gray-300 truncate flex-1 min-w-0 block">Asus ROG Zephyrus G16</span>
-        </nav>
-        <header class="mb-8">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight mb-4 break-words w-full">وحش الألعاب الجديد: مراجعة Asus ROG Zephyrus G16</h1>
-            <div class="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-400 text-sm">
-                <div class="flex items-center gap-1"><i data-lucide="calendar" class="w-4 h-4"></i><time>2024-05-15</time></div>
-                <div class="flex items-center gap-1"><i data-lucide="user" class="w-4 h-4"></i><span>TechTouch Team</span></div>
-            </div>
-        </header>
-        <div class="mb-8 rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700">
-            <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=1200&q=80" alt="Asus Laptop" class="w-full object-cover max-h-[500px] hover:scale-105 transition-transform duration-700" />
-        </div>
-        <article class="prose prose-lg dark:prose-invert max-w-none leading-relaxed">
-            <!-- Content Injected via Generator -->
-        </article>
-    </main>
-    <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center">
-            <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة.</p>
-        </div>
-    </footer>
-    <script src="assets/js/app.js"></script>
+
+    <div class="mb-8 rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700">
+        <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=1200&q=80"
+             alt="Asus Laptop"
+             class="w-full object-cover max-h-[500px] hover:scale-105 transition-transform duration-700" />
+    </div>
+
+    <article class="prose prose-lg dark:prose-invert max-w-none leading-relaxed">
+        <!-- Content Injected via Generator -->
+    </article>
+
+</main>
+
+<footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col items-center">
+        <p class="text-sm text-gray-500 font-medium">
+            © 2024 TechTouch. جميع الحقوق محفوظة.
+        </p>
+    </div>
+</footer>
+
+<script src="assets/js/app.js"></script>
 </body>
 </html>
