@@ -1,9 +1,7 @@
 /* Global Reset & Layout Protection */
 *, *::before, *::after { box-sizing: border-box; min-width: 0; }
-
-/* Section 8: Remove overflow-x from body, keep on html */
 html { scroll-behavior: smooth; scroll-padding-top: 140px; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; width: 100%; max-width: 100vw; min-height: 100vh; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; width: 100%; max-width: 100vw; min-height: 100vh; margin: 0; padding: 0; }
 
 /* Typography */
 h1 { font-size: 1.75rem; line-height: 1.5; } h2 { font-size: 1.5rem; line-height: 1.5; } h3 { font-size: 1.25rem; line-height: 1.5; } p, li { font-size: 1rem; line-height: 1.8; }
@@ -21,13 +19,10 @@ img, iframe, video, object, embed { max-width: 100% !important; display: block; 
 .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.75rem; margin: 1.5rem 0; background-color: #000; width: 100%; max-width: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 .video-container iframe { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; border: 0; }
 .btn-wrapped-link { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%); color: white !important; font-weight: 700; padding: 0.75rem 1rem; border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; width: 100%; max-width: 100%; margin: 1rem 0; }
-.btn-wrapped-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.3); will-change: transform; }
+.btn-wrapped-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.3); }
 
-/* Section 1: RTL Marquee Fix */
-@keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
+/* Animations */
+@keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 .animate-marquee { animation: marquee 30s linear infinite; }
 @keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
 .animate-fade-in { animation: fadeIn 0.5s ease-out; }
@@ -35,11 +30,7 @@ img, iframe, video, object, embed { max-width: 100% !important; display: block; 
 /* Utilities */
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; } .dark ::-webkit-scrollbar-track { background: #1f2937; } ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: #555; }
 .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Section 7: Table Fix */
-.table-wrapper { width: 100%; overflow-x: auto; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
-.dark .table-wrapper { border-color: #374151; }
-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 1rem; }
 @media (max-width: 480px) { .related-grid { grid-template-columns: repeat(2, 1fr) !important; } .related-posts h4 { font-size: 12px; line-height: 1.4; } .related-posts img { height: 90px !important; } }
 
 /* ========================================= */
@@ -50,35 +41,31 @@ table { width: 100%; border-collapse: collapse; white-space: nowrap; }
 .nav-link {
     position: relative;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid transparent; 
-    border-radius: 9999px !important; 
+    border: 1px solid transparent; /* Prevent layout shift */
+    border-radius: 9999px !important; /* Full rounded pill */
 }
 
-/* Section 6: Performance Optimization */
+/* Active State: Glass Effect */
 .nav-link.active {
     background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-color: rgba(255, 255, 255, 0.4) !important;
     box-shadow: 0 4px 15px rgba(31, 38, 135, 0.08);
-    color: #2563eb !important; 
+    color: #2563eb !important; /* Blue-600 */
     transform: translateY(-1px);
     font-weight: 800;
-    will-change: transform, backdrop-filter;
 }
 
-@media (min-width: 768px) {
-    .nav-link.active {
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-    }
-}
-
+/* Dark Mode Glass */
 .dark .nav-link.active {
     background: rgba(30, 41, 59, 0.6) !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
-    color: #60a5fa !important; 
+    color: #60a5fa !important; /* Blue-400 */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* Hover State */
 .nav-link:not(.active):hover {
     background: rgba(0, 0, 0, 0.03);
     color: #2563eb;
@@ -158,52 +145,50 @@ table { width: 100%; border-collapse: collapse; white-space: nowrap; }
 }
 
 /* ========================================= */
-/* 3. Modern Glass Ticker (Section 2 & 1 Fixes) */
+/* 3. Modern Glass Ticker                    */
 /* ========================================= */
 
 #news-ticker-bar {
     display: flex;
     align-items: center;
-    height: 44px; /* Fixed height */
-    overflow: hidden;
-    gap: 0 !important; /* Remove Gap */
-    padding: 0 !important; /* Remove Padding */
-    background-color: #111827;
+    gap: 8px !important;
+    padding-right: 8px !important;
+    padding-left: 8px !important;
+    height: 44px; /* Slightly taller for elegance */
+    background-color: #111827; /* Gray-900 */
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
     z-index: 40;
+    overflow: hidden;
 }
 
-/* Section 2.2: Ticker Label Adjustments */
+/* The Glassy "Ad/New" Label */
 #ticker-label {
-    margin: 0 !important;
-    padding: 0 8px !important; /* Reduced Padding */
-    height: 100%; /* Stretch to fill */
-    align-self: stretch;
+    margin-left: 0 !important;
+    padding: 0 16px !important;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
-    font-size: 0.75rem; 
+    border-radius: 8px !important;
+    font-size: 0.75rem; /* 12px */
     font-weight: 800;
     letter-spacing: 0.025em;
     flex-shrink: 0;
     z-index: 10;
     
+    /* Glass Effect */
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-    border-right: 1px solid rgba(255, 255, 255, 0.1); /* Separator instead of full border */
-    color: #60a5fa; 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: #60a5fa; /* Blue-400 */
     text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
-    border-radius: 0 !important; /* Remove rounded corners to sit flush */
 }
 
-@media (min-width: 768px) {
-    #ticker-label {
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-    }
-}
-
+/* Ticker Content Container */
 #ticker-content-wrapper {
     flex: 1;
     height: 100%;
@@ -211,13 +196,11 @@ table { width: 100%; border-collapse: collapse; white-space: nowrap; }
     overflow: hidden;
     display: flex;
     align-items: center;
-    /* Removed Mask if causing visual gaps, or adjusted */
-    mask-image: linear-gradient(to left, transparent, black 5%, black 95%, transparent);
-    -webkit-mask-image: linear-gradient(to left, transparent, black 5%, black 95%, transparent);
-    mask-repeat: no-repeat;
-    mask-size: 100% 100%;
+    mask-image: linear-gradient(to left, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to left, transparent, black 10%, black 90%, transparent);
 }
 
+/* Actual Scrolling Content */
 #ticker-content {
     display: flex;
     align-items: center;
@@ -225,29 +208,27 @@ table { width: 100%; border-collapse: collapse; white-space: nowrap; }
     white-space: nowrap;
 }
 
-/* Section 1: Position Left for RTL Marquee */
+/* When Animation is Active */
 #ticker-content.animate-marquee {
     position: absolute;
-    left: 0; /* Changed from right: 0 */
+    right: 0;
     animation: marquee 30s linear infinite;
-    will-change: transform;
 }
 
-/* Section 2.3: Remove padding when stopped */
+/* When Animation is Stopped - FIX Ticker Alignment */
 #ticker-content:not(.animate-marquee) {
     width: 100%;
-    justify-content: flex-start;
-    padding: 0 !important;
-    margin: 0 !important;
-    position: relative !important;
-    transform: none !important;
+    justify-content: flex-start; /* Align near label */
+    padding-right: 0.5rem;
+    position: relative !important; /* Remove absolute */
+    transform: none !important; /* Remove transform */
     animation: none !important;
-    padding-right: 0.5rem !important; /* Small padding for readability near label */
 }
 
+/* Text Styling */
 #ticker-content span,
 #ticker-content a {
-    color: #f3f4f6; 
+    color: #f3f4f6; /* Gray-100 */
     font-weight: 500;
     text-decoration: none;
     transition: color 0.2s;
@@ -258,18 +239,10 @@ table { width: 100%; border-collapse: collapse; white-space: nowrap; }
     text-decoration: underline;
 }
 
+/* Image Mode Styling */
 .ticker-image-mode {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover; /* Cover usually, or contain if preferred */
     display: block;
-}
-
-/* Section 3: Header Actions Fix */
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 4px !important;
-    justify-content: flex-start;
-    margin: 0 !important;
 }

@@ -27,85 +27,63 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Highlight Active Nav Link (Robust Logic - Section 4)
-    const currentPath = window.location.pathname.replace(/\/$/, ""); // Normalize path
+    // 3. Highlight Active Nav Link (Main Navigation - Glassmorphism)
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('.nav-link');
     
     navLinks.forEach(link => {
-        const linkUrl = new URL(link.href, window.location.origin);
-        const linkPath = linkUrl.pathname.replace(/\/$/, "");
+        const linkPath = link.getAttribute('href');
+        // Reset base classes to ensure clean slate
+        link.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'active', 'text-blue-600');
         
-        // Reset
-        link.classList.remove('active');
-        
-        // Exact match or Home Root match
-        // Also handles the case where index.html might be implicit
-        const isHome = (currentPath === '' || currentPath.endsWith('index.html')) && (linkPath === '' || linkPath.endsWith('index.html'));
-        const isMatch = currentPath === linkPath || (linkPath !== '' && !linkPath.endsWith('index.html') && currentPath.startsWith(linkPath));
-
-        if (isHome || isMatch) {
-            link.classList.add('active');
+        // Simple exact match or root match
+        if (linkPath === currentPath || (currentPath === '' && linkPath === 'index.html')) {
+            link.classList.add('active'); // CSS handles the Glassmorphism
         }
     });
 
-    // 4. Tab Switching Logic (Homepage & Articles) - Hash Aware (Section 5)
+    // 4. Tab Switching Logic (Homepage & Articles) - Updated to use .active class only
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
     if (tabButtons.length > 0) {
-        
-        const activateTab = (targetTab) => {
-            // Validate tab existence
-            const targetContent = document.getElementById(`tab-${targetTab}`);
-            if (!targetContent) return;
-
-            // 1. Reset Buttons
-            tabButtons.forEach(b => b.classList.remove('active'));
-            
-            // 2. Activate specific button
-            const activeBtn = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
-            if (activeBtn) activeBtn.classList.add('active');
-
-            // 3. Toggle Content
-            tabContents.forEach(content => content.classList.add('hidden'));
-            targetContent.classList.remove('hidden');
-            targetContent.classList.remove('animate-fade-in');
-            void targetContent.offsetWidth; // Force reflow
-            targetContent.classList.add('animate-fade-in');
-        };
-
-        // Initialize based on Hash or Default
-        const initialHash = window.location.hash.replace('#tab-', '');
-        const validTabs = Array.from(tabButtons).map(b => b.getAttribute('data-tab'));
-        
-        if (initialHash && validTabs.includes(initialHash)) {
-            activateTab(initialHash);
-        } else {
-            // Determine active from HTML structure if no hash, or default to first
-            const currentlyVisible = document.querySelector('.tab-content:not(.hidden)');
-            if (currentlyVisible) {
-                const id = currentlyVisible.id.replace('tab-', '');
-                activateTab(id);
-            } else {
-                activateTab(validTabs[0]); // Default to first (usually articles)
-            }
-        }
-
-        // Click Handler
+        // Ensure correct initial state based on HTML structure
         tabButtons.forEach(btn => {
+            const targetTab = btn.getAttribute('data-tab');
+            const targetContent = document.getElementById(`tab-${targetTab}`);
+            
+            // If content is visible (not hidden), mark button as active
+            if (targetContent && !targetContent.classList.contains('hidden')) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+
+            // Click Handler
             btn.addEventListener('click', (e) => {
                 const targetTab = btn.getAttribute('data-tab');
-                
-                // Update URL Hash without scrolling (optional, keeps state on refresh)
-                history.replaceState(null, null, `#tab-${targetTab}`);
-                
-                activateTab(targetTab);
 
-                // Mobile Scroll Fix - only if needed
-                if(window.innerWidth < 768) {
-                    const headerOffset = 140; 
-                    const targetContent = document.getElementById(`tab-${targetTab}`);
-                    if (targetContent) {
+                // 1. Reset ALL buttons
+                tabButtons.forEach(b => {
+                    b.classList.remove('active');
+                });
+
+                // 2. Activate Clicked Button
+                const activeBtn = e.currentTarget;
+                activeBtn.classList.add('active');
+
+                // 3. Handle Content Visibility
+                tabContents.forEach(content => content.classList.add('hidden'));
+                const targetContent = document.getElementById(`tab-${targetTab}`);
+                if (targetContent) {
+                    targetContent.classList.remove('hidden');
+                    targetContent.classList.remove('animate-fade-in');
+                    void targetContent.offsetWidth; // Force reflow
+                    targetContent.classList.add('animate-fade-in');
+                    
+                    // Mobile Scroll Fix
+                    if(window.innerWidth < 768) {
+                        const headerOffset = 140; 
                         const elementPosition = targetContent.getBoundingClientRect().top;
                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
@@ -145,10 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const innerContent = tickerContainer.querySelector('span') || tickerContainer.querySelector('a');
             if (innerContent && tickerContainer.parentElement) {
                 const parentWidth = tickerContainer.parentElement.clientWidth;
-                // If content is smaller than screen, stop animation
                 if (innerContent.offsetWidth < parentWidth) {
-                    tickerContainer.classList.remove('animate-marquee');
-                    // Ensure positioning is reset via CSS rules for :not(.animate-marquee)
+                    tickerContainer.classList.remove('animate-marquee', 'absolute', 'right-0');
                 }
             }
         });
