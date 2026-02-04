@@ -21,9 +21,9 @@
   },
   "globalFonts": {
     "nav": 12,
-    "content": 13,
-    "titles": 14,
-    "mainTitles": 15
+    "content": 14,
+    "titles": 16,
+    "mainTitles": 22
   },
   "ticker": {
     "label": "جديد",
