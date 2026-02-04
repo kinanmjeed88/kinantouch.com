@@ -61,21 +61,6 @@ const ONESIGNAL_SCRIPT = `
 </script>
 `;
 
-const ADSENSE_BLOCK = `
-<div class="adsbygoogle-container w-full mx-auto my-8 py-4 bg-gray-50 dark:bg-gray-900/30 border-y border-gray-100 dark:border-gray-800 text-center overflow-hidden">
-    <div class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-2">إعلان</div>
-    <div style="display: flex; justify-content: center; width: 100%;">
-        <ins class="adsbygoogle"
-             style="display:block; width: 100%;"
-             data-ad-client="${AD_CLIENT_ID}"
-             data-ad-slot="auto"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-</div>
-`;
-
 // Ticker HTML Template (Updated Style)
 const TICKER_HTML_TEMPLATE = `
 <div id="news-ticker-bar" class="w-full bg-gray-900 text-white h-10 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
@@ -267,7 +252,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // 2. Inject Fresh Scripts
     $('head').append(ONESIGNAL_SCRIPT);
-    $('head').prepend(AD_SCRIPT); // Prepend as requested for Auto Ads
+    $('head').prepend(AD_SCRIPT); // Auto Ads script at the top
     $('head').prepend(GA_SCRIPT);
     
     // 3. Search Console Meta
@@ -444,8 +429,8 @@ const updateListingPages = () => {
                 container.empty();
                 posts.slice(0, pageInfo.limit).forEach(post => container.append(createCardHTML(post)));
                 if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
+                // Clean up any old AdSense containers if they exist
                 container.parent().find('.adsbygoogle-container').remove();
-                // Removed ADSENSE_BLOCK injection here as requested for Auto Ads
             }
         };
         fillContainer('articles', allPosts.filter(p => p.category === 'articles'));
@@ -522,6 +507,7 @@ const generateIndividualArticles = () => {
         // ---------------------------------------
 
         const $content = cheerio.load(post.content, null, false);
+        // Clean up old manual AdSense containers
         $content('.adsbygoogle-container, .ad-placeholder').remove();
 
         const children = $content.root().children();
