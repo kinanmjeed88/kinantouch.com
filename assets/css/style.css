@@ -215,11 +215,14 @@ table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; marg
     animation: marquee 30s linear infinite;
 }
 
-/* When Animation is Stopped */
+/* When Animation is Stopped - FIX Ticker Alignment */
 #ticker-content:not(.animate-marquee) {
     width: 100%;
-    justify-content: flex-start;
+    justify-content: flex-start; /* Align near label */
     padding-right: 0.5rem;
+    position: relative !important; /* Remove absolute */
+    transform: none !important; /* Remove transform */
+    animation: none !important;
 }
 
 /* Text Styling */

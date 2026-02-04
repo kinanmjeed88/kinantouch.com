@@ -282,7 +282,6 @@ window.savePost = async () => {
         // =============================
 
         let manualDate = document.getElementById('pDate')?.value;
-
         let finalDate;
 
         if (manualDate && manualDate.trim() !== '') {

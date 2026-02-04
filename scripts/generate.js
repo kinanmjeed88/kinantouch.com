@@ -60,22 +60,23 @@ const ONESIGNAL_SCRIPT = `
 </script>
 `;
 
-const ADSENSE_BLOCK = `
-<div class="adsbygoogle-container w-full mx-auto my-8 py-4 bg-gray-50 dark:bg-gray-900/30 border-y border-gray-100 dark:border-gray-800 text-center overflow-hidden">
-    <div class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-2">إعلان</div>
-    <div style="display: flex; justify-content: center; width: 100%;">
-        <ins class="adsbygoogle"
-             style="display:block; width: 100%;"
-             data-ad-client="${AD_CLIENT_ID}"
-             data-ad-slot="auto"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+// Footer Template for Consistency
+const STANDARD_FOOTER = `
+<footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+        <div class="flex items-center justify-center gap-4 mb-4">
+            <a href="https://www.facebook.com/share/1EsapVHA6W/" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#1877F2] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+            <a href="https://www.instagram.com/techtouch0" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#E4405F] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+            <a href="https://www.tiktok.com/@techtouch6" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-black hover:border-gray-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg></a>
+            <a href="https://youtube.com/@kinanmajeed?si=I2yuzJT2rRnEHLVg" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#FF0000] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><i data-lucide="youtube" class="w-5 h-5"></i></a>
+            <a href="https://t.me/techtouch7" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#229ED9] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><i data-lucide="send" class="w-5 h-5 ml-0.5"></i></a>
+        </div>
+        <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
     </div>
-</div>
+</footer>
 `;
 
-// Ticker HTML Template (Updated Style)
+// Ticker HTML Template
 const TICKER_HTML_TEMPLATE = `
 <div id="news-ticker-bar" class="w-full bg-gray-900 text-white h-10 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
     <div class="h-full flex items-center justify-center px-4 relative z-10 shrink-0">
@@ -323,7 +324,8 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('#dynamic-theme-styles').remove();
     $('head').append(dynamicStyle);
 
-    // E. Social Links
+    // E. Social Links in Footer - Remove from here if injecting via standard footer
+    // But specific checks for updates if aboutData changes
     if (aboutData.social) {
         $('footer a[href*="facebook"]').attr('href', aboutData.social.facebook || '#');
         $('footer a[href*="instagram"]').attr('href', aboutData.social.instagram || '#');
@@ -349,7 +351,8 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         if (aboutData.ticker.animated !== false) {
             tickerContentDiv.addClass('animate-marquee absolute right-0');
         } else {
-            tickerContentDiv.addClass('w-full justify-start pr-2 overflow-hidden');
+            // Updated class for non-animated state handled by CSS now mostly, but ensuring clean slate
+            tickerContentDiv.removeClass('animate-marquee absolute right-0');
         }
         
         // Handle Content Type (Image vs Text)
@@ -357,8 +360,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
             // Image Content
             const imgUrl = cleanPath(aboutData.ticker.imageUrl);
             const contentHtml = `<img src="${imgUrl}" alt="Ticker Banner" class="h-full object-contain mx-auto" style="max-height: 40px; width: auto;" />`;
-            // Remove animation for image typically, or keep if scrolling banner is desired. 
-            // For better UX, usually banner images are static or marquee. Let's keep marquee structure but ensure image fits.
             tickerContentDiv.html(contentHtml);
         } else {
             // Text Content
@@ -443,8 +444,8 @@ const updateListingPages = () => {
                 container.empty();
                 posts.slice(0, pageInfo.limit).forEach(post => container.append(createCardHTML(post)));
                 if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
+                // Remove existing manually injected ad containers
                 container.parent().find('.adsbygoogle-container').remove();
-                container.after(ADSENSE_BLOCK);
             }
         };
         fillContainer('articles', allPosts.filter(p => p.category === 'articles'));
@@ -455,7 +456,7 @@ const updateListingPages = () => {
     });
 };
 
-const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.find('a[href="tool-analysis.html"]').remove(); main.append(ADSENSE_BLOCK); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
+const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.find('a[href="tool-analysis.html"]').remove(); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
 const updateAboutPageDetails = () => { const aboutPath = path.join(ROOT_DIR, 'about.html'); if (!fs.existsSync(aboutPath)) return; let html = fs.readFileSync(aboutPath, 'utf8'); const $ = cheerio.load(html); fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html')); };
 const updateChannelsPage = () => {
     const toolsPath = path.join(ROOT_DIR, 'tools-sites.html'); if (!fs.existsSync(toolsPath)) return; let html = fs.readFileSync(toolsPath, 'utf8'); const $ = cheerio.load(html); const grid = $('main .grid'); grid.empty();
@@ -482,24 +483,42 @@ const generateIndividualArticles = () => {
         $('h1').first().text(post.title);
         $('time').text(post.date);
         
+        // --- Breadcrumb Logic ---
+        let breadcrumbLabel = 'اخبار';
+        let breadcrumbLink = 'articles.html';
+
+        if (post.category === 'apps') {
+            breadcrumbLabel = 'تطبيقات';
+            breadcrumbLink = 'index.html#tab-apps';
+        } else if (post.category === 'games') {
+            breadcrumbLabel = 'ألعاب';
+            breadcrumbLink = 'index.html#tab-games';
+        } else if (post.category === 'sports') {
+            breadcrumbLabel = 'رياضة';
+            breadcrumbLink = 'index.html#tab-sports';
+        }
+
+        let breadcrumbElement = $('nav a[href="articles.html"]');
+
+        if (!breadcrumbElement.length) {
+            breadcrumbElement = $('nav a').filter((i, el) => {
+                return $(el).text().trim() === 'اخبار';
+            }).first();
+        }
+
+        if (breadcrumbElement.length) {
+            breadcrumbElement.text(breadcrumbLabel);
+            breadcrumbElement.attr('href', breadcrumbLink);
+        }
+        
         // --- FIX: UPDATE MAIN FEATURED IMAGE ---
         $('main > div.rounded-2xl > img').attr('src', cleanPath(post.image));
         $('main > div.rounded-2xl > img').attr('alt', post.title);
         // ---------------------------------------
 
         const $content = cheerio.load(post.content, null, false);
+        // Remove manual ad blocks from content
         $content('.adsbygoogle-container, .ad-placeholder').remove();
-
-        const children = $content.root().children();
-        const blockElements = children.filter('p, h2, h3, h4, ul, ol, div, img');
-        const totalBlocks = blockElements.length;
-
-        if (totalBlocks >= 2) {
-            const midIndex = Math.floor(totalBlocks * 0.3);
-            blockElements.eq(Math.max(0, midIndex)).after(ADSENSE_BLOCK);
-        } else {
-            $content.root().append(ADSENSE_BLOCK);
-        }
 
         // Apply cleaning to article images as well
         $content('img').each((i, img) => {
@@ -510,6 +529,44 @@ const generateIndividualArticles = () => {
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         $('article').html($content.html()); 
         
+        // --- Related Posts (6 Posts, 2 Columns) ---
+        const relatedPosts = allPosts
+            .filter(p => p.slug !== post.slug)
+            .slice(0, 6);
+
+        if (relatedPosts.length) {
+            let relatedHTML = `
+            <section class="related-posts mt-12 border-t border-gray-100 dark:border-gray-700 pt-8">
+                <h3 class="text-lg font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-blue-600"></i>
+                    قد يعجبك أيضاً
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+            `;
+
+            relatedPosts.forEach(r => {
+                relatedHTML += `
+                <a href="article-${r.slug}.html"
+                   class="block bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <img src="${cleanPath(r.image)}"
+                         class="w-full h-28 object-cover"
+                         loading="lazy" />
+                    <div class="p-3">
+                        <h4 class="text-sm font-bold line-clamp-2 text-gray-900 dark:text-white">
+                            ${r.title}
+                        </h4>
+                    </div>
+                </a>
+                `;
+            });
+
+            relatedHTML += `</div></section>`;
+            $('article').append(relatedHTML);
+        }
+
+        // --- Standardize Footer ---
+        $('footer').replaceWith(STANDARD_FOOTER);
+
         const jsonLd = { "@context": "https://schema.org", "@type": "Article", "headline": post.title, "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(), "dateModified": new Date(post.effectiveDate).toISOString(), "author": { "@type": "Person", "name": aboutData.profileName }, "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } }, "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } };
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);
