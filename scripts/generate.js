@@ -267,7 +267,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // 2. Inject Fresh Scripts
     $('head').append(ONESIGNAL_SCRIPT);
-    $('head').append(AD_SCRIPT);
+    $('head').prepend(AD_SCRIPT); // Prepend as requested for Auto Ads
     $('head').prepend(GA_SCRIPT);
     
     // 3. Search Console Meta
@@ -445,7 +445,7 @@ const updateListingPages = () => {
                 posts.slice(0, pageInfo.limit).forEach(post => container.append(createCardHTML(post)));
                 if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
                 container.parent().find('.adsbygoogle-container').remove();
-                container.after(ADSENSE_BLOCK);
+                // Removed ADSENSE_BLOCK injection here as requested for Auto Ads
             }
         };
         fillContainer('articles', allPosts.filter(p => p.category === 'articles'));
@@ -456,7 +456,7 @@ const updateListingPages = () => {
     });
 };
 
-const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.find('a[href="tool-analysis.html"]').remove(); main.append(ADSENSE_BLOCK); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
+const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.find('a[href="tool-analysis.html"]').remove(); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
 const updateAboutPageDetails = () => { const aboutPath = path.join(ROOT_DIR, 'about.html'); if (!fs.existsSync(aboutPath)) return; let html = fs.readFileSync(aboutPath, 'utf8'); const $ = cheerio.load(html); fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html')); };
 const updateChannelsPage = () => {
     const toolsPath = path.join(ROOT_DIR, 'tools-sites.html'); if (!fs.existsSync(toolsPath)) return; let html = fs.readFileSync(toolsPath, 'utf8'); const $ = cheerio.load(html); const grid = $('main .grid'); grid.empty();
@@ -474,38 +474,39 @@ const generateIndividualArticles = () => {
 
     allPosts.forEach(post => {
         const $ = cheerio.load(template);
+        
         // ================================
-// Dynamic Breadcrumb Generator
-// ================================
+        // Dynamic Breadcrumb Generator
+        // ================================
 
-// 1️⃣ تحديد اسم القسم والرابط بناءً على تصنيف المقال
-const categoryLabel = getCatLabel(post.category);
+        let breadcrumbLabel = 'اخبار';
+        let breadcrumbLink = 'articles.html';
 
-let breadcrumbLinkMap = {
-    articles: 'articles.html',
-    apps: 'index.html#tab-apps',
-    games: 'index.html#tab-games',
-    sports: 'index.html#tab-sports'
-};
+        if (post.category === 'apps') {
+            breadcrumbLabel = 'تطبيقات';
+            breadcrumbLink = 'index.html#tab-apps';
+        } else if (post.category === 'games') {
+            breadcrumbLabel = 'ألعاب';
+            breadcrumbLink = 'index.html#tab-games';
+        } else if (post.category === 'sports') {
+            breadcrumbLabel = 'رياضة';
+            breadcrumbLink = 'index.html#tab-sports';
+        }
 
-const categoryLink = breadcrumbLinkMap[post.category] || 'articles.html';
+        // تحديث عنصر breadcrumb
+        let breadcrumbElement = $('nav a[href="articles.html"]');
 
-// 2️⃣ البحث عن عنصر الـ breadcrumb داخل القالب
-// نحاول أولاً البحث عن الرابط الافتراضي
-let breadcrumbElement = $('nav a[href="articles.html"]');
+        if (!breadcrumbElement.length) {
+            breadcrumbElement = $('nav a').filter((i, el) => {
+                return $(el).text().trim() === 'اخبار';
+            }).first();
+        }
 
-// إذا لم يجده نحاول إيجاده بالنص
-if (!breadcrumbElement.length) {
-    breadcrumbElement = $('nav a').filter((i, el) => {
-        return $(el).text().trim() === 'اخبار';
-    }).first();
-}
+        if (breadcrumbElement.length) {
+            breadcrumbElement.text(breadcrumbLabel);
+            breadcrumbElement.attr('href', breadcrumbLink);
+        }
 
-// 3️⃣ تحديث النص والرابط إذا وُجد العنصر
-if (breadcrumbElement.length) {
-    breadcrumbElement.text(categoryLabel);
-    breadcrumbElement.attr('href', categoryLink);
-}
         const pageSlug = `article-${post.slug}.html`;
         const fullUrl = `${BASE_URL}/${pageSlug}`;
         const fullImageUrl = toAbsoluteUrl(post.image);
@@ -527,13 +528,6 @@ if (breadcrumbElement.length) {
         const blockElements = children.filter('p, h2, h3, h4, ul, ol, div, img');
         const totalBlocks = blockElements.length;
 
-        if (totalBlocks >= 2) {
-            const midIndex = Math.floor(totalBlocks * 0.3);
-            blockElements.eq(Math.max(0, midIndex)).after(ADSENSE_BLOCK);
-        } else {
-            $content.root().append(ADSENSE_BLOCK);
-        }
-
         // Apply cleaning to article images as well
         $content('img').each((i, img) => {
             const originalSrc = $content(img).attr('src');
@@ -543,6 +537,42 @@ if (breadcrumbElement.length) {
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         $('article').html($content.html()); 
         
+        // ================================
+        // Related Posts (4 items - Mobile layout)
+        // ================================
+
+        const relatedPosts = allPosts
+            .filter(p => p.slug !== post.slug)
+            .slice(0, 4);
+
+        if (relatedPosts.length) {
+
+            let relatedHTML = `
+            <section class="related-posts mt-10">
+                <h3 class="text-lg font-bold mb-4 text-gray-800 dark:text-white">
+                    قد يعجبك أيضاً
+                </h3>
+                <div class="grid grid-cols-2 gap-3 related-grid">
+            `;
+
+            relatedPosts.forEach(r => {
+                relatedHTML += `
+                <a href="article-${r.slug}.html" class="block bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
+                    <img src="${cleanPath(r.image)}" class="w-full h-24 object-cover" loading="lazy" />
+                    <div class="p-2">
+                        <h4 class="text-xs font-bold line-clamp-2 text-gray-900 dark:text-white">
+                            ${r.title}
+                        </h4>
+                    </div>
+                </a>
+                `;
+            });
+
+            relatedHTML += `</div></section>`;
+
+            $('article').append(relatedHTML);
+        }
+
         const jsonLd = { "@context": "https://schema.org", "@type": "Article", "headline": post.title, "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(), "dateModified": new Date(post.effectiveDate).toISOString(), "author": { "@type": "Person", "name": aboutData.profileName }, "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } }, "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } };
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);

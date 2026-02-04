@@ -212,3 +212,46 @@ table {
     -webkit-overflow-scrolling: touch;
     margin-bottom: 1rem;
 }
+
+/* --- Fix Ticker Layout (Very Small Screens Only) --- */
+@media (max-width: 480px) {
+
+    #news-ticker-bar {
+        height: 36px;
+    }
+
+    #ticker-label {
+        padding: 2px 8px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+        border: 2px solid #2563eb !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #news-ticker-bar .flex-1 {
+        margin-right: 6px !important;
+    }
+
+    #ticker-content {
+        padding-right: 4px !important;
+    }
+}
+
+/* --- Related Posts Mobile Optimization --- */
+@media (max-width: 480px) {
+
+    .related-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .related-posts h4 {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .related-posts img {
+        height: 90px !important;
+    }
+}
