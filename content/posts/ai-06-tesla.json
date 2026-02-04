@@ -1,0 +1,9 @@
+{
+  "title": "السيارات ذاتية القيادة: كيف تدرب Tesla شبكاتها العصبية للرؤية؟",
+  "slug": "tesla-fsd-ai",
+  "description": "من الكاميرات إلى الشبكات العصبية العميقة: كيف تحاول تسلا حل معضلة القيادة الذاتية الكاملة باستخدام مليارات الأميال من البيانات.",
+  "date": "2026-08-05",
+  "category": "articles",
+  "image": "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80",
+  "content": "<h3 class=\"text-2xl font-bold text-red-600 dark:text-red-400 mb-4\">القيادة بالرؤية الحاسوبية فقط</h3><p>تختلف فلسفة Tesla عن معظم المنافسين؛ فهي لا تعتمد على الرادارات باهظة الثمن (Lidar)، بل تراهن بالكامل على الكاميرات والرؤية الحاسوبية (Computer Vision)، محاكية بذلك طريقة قيادة الإنسان بالعين والدماغ.</p><h4 class=\"font-bold text-lg mb-2\">كيف يعمل نظام FSD؟</h4><ul class=\"list-disc list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700\"><li><strong>الإدراك المحيطي:</strong> 8 كاميرات توفر رؤية 360 درجة حول السيارة.</li><li><strong>الشبكات العصبية العميقة:</strong> تقوم بتحليل الصور في الوقت الفعلي لتحديد الطرق، المشاة، الإشارات، والعوائق.</li><li><strong>التعلم المستمر:</strong> تستفيد تسلا من أسطولها الضخم لجمع بيانات من مليارات الكيلومترات، مما يسمح للنظام بالتعلم من الحالات النادرة والمعقدة (Edge Cases).</li></ul><h4 class=\"font-bold text-lg mb-2\">التحديات والسلامة</h4><p>رغم التقدم الهائل، تواجه القيادة الذاتية تحديات كبيرة مثل الظروف الجوية السيئة (الثلوج، الضباب) والطرق غير المخططة جيداً. الهدف النهائي ليس الرفاهية فحسب، بل تقليل الحوادث البشرية بشكل جذري، حيث لا يتعب الذكاء الاصطناعي ولا يتشتت انتباهه.</p><div class=\"my-8 w-full flex justify-center px-1 sm:px-0\"><a href=\"https://www.tesla.com/AI\" target=\"_blank\" class=\"btn-wrapped-link w-full sm:w-auto sm:min-w-[280px] max-w-md mx-auto\"><i data-lucide=\"zap\"></i><span class=\"break-words\">تقنيات Tesla AI</span></a></div>"
+}

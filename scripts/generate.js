@@ -547,7 +547,7 @@ const generateIndividualArticles = () => {
                     <span class="font-bold">TechTouch Team</span>
                 </div>
             </div>
-        header>
+        </header>
         `;
         
         const existingHeader = $('main header').first();
