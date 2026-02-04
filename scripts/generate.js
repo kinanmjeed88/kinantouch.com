@@ -60,16 +60,16 @@ const ONESIGNAL_SCRIPT = `
 </script>
 `;
 
-// Footer Template for Consistency
+// Footer Template for Consistency - Standardized Icon Sizes (w-10 h-10 container, w-5 h-5 icon)
 const STANDARD_FOOTER = `
 <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
         <div class="flex items-center justify-center gap-4 mb-4">
-            <a href="https://www.facebook.com/share/1EsapVHA6W/" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#1877F2] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><i data-lucide="facebook" class="w-5 h-5"></i></a>
-            <a href="https://www.instagram.com/techtouch0" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#E4405F] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><i data-lucide="instagram" class="w-5 h-5"></i></a>
-            <a href="https://www.tiktok.com/@techtouch6" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-black hover:border-gray-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg></a>
-            <a href="https://youtube.com/@kinanmajeed?si=I2yuzJT2rRnEHLVg" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#FF0000] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><i data-lucide="youtube" class="w-5 h-5"></i></a>
-            <a href="https://t.me/techtouch7" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#229ED9] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700"><i data-lucide="send" class="w-5 h-5 ml-0.5"></i></a>
+            <a href="https://www.facebook.com/share/1EsapVHA6W/" target="_blank" class="social-icon-btn hover:bg-[#1877F2] hover:text-white shadow-lg"><i data-lucide="facebook"></i></a>
+            <a href="https://www.instagram.com/techtouch0" target="_blank" class="social-icon-btn hover:bg-[#E4405F] hover:text-white shadow-lg"><i data-lucide="instagram"></i></a>
+            <a href="https://www.tiktok.com/@techtouch6" target="_blank" class="social-icon-btn hover:bg-black hover:border-gray-600 hover:text-white shadow-lg"><svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg></a>
+            <a href="https://youtube.com/@kinanmajeed?si=I2yuzJT2rRnEHLVg" target="_blank" class="social-icon-btn hover:bg-[#FF0000] hover:text-white shadow-lg"><i data-lucide="youtube"></i></a>
+            <a href="https://t.me/techtouch7" target="_blank" class="social-icon-btn hover:bg-[#229ED9] hover:text-white shadow-lg"><i data-lucide="send" class="w-5 h-5 ml-0.5"></i></a>
         </div>
         <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
     </div>
@@ -185,7 +185,7 @@ const parseMarkdown = (markdown) => {
         }
         return '';
     });
-    html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<img src="${src}" alt="${alt}" class="w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700">`);
+    html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<div class="article-image-container"><img src="${src}" alt="${alt}"></div>`);
     html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-6 w-full flex justify-center px-2"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto"><i data-lucide="external-link" class="shrink-0 w-4 h-4"></i><span class="break-words whitespace-normal text-center">$1</span></a></div>`);
     html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words whitespace-normal w-full">$1</h3>');
     html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 break-words whitespace-normal w-full">$1</h2>');
@@ -464,7 +464,21 @@ const updateListingPages = () => {
     });
 };
 
-const updateToolsPage = () => { const filePath = path.join(ROOT_DIR, 'tools.html'); if (!fs.existsSync(filePath)) return; let html = fs.readFileSync(filePath, 'utf8'); const $ = cheerio.load(html); const main = $('main'); if (main.length) { main.find('.adsbygoogle-container').remove(); main.find('a[href="tool-analysis.html"]').remove(); } fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); };
+const updateToolsPage = () => { 
+    const filePath = path.join(ROOT_DIR, 'tools.html'); 
+    if (!fs.existsSync(filePath)) return; 
+    let html = fs.readFileSync(filePath, 'utf8'); 
+    const $ = cheerio.load(html); 
+    const main = $('main'); 
+    if (main.length) { 
+        main.find('.adsbygoogle-container').remove(); 
+        main.find('a[href="tool-analysis.html"]').remove(); 
+    } 
+    // Standardize footer on Tools page (Replace existing footer)
+    $('footer').replaceWith(STANDARD_FOOTER);
+    fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); 
+};
+
 const updateAboutPageDetails = () => { const aboutPath = path.join(ROOT_DIR, 'about.html'); if (!fs.existsSync(aboutPath)) return; let html = fs.readFileSync(aboutPath, 'utf8'); const $ = cheerio.load(html); fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html')); };
 const updateChannelsPage = () => {
     const toolsPath = path.join(ROOT_DIR, 'tools-sites.html'); if (!fs.existsSync(toolsPath)) return; let html = fs.readFileSync(toolsPath, 'utf8'); const $ = cheerio.load(html); const grid = $('main .grid'); grid.empty();
@@ -488,9 +502,38 @@ const generateIndividualArticles = () => {
         
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
-        $('h1').first().text(post.title);
-        $('time').text(post.date);
         
+        // --- Redesigned Glass Header Structure ---
+        // Find existing header or main section for title/meta replacement
+        const articleHeaderHTML = `
+        <header class="mb-8 relative">
+            <div class="article-header-card">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight break-words w-full m-0">
+                    ${post.title}
+                </h1>
+            </div>
+            <div class="article-meta-bar">
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i>
+                    <time class="font-bold">${post.date}</time>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+                    <span class="font-bold">TechTouch Team</span>
+                </div>
+            </div>
+        </header>
+        `;
+        
+        // Replace existing header contents (h1/meta) with new structure
+        const existingHeader = $('main header').first();
+        if(existingHeader.length) {
+            existingHeader.replaceWith(articleHeaderHTML);
+        } else {
+            // Fallback if header doesn't exist in template
+            $('main').prepend(articleHeaderHTML);
+        }
+
         // --- Breadcrumb Logic (Fix for Tab Hash) ---
         let breadcrumbLabel = 'اخبار';
         let breadcrumbLink = 'index.html#tab-articles';
@@ -519,9 +562,21 @@ const generateIndividualArticles = () => {
             breadcrumbElement.attr('href', breadcrumbLink);
         }
         
-        // --- FIX: UPDATE MAIN FEATURED IMAGE ---
-        $('main > div.rounded-2xl > img').attr('src', cleanPath(post.image));
-        $('main > div.rounded-2xl > img').attr('alt', post.title);
+        // --- ADAPTIVE MAIN IMAGE ---
+        // Find existing image container and replace/update
+        const existingImgDiv = $('main > div.rounded-2xl');
+        const adaptiveImageHTML = `
+        <div class="article-image-container">
+            <img src="${cleanPath(post.image)}" alt="${post.title}" class="article-featured-image" loading="eager" />
+        </div>
+        `;
+        
+        if (existingImgDiv.length) {
+            existingImgDiv.replaceWith(adaptiveImageHTML);
+        } else {
+            // Insert after new header if not found
+            $('main > header').after(adaptiveImageHTML);
+        }
         // ---------------------------------------
 
         const $content = cheerio.load(post.content, null, false);
@@ -534,6 +589,7 @@ const generateIndividualArticles = () => {
             if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
         });
         
+        // Wrap content images in adaptive container too if needed, or keep standard styling
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         $('article').html($content.html()); 
         
