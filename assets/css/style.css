@@ -1,5 +1,37 @@
+/* Global Reset & Layout Protection */
+*, *::before, *::after { box-sizing: border-box; min-width: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 140px; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; width: 100%; max-width: 100vw; min-height: 100vh; margin: 0; padding: 0; }
 
-/* ... existing code ... */
+/* Typography */
+h1 { font-size: 1.75rem; line-height: 1.5; } h2 { font-size: 1.5rem; line-height: 1.5; } h3 { font-size: 1.25rem; line-height: 1.5; } p, li { font-size: 1rem; line-height: 1.8; }
+@media (max-width: 640px) { h1 { font-size: 1.35rem; line-height: 1.4; } h2 { font-size: 1.2rem; line-height: 1.4; } h3 { font-size: 1.1rem; line-height: 1.4; } p, li, span, a { font-size: 0.95rem; line-height: 1.7; } main { padding-left: 1rem !important; padding-right: 1rem !important; width: 100%; } }
+
+/* Content Wrapping */
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6, .prose p, .prose span, .prose a, .prose li, .prose div, .prose blockquote, .prose pre { overflow-wrap: break-word !important; word-wrap: break-word !important; word-break: break-word !important; white-space: normal !important; max-width: 100%; }
+.ticker-text, .animate-marquee span, .whitespace-nowrap { white-space: nowrap !important; }
+img, iframe, video, object, embed { max-width: 100% !important; display: block; }
+.prose img { height: auto !important; }
+
+/* Components */
+.adsbygoogle-container { width: 100%; max-width: 100%; overflow: hidden; margin: 1.5rem 0; padding: 0.5rem; background: transparent; display: flex; justify-content: center; align-items: center; border-radius: 0.75rem; }
+.adsbygoogle { display: block !important; width: 100% !important; }
+.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.75rem; margin: 1.5rem 0; background-color: #000; width: 100%; max-width: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+.video-container iframe { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; border: 0; }
+.btn-wrapped-link { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%); color: white !important; font-weight: 700; padding: 0.75rem 1rem; border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; width: 100%; max-width: 100%; margin: 1rem 0; }
+.btn-wrapped-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.3); }
+
+/* Animations */
+@keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.animate-marquee { animation: marquee 30s linear infinite; }
+@keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.5s ease-out; }
+
+/* Utilities */
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; } .dark ::-webkit-scrollbar-track { background: #1f2937; } ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: #555; }
+.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 1rem; }
+@media (max-width: 480px) { .related-grid { grid-template-columns: repeat(2, 1fr) !important; } .related-posts h4 { font-size: 12px; line-height: 1.4; } .related-posts img { height: 90px !important; } }
 
 /* ========================================= */
 /* FIX: Category Tabs Active Border (Tight) */
@@ -8,58 +40,52 @@
 .tab-btn {
     position: relative;
     border: 1px solid transparent; 
-    /* Force tight padding for "word difference only" look */
-    padding-left: 12px !important;
-    padding-right: 12px !important;
 }
 
-/* Unify Active State */
+/* Unify Active State - Clean slate */
 .tab-btn.active {
     border: none !important;
     background: transparent !important;
     box-shadow: none !important;
     color: #2563eb !important;
+    /* Remove padding from button to let span control spacing */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow: visible !important;
 }
 
-/* Dark Mode Active Text */
-.dark .tab-btn.active {
-    color: #60a5fa !important;
+/* The text wrapper inside the button */
+.tab-btn.active span {
+    position: relative;
+    padding: 4px 8px; /* Breathing room for text */
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    
+    /* Create borders using gradients for 60% height effect */
+    background-image: 
+        linear-gradient(to top, #2563eb 60%, transparent 60%), /* Left Border */
+        linear-gradient(to top, #2563eb 60%, transparent 60%); /* Right Border */
+    background-position: left bottom, right bottom;
+    background-size: 2px 100%; /* Width of side borders */
+    background-repeat: no-repeat;
+    
+    /* Bottom Border */
+    border-bottom: 2px solid #2563eb;
+    
+    /* Corner radius for bottom */
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
-/* Bottom Line - Exactly width of button minus small padding */
-.tab-btn.active::after {
-    content: "";
-    position: absolute;
-    bottom: 2px; /* Lift slightly up */
-    right: 4px;  /* Very tight to text */
-    left: 4px;   /* Very tight to text */
-    height: 2px;
-    background: #2563eb;
-    border-radius: 2px;
-}
-
-/* Right Line (50% Height) - Hugging text */
-.tab-btn.active::before {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 2px;
-    width: 2px;
-    height: 50%;
-    background: #2563eb;
-    border-radius: 2px 2px 0 0;
-}
-
-/* Left Line (50% Height) - Hugging text */
-.tab-btn.active span::after {
-    content: "";
-    position: absolute;
-    left: -28px; /* Adjusted to hug the icon+text block tightly */
-    bottom: 2px;
-    width: 2px;
-    height: 50%;
-    background: #2563eb;
-    border-radius: 2px 2px 0 0;
+.dark .tab-btn.active { color: #60a5fa !important; }
+.dark .tab-btn.active span {
+    background-image: 
+        linear-gradient(to top, #60a5fa 60%, transparent 60%),
+        linear-gradient(to top, #60a5fa 60%, transparent 60%);
+    border-bottom-color: #60a5fa;
 }
 
 /* ========================================= */
@@ -69,13 +95,13 @@
 #news-ticker-bar {
     display: flex;
     align-items: center;
-    gap: 0 !important; /* Remove gap here, control manually */
-    padding-right: 8px !important; /* Start padding */
-    height: 40px; /* Fixed height for consistency */
+    gap: 6px !important; /* Fixed precise gap */
+    padding-right: 8px !important;
+    height: 40px;
 }
 
 #ticker-label {
-    margin-left: 6px !important; /* Precise gap between label and text */
+    margin-left: 0 !important; /* Gap is handled by parent */
     padding: 2px 8px !important;
     border-radius: 6px !important;
     white-space: nowrap;
@@ -83,7 +109,6 @@
     height: 24px;
     display: flex;
     align-items: center;
-    /* Ensure label border is visible and clean */
     border-width: 1.5px !important; 
 }
 
@@ -97,20 +122,20 @@
 #ticker-content:not(.animate-marquee) {
     transform: none !important;
     animation: none !important;
-    position: static !important; /* Critical: Remove absolute */
+    position: static !important; /* Critical to respect flex layout */
     width: auto !important;
     justify-content: flex-start !important;
     margin-right: 0 !important;
     padding-right: 0 !important;
 }
 
-/* Text inside ticker when stopped */
+/* Text alignment when stopped */
 #ticker-content:not(.animate-marquee) span,
 #ticker-content:not(.animate-marquee) a {
-    margin: 0 !important; /* Remove default margins */
+    margin: 0 !important;
     padding: 0 !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 80vw; /* Prevent overflow on small screens */
+    max-width: 80vw;
 }
