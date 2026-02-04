@@ -1,0 +1,9 @@
+{
+  "title": "التاريخ يعيد تقديم نفسه: الذكاء الاصطناعي في الأرشيف الوطني الأمريكي",
+  "slug": "national-archives-ai",
+  "description": "كيف يتم استخدام AI لتنظيم ملايين الوثائق التاريخية وجعلها متاحة للجمهور بطرق تفاعلية؟",
+  "date": "2026-01-24",
+  "category": "articles",
+  "image": "https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=1200&q=80",
+  "content": "<h3 class=\"text-2xl font-bold text-amber-700 dark:text-amber-500 mb-4\">رقمنة الذاكرة البشرية</h3><p>في خطوة رائدة، اعتمد الأرشيف الوطني الأمريكي تقنيات الذكاء الاصطناعي لتنظيم وعرض ملايين الوثائق والمحتوى التاريخي. المشروع لا يقتصر على المسح الضوئي، بل يشمل:</p><ul class=\"list-disc list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700\"><li><strong>فهم النصوص اليدوية:</strong> تحويل الوثائق المكتوبة بخط اليد القديم إلى نصوص رقمية قابلة للبحث.</li><li><strong>الربط الدلالي:</strong> اكتشاف العلاقات الخفية بين الوثائق والأحداث التاريخية المختلفة.</li><li><strong>التفاعل مع الجمهور:</strong> إتاحة الفرصة للباحثين والطلاب \"للتحدث\" مع الوثائق التاريخية وطرح أسئلة عليها.</li></ul><p>هذا يمثل تحولاً جذرياً في مجال الخدمات العامة الرقمية وحفظ التراث الإنساني.</p><div class=\"my-8 w-full flex justify-center px-1 sm:px-0\"><a href=\"https://www.axios.com\" target=\"_blank\" class=\"btn-wrapped-link w-full sm:w-auto sm:min-w-[280px] max-w-md mx-auto\"><i data-lucide=\"file-text\"></i><span class=\"break-words\">تفاصيل المشروع (Axios)</span></a></div>"
+}

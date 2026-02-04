@@ -64,10 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetBtn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
                 targetContent = document.getElementById(`tab-${hash}`);
             }
-
-            // If hash is invalid or missing, check if we need to set default
-            // But if we are already on the page and no hash, default is typically handled by HTML structure (first tab visible)
-            // However, to be safe and responsive to hash changes:
             
             if (targetBtn && targetContent) {
                 // Deactivate all
@@ -102,7 +98,90 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 5. PWA Install Logic
+    // 5. Pagination Logic (New Addition)
+    function setupPagination() {
+        const itemsPerPage = 15;
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabContents.forEach(tab => {
+            const grid = tab.querySelector('.grid');
+            if(!grid) return;
+            
+            const items = Array.from(grid.children);
+            if(items.length <= itemsPerPage) return;
+
+            // Check if controls already exist
+            if(tab.querySelector('.pagination-controls')) return;
+
+            // Create pagination controls
+            const controls = document.createElement('div');
+            controls.className = 'pagination-controls flex justify-center gap-4 mt-8 pt-4 border-t border-gray-100 dark:border-gray-800';
+            
+            const prevBtn = document.createElement('button');
+            prevBtn.innerHTML = `<span>السابق</span>`;
+            prevBtn.className = 'px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
+            
+            const nextBtn = document.createElement('button');
+            nextBtn.innerHTML = `<span>التالي</span>`;
+            nextBtn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
+
+            controls.appendChild(prevBtn);
+            controls.appendChild(nextBtn);
+            tab.appendChild(controls);
+
+            let currentPage = 1;
+            const totalPages = Math.ceil(items.length / itemsPerPage);
+
+            function showPage(page) {
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+
+                items.forEach((item, index) => {
+                    if(index >= start && index < end) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+
+                prevBtn.disabled = page === 1;
+                nextBtn.disabled = page === totalPages;
+                
+                // Scroll to top of grid
+                if(window.scrollY > grid.offsetTop) {
+                    const headerOffset = 150;
+                    const elementPosition = grid.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+            }
+
+            prevBtn.addEventListener('click', () => {
+                if(currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if(currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            });
+
+            // Init
+            showPage(1);
+        });
+    }
+    
+    // Run pagination setup
+    setupPagination();
+
+    // 6. PWA Install Logic
     let deferredPrompt;
     const installBtn = document.getElementById('install-app-btn');
 
@@ -125,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 6. News Ticker Auto-Stop Logic (Fixed cleanup)
+    // 7. News Ticker Auto-Stop Logic (Fixed cleanup)
     const tickerContainer = document.getElementById('ticker-content');
     if (tickerContainer) {
         document.fonts.ready.then(() => {
@@ -141,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 7. Back To Top Logic
+    // 8. Back To Top Logic
     const backToTopBtn = document.getElementById('back-to-top');
     if (backToTopBtn) {
         window.addEventListener('scroll', () => {

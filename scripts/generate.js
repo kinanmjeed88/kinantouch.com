@@ -141,29 +141,23 @@ const escapeXml = (unsafe) => {
 
 // --- Helper Functions ---
 const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
-    // Case 1: Simple string (Lucide icon name)
     if (typeof iconData === 'string') {
         return `<i data-lucide="${iconData || defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
     }
-    // Case 2: Object configuration
     if (iconData && typeof iconData === 'object') {
         const size = iconData.size || defaultSize;
         if (iconData.type === 'image') {
             return `<img src="${cleanPath(iconData.value)}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
         } else {
-            // Lucide icon
             return `<i data-lucide="${iconData.value || defaultIconName}" style="width:${size}px; height:${size}px;"></i>`;
         }
     }
-    // Case 3: Fallback
     return `<i data-lucide="${defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
 };
 
 // --- DYNAMIC SOCIAL ICONS GENERATION ---
 const generateSocialFooter = () => {
     const socialKeys = ['facebook', 'instagram', 'tiktok', 'youtube', 'telegram'];
-    
-    // Default brand colors for hover effects
     const brandColors = {
         facebook: 'hover:bg-[#1877F2]',
         instagram: 'hover:bg-[#E4405F]',
@@ -171,33 +165,19 @@ const generateSocialFooter = () => {
         youtube: 'hover:bg-[#FF0000]',
         telegram: 'hover:bg-[#229ED9]'
     };
-
-    // Default icon names if not set in CMS
     const defaultIcons = {
-        facebook: 'facebook',
-        instagram: 'instagram',
-        tiktok: 'video', // Fallback
-        youtube: 'youtube',
-        telegram: 'send'
+        facebook: 'facebook', instagram: 'instagram', tiktok: 'video', youtube: 'youtube', telegram: 'send'
     };
 
     let iconsHTML = '';
-
     socialKeys.forEach(key => {
         const url = aboutData.social?.[key];
-        // Only render if URL exists and is not '#'
         if (url && url !== '#') {
-            // Get Icon Data from CMS (aboutData.socialIcons) or fall back to default string
             let iconData = aboutData.socialIcons?.[key];
             if (!iconData) iconData = defaultIcons[key];
-
             const iconHTML = renderIconHTML(iconData, defaultIcons[key], 20);
             const hoverClass = brandColors[key] || 'hover:bg-blue-600';
-
-            iconsHTML += `
-            <a href="${url}" target="_blank" class="social-icon-btn ${hoverClass} hover:text-white shadow-lg" aria-label="${key}">
-                ${iconHTML}
-            </a>`;
+            iconsHTML += `<a href="${url}" target="_blank" class="social-icon-btn ${hoverClass} hover:text-white shadow-lg" aria-label="${key}">${iconHTML}</a>`;
         }
     });
 
@@ -207,13 +187,12 @@ const generateSocialFooter = () => {
             <div class="flex items-center justify-center gap-4 mb-4 social-links-container">
                 ${iconsHTML}
             </div>
-            <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
+            <p class="text-sm text-gray-500 font-medium">© 2026 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
         </div>
     </footer>
     `;
 };
 
-// Generate the standard footer ONCE based on current data
 const STANDARD_FOOTER = generateSocialFooter();
 
 // Markdown Parser
@@ -322,20 +301,14 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     }
 
     // 4. Common UI Updates
-    
-    // A. Profile Image
     let profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
     profileImgSrc = cleanPath(profileImgSrc);
-    
     $('#header-profile-img').attr('src', profileImgSrc);
     $('.profile-img-display').attr('src', profileImgSrc);
     $('link[rel*="icon"]').attr('href', profileImgSrc);
     $('meta[property="og:image"]').attr('content', toAbsoluteUrl(profileImgSrc));
-    
-    // B. Profile Name
     $('#header-profile-name').text(aboutData.profileName);
     
-    // C. Site Title / Logo
     let siteTitleEl = $('header a[href="index.html"]').filter((i, el) => {
         const cls = $(el).attr('class') || '';
         const content = $(el).html() || '';
@@ -355,7 +328,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
     }
 
-    // D. Header Actions Container
     const headerDiv = $('header > div');
     const actionsContainer = headerDiv.find('div.flex.items-center.gap-2').last();
     if(actionsContainer.length) {
@@ -363,7 +335,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         actionsContainer.find('button').removeClass('ml-auto mr-auto');
     }
 
-    // E. DYNAMIC STYLES
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
@@ -377,11 +348,8 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('#dynamic-theme-styles').remove();
     $('head').append(dynamicStyle);
 
-    // F. Social Links in Footer (REPLACED BY WHOLE FOOTER REPLACEMENT)
-    // We now replace the entire footer element to ensure consistency and icon correctness.
     $('footer').replaceWith(STANDARD_FOOTER);
 
-    // G. TICKER LOGIC
     $('#news-ticker-bar').remove();
     if (fileName === 'index.html' && aboutData.ticker && aboutData.ticker.enabled !== false) {
         $('header').after(TICKER_HTML_TEMPLATE);
@@ -406,7 +374,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
     }
     
-    // H. Category Labels
     if (aboutData.categories && aboutData.categories.labels) {
         $('[data-tab="articles"] span').text(aboutData.categories.labels.articles || 'اخبار');
         $('[data-tab="apps"] span').text(aboutData.categories.labels.apps || 'تطبيقات');
@@ -414,7 +381,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('[data-tab="sports"] span').text(aboutData.categories.labels.sports || 'رياضة');
     }
     
-    // I. About Page Specifics
     if (fileName === 'about.html') {
         const coverContainer = $('#about-cover-section');
         if (coverContainer.length) {
@@ -423,33 +389,25 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
                 const coverUrl = cleanPath(aboutData.coverValue);
                 coverContainer.css('background', `url('${coverUrl}') center/cover no-repeat`);
                 coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
-                coverContainer.removeClass((i, c) => (c.match(/from-\S+/g) || []).join(' '));
-                coverContainer.removeClass((i, c) => (c.match(/to-\S+/g) || []).join(' '));
             } else {
                 coverContainer.css('background', ''); 
                 coverContainer.removeClass((i, c) => (c.match(/bg-gradient-\S+/g) || []).join(' '));
-                coverContainer.removeClass((i, c) => (c.match(/from-\S+/g) || []).join(' '));
-                coverContainer.removeClass((i, c) => (c.match(/to-\S+/g) || []).join(' '));
                 coverContainer.addClass(aboutData.coverValue || 'bg-gradient-to-r from-blue-700 to-blue-500');
             }
         }
-        
         $('#about-bot-list').parent().find('h2').contents().last().replaceWith(' ' + (aboutData.botTitle || 'مركز خدمة الطلبات (Bot)'));
         if(aboutData.botInfo) {
             const botItems = aboutData.botInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-blue-500 text-xl">✪</span><span>${i}</span></li>`).join('');
             $('#about-bot-list').html(botItems);
         }
-        
         $('#about-search-list').parent().find('h2').contents().last().replaceWith(' ' + (aboutData.searchTitle || 'دليل الوصول الذكي للمحتوى'));
         if(aboutData.searchInfo) {
             const searchItems = aboutData.searchInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-green-500 text-xl">✪</span><span>${i}</span></li>`).join('');
             $('#about-search-list').html(searchItems);
         }
-        
         $('.prose p:first').text(aboutData.bio);
     }
 
-    // J. Inject Back to Top Button
     if ($('#back-to-top').length === 0) {
         $('body').append(`
         <button id="back-to-top" class="fixed bottom-6 right-6 z-50 bg-gray-900/60 hover:bg-gray-900/80 backdrop-blur-md text-white p-2 rounded-full shadow-lg transition-all duration-300 transform translate-y-10 opacity-0 invisible hover:scale-110 hover:-translate-y-1 focus:outline-none border border-white/10 group" aria-label="العودة للأعلى">
@@ -458,7 +416,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         `);
     }
 
-    // Ensure DOCTYPE
     let finalHtml = $.html();
     if (!finalHtml.trim().toLowerCase().startsWith('<!doctype html>')) {
         finalHtml = '<!DOCTYPE html>\n' + finalHtml;
@@ -466,8 +423,9 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     return finalHtml;
 };
 
+// Updated: Increased limit to allow frontend pagination to handle all posts
 const updateListingPages = () => {
-    const pagesToUpdate = [{ file: 'index.html', limit: 12 }, { file: 'articles.html', limit: 1000 }];
+    const pagesToUpdate = [{ file: 'index.html', limit: 1000 }, { file: 'articles.html', limit: 2000 }];
     pagesToUpdate.forEach(pageInfo => {
         const filePath = path.join(ROOT_DIR, pageInfo.file);
         if (!fs.existsSync(filePath)) return;
@@ -479,7 +437,6 @@ const updateListingPages = () => {
                 container.empty();
                 posts.slice(0, pageInfo.limit).forEach(post => container.append(createCardHTML(post)));
                 if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
-                // Remove existing manually injected ad containers
                 container.parent().find('.adsbygoogle-container').remove();
             }
         };
@@ -501,7 +458,6 @@ const updateToolsPage = () => {
         main.find('.adsbygoogle-container').remove(); 
         main.find('a[href="tool-analysis.html"]').remove(); 
     } 
-    // Footer is updated via updateGlobalElements
     fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); 
 };
 
@@ -529,7 +485,7 @@ const generateIndividualArticles = () => {
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         
-        // --- Redesigned Glass Header Structure ---
+        // --- FIXED HEADER TAG ---
         const articleHeaderHTML = `
         <header class="mb-8 relative">
             <div class="article-header-card">
@@ -557,33 +513,21 @@ const generateIndividualArticles = () => {
             $('main').prepend(articleHeaderHTML);
         }
 
-        // --- Breadcrumb Logic ---
         let breadcrumbLabel = 'اخبار';
         let breadcrumbLink = 'index.html#tab-articles';
-
-        if (post.category === 'apps') {
-            breadcrumbLabel = 'تطبيقات';
-            breadcrumbLink = 'index.html#tab-apps';
-        } else if (post.category === 'games') {
-            breadcrumbLabel = 'ألعاب';
-            breadcrumbLink = 'index.html#tab-games';
-        } else if (post.category === 'sports') {
-            breadcrumbLabel = 'رياضة';
-            breadcrumbLink = 'index.html#tab-sports';
-        }
+        if (post.category === 'apps') { breadcrumbLabel = 'تطبيقات'; breadcrumbLink = 'index.html#tab-apps'; }
+        else if (post.category === 'games') { breadcrumbLabel = 'ألعاب'; breadcrumbLink = 'index.html#tab-games'; }
+        else if (post.category === 'sports') { breadcrumbLabel = 'رياضة'; breadcrumbLink = 'index.html#tab-sports'; }
 
         let breadcrumbElement = $('nav a[href="articles.html"]');
         if (!breadcrumbElement.length) {
-            breadcrumbElement = $('nav a').filter((i, el) => {
-                return $(el).text().trim() === 'اخبار';
-            }).first();
+            breadcrumbElement = $('nav a').filter((i, el) => { return $(el).text().trim() === 'اخبار'; }).first();
         }
         if (breadcrumbElement.length) {
             breadcrumbElement.text(breadcrumbLabel);
             breadcrumbElement.attr('href', breadcrumbLink);
         }
         
-        // --- ADAPTIVE MAIN IMAGE ---
         const existingImgDiv = $('main > div.rounded-2xl');
         const adaptiveImageHTML = `
         <div class="article-image-container">
@@ -591,55 +535,33 @@ const generateIndividualArticles = () => {
         </div>
         `;
         
-        if (existingImgDiv.length) {
-            existingImgDiv.replaceWith(adaptiveImageHTML);
-        } else {
-            $('main > header').after(adaptiveImageHTML);
-        }
+        if (existingImgDiv.length) { existingImgDiv.replaceWith(adaptiveImageHTML); } else { $('main > header').after(adaptiveImageHTML); }
 
         const $content = cheerio.load(post.content, null, false);
         $content('.adsbygoogle-container, .ad-placeholder').remove();
-
         $content('img').each((i, img) => {
             const originalSrc = $content(img).attr('src');
             if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
         });
-        
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         $('article').html($content.html()); 
         
-        // --- Related Posts ---
         const relatedPosts = allPosts.filter(p => p.slug !== post.slug).slice(0, 6);
         if (relatedPosts.length) {
             let relatedHTML = `
             <section class="related-posts mt-12 border-t border-gray-100 dark:border-gray-700 pt-8">
-                <h3 class="text-lg font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2">
-                    <i data-lucide="layers" class="w-5 h-5 text-blue-600"></i>
-                    قد يعجبك أيضاً
-                </h3>
-                <div class="grid grid-cols-2 gap-4">
-            `;
+                <h3 class="text-lg font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="layers" class="w-5 h-5 text-blue-600"></i> قد يعجبك أيضاً</h3>
+                <div class="grid grid-cols-2 gap-4">`;
             relatedPosts.forEach(r => {
-                relatedHTML += `
-                <a href="article-${r.slug}.html"
-                   class="block bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                    <img src="${cleanPath(r.image)}"
-                         class="w-full h-28 object-cover"
-                         loading="lazy" />
-                    <div class="p-3">
-                        <h4 class="text-sm font-bold line-clamp-2 text-gray-900 dark:text-white">
-                            ${r.title}
-                        </h4>
-                    </div>
-                </a>
-                `;
+                relatedHTML += `<a href="article-${r.slug}.html" class="block bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <img src="${cleanPath(r.image)}" class="w-full h-28 object-cover" loading="lazy" />
+                    <div class="p-3"><h4 class="text-sm font-bold line-clamp-2 text-gray-900 dark:text-white">${r.title}</h4></div>
+                </a>`;
             });
             relatedHTML += `</div></section>`;
             $('article').append(relatedHTML);
         }
 
-        // Footer injection handled by updateGlobalElements
-        
         const jsonLd = { "@context": "https://schema.org", "@type": "Article", "headline": post.title, "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(), "dateModified": new Date(post.effectiveDate).toISOString(), "author": { "@type": "Person", "name": aboutData.profileName }, "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } }, "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } };
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);
@@ -654,108 +576,38 @@ const updateSearchData = () => {
     fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
 };
 
-// RSS Generator
 const generateRSS = () => {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
     const now = new Date().toUTCString();
-    let xml = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-<channel>
-    <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>
-    <link>${BASE_URL}</link>
-    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
-    <language>ar</language>
-    <lastBuildDate>${now}</lastBuildDate>
-    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />`;
-
+    let xml = `<?xml version="1.0" encoding="UTF-8" ?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>${escapeXml(aboutData.siteName || "TechTouch")}</title><link>${BASE_URL}</link><description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description><language>ar</language><lastBuildDate>${now}</lastBuildDate><atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />`;
     allPosts.slice(0, 20).forEach(post => {
         const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
         const fullImg = toAbsoluteUrl(post.image);
-        xml += `
-    <item>
-        <title><![CDATA[${post.title}]]></title>
-        <link>${fullUrl}</link>
-        <guid>${fullUrl}</guid>
-        <pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate>
-        <description><![CDATA[${post.description}]]></description>
-        <enclosure url="${fullImg}" type="image/jpeg" />
-    </item>`;
+        xml += `<item><title><![CDATA[${post.title}]]></title><link>${fullUrl}</link><guid>${fullUrl}</guid><pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate><description><![CDATA[${post.description}]]></description><enclosure url="${fullImg}" type="image/jpeg" /></item>`;
     });
     xml += `</channel></rss>`;
     fs.writeFileSync(feedPath, xml);
 };
 
-// Sitemap Generator
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
-    
-    const staticPages = [
-        { file: 'index.html', url: '/', priority: '1.0' },
-        { file: 'articles.html', url: '/articles.html', priority: '0.9' },
-        { file: 'tools.html', url: '/tools.html', priority: '0.9' },
-        { file: 'about.html', url: '/about.html', priority: '0.7' },
-        { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' },
-        { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' },
-        { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' },
-        { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' },
-        { file: 'privacy.html', url: '/privacy.html', priority: '0.3' },
-        { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }
-    ];
-
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
-
-    staticPages.forEach(page => {
-        if (page.file === '404.html') return;
-        const filePath = path.join(ROOT_DIR, page.file);
-        let lastmod = today;
-        if (fs.existsSync(filePath)) {
-            try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {}
-        }
-        const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`;
-        xml += `
-  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <priority>${page.priority}</priority>
-  </url>`;
-    });
-
-    allPosts.forEach(post => {
-        const fullImg = toAbsoluteUrl(post.image);
-        const pageUrl = `${BASE_URL}/article-${post.slug}.html`;
-        const postDate = new Date(post.effectiveDate).toISOString().split('T')[0];
-        xml += `
-  <url>
-    <loc>${pageUrl}</loc>
-    <lastmod>${postDate}</lastmod>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>${escapeXml(fullImg)}</image:loc>
-      <image:title>${escapeXml(post.title)}</image:title>
-    </image:image>
-  </url>`;
-    });
-
+    const staticPages = [{ file: 'index.html', url: '/', priority: '1.0' }, { file: 'articles.html', url: '/articles.html', priority: '0.9' }, { file: 'tools.html', url: '/tools.html', priority: '0.9' }, { file: 'about.html', url: '/about.html', priority: '0.7' }, { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' }, { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' }, { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' }, { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' }, { file: 'privacy.html', url: '/privacy.html', priority: '0.3' }, { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }];
+    let xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
+    staticPages.forEach(page => { if (page.file === '404.html') return; const filePath = path.join(ROOT_DIR, page.file); let lastmod = today; if (fs.existsSync(filePath)) { try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {} } const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`; xml += `<url><loc>${loc}</loc><lastmod>${lastmod}</lastmod><priority>${page.priority}</priority></url>`; });
+    allPosts.forEach(post => { const fullImg = toAbsoluteUrl(post.image); const pageUrl = `${BASE_URL}/article-${post.slug}.html`; const postDate = new Date(post.effectiveDate).toISOString().split('T')[0]; xml += `<url><loc>${pageUrl}</loc><lastmod>${postDate}</lastmod><priority>0.8</priority><image:image><image:loc>${escapeXml(fullImg)}</image:loc><image:title>${escapeXml(post.title)}</image:title></image:image></url>`; });
     xml += `\n</urlset>`;
     fs.writeFileSync(sitemapPath, xml);
     console.log('✅ sitemap.xml regenerated automatically.');
 };
 
-// Execution Sequence
 updateAboutPageDetails();
 updateChannelsPage();
 updateToolsPage();
-HTML_FILES.forEach(file => {
-    const filePath = path.join(ROOT_DIR, file);
-    if (fs.existsSync(filePath)) fs.writeFileSync(filePath, updateGlobalElements(fs.readFileSync(filePath, 'utf8'), file));
-});
+HTML_FILES.forEach(file => { const filePath = path.join(ROOT_DIR, file); if (fs.existsSync(filePath)) fs.writeFileSync(filePath, updateGlobalElements(fs.readFileSync(filePath, 'utf8'), file)); });
 updateListingPages();
 generateIndividualArticles();
 updateSearchData();
 generateRSS();
 generateSitemap();
-
 console.log('Build Complete. Auto-Injection & Data Sync Fixed.');

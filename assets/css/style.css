@@ -378,3 +378,15 @@ table { display: table; width: 100%; white-space: nowrap; }
     object-fit: cover !important;
     border-radius: 50% !important;
 }
+
+/* Pagination Controls */
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #e5e7eb;
+    color: #9ca3af;
+}
+.dark .pagination-controls button:disabled {
+    background-color: #374151;
+    color: #6b7280;
+}

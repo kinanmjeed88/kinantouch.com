@@ -1,0 +1,9 @@
+{
+  "title": "تسريع الاكتشافات: أدوات البحث العلمي القائمة على الذكاء الاصطناعي",
+  "slug": "ai-scientific-research-tools",
+  "description": "كيف تساعد أدوات مثل Elicit و Consensus الباحثين في تحليل آلاف الأوراق العلمية في دقائق؟",
+  "date": "2026-01-20",
+  "category": "tools",
+  "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&q=80",
+  "content": "<h3 class=\"text-2xl font-bold text-cyan-600 dark:text-cyan-400 mb-4\">مساعد الباحث الخارق</h3><p>لم يعد البحث العلمي يتطلب شهوراً من قراءة المراجع يدوياً. أدوات متقدمة ظهرت بقوة في 2026 لخدمة المجتمع الأكاديمي:</p><h4 class=\"font-bold text-lg mb-2\">أهم الأدوات البحثية:</h4><ul class=\"list-disc list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700\"><li><strong>Elicit:</strong> يعمل كمساعد بحثي، يجد الأوراق ذات الصلة ويلخص استنتاجاتها بدقة عالية.</li><li><strong>Consensus:</strong> محرك بحث يستخدم AI للإجابة على الأسئلة العلمية بناءً على إجماع الدراسات المنشورة (Peer-reviewed).</li><li><strong>Scite AI:</strong> يساعد في تقييم موثوقية الاقتباسات وهل الورقة تدعم أم تعارض الفرضية المطروحة.</li></ul><p>هذه الأدوات لا تستبدل الباحث، بل تزيح عنه عبء البحث الروتيني ليتفرغ للتحليل والابتكار.</p><div class=\"my-8 w-full flex justify-center px-1 sm:px-0\"><a href=\"https://www.consensus.app\" target=\"_blank\" class=\"btn-wrapped-link w-full sm:w-auto sm:min-w-[280px] max-w-md mx-auto\"><i data-lucide=\"book-open\"></i><span class=\"break-words\">جرب Consensus للبحث</span></a></div>"
+}
