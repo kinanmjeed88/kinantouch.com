@@ -213,38 +213,6 @@ table {
     margin-bottom: 1rem;
 }
 
-/* ============================= */
-/* Fix Ticker Spacing (Mobile)   */
-/* ============================= */
-
-@media (max-width: 480px) {
-
-    #news-ticker-bar {
-        height: 36px;
-        gap: 6px !important;
-        padding-right: 4px !important;
-    }
-
-    #ticker-label {
-        margin-left: 6px !important;
-        padding: 2px 8px !important;
-        font-size: 11px !important;
-        border-radius: 6px !important;
-        border: 2px solid #2563eb !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    #news-ticker-bar .flex-1 {
-        margin-right: 4px !important;
-    }
-
-    #ticker-content {
-        padding-right: 0 !important;
-    }
-}
-
 /* --- Related Posts Mobile Optimization --- */
 @media (max-width: 480px) {
 
@@ -263,30 +231,64 @@ table {
 }
 
 /* ============================= */
-/* Unified Border Active Style   */
+/* Unified Interactive Border    */
 /* ============================= */
 
 .nav-link,
 .tab-btn {
+    position: relative;
     border: 2px solid transparent;
-    border-radius: 6px;
-    padding: 4px 10px;
-    transition: all 0.2s ease;
+    border-radius: 8px;
+    padding: 6px 12px;
+    transition: 
+        border-color 0.25s ease,
+        transform 0.15s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Hover effect */
+.nav-link:hover,
+.tab-btn:hover {
+    transform: translateY(-2px);
 }
 
 /* Active state */
+/* Mapping existing JS classes (bg-blue-600 for nav, border-2 for tabs) to new style */
 .nav-link.active,
 .tab-btn.active,
-.nav-link.bg-blue-600, /* Override existing JS classes */
+.nav-link.bg-blue-600,
 .tab-btn.border-2 {
-    border: 2px solid #2563eb !important;
+    border-color: #2563eb !important;
     background: transparent !important;
     color: inherit !important;
-    box-shadow: none !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
 }
 
-/* Dark mode specific adjustments if needed */
-.dark .nav-link.active,
-.dark .tab-btn.active {
-    border-color: #3b82f6 !important;
+/* ============================= */
+/* Mobile Ticker Spacing Fix     */
+/* ============================= */
+
+@media (max-width: 480px) {
+
+    #news-ticker-bar {
+        display: flex;
+        align-items: center;
+        gap: 6px !important;
+        padding-right: 4px !important;
+    }
+
+    #ticker-label {
+        margin-left: 6px !important;
+        padding: 2px 8px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+    }
+
+    #news-ticker-bar .flex-1 {
+        margin-right: 4px !important;
+    }
+
+    #ticker-content {
+        padding-right: 0 !important;
+    }
 }
