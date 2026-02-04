@@ -345,15 +345,36 @@ table { display: table; width: 100%; white-space: nowrap; }
     background-color: rgb(31 41 55); /* Gray-800 */
     border-width: 1px;
     border-color: rgb(55 65 81); /* Gray-700 */
-    color: white; /* Gray-300 */
+    color: white !important; /* Force text/icon color */
+    text-decoration: none;
+    overflow: hidden; /* Ensure image fits circle */
 }
 
 .social-icon-btn:hover {
     transform: scale(1.1);
+    border-color: transparent;
 }
 
-.social-icon-btn svg {
+/* Lucide Icons (SVG) */
+.social-icon-btn svg.lucide {
     width: 1.25rem !important; /* 20px (w-5) */
     height: 1.25rem !important;
-    fill: currentColor;
+    fill: none !important; /* Lucide icons are stroke-based */
+    stroke: currentColor !important;
+    stroke-width: 2px;
+}
+
+/* Custom SVGs (Not Lucide) */
+.social-icon-btn svg:not(.lucide) {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    fill: currentColor !important; /* Fill for standard SVGs */
+}
+
+/* Image Icons */
+.social-icon-btn img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
 }

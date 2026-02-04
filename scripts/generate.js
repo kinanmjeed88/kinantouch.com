@@ -60,23 +60,7 @@ const ONESIGNAL_SCRIPT = `
 </script>
 `;
 
-// Footer Template for Consistency - Standardized Icon Sizes (w-10 h-10 container, w-5 h-5 icon)
-const STANDARD_FOOTER = `
-<footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-        <div class="flex items-center justify-center gap-4 mb-4">
-            <a href="https://www.facebook.com/share/1EsapVHA6W/" target="_blank" class="social-icon-btn hover:bg-[#1877F2] hover:text-white shadow-lg"><i data-lucide="facebook"></i></a>
-            <a href="https://www.instagram.com/techtouch0" target="_blank" class="social-icon-btn hover:bg-[#E4405F] hover:text-white shadow-lg"><i data-lucide="instagram"></i></a>
-            <a href="https://www.tiktok.com/@techtouch6" target="_blank" class="social-icon-btn hover:bg-black hover:border-gray-600 hover:text-white shadow-lg"><svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg></a>
-            <a href="https://youtube.com/@kinanmajeed?si=I2yuzJT2rRnEHLVg" target="_blank" class="social-icon-btn hover:bg-[#FF0000] hover:text-white shadow-lg"><i data-lucide="youtube"></i></a>
-            <a href="https://t.me/techtouch7" target="_blank" class="social-icon-btn hover:bg-[#229ED9] hover:text-white shadow-lg"><i data-lucide="send" class="w-5 h-5 ml-0.5"></i></a>
-        </div>
-        <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
-    </div>
-</footer>
-`;
-
-// Ticker HTML Template - Updated for spacing and RTL fixes
+// Ticker HTML Template
 const TICKER_HTML_TEMPLATE = `
 <div id="news-ticker-bar" class="w-full bg-gray-900 text-white h-10 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
     <div class="h-full flex items-center justify-center px-0 relative z-10 shrink-0">
@@ -117,6 +101,7 @@ let aboutData = {
     categories: { labels: { articles: "اخبار", apps: "تطبيقات", games: "ألعاب", sports: "رياضة" } },
     globalFonts: { nav: 12, content: 13, titles: 14, mainTitles: 15 },
     social: {},
+    socialIcons: {},
     ticker: { enabled: true, text: "Welcome", label: "New", url: "#" }
 };
 let channelsData = [];
@@ -156,20 +141,80 @@ const escapeXml = (unsafe) => {
 
 // --- Helper Functions ---
 const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
+    // Case 1: Simple string (Lucide icon name)
     if (typeof iconData === 'string') {
-        return `<i data-lucide="${iconData || defaultIconName}" class="w-5 h-5"></i>`;
+        return `<i data-lucide="${iconData || defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
     }
+    // Case 2: Object configuration
     if (iconData && typeof iconData === 'object') {
+        const size = iconData.size || defaultSize;
         if (iconData.type === 'image') {
-            const size = iconData.size || defaultSize;
             return `<img src="${cleanPath(iconData.value)}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
         } else {
-            const size = iconData.size || defaultSize;
-            return `<i data-lucide="${iconData.value}" style="width:${size}px; height:${size}px;"></i>`;
+            // Lucide icon
+            return `<i data-lucide="${iconData.value || defaultIconName}" style="width:${size}px; height:${size}px;"></i>`;
         }
     }
-    return `<i data-lucide="${defaultIconName}" class="w-5 h-5"></i>`;
+    // Case 3: Fallback
+    return `<i data-lucide="${defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
 };
+
+// --- DYNAMIC SOCIAL ICONS GENERATION ---
+const generateSocialFooter = () => {
+    const socialKeys = ['facebook', 'instagram', 'tiktok', 'youtube', 'telegram'];
+    
+    // Default brand colors for hover effects
+    const brandColors = {
+        facebook: 'hover:bg-[#1877F2]',
+        instagram: 'hover:bg-[#E4405F]',
+        tiktok: 'hover:bg-black hover:border-gray-600',
+        youtube: 'hover:bg-[#FF0000]',
+        telegram: 'hover:bg-[#229ED9]'
+    };
+
+    // Default icon names if not set in CMS
+    const defaultIcons = {
+        facebook: 'facebook',
+        instagram: 'instagram',
+        tiktok: 'video', // Fallback
+        youtube: 'youtube',
+        telegram: 'send'
+    };
+
+    let iconsHTML = '';
+
+    socialKeys.forEach(key => {
+        const url = aboutData.social?.[key];
+        // Only render if URL exists and is not '#'
+        if (url && url !== '#') {
+            // Get Icon Data from CMS (aboutData.socialIcons) or fall back to default string
+            let iconData = aboutData.socialIcons?.[key];
+            if (!iconData) iconData = defaultIcons[key];
+
+            const iconHTML = renderIconHTML(iconData, defaultIcons[key], 20);
+            const hoverClass = brandColors[key] || 'hover:bg-blue-600';
+
+            iconsHTML += `
+            <a href="${url}" target="_blank" class="social-icon-btn ${hoverClass} hover:text-white shadow-lg" aria-label="${key}">
+                ${iconHTML}
+            </a>`;
+        }
+    });
+
+    return `
+    <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800 footer-dynamic">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+            <div class="flex items-center justify-center gap-4 mb-4 social-links-container">
+                ${iconsHTML}
+            </div>
+            <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
+        </div>
+    </footer>
+    `;
+};
+
+// Generate the standard footer ONCE based on current data
+const STANDARD_FOOTER = generateSocialFooter();
 
 // Markdown Parser
 const parseMarkdown = (markdown) => {
@@ -310,13 +355,11 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
     }
 
-    // D. Header Actions Container (Fix gap)
-    // Find the container holding the profile/theme buttons. It's usually the last div in the header container.
+    // D. Header Actions Container
     const headerDiv = $('header > div');
     const actionsContainer = headerDiv.find('div.flex.items-center.gap-2').last();
     if(actionsContainer.length) {
         actionsContainer.addClass('header-actions');
-        // Ensure buttons don't have conflicting margins
         actionsContainer.find('button').removeClass('ml-auto mr-auto');
     }
 
@@ -334,43 +377,27 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('#dynamic-theme-styles').remove();
     $('head').append(dynamicStyle);
 
-    // F. Social Links in Footer
-    if (aboutData.social) {
-        $('footer a[href*="facebook"]').attr('href', aboutData.social.facebook || '#');
-        $('footer a[href*="instagram"]').attr('href', aboutData.social.instagram || '#');
-        $('footer a[href*="tiktok"]').attr('href', aboutData.social.tiktok || '#');
-        $('footer a[href*="youtube"]').attr('href', aboutData.social.youtube || '#');
-        $('footer a[href*="t.me"]').attr('href', aboutData.social.telegram || '#');
-    }
+    // F. Social Links in Footer (REPLACED BY WHOLE FOOTER REPLACEMENT)
+    // We now replace the entire footer element to ensure consistency and icon correctness.
+    $('footer').replaceWith(STANDARD_FOOTER);
 
-    // G. TICKER LOGIC (RESTRICTED TO INDEX.HTML)
-    // 1. Always remove any existing ticker first
+    // G. TICKER LOGIC
     $('#news-ticker-bar').remove();
-
-    // 2. Check if this is the Home Page AND Ticker is enabled
     if (fileName === 'index.html' && aboutData.ticker && aboutData.ticker.enabled !== false) {
         $('header').after(TICKER_HTML_TEMPLATE);
-        
-        // 3. Update the content of the newly injected ticker
         $('#ticker-label').text(aboutData.ticker.label);
-        
         const tickerContentDiv = $('#ticker-content');
         tickerContentDiv.removeClass().addClass('flex items-center h-full whitespace-nowrap');
-        
         if (aboutData.ticker.animated !== false) {
-            tickerContentDiv.addClass('animate-marquee absolute left-0'); // Changed right-0 to left-0
+            tickerContentDiv.addClass('animate-marquee absolute left-0');
         } else {
             tickerContentDiv.removeClass('animate-marquee absolute left-0');
         }
-        
-        // Handle Content Type (Image vs Text)
         if (aboutData.ticker.type === 'image' && aboutData.ticker.imageUrl) {
-            // Image Content
             const imgUrl = cleanPath(aboutData.ticker.imageUrl);
             const contentHtml = `<img src="${imgUrl}" alt="Ticker Banner" class="h-full object-contain mx-auto" style="max-height: 40px; width: auto;" />`;
             tickerContentDiv.html(contentHtml);
         } else {
-            // Text Content
             let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block">${aboutData.ticker.text}</span>`;
             if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
                 contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block ticker-text text-gray-100">${aboutData.ticker.text}</a>`;
@@ -474,8 +501,7 @@ const updateToolsPage = () => {
         main.find('.adsbygoogle-container').remove(); 
         main.find('a[href="tool-analysis.html"]').remove(); 
     } 
-    // Standardize footer on Tools page (Replace existing footer)
-    $('footer').replaceWith(STANDARD_FOOTER);
+    // Footer is updated via updateGlobalElements
     fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); 
 };
 
@@ -504,7 +530,6 @@ const generateIndividualArticles = () => {
         $('meta[name="description"]').attr('content', post.description);
         
         // --- Redesigned Glass Header Structure ---
-        // Find existing header or main section for title/meta replacement
         const articleHeaderHTML = `
         <header class="mb-8 relative">
             <div class="article-header-card">
@@ -522,19 +547,17 @@ const generateIndividualArticles = () => {
                     <span class="font-bold">TechTouch Team</span>
                 </div>
             </div>
-        </header>
+        header>
         `;
         
-        // Replace existing header contents (h1/meta) with new structure
         const existingHeader = $('main header').first();
         if(existingHeader.length) {
             existingHeader.replaceWith(articleHeaderHTML);
         } else {
-            // Fallback if header doesn't exist in template
             $('main').prepend(articleHeaderHTML);
         }
 
-        // --- Breadcrumb Logic (Fix for Tab Hash) ---
+        // --- Breadcrumb Logic ---
         let breadcrumbLabel = 'اخبار';
         let breadcrumbLink = 'index.html#tab-articles';
 
@@ -550,20 +573,17 @@ const generateIndividualArticles = () => {
         }
 
         let breadcrumbElement = $('nav a[href="articles.html"]');
-
         if (!breadcrumbElement.length) {
             breadcrumbElement = $('nav a').filter((i, el) => {
                 return $(el).text().trim() === 'اخبار';
             }).first();
         }
-
         if (breadcrumbElement.length) {
             breadcrumbElement.text(breadcrumbLabel);
             breadcrumbElement.attr('href', breadcrumbLink);
         }
         
         // --- ADAPTIVE MAIN IMAGE ---
-        // Find existing image container and replace/update
         const existingImgDiv = $('main > div.rounded-2xl');
         const adaptiveImageHTML = `
         <div class="article-image-container">
@@ -574,30 +594,22 @@ const generateIndividualArticles = () => {
         if (existingImgDiv.length) {
             existingImgDiv.replaceWith(adaptiveImageHTML);
         } else {
-            // Insert after new header if not found
             $('main > header').after(adaptiveImageHTML);
         }
-        // ---------------------------------------
 
         const $content = cheerio.load(post.content, null, false);
-        // Remove manual ad blocks from content
         $content('.adsbygoogle-container, .ad-placeholder').remove();
 
-        // Apply cleaning to article images as well
         $content('img').each((i, img) => {
             const originalSrc = $content(img).attr('src');
             if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
         });
         
-        // Wrap content images in adaptive container too if needed, or keep standard styling
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         $('article').html($content.html()); 
         
-        // --- Related Posts (6 Posts, 2 Columns) ---
-        const relatedPosts = allPosts
-            .filter(p => p.slug !== post.slug)
-            .slice(0, 6);
-
+        // --- Related Posts ---
+        const relatedPosts = allPosts.filter(p => p.slug !== post.slug).slice(0, 6);
         if (relatedPosts.length) {
             let relatedHTML = `
             <section class="related-posts mt-12 border-t border-gray-100 dark:border-gray-700 pt-8">
@@ -607,7 +619,6 @@ const generateIndividualArticles = () => {
                 </h3>
                 <div class="grid grid-cols-2 gap-4">
             `;
-
             relatedPosts.forEach(r => {
                 relatedHTML += `
                 <a href="article-${r.slug}.html"
@@ -623,14 +634,12 @@ const generateIndividualArticles = () => {
                 </a>
                 `;
             });
-
             relatedHTML += `</div></section>`;
             $('article').append(relatedHTML);
         }
 
-        // --- Standardize Footer ---
-        $('footer').replaceWith(STANDARD_FOOTER);
-
+        // Footer injection handled by updateGlobalElements
+        
         const jsonLd = { "@context": "https://schema.org", "@type": "Article", "headline": post.title, "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(), "dateModified": new Date(post.effectiveDate).toISOString(), "author": { "@type": "Person", "name": aboutData.profileName }, "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } }, "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } };
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);
