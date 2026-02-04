@@ -324,8 +324,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('#dynamic-theme-styles').remove();
     $('head').append(dynamicStyle);
 
-    // E. Social Links in Footer - Remove from here if injecting via standard footer
-    // But specific checks for updates if aboutData changes
+    // E. Social Links
     if (aboutData.social) {
         $('footer a[href*="facebook"]').attr('href', aboutData.social.facebook || '#');
         $('footer a[href*="instagram"]').attr('href', aboutData.social.instagram || '#');
@@ -422,6 +421,13 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         </button>
         `);
     }
+
+    // J. Responsive Table Wrapper
+    $('table').each(function() {
+        if (!$(this).parent().hasClass('table-wrapper')) {
+            $(this).wrap('<div class="table-wrapper"></div>');
+        }
+    });
 
     // Ensure DOCTYPE
     let finalHtml = $.html();
