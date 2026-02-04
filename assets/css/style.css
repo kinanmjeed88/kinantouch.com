@@ -24,10 +24,10 @@ img, iframe, video, object, embed { max-width: 100% !important; display: block; 
 /* Header Actions Adjustment */
 .header-actions { display: flex; align-items: center; gap: 4px !important; }
 
-/* Animations */
+/* Animations - Updated for Left to Right Direction */
 @keyframes marquee { 
-    0% { transform: translateX(100%); } 
-    100% { transform: translateX(-100%); } 
+    0% { transform: translateX(-100%); } 
+    100% { transform: translateX(100%); } 
 }
 .animate-marquee { animation: marquee 30s linear infinite; }
 @keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
