@@ -230,73 +230,113 @@ table {
     }
 }
 
-/* ============================= */
-/* Unified Interactive Border    */
-/* ============================= */
+/* ========================================= */
+/* Category Tabs - 3 Side Border Only       */
+/* ========================================= */
 
-.nav-link,
 .tab-btn {
     position: relative;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    padding: 6px 12px;
-    transition: 
-        border-color 0.25s ease,
-        transform 0.15s ease,
-        box-shadow 0.25s ease;
 }
 
-/* Hover effect */
-.nav-link:hover,
-.tab-btn:hover {
-    transform: translateY(-2px);
+.tab-btn span {
+    position: relative;
 }
 
-/* Active state */
-/* Mapping JS-injected classes to new style */
-.nav-link.bg-blue-600,
+/* إلغاء أي border أو ظل سابق */
+.tab-btn.active,
 .tab-btn.border-2,
-.nav-link.active,
-.tab-btn.active {
-    border-color: #2563eb !important;
+.tab-btn.bg-blue-600 {
+    border: none !important;
     background: transparent !important;
-    color: #2563eb !important;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+    box-shadow: none !important;
+    color: inherit !important;
 }
 
-/* Dark mode adjustment for visibility */
-.dark .nav-link.bg-blue-600,
-.dark .tab-btn.border-2 {
-    color: #3b82f6 !important;
-    border-color: #3b82f6 !important;
+/* الخط السفلي */
+.tab-btn.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 6px;
+    left: 6px;
+    height: 2px;
+    background: #2563eb;
 }
 
-/* ============================= */
-/* Mobile Ticker Spacing Fix     */
-/* ============================= */
+/* الخط الأيمن */
+.tab-btn.active::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 2px;
+    height: 65%;
+    background: #2563eb;
+}
 
-@media (max-width: 480px) {
+/* الخط الأيسر */
+/* Adjust left position slightly to frame the content including icon */
+.tab-btn.active span::after {
+    content: "";
+    position: absolute;
+    left: -24px;
+    bottom: 0;
+    width: 2px;
+    height: 65%;
+    background: #2563eb;
+}
 
-    #news-ticker-bar {
-        display: flex;
-        align-items: center;
-        gap: 6px !important;
-        padding-right: 4px !important;
-        height: 36px;
-    }
+/* ========================================= */
+/* Top Nav Tight Border                     */
+/* ========================================= */
 
-    #ticker-label {
-        margin-left: 6px !important;
-        padding: 2px 8px !important;
-        font-size: 11px !important;
-        border-radius: 6px !important;
-    }
+.nav-link {
+    border: 2px solid transparent;
+    padding: 2px 6px !important; /* تقليل الفراغ */
+    border-radius: 6px;
+    background: transparent !important;
+    box-shadow: none !important;
+}
 
-    #news-ticker-bar .flex-1 {
-        margin-right: 4px !important;
-    }
+/* عند التفعيل */
+.nav-link.active,
+.nav-link.bg-blue-600 {
+    border: 2px solid #2563eb !important;
+    background: transparent !important;
+    color: inherit !important;
+    box-shadow: none !important;
+}
 
-    #ticker-content {
-        padding-right: 0 !important;
-    }
+/* ========================================= */
+/* Ticker Alignment Fix (When Static)       */
+/* ========================================= */
+
+#news-ticker-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px !important;
+    padding-right: 4px !important;
+    height: 36px;
+}
+
+#ticker-content:not(.animate-marquee) {
+    position: static !important;
+    justify-content: flex-start !important;
+    margin-right: 4px !important;
+    width: auto !important;
+}
+
+#ticker-label {
+    margin-left: 4px !important;
+    padding: 2px 8px !important;
+    font-size: 11px !important;
+    border-radius: 6px !important;
+}
+
+#news-ticker-bar .flex-1 {
+    margin-right: 4px !important;
+}
+
+#ticker-content {
+    padding-right: 0 !important;
 }
