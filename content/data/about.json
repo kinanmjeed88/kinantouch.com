@@ -20,10 +20,10 @@
     }
   },
   "globalFonts": {
-    "nav": 15,
+    "nav": 14,
     "content": 14,
-    "titles": 25,
-    "mainTitles": 25
+    "titles": 16,
+    "mainTitles": 21
   },
   "ticker": {
     "label": "ملاحظة :",
