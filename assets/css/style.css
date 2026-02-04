@@ -2,41 +2,37 @@
 /* Global Reset & Layout Protection */
 *, *::before, *::after {
     box-sizing: border-box;
-    min-width: 0; /* Critical: Allows flex children to shrink below content size */
+    min-width: 0;
 }
 
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 140px;
     -webkit-text-size-adjust: 100%;
-    overflow-x: hidden; /* Prevent horizontal scroll on document */
+    overflow-x: hidden;
 }
 
 body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     overflow-x: hidden; 
     width: 100%;
-    max-width: 100vw; /* Hard limit on width */
+    max-width: 100vw;
     min-height: 100vh;
     margin: 0;
     padding: 0;
 }
 
-/* --- Typography Scaling (Optimized for Mobile) --- */
-/* Desktop Sizes */
+/* --- Typography Scaling --- */
 h1 { font-size: 1.75rem; line-height: 1.5; }
 h2 { font-size: 1.5rem; line-height: 1.5; }
 h3 { font-size: 1.25rem; line-height: 1.5; }
 p, li { font-size: 1rem; line-height: 1.8; }
 
-/* Mobile Sizes (Small Screens) */
 @media (max-width: 640px) {
     h1 { font-size: 1.35rem; line-height: 1.4; }
     h2 { font-size: 1.2rem; line-height: 1.4; }
     h3 { font-size: 1.1rem; line-height: 1.4; }
     p, li, span, a { font-size: 0.95rem; line-height: 1.7; }
-    
-    /* Ensure containers have padding but don't overflow */
     main {
         padding-left: 1rem !important;
         padding-right: 1rem !important;
@@ -44,8 +40,7 @@ p, li { font-size: 1rem; line-height: 1.8; }
     }
 }
 
-/* --- Critical Text Wrapping Fixes (Scoped to Content) --- */
-/* FIX: Restrict forced wrapping to prose content only to avoid breaking UI like ticker */
+/* --- Content Wrapping Fixes --- */
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6, 
 .prose p, .prose span, .prose a, .prose li, .prose div, .prose blockquote, .prose pre {
     overflow-wrap: break-word !important; 
@@ -55,33 +50,27 @@ p, li { font-size: 1rem; line-height: 1.8; }
     max-width: 100%;
 }
 
-/* Specific Override for Ticker to ensure it never wraps */
 .ticker-text, .animate-marquee span, .whitespace-nowrap {
     white-space: nowrap !important;
 }
 
-/* Prevent link buttons from overflowing text */
 a.btn-wrapped-link span {
     white-space: normal !important;
     text-align: center;
 }
 
-/* --- Media Containment --- */
 img, iframe, video, object, embed {
     max-width: 100% !important;
     display: block;
 }
 
-/* Restore height auto only for content images to maintain aspect ratio */
-.prose img {
-    height: auto !important;
-}
+.prose img { height: auto !important; }
 
-/* --- AdSense Strict Containment --- */
+/* --- Containers --- */
 .adsbygoogle-container {
     width: 100%;
     max-width: 100%;
-    overflow: hidden; /* Cut off anything that overflows */
+    overflow: hidden;
     margin: 1.5rem 0;
     padding: 0.5rem;
     background: transparent;
@@ -89,16 +78,10 @@ img, iframe, video, object, embed {
     justify-content: center;
     align-items: center;
     border-radius: 0.75rem;
-    box-sizing: border-box;
 }
 
-.adsbygoogle {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-}
+.adsbygoogle { display: block !important; width: 100% !important; }
 
-/* --- Video Container (16:9) --- */
 .video-container {
     position: relative;
     padding-bottom: 56.25%;
@@ -108,7 +91,7 @@ img, iframe, video, object, embed {
     margin: 1.5rem 0;
     background-color: #000;
     width: 100%;
-    max-width: 100%; /* Force width limit */
+    max-width: 100%;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -127,11 +110,10 @@ img, iframe, video, object, embed {
 .dark ::-webkit-scrollbar-track { background: #1f2937; }
 ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #555; }
-
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Animations */
+/* --- Animations --- */
 @keyframes marquee {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
@@ -144,7 +126,7 @@ img, iframe, video, object, embed {
 }
 .animate-fade-in { animation: fadeIn 0.5s ease-out; }
 
-/* Link Buttons */
+/* --- Components --- */
 .btn-wrapped-link {
     display: flex;
     align-items: center;
@@ -157,39 +139,16 @@ img, iframe, video, object, embed {
     border-radius: 0.75rem;
     text-decoration: none;
     transition: all 0.3s ease;
-    width: 100%; /* Full width on mobile */
+    width: 100%;
     max-width: 100%;
-    box-sizing: border-box;
     margin: 1rem 0;
 }
+.btn-wrapped-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.3); }
 
-.btn-wrapped-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.3);
-}
+.prose { max-width: 100% !important; overflow-x: hidden; font-size: 1rem; }
+.prose img { border-radius: 0.5rem; margin: 1rem auto; width: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 
-/* Article Prose Fixes */
-.prose {
-    max-width: 100% !important;
-    overflow-x: hidden;
-    font-size: 1rem;
-}
-
-.prose img {
-    border-radius: 0.5rem;
-    margin: 1rem auto;
-    width: 100%;
-    height: auto;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* Post Card Wrappers */
-.post-card-wrapper {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-}
-
+.post-card-wrapper { display: block; width: 100%; max-width: 100%; }
 .post-card {
     display: flex;
     flex-direction: column;
@@ -203,31 +162,12 @@ img, iframe, video, object, embed {
 .dark .post-card { background-color: #1f2937; }
 .post-card:hover { transform: translateY(-4px); }
 
-/* Table Reset for Mobile */
-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 1rem;
-}
+table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; margin-bottom: 1rem; }
 
-/* --- Related Posts Mobile Optimization --- */
 @media (max-width: 480px) {
-
-    .related-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
-
-    .related-posts h4 {
-        font-size: 12px;
-        line-height: 1.4;
-    }
-
-    .related-posts img {
-        height: 90px !important;
-    }
+    .related-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .related-posts h4 { font-size: 12px; line-height: 1.4; }
+    .related-posts img { height: 90px !important; }
 }
 
 /* ========================================= */
@@ -236,25 +176,24 @@ table {
 
 .tab-btn {
     position: relative;
+    /* Ensure no conflicts with default states */
+    border: 1px solid transparent; 
 }
 
-.tab-btn span {
-    position: relative;
-}
-
-/* إزالة أي ستايل سابق عند التفعيل */
-.tab-btn.border-2,
-.tab-btn.bg-blue-600,
+/* Unify Active State - Override Tailwind */
 .tab-btn.active {
     border: none !important;
     background: transparent !important;
     box-shadow: none !important;
-    color: inherit !important;
+    color: #2563eb !important; /* TechTouch Blue */
 }
 
-/* الخط السفلي */
-.tab-btn.border-2::after,
-.tab-btn.bg-blue-600::after,
+/* Dark Mode Active Text */
+.dark .tab-btn.active {
+    color: #60a5fa !important;
+}
+
+/* Bottom Line */
 .tab-btn.active::after {
     content: "";
     position: absolute;
@@ -263,49 +202,56 @@ table {
     left: 6px;
     height: 2px;
     background: #2563eb;
+    border-radius: 2px;
 }
 
-/* الخط الأيمن */
-.tab-btn.border-2::before,
-.tab-btn.bg-blue-600::before,
+/* Right Line (60% Height) */
 .tab-btn.active::before {
     content: "";
     position: absolute;
     right: 0;
     bottom: 0;
     width: 2px;
-    height: 65%;
+    height: 60%;
     background: #2563eb;
+    border-radius: 2px 2px 0 0;
 }
 
-/* الخط الأيسر */
-.tab-btn.border-2 span::after,
-.tab-btn.bg-blue-600 span::after,
+/* Left Line (60% Height) - Using Span Pseudo to target button context */
+/* Since parent is relative, we can position absolutely to the left side */
 .tab-btn.active span::after {
     content: "";
     position: absolute;
-    left: -22px;
+    left: 0;
     bottom: 0;
     width: 2px;
-    height: 65%;
+    height: 60%; /* Match Right Side */
     background: #2563eb;
+    border-radius: 2px 2px 0 0;
+    /* Reset from previous attempts */
+    top: auto; 
+    transform: none;
+}
+
+/* Ensure the span doesn't trap the pseudo element if it's small */
+.tab-btn span {
+    position: static; /* Force static so ::after positions relative to .tab-btn */
 }
 
 /* ========================================= */
-/* Top Nav Tight Border                     */
+/* FIX: Navigation Link Active State        */
 /* ========================================= */
 
 .nav-link {
     border: 2px solid transparent;
-    padding: 2px 6px !important; /* تقليل الفراغ */
+    padding: 2px 6px !important;
     border-radius: 6px;
     background: transparent !important;
     box-shadow: none !important;
 }
 
-/* عند التفعيل */
 .nav-link.active,
-.nav-link.bg-blue-600 {
+.nav-link.bg-blue-600 { /* Keep backward compat just in case */
     border: 2px solid #2563eb !important;
     background: transparent !important;
     color: inherit !important;
@@ -313,31 +259,37 @@ table {
 }
 
 /* ========================================= */
-/* FIX: Reset Transform When Ticker Stops   */
+/* FIX: Ticker Alignment (Stop State)       */
 /* ========================================= */
+
+#news-ticker-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px !important; /* Professional gap */
+    padding-right: 4px !important;
+}
 
 #ticker-content {
     display: flex;
     align-items: center;
+    transition: transform 0.3s ease;
+    will-change: transform;
 }
 
-/* عند إيقاف الحركة */
+/* When Animation is STOPPED */
 #ticker-content:not(.animate-marquee) {
-    transform: translateX(0) !important;
+    transform: none !important;
     animation: none !important;
+    position: static !important; /* Reset from absolute */
+    width: auto !important;
+    justify-content: flex-start !important;
+    margin-right: 0 !important;
 }
 
-/* تقليل الفراغ بين "جديد" والنص */
-#news-ticker-bar {
-    display: flex;
-    align-items: center;
-    gap: 4px !important;
-    padding-right: 4px !important;
-}
-
-/* تنسيق كلمة جديد */
 #ticker-label {
-    margin-left: 4px !important;
+    margin-left: 0 !important; /* Handled by parent gap */
     padding: 2px 8px !important;
     border-radius: 6px !important;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
