@@ -27,74 +27,98 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Highlight Active Nav Link (Main Navigation)
+    // 3. Highlight Active Nav Link (Main Navigation - Glassmorphism)
     const currentPath = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('.nav-link');
     
     navLinks.forEach(link => {
         const linkPath = link.getAttribute('href');
+        // Reset base classes to ensure clean slate
+        link.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'active', 'text-blue-600');
+        
         // Simple exact match or root match
         if (linkPath === currentPath || (currentPath === '' && linkPath === 'index.html')) {
-            // Remove generic inactive classes
-            link.classList.remove('text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-100');
-            // Add unified active class
-            link.classList.add('active'); 
+            link.classList.add('active'); // CSS handles the Glassmorphism
         }
     });
 
-    // 4. Tab Switching Logic (Homepage & Articles) - REFACTORED
+    // 4. Tab Switching Logic (Homepage & Articles) - Minimalist Underline
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    // Helper to clean tab button classes
+    // Function to strip all conflicting Tailwind classes
     const cleanTabClasses = (btn) => {
-        // Remove ALL conflicting styling classes that might be hardcoded in HTML
         btn.classList.remove(
-            'active', 
-            'border-2', 'border-blue-600', 'border-green-600', 'border-purple-600', 'border-orange-600',
-            'bg-blue-600', 'bg-green-600', 'bg-purple-600', 'bg-orange-600',
-            'text-blue-600', 'text-green-600', 'text-purple-600', 'text-orange-600',
-            'text-white', 'shadow-sm', 'shadow-md'
+            // Backgrounds
+            'bg-blue-600', 'bg-green-600', 'bg-purple-600', 'bg-orange-600', 
+            'bg-white', 'dark:bg-gray-800', 'bg-transparent',
+            // Borders
+            'border-2', 'border', 'border-blue-600', 'border-green-600', 'border-purple-600', 'border-orange-600',
+            'border-transparent', 'dark:border-gray-700', 'border-gray-200',
+            // Text Colors
+            'text-white', 'text-blue-600', 'text-green-600', 'text-purple-600', 'text-orange-600', 
+            'text-gray-600', 'dark:text-gray-300',
+            // Shapes & Shadows
+            'rounded-full', 'shadow-sm', 'shadow-md', 'shadow-lg'
         );
-        // Ensure default inactive state classes exist
-        btn.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300', 'border', 'border-gray-200', 'dark:border-gray-700');
+        // Add inactive base text color (CSS handles hover)
+        btn.classList.add('text-gray-500', 'dark:text-gray-400');
     };
 
     if (tabButtons.length > 0) {
-        // A) Initialization Phase: normalize state on load
         tabButtons.forEach(btn => {
-            // Check if this button was intended to be active via HTML classes
-            const isInitiallyActive = btn.classList.contains('bg-blue-600') || 
-                                      btn.classList.contains('border-blue-600') ||
-                                      btn.classList.contains('border-2');
-            
-            cleanTabClasses(btn); // Strip everything
+            // Determine if this tab should be active initially
+            // Check for 'active' class OR specific styling classes that indicate activity in the HTML
+            const isInitiallyActive = btn.classList.contains('active') || 
+                                      btn.classList.contains('bg-blue-600') || 
+                                      btn.getAttribute('data-tab') === 'articles'; // Default to articles if unsure
+
+            // Strip everything
+            cleanTabClasses(btn);
 
             if (isInitiallyActive) {
-                btn.classList.add('active'); // Apply unified class
-                btn.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300', 'border', 'border-gray-200', 'dark:border-gray-700');
+                // If multiple are marked active, only the first one stays active (handled by loop order or logic below)
+                // ideally we clear all first, but here we run per button.
+                // Better approach: Let's assume the HTML sets one active.
+            }
+        });
+
+        // Re-run to force correct state based on logic, prioritizing 'active' class or first element
+        let hasActive = false;
+        tabButtons.forEach(btn => {
+            // Check if this button was intended to be active (e.g. it corresponds to visible content)
+            const targetTab = btn.getAttribute('data-tab');
+            const targetContent = document.getElementById(`tab-${targetTab}`);
+            const isContentVisible = targetContent && !targetContent.classList.contains('hidden');
+            
+            if (isContentVisible && !hasActive) {
+                btn.classList.remove('text-gray-500', 'dark:text-gray-400');
+                btn.classList.add('active');
+                hasActive = true;
+            } else {
+                btn.classList.remove('active');
             }
 
-            // B) Click Event Listener
+            // Click Handler
             btn.addEventListener('click', (e) => {
                 const targetTab = btn.getAttribute('data-tab');
 
                 // 1. Reset ALL buttons
                 tabButtons.forEach(b => {
-                    cleanTabClasses(b);
+                    b.classList.remove('active');
+                    b.classList.add('text-gray-500', 'dark:text-gray-400');
                 });
 
                 // 2. Activate Clicked Button
                 const activeBtn = e.currentTarget;
-                activeBtn.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300', 'border', 'border-gray-200', 'dark:border-gray-700');
+                activeBtn.classList.remove('text-gray-500', 'dark:text-gray-400');
                 activeBtn.classList.add('active');
 
-                // 3. Handle Content Visibility (Standard Logic)
+                // 3. Handle Content Visibility
                 tabContents.forEach(content => content.classList.add('hidden'));
                 const targetContent = document.getElementById(`tab-${targetTab}`);
                 if (targetContent) {
                     targetContent.classList.remove('hidden');
-                    // Reset animation
                     targetContent.classList.remove('animate-fade-in');
                     void targetContent.offsetWidth; // Force reflow
                     targetContent.classList.add('animate-fade-in');
@@ -134,18 +158,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 6. News Ticker Auto-Stop Logic (Refined)
+    // 6. News Ticker Auto-Stop Logic
     const tickerContainer = document.getElementById('ticker-content');
     if (tickerContainer) {
         document.fonts.ready.then(() => {
             const innerContent = tickerContainer.querySelector('span') || tickerContainer.querySelector('a');
             if (innerContent && tickerContainer.parentElement) {
                 const parentWidth = tickerContainer.parentElement.clientWidth;
-                // Add buffer to prevent flicker
                 if (innerContent.offsetWidth < parentWidth) {
-                    // Stop animation and apply static styling classes
                     tickerContainer.classList.remove('animate-marquee', 'absolute', 'right-0');
-                    // We let CSS handle the rest via #ticker-content:not(.animate-marquee)
                 }
             }
         });

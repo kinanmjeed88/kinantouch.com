@@ -1,3 +1,4 @@
+
 /* Global Reset & Layout Protection */
 *, *::before, *::after { box-sizing: border-box; min-width: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: 140px; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
@@ -34,74 +35,137 @@ table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; marg
 @media (max-width: 480px) { .related-grid { grid-template-columns: repeat(2, 1fr) !important; } .related-posts h4 { font-size: 12px; line-height: 1.4; } .related-posts img { height: 90px !important; } }
 
 /* ========================================= */
-/* FIX: Category Tabs Active Border (Tight) */
+/* 1. Glassmorphism Main Navigation          */
+/* (الرئيسية، الأدوات، حول)                  */
+/* ========================================= */
+
+.nav-link {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent; /* Prevent layout shift */
+    border-radius: 9999px !important; /* Full rounded pill */
+}
+
+/* Active State: Glass Effect */
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(31, 38, 135, 0.08);
+    color: #2563eb !important; /* Blue-600 */
+    transform: translateY(-1px);
+    font-weight: 800;
+}
+
+/* Dark Mode Glass */
+.dark .nav-link.active {
+    background: rgba(30, 41, 59, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #60a5fa !important; /* Blue-400 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover State */
+.nav-link:not(.active):hover {
+    background: rgba(0, 0, 0, 0.03);
+    color: #2563eb;
+}
+.dark .nav-link:not(.active):hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #60a5fa;
+}
+
+/* ========================================= */
+/* 2. Minimalist Underline Tabs              */
+/* (اخبار، تطبيقات، ألعاب، رياضة)            */
 /* ========================================= */
 
 .tab-btn {
-    position: relative;
-    border: 1px solid transparent; 
-}
-
-/* Unify Active State - Clean slate */
-.tab-btn.active {
-    border: none !important;
     background: transparent !important;
+    border: none !important;
     box-shadow: none !important;
-    color: #2563eb !important;
-    /* Remove padding from button to let span control spacing */
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    margin-left: 10px;
-    margin-right: 10px;
-    overflow: visible !important;
-}
-
-/* The text wrapper inside the button */
-.tab-btn.active span {
     position: relative;
-    padding: 4px 8px; /* Breathing room for text */
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    
-    /* Create borders using gradients for 60% height effect */
-    background-image: 
-        linear-gradient(to top, #2563eb 60%, transparent 60%), /* Left Border */
-        linear-gradient(to top, #2563eb 60%, transparent 60%); /* Right Border */
-    background-position: left bottom, right bottom;
-    background-size: 2px 100%; /* Width of side borders */
-    background-repeat: no-repeat;
-    
-    /* Bottom Border */
-    border-bottom: 2px solid #2563eb;
-    
-    /* Corner radius for bottom */
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
+    /* Ensure no default borders or backgrounds interfere */
+    border-radius: 0 !important; 
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-top: 0.5rem !important;
+    margin-bottom: -1px; /* Align with bottom border of container if any */
+    color: #6b7280; /* Default Gray */
+    font-weight: 600;
 }
 
-.dark .tab-btn.active { color: #60a5fa !important; }
-.dark .tab-btn.active span {
-    background-image: 
-        linear-gradient(to top, #60a5fa 60%, transparent 60%),
-        linear-gradient(to top, #60a5fa 60%, transparent 60%);
-    border-bottom-color: #60a5fa;
+/* Icons inside tabs */
+.tab-btn i, .tab-btn svg {
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Active Icon Lift */
+.tab-btn.active i, .tab-btn.active svg {
+    transform: translateY(-2px);
+    color: inherit;
+}
+
+/* Active State - Text Color Only */
+.tab-btn.active {
+    color: #2563eb !important; /* Blue-600 */
+    background-color: transparent !important;
+    font-weight: 800;
+}
+.dark .tab-btn.active {
+    color: #60a5fa !important; /* Blue-400 */
+}
+
+/* The Animated Underline (The Elegant Part) */
+.tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; /* Start hidden */
+    height: 3px;
+    background: #2563eb;
+    border-radius: 10px 10px 0 0;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+}
+
+.dark .tab-btn::after {
+    background: #60a5fa;
+    box-shadow: 0 0 8px rgba(96, 165, 250, 0.4); /* Subtle glow in dark mode */
+}
+
+/* Active State - Show Line */
+.tab-btn.active::after {
+    width: 70%; /* Expand to 70% of width (not full width for elegance) */
+    opacity: 1;
+}
+
+/* Hover Effect for non-active */
+.tab-btn:not(.active):hover {
+    color: #374151; /* Darker Gray */
+}
+.dark .tab-btn:not(.active):hover {
+    color: #e5e7eb; /* Lighter Gray */
 }
 
 /* ========================================= */
-/* FIX: Ticker Alignment (Perfect Adjacency) */
+/* FIX: Ticker Alignment (Preserved)         */
 /* ========================================= */
 
 #news-ticker-bar {
     display: flex;
     align-items: center;
-    gap: 6px !important; /* Fixed precise gap */
+    gap: 6px !important;
     padding-right: 8px !important;
     height: 40px;
 }
 
 #ticker-label {
-    margin-left: 0 !important; /* Gap is handled by parent */
+    margin-left: 0 !important;
     padding: 2px 8px !important;
     border-radius: 6px !important;
     white-space: nowrap;
@@ -118,18 +182,16 @@ table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; marg
     height: 100%;
 }
 
-/* When Animation is STOPPED */
 #ticker-content:not(.animate-marquee) {
     transform: none !important;
     animation: none !important;
-    position: static !important; /* Critical to respect flex layout */
+    position: static !important;
     width: auto !important;
     justify-content: flex-start !important;
     margin-right: 0 !important;
     padding-right: 0 !important;
 }
 
-/* Text alignment when stopped */
 #ticker-content:not(.animate-marquee) span,
 #ticker-content:not(.animate-marquee) a {
     margin: 0 !important;
