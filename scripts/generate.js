@@ -76,16 +76,16 @@ const STANDARD_FOOTER = `
 </footer>
 `;
 
-// Ticker HTML Template
+// Ticker HTML Template - Updated for spacing and RTL fixes
 const TICKER_HTML_TEMPLATE = `
 <div id="news-ticker-bar" class="w-full bg-gray-900 text-white h-10 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
-    <div class="h-full flex items-center justify-center px-4 relative z-10 shrink-0">
-        <div id="ticker-label" class="border-2 border-blue-500 text-blue-500 px-3 py-0.5 rounded-md font-bold text-xs shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+    <div class="h-full flex items-center justify-center px-0 relative z-10 shrink-0">
+        <div id="ticker-label" class="border-l border-white/10 text-blue-500 px-1 py-0.5 font-bold text-xs">
           جديد
         </div>
     </div>
     <div class="flex-1 overflow-hidden relative h-full flex items-center bg-gray-900">
-      <div id="ticker-content" class="animate-marquee whitespace-nowrap absolute right-0 flex items-center">
+      <div id="ticker-content" class="animate-marquee whitespace-nowrap absolute left-0 flex items-center">
       </div>
     </div>
 </div>
@@ -310,7 +310,17 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
     }
 
-    // D. DYNAMIC STYLES
+    // D. Header Actions Container (Fix gap)
+    // Find the container holding the profile/theme buttons. It's usually the last div in the header container.
+    const headerDiv = $('header > div');
+    const actionsContainer = headerDiv.find('div.flex.items-center.gap-2').last();
+    if(actionsContainer.length) {
+        actionsContainer.addClass('header-actions');
+        // Ensure buttons don't have conflicting margins
+        actionsContainer.find('button').removeClass('ml-auto mr-auto');
+    }
+
+    // E. DYNAMIC STYLES
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
@@ -324,8 +334,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     $('#dynamic-theme-styles').remove();
     $('head').append(dynamicStyle);
 
-    // E. Social Links in Footer - Remove from here if injecting via standard footer
-    // But specific checks for updates if aboutData changes
+    // F. Social Links in Footer
     if (aboutData.social) {
         $('footer a[href*="facebook"]').attr('href', aboutData.social.facebook || '#');
         $('footer a[href*="instagram"]').attr('href', aboutData.social.instagram || '#');
@@ -334,7 +343,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('footer a[href*="t.me"]').attr('href', aboutData.social.telegram || '#');
     }
 
-    // F. TICKER LOGIC (RESTRICTED TO INDEX.HTML)
+    // G. TICKER LOGIC (RESTRICTED TO INDEX.HTML)
     // 1. Always remove any existing ticker first
     $('#news-ticker-bar').remove();
 
@@ -349,10 +358,9 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         tickerContentDiv.removeClass().addClass('flex items-center h-full whitespace-nowrap');
         
         if (aboutData.ticker.animated !== false) {
-            tickerContentDiv.addClass('animate-marquee absolute right-0');
+            tickerContentDiv.addClass('animate-marquee absolute left-0'); // Changed right-0 to left-0
         } else {
-            // Updated class for non-animated state handled by CSS now mostly, but ensuring clean slate
-            tickerContentDiv.removeClass('animate-marquee absolute right-0');
+            tickerContentDiv.removeClass('animate-marquee absolute left-0');
         }
         
         // Handle Content Type (Image vs Text)
@@ -371,7 +379,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
     }
     
-    // G. Category Labels
+    // H. Category Labels
     if (aboutData.categories && aboutData.categories.labels) {
         $('[data-tab="articles"] span').text(aboutData.categories.labels.articles || 'اخبار');
         $('[data-tab="apps"] span').text(aboutData.categories.labels.apps || 'تطبيقات');
@@ -379,7 +387,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('[data-tab="sports"] span').text(aboutData.categories.labels.sports || 'رياضة');
     }
     
-    // H. About Page Specifics
+    // I. About Page Specifics
     if (fileName === 'about.html') {
         const coverContainer = $('#about-cover-section');
         if (coverContainer.length) {
@@ -414,7 +422,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         $('.prose p:first').text(aboutData.bio);
     }
 
-    // I. Inject Back to Top Button
+    // J. Inject Back to Top Button
     if ($('#back-to-top').length === 0) {
         $('body').append(`
         <button id="back-to-top" class="fixed bottom-6 right-6 z-50 bg-gray-900/60 hover:bg-gray-900/80 backdrop-blur-md text-white p-2 rounded-full shadow-lg transition-all duration-300 transform translate-y-10 opacity-0 invisible hover:scale-110 hover:-translate-y-1 focus:outline-none border border-white/10 group" aria-label="العودة للأعلى">
@@ -483,9 +491,9 @@ const generateIndividualArticles = () => {
         $('h1').first().text(post.title);
         $('time').text(post.date);
         
-        // --- Breadcrumb Logic ---
+        // --- Breadcrumb Logic (Fix for Tab Hash) ---
         let breadcrumbLabel = 'اخبار';
-        let breadcrumbLink = 'articles.html';
+        let breadcrumbLink = 'index.html#tab-articles';
 
         if (post.category === 'apps') {
             breadcrumbLabel = 'تطبيقات';

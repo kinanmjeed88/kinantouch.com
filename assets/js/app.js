@@ -27,68 +27,77 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Highlight Active Nav Link (Main Navigation - Glassmorphism)
-    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach(link => {
-        const linkPath = link.getAttribute('href');
-        // Reset base classes to ensure clean slate
-        link.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'active', 'text-blue-600');
-        
-        // Simple exact match or root match
-        if (linkPath === currentPath || (currentPath === '' && linkPath === 'index.html')) {
-            link.classList.add('active'); // CSS handles the Glassmorphism
+    // 3. Highlight Active Nav Link (Improved Logic)
+    const currentPath = window.location.pathname.replace(/\/$/, "");
+    document.querySelectorAll(".nav-link").forEach(link => {
+        try {
+            const linkPath = new URL(link.href).pathname.replace(/\/$/, "");
+            link.classList.remove("active");
+            // Check for exact match or index match
+            if (currentPath === linkPath || currentPath.endsWith(linkPath)) {
+                link.classList.add("active");
+            }
+            // Fallback for root
+            if ((currentPath === '' || currentPath === '/') && linkPath.endsWith('index.html')) {
+                link.classList.add("active");
+            }
+        } catch(e) {
+            // Fallback for relative links if URL parsing fails
+            const href = link.getAttribute('href');
+            if (currentPath.endsWith(href)) {
+                link.classList.add("active");
+            }
         }
     });
 
-    // 4. Tab Switching Logic (Homepage & Articles) - Updated to use .active class only
+    // 4. Tab Switching Logic (Hash Based Persistence)
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
     if (tabButtons.length > 0) {
-        // Ensure correct initial state based on HTML structure
-        tabButtons.forEach(btn => {
-            const targetTab = btn.getAttribute('data-tab');
-            const targetContent = document.getElementById(`tab-${targetTab}`);
-            
-            // If content is visible (not hidden), mark button as active
-            if (targetContent && !targetContent.classList.contains('hidden')) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
+        
+        function activateTabFromHash() {
+            const hash = window.location.hash.replace('#tab-', '');
+            let targetBtn, targetContent;
+
+            if (hash) {
+                targetBtn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
+                targetContent = document.getElementById(`tab-${hash}`);
             }
 
-            // Click Handler
+            // If hash is invalid or missing, check if we need to set default
+            // But if we are already on the page and no hash, default is typically handled by HTML structure (first tab visible)
+            // However, to be safe and responsive to hash changes:
+            
+            if (targetBtn && targetContent) {
+                // Deactivate all
+                tabButtons.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.add('hidden'));
+
+                // Activate Target
+                targetBtn.classList.add('active');
+                targetContent.classList.remove('hidden');
+                
+                // Animate
+                targetContent.classList.remove('animate-fade-in');
+                void targetContent.offsetWidth; // Force reflow
+                targetContent.classList.add('animate-fade-in');
+            }
+        }
+
+        // Initial Load
+        activateTabFromHash();
+
+        // Listen for hash changes (Browser Back Button)
+        window.addEventListener('hashchange', activateTabFromHash);
+
+        // Click Handlers
+        tabButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const targetTab = btn.getAttribute('data-tab');
-
-                // 1. Reset ALL buttons
-                tabButtons.forEach(b => {
-                    b.classList.remove('active');
-                });
-
-                // 2. Activate Clicked Button
-                const activeBtn = e.currentTarget;
-                activeBtn.classList.add('active');
-
-                // 3. Handle Content Visibility
-                tabContents.forEach(content => content.classList.add('hidden'));
-                const targetContent = document.getElementById(`tab-${targetTab}`);
-                if (targetContent) {
-                    targetContent.classList.remove('hidden');
-                    targetContent.classList.remove('animate-fade-in');
-                    void targetContent.offsetWidth; // Force reflow
-                    targetContent.classList.add('animate-fade-in');
-                    
-                    // Mobile Scroll Fix
-                    if(window.innerWidth < 768) {
-                        const headerOffset = 140; 
-                        const elementPosition = targetContent.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-                    }
-                }
+                // Update URL Hash without scrolling
+                history.pushState(null, null, `#tab-${targetTab}`);
+                activateTabFromHash();
             });
         });
     }
@@ -116,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 6. News Ticker Auto-Stop Logic
+    // 6. News Ticker Auto-Stop Logic (Fixed cleanup)
     const tickerContainer = document.getElementById('ticker-content');
     if (tickerContainer) {
         document.fonts.ready.then(() => {
@@ -124,7 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (innerContent && tickerContainer.parentElement) {
                 const parentWidth = tickerContainer.parentElement.clientWidth;
                 if (innerContent.offsetWidth < parentWidth) {
-                    tickerContainer.classList.remove('animate-marquee', 'absolute', 'right-0');
+                    tickerContainer.classList.remove('animate-marquee');
+                    tickerContainer.style.position = 'relative';
+                    tickerContainer.style.left = 'auto'; // Reset left
                 }
             }
         });
