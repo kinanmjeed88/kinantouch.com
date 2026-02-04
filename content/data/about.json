@@ -7,7 +7,7 @@
   "botTitle": "سياسة الخصوصية",
   "searchTitle": "نشر الاخبار التقنية والذكاء الاصطناعي",
   "coverType": "image",
-  "coverValue": "",
+  "coverValue": "assets/images/1770209575041_IMG_20260131_212859_0807.webp",
   "siteName": "TechTouch",
   "logoType": "image",
   "logoUrl": "assets/images/1770209140920_٢٠٢٦٠٢٠٣_٢٠٤٤٣٧.webp",
@@ -33,7 +33,7 @@
     "imageUrl": "",
     "fontSize": 14,
     "animated": false,
-    "enabled": true
+    "enabled": false
   },
   "social": {
     "facebook": "https://www.facebook.com/share/1EsapVHA6W/",
