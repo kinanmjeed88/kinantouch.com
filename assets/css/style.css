@@ -231,7 +231,7 @@ table {
 }
 
 /* ========================================= */
-/* Category Tabs - 3 Side Border Only       */
+/* FIX: Category Tabs Active Border (3 Sides) */
 /* ========================================= */
 
 .tab-btn {
@@ -242,10 +242,10 @@ table {
     position: relative;
 }
 
-/* إلغاء أي border أو ظل سابق */
-.tab-btn.active,
+/* إزالة أي ستايل سابق عند التفعيل */
 .tab-btn.border-2,
-.tab-btn.bg-blue-600 {
+.tab-btn.bg-blue-600,
+.tab-btn.active {
     border: none !important;
     background: transparent !important;
     box-shadow: none !important;
@@ -253,6 +253,8 @@ table {
 }
 
 /* الخط السفلي */
+.tab-btn.border-2::after,
+.tab-btn.bg-blue-600::after,
 .tab-btn.active::after {
     content: "";
     position: absolute;
@@ -264,6 +266,8 @@ table {
 }
 
 /* الخط الأيمن */
+.tab-btn.border-2::before,
+.tab-btn.bg-blue-600::before,
 .tab-btn.active::before {
     content: "";
     position: absolute;
@@ -275,11 +279,12 @@ table {
 }
 
 /* الخط الأيسر */
-/* Adjust left position slightly to frame the content including icon */
+.tab-btn.border-2 span::after,
+.tab-btn.bg-blue-600 span::after,
 .tab-btn.active span::after {
     content: "";
     position: absolute;
-    left: -24px;
+    left: -22px;
     bottom: 0;
     width: 2px;
     height: 65%;
@@ -308,35 +313,31 @@ table {
 }
 
 /* ========================================= */
-/* Ticker Alignment Fix (When Static)       */
+/* FIX: Reset Transform When Ticker Stops   */
 /* ========================================= */
 
+#ticker-content {
+    display: flex;
+    align-items: center;
+}
+
+/* عند إيقاف الحركة */
+#ticker-content:not(.animate-marquee) {
+    transform: translateX(0) !important;
+    animation: none !important;
+}
+
+/* تقليل الفراغ بين "جديد" والنص */
 #news-ticker-bar {
     display: flex;
     align-items: center;
-    gap: 6px !important;
+    gap: 4px !important;
     padding-right: 4px !important;
-    height: 36px;
 }
 
-#ticker-content:not(.animate-marquee) {
-    position: static !important;
-    justify-content: flex-start !important;
-    margin-right: 4px !important;
-    width: auto !important;
-}
-
+/* تنسيق كلمة جديد */
 #ticker-label {
     margin-left: 4px !important;
     padding: 2px 8px !important;
-    font-size: 11px !important;
     border-radius: 6px !important;
-}
-
-#news-ticker-bar .flex-1 {
-    margin-right: 4px !important;
-}
-
-#ticker-content {
-    padding-right: 0 !important;
 }
