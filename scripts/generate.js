@@ -62,6 +62,9 @@ function generateSite() {
         const $ = cheerio.load(templateHtml);
         const pageSlug = `article-${post.slug}.html`;
         
+        // Remove Ticker from Subpages (Articles)
+        $('#news-ticker-bar').remove();
+
         // Meta
         $('title').text(`${post.title} | ${aboutData.siteName}`);
         $('meta[name="description"]').attr('content', post.description);
@@ -136,6 +139,47 @@ function generateSite() {
 
     // Generate Home Index
     const $home = cheerio.load(templateHtml);
+    
+    // Ticker Logic for Homepage ONLY
+    const tickerConfig = aboutData.ticker || { enabled: true, text: "Welcome", label: "New" };
+    if (tickerConfig.enabled === false) {
+        $home('#news-ticker-bar').remove();
+    } else {
+        // Set Label
+        $home('#ticker-label').text(tickerConfig.label || 'جديد');
+        
+        // Prepare Wrapper & Content
+        const tickerContent = $home('#ticker-content');
+        
+        // Apply Font Size
+        if (tickerConfig.fontSize) {
+            tickerContent.css('font-size', `${tickerConfig.fontSize}px`);
+        }
+
+        // Handle Animation Class
+        if (tickerConfig.animated === false) {
+            tickerContent.removeClass('animate-marquee');
+        } else {
+            tickerContent.addClass('animate-marquee');
+        }
+
+        // Handle Content Type (Text vs Image)
+        if (tickerConfig.type === 'image' && tickerConfig.imageUrl) {
+            // Image Mode
+            const imgHtml = `<a href="${tickerConfig.url || '#'}" class="block h-full w-full"><img src="${cleanPath(tickerConfig.imageUrl)}" class="ticker-image-mode h-full w-auto object-contain" alt="Advertisement"></a>`;
+            tickerContent.html(imgHtml);
+            // In image mode, we might want to disable text marquee behavior slightly differently or keep it
+            // but usually a banner is static or scrolls if wide. Let's keep marquee for now if wide.
+        } else {
+            // Text Mode
+            let textHtml = `<span class="mx-4 font-medium text-gray-100">${tickerConfig.text}</span>`;
+            if (tickerConfig.url && tickerConfig.url !== '#') {
+                textHtml = `<a href="${tickerConfig.url}" class="mx-4 font-medium text-gray-100 hover:text-blue-400 transition-colors">${tickerConfig.text}</a>`;
+            }
+            tickerContent.html(textHtml);
+        }
+    }
+
     ['articles', 'apps', 'games', 'sports'].forEach(cat => {
         const catPosts = posts.filter(p => p.category === cat || (cat === 'articles' && !p.category));
         const listHTML = catPosts.map(p => `
