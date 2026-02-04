@@ -252,12 +252,14 @@ window.openPostEditor = () => {
     document.getElementById('postEditor').classList.remove('hidden'); 
     ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
     document.getElementById('pSlug').dataset.mode = 'new'; document.getElementById('pSlug').readOnly = false; document.getElementById('editorTitle').innerText = 'مقال جديد'; 
+    document.getElementById('pDate').value = ''; // Reset date field for new posts
 };
 window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
 window.openEditByIndex = (index) => {
     const p = cachedPosts[index]; if (!p) return alert('المقال غير موجود');
     const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
     setVal('pTitle', p.title); setVal('pSlug', p.slug); setVal('pCat', p.category); setVal('pDesc', p.description); setVal('pContent', p.content); setVal('pImage', p.image); setVal('pYoutubeId', p.youtubeVideoId);
+    setVal('pDate', p.date); // Populate date field
     const slugEl = document.getElementById('pSlug'); if(slugEl) { slugEl.readOnly = true; slugEl.dataset.mode = 'edit'; }
     document.getElementById('editorTitle').innerText = 'تعديل مقال'; document.getElementById('postEditor').classList.remove('hidden');
 };
@@ -274,7 +276,23 @@ window.savePost = async () => {
         const existingPost = isEdit ? cachedPosts.find(p => p.slug === slug) : null; 
         const now = new Date().toISOString().split('T')[0];
         const getVal = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
-        const postData = { title: getVal('pTitle'), slug: slug, description: getVal('pDesc'), category: getVal('pCat'), date: (isEdit && existingPost) ? existingPost.date : now, updated: (isEdit) ? now : undefined, image: getVal('pImage'), content: getVal('pContent'), youtubeVideoId: getVal('pYoutubeId') };
+
+        // =============================
+        // Custom Publish Date Support
+        // =============================
+
+        let manualDate = document.getElementById('pDate')?.value;
+
+        let finalDate;
+
+        if (manualDate && manualDate.trim() !== '') {
+            finalDate = manualDate;
+        } else {
+            const today = new Date();
+            finalDate = today.toISOString().split('T')[0];
+        }
+
+        const postData = { title: getVal('pTitle'), slug: slug, description: getVal('pDesc'), category: getVal('pCat'), date: finalDate, updated: (isEdit) ? now : undefined, image: getVal('pImage'), content: getVal('pContent'), youtubeVideoId: getVal('pYoutubeId') };
         if(!postData.updated) delete postData.updated;
         await api.put(`content/posts/${slug}.json`, JSON.stringify(postData, null, 2), `Update Post: ${postData.title}`, existingPost ? existingPost.sha : null);
         showToast('تم حفظ المقال!'); closePostEditor(); loadPosts();

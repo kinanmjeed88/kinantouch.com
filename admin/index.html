@@ -138,6 +138,10 @@
                         <div class="col-span-2 md:col-span-1"><label class="label">العنوان</label><input type="text" id="pTitle" class="input-field" oninput="autoSlug()"></div>
                         <div class="col-span-2 md:col-span-1"><label class="label">الرابط (Slug)</label><input type="text" id="pSlug" class="input-field bg-gray-50" readonly></div>
                         <div class="col-span-2 md:col-span-1"><label class="label">القسم</label><select id="pCat" class="input-field"><option value="articles">اخبار</option><option value="apps">تطبيقات</option><option value="games">ألعاب</option><option value="sports">رياضة</option></select></div>
+                        
+                        <!-- Added Date Input Here -->
+                        <div class="col-span-2 md:col-span-1"><label class="label">تاريخ النشر (اختياري)</label><input type="date" id="pDate" class="input-field dir-ltr"></div>
+
                         <div class="col-span-2 md:col-span-1"><label class="label">الصورة</label><div class="flex gap-2"><input type="file" id="pFile" class="hidden" onchange="handleFileSelect(this, 'pImage')"><button onclick="document.getElementById('pFile').click()" class="btn-secondary whitespace-nowrap"><i data-lucide="image"></i> رفع</button><input type="text" id="pImage" class="input-field dir-ltr" placeholder="رابط الصورة أو المسار..."></div></div>
                         <div class="col-span-2"><label class="label">الوصف المختصر</label><textarea id="pDesc" rows="2" class="input-field" placeholder="وصف يظهر في بطاقات الصفحة الرئيسية..."></textarea></div>
                         
@@ -249,7 +253,7 @@
                     <div id="tickerInputsContainer" class="grid grid-cols-1 md:grid-cols-4 gap-4 transition-opacity duration-300">
                         <div class="md:col-span-1"><label class="label">العنوان (Tag)</label><input type="text" id="tickerLabel" class="input-field"></div>
                         
-                        <!-- NEW: Content Type Selector -->
+                        <!-- Content Type Selector -->
                         <div class="md:col-span-3 flex gap-4 items-center mb-2">
                             <span class="label mb-0">نوع المحتوى:</span>
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="tickerType" value="text" checked onchange="toggleTickerContent()" class="accent-blue-600"> <span>نص</span></label>
