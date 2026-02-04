@@ -4,8 +4,13 @@
     "name": "بوت الطلبات",
     "desc": "بوت على التيليكرام لاستقبال طلبات التطبيقات والالعاب المعدلة",
     "url": "https://t.me/techtouchAI_bot",
-    "icon": "bot",
-    "color": "purple"
+    "icon": "assets/images/1770239446854_IMG_20260130_132519_0237.webp",
+    "color": "purple",
+    "iconData": {
+      "type": "image",
+      "value": "assets/images/1770239446854_IMG_20260130_132519_0237.webp",
+      "size": "128"
+    }
   },
   {
     "id": "apps_games",
