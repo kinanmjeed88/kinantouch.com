@@ -344,10 +344,15 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         actionsContainer.addClass('header-actions');
         actionsContainer.find('button').removeClass('ml-auto mr-auto');
         
-        // Ensure Theme Toggle has correct order class
+        // Ensure Theme Toggle has correct order class (Order 1: Far Left / End)
         const themeBtn = actionsContainer.find('#theme-toggle');
         if(themeBtn.length) {
-            themeBtn.addClass('order-1');
+            themeBtn.addClass('order-3'); // 3 is Leftmost in standard visual, 1 is Rightmost in visual grouping
+            // Actually, let's use explicit visual order from Right to Left within the container:
+            // Container is LTR.
+            // Home (Right) -> Search (Middle) -> Theme (Left/End)
+            // Use Order css:
+            themeBtn.addClass('order-3'); 
         }
 
         // Remove existing back button (arrow-right) from header if present
@@ -356,14 +361,14 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         // Remove old Home button from previous injections
         actionsContainer.find('#home-btn-header').remove();
 
-        // Inject Home Button (Order 3 - Inner most)
-        // Search Button (Order 2) is injected by search-engine.js
+        // Inject Home Button (Order 1 - Inner most / Right of the group)
         const homeBtn = `
-        <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-3" aria-label="الرئيسية">
+        <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
             <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
         </a>
         `;
         actionsContainer.append(homeBtn);
+        // Search Button (Order 2) is injected by search-engine.js to sit between
     }
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };

@@ -13,7 +13,7 @@ let cachedAbout = {};
 // Icon Picker State
 let iconPickerTarget = null;
 const commonIcons = [
-    // Social Media & Brands (Requested)
+    // Social Media Brands (Lucide Supported or Mapped)
     'facebook', 'instagram', 'twitter', 'youtube', 'linkedin', 'twitch', 'message-circle', 'send', 'message-square',
     'github', 'gitlab', 'slack', 'dribbble', 'figma', 'framer', 'chrome', 'codepen', 'codesandbox', 'trello',
     'pocket', 'rss', 'globe', 'link', 'share-2', 'at-sign', 'hash', 'mail', 'phone', 'video', 'ghost', 'camera', 'music',
@@ -34,7 +34,10 @@ const commonIcons = [
     'dollar-sign', 'gift', 'award', 'trophy', 'medal', 'activity', 'calendar', 'clock', 'watch', 'timer',
     'map', 'map-pin', 'navigation', 'compass', 'flag', 'bookmark', 'book', 'book-open', 'file', 'file-text', 'folder', 'folder-plus',
     'image', 'film', 'tv', 'radio', 'mic', 'headphones', 'volume-2', 'play', 'pause', 'play-circle', 'stop-circle',
-    'shield', 'lock', 'unlock', 'key', 'eye', 'eye-off', 'briefcase', 'coffee', 'archive', 'box', 'package'
+    'shield', 'lock', 'unlock', 'key', 'eye', 'eye-off', 'briefcase', 'coffee', 'archive', 'box', 'package',
+    'anchor', 'aperture', 'box', 'circle', 'disc', 'droplet', 'feather', 'framer', 'hexagon', 'layout-grid', 'life-buoy', 'loader',
+    'move', 'power', 'repeat', 'scissors', 'shuffle', 'slash', 'sliders', 'speaker', 'square', 'tag', 'target', 'tool', 'truck',
+    'umbrella', 'upload-cloud', 'voicemail', 'volume', 'watch', 'wind', 'zap-off', 'zoom-in', 'zoom-out'
 ];
 
 document.addEventListener('DOMContentLoaded', () => {

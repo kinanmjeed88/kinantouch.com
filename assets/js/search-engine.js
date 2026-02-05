@@ -30,14 +30,18 @@ class TechTouchSearch {
     }
 
     injectSearchButton() {
-        // Find existing buttons (Home is order-3, Theme is order-1)
+        // Find existing buttons
+        // Theme is Order 3 (Leftmost)
+        // Home is Order 1 (Rightmost of group)
+        // Search should be Order 2 (Middle)
+        
         const homeBtn = document.getElementById('home-btn-header');
         const themeBtn = document.getElementById('theme-toggle');
         
         if (!document.getElementById('search-trigger')) {
             const searchBtn = document.createElement('button');
             searchBtn.id = 'search-trigger';
-            // Order-2 to be placed between Theme (1) and Home (3) visually on the left side
+            // Order 2 places it between Home (1) and Theme (3) visually in flex row
             searchBtn.className = 'p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-2';
             searchBtn.setAttribute('aria-label', 'بحث');
             // SVG Icon
@@ -48,14 +52,11 @@ class TechTouchSearch {
                 </svg>
             `;
             
-            // Insert it into the header actions container
-            // Since we use order-{n} classes, append/prepend doesn't matter for visual, 
-            // but appending is safer to ensure it's in the same container.
+            // Append to the actions container. The CSS order property handles the visual position.
             const actionsContainer = document.querySelector('.header-actions');
             if(actionsContainer) {
                 actionsContainer.appendChild(searchBtn);
             } else if (themeBtn && themeBtn.parentNode) {
-                // Fallback if class not found
                 themeBtn.parentNode.appendChild(searchBtn);
             }
         }
