@@ -12,33 +12,44 @@ let cachedAbout = {};
 
 // Icon Picker State
 let iconPickerTarget = null;
+
+// Standard Lucide Icons
 const commonIcons = [
-    // Requested Social Media & Brands
-    'facebook', 'instagram', 'twitter', 'youtube', 'linkedin', 'twitch', 'message-circle', 'send', 'message-square',
-    'github', 'gitlab', 'slack', 'dribbble', 'figma', 'framer', 'chrome', 'codepen', 'codesandbox', 'trello',
-    'pocket', 'rss', 'globe', 'link', 'share-2', 'at-sign', 'hash', 'mail', 'phone', 'video', 'ghost', 'camera', 'music',
-    
-    // UI & Navigation (General)
     'home', 'user', 'users', 'settings', 'menu', 'x', 'search', 'bell', 'star', 'heart', 'thumbs-up', 
     'check', 'check-circle', 'alert-circle', 'alert-triangle', 'info', 'help-circle', 'plus', 'minus', 
     'trash', 'trash-2', 'edit', 'edit-2', 'edit-3', 'copy', 'external-link', 'more-horizontal', 'more-vertical',
     'chevron-right', 'chevron-left', 'chevron-up', 'chevron-down', 'arrow-right', 'arrow-left', 'arrow-up', 'arrow-down',
     'download', 'upload', 'refresh-cw', 'rotate-cw', 'maximize', 'minimize', 'grid', 'list', 'layout', 'layers',
-    
-    // Tech & Devices
-    'smartphone', 'monitor', 'laptop', 'tablet', 'watch', 'cpu', 'hard-drive', 'wifi', 'bluetooth', 'battery', 'battery-charging', 'zap',
-    'gamepad', 'gamepad-2', 'joystick', 'mouse', 'keyboard', 'printer', 'server', 'database', 'code', 'terminal', 'command',
-    
-    // Misc & Objects
-    'sun', 'moon', 'cloud', 'cloud-rain', 'umbrella', 'shopping-cart', 'shopping-bag', 'credit-card', 
-    'dollar-sign', 'gift', 'award', 'trophy', 'medal', 'activity', 'calendar', 'clock', 'watch', 'timer',
-    'map', 'map-pin', 'navigation', 'compass', 'flag', 'bookmark', 'book', 'book-open', 'file', 'file-text', 'folder', 'folder-plus',
-    'image', 'film', 'tv', 'radio', 'mic', 'headphones', 'volume-2', 'play', 'pause', 'play-circle', 'stop-circle',
-    'shield', 'lock', 'unlock', 'key', 'eye', 'eye-off', 'briefcase', 'coffee', 'archive', 'box', 'package',
-    'anchor', 'aperture', 'box', 'circle', 'disc', 'droplet', 'feather', 'framer', 'hexagon', 'layout-grid', 'life-buoy', 'loader',
-    'move', 'power', 'repeat', 'scissors', 'shuffle', 'slash', 'sliders', 'speaker', 'square', 'tag', 'target', 'tool', 'truck',
-    'umbrella', 'upload-cloud', 'voicemail', 'volume', 'watch', 'wind', 'zap-off', 'zoom-in', 'zoom-out'
+    'smartphone', 'monitor', 'laptop', 'tablet', 'watch', 'cpu', 'hard-drive', 'wifi', 'bluetooth', 'battery', 'zap',
+    'gamepad', 'gamepad-2', 'joystick', 'mouse', 'keyboard', 'printer', 'server', 'database', 'code', 'terminal',
+    'sun', 'moon', 'cloud', 'umbrella', 'shopping-cart', 'credit-card', 'dollar-sign', 'gift', 'award', 'trophy', 'medal', 
+    'activity', 'calendar', 'clock', 'timer', 'map', 'map-pin', 'navigation', 'compass', 'flag', 'bookmark', 'book', 'file-text', 
+    'image', 'film', 'tv', 'radio', 'mic', 'headphones', 'video', 'camera', 'music', 'shield', 'lock', 'key', 'eye'
 ];
+
+// Custom Brand SVG Paths (For icons missing in Lucide)
+const brandIcons = {
+    "Facebook": { path: '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Instagram": { path: '<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "X (Twitter)": { path: '<path d="M4 4l11.733 16h4.267l-11.733 -16z" /><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "TikTok": { path: '<path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "YouTube": { path: '<path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Snapchat": { path: '<path d="M12 2c-3.5 0-6 2.5-6 6 0 1.5.5 2.5 1 3.5-.5 1-1.5 1-2 1-1.5 0-2 1.5-2 1.5S3.5 16 6 16c0 1.5 1.5 3 2 3s2.5 3 4 3 3.5-1 4-3 2-1.5 2-3c2.5 0 3 .5 3 2s-1.5 1.5-3 1.5c-.5 0-1.5 0-2-1 .5-1 1-2 1-3.5 0-3.5-2.5-6-6-6z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Telegram": { path: '<line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "WhatsApp": { path: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "LinkedIn": { path: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Pinterest": { path: '<path d="M8 14.5c-3-1-3-5 0-6 2-1 5-1 6 1 2 2 1 6-1 7-2 1-4 0-5-2"/><line x1="8" y1="20" x2="12" y2="10"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Reddit": { path: '<circle cx="12" cy="12" r="10"/><path d="M16 12a2 2 0 1 1-2-2 2 2 0 0 1 2 2z"/><path d="M10 12a2 2 0 1 1-2-2 2 2 0 0 1 2 2z"/><path d="M9 16c1.5 1 4.5 1 6 0"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Threads": { path: '<path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-5-9"/><path d="M15 11.5a3.5 3.5 0 1 1-3.5-3.5 3.5 3.5 0 0 1 3.5 3.5c0 3-2.5 5.5-5 5.5"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Discord": { path: '<circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M7.5 7.5c3.5-1 5.5-1 9 0"/><path d="M7 16.5c3.5 1 5.5 1 9 0"/><path d="M15.5 17c0 1 1.5 3 2 3 1.5 0 2.8-3.3 3.2-6 .4-3.3-.3-5.5-1.3-8.7A10 10 0 0 0 13 4.3c-1 .3-1.4 1-1.4 1s-1-.7-2-1a10 10 0 0 0-6.4 1c-1 3.2-1.7 5.4-1.3 8.7.4 2.7 1.7 6 3.2 6 .5 0 2-2 2-3"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Tumblr": { path: '<path d="M14 6a4 4 0 0 0-4-4v4H6v4h4v6a4 4 0 0 0 4 4h4v-4h-2a2 2 0 0 1-2-2v-4h4V6h-4z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Twitch": { path: '<path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m5 4V7"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "WeChat": { path: '<path d="M7.5 13.5c-3.3 0-6-2.5-6-5.5S4.2 2.5 7.5 2.5 13.5 5 13.5 8s-2.7 5.5-6 5.5c-.6 0-1.2-.1-1.8-.2l-2.4 1.4.5-2.2c-1.4-1.2-2.3-2.9-2.3-4.8 0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6z"/><path d="M16.5 14.5c-2.8 0-5-2-5-4.5s2.2-4.5 5-4.5 5 2 5 4.5c0 1.5-.8 2.9-2 3.8l.4 1.9-2-1.2c-.5.1-1 .1-1.4.1z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "LINE": { path: '<path d="M20.9 10c0-4.4-4-8-8.9-8S3.1 5.6 3.1 10c0 3.9 3.1 7.2 7.3 7.9.3 0 .7.1.8.2.2.2.1.5 0 .9-.2.8-.7 2.1-1.1 2.9-.1.3 0 .7.4.7h.1c1.9 0 5-2.7 6.8-4.6 2.4-1.7 3.5-4.1 3.5-7z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Kwai": { path: '<path d="M16.5 6a4.5 4.5 0 1 0-9 0 4.5 4.5 0 0 0 9 0z M3 21h18v-2a4 4 0 0 0-4-4h-10a4 4 0 0 0-4 4v2z" />', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Quora": { path: '<path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-10-10zm0 17a1 1 0 1 1 1-1 1 1 0 0 1-1 1zm2.5-9.5c0 1.5-1.5 2-2.5 3-.5.5-1 1-1 2h-2c0-2 2-3 3-4 1-1 1-2-1-2s-3 1-3 1l-1-2c1-1 3-2 5-2s4 2 4 4z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Viber": { path: '<path d="M19.9 16.5c-1.3-.6-2.5-1-3.6-.6-1 .4-1.5 1.4-1.8 1.5-.7-.2-2.6-1-3.8-2.2-1.2-1.2-2-3.1-2.2-3.8.1-.3 1.1-.8 1.5-1.8.4-1.1 0-2.3-.6-3.6-1-2.2-3.4-1.8-3.9-1.6-.5.1-.9.6-1.1 1-.8 1.7-.6 4.7 2.1 7.4 2.7 2.7 5.7 2.9 7.4 2.1.4-.2.9-.6 1-1.1.2-.5.6-2.9-1.6-3.9z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     initIconPicker();
@@ -144,9 +155,28 @@ const api = {
 
 function initIconPicker() {
     const grid = document.getElementById('iconGrid');
+    grid.innerHTML = ''; // Clear previous
+
+    // 1. Add Custom Brand Icons
+    for (const [name, svgData] of Object.entries(brandIcons)) {
+        const div = document.createElement('div');
+        div.className = 'icon-option bg-blue-50 border-blue-200';
+        div.title = name;
+        div.innerHTML = `<svg viewBox="${svgData.viewBox}" fill="${svgData.fill}" stroke="${svgData.stroke}" stroke-width="${svgData.strokeWidth}" class="w-5 h-5">${svgData.path}</svg>`;
+        div.onclick = () => selectBrandIcon(svgData);
+        grid.appendChild(div);
+    }
+
+    // Separator
+    const sep = document.createElement('div');
+    sep.className = 'col-span-full h-px bg-gray-200 my-2';
+    grid.appendChild(sep);
+
+    // 2. Add Standard Lucide Icons
     commonIcons.forEach(iconName => {
         const div = document.createElement('div');
         div.className = 'icon-option';
+        div.title = iconName;
         div.innerHTML = `<i data-lucide="${iconName}" class="w-5 h-5"></i>`;
         div.onclick = () => selectLucideIcon(iconName);
         grid.appendChild(div);
@@ -175,7 +205,26 @@ window.switchPickerTab = (tab) => {
     document.getElementById(`picker-${tab}`).classList.remove('hidden');
 };
 window.updateSizeDisplay = (val) => { document.getElementById('sizeDisplay').innerText = `${val}px`; const prev = document.getElementById('pickerPreviewImg'); if(prev) { prev.style.width = val + 'px'; prev.style.height = val + 'px'; } };
-window.selectLucideIcon = (iconName) => { const size = document.getElementById('pickerSize').value; applyIconChange({ type: 'lucide', value: iconName, size: size }); };
+
+window.selectLucideIcon = (iconName) => { 
+    const size = document.getElementById('pickerSize').value; 
+    applyIconChange({ type: 'lucide', value: iconName, size: size }); 
+};
+
+window.selectBrandIcon = (svgData) => {
+    const size = document.getElementById('pickerSize').value;
+    // We store the raw SVG parts needed to reconstruct it
+    applyIconChange({ 
+        type: 'svg', 
+        value: svgData.path, 
+        viewBox: svgData.viewBox,
+        fill: svgData.fill,
+        stroke: svgData.stroke,
+        strokeWidth: svgData.strokeWidth,
+        size: size 
+    });
+};
+
 window.handlePickerFileSelect = async (input) => {
     if (input.files && input.files[0]) {
         const btn = document.getElementById('btnUploadPicker'); btn.innerText = 'جاري الضغط والرفع...'; btn.disabled = true;
@@ -196,10 +245,31 @@ window.confirmImageSelection = () => { const url = document.getElementById('pick
 
 function applyIconChange(iconData) {
     if (!iconPickerTarget) return;
-    if (iconPickerTarget.type === 'channel') { cachedChannels[iconPickerTarget.id].iconData = iconData; cachedChannels[iconPickerTarget.id].icon = iconData.value; renderChannels(); }
+    
+    // Update Channel Icon
+    if (iconPickerTarget.type === 'channel') { 
+        cachedChannels[iconPickerTarget.id].iconData = iconData; 
+        // For backwards compatibility, set .icon to value if it's a string (lucide), else 'star'
+        cachedChannels[iconPickerTarget.id].icon = (iconData.type === 'lucide') ? iconData.value : 'star';
+        renderChannels(); 
+    }
+    // Update Social Icon
     else if (iconPickerTarget.type === 'social') {
-        const btn = document.getElementById(`btnIcon_${iconPickerTarget.id}`); btn.dataset.iconInfo = JSON.stringify(iconData);
-        if(iconData.type === 'image') { btn.innerHTML = `<img src="${iconData.value}" style="width:24px; height:24px; object-fit:contain;">`; } else { btn.innerHTML = `<i data-lucide="${iconData.value}"></i>`; lucide.createIcons(); }
+        const btn = document.getElementById(`btnIcon_${iconPickerTarget.id}`); 
+        btn.dataset.iconInfo = JSON.stringify(iconData);
+        
+        let html = '';
+        if(iconData.type === 'image') { 
+            let sUrl = iconData.value;
+            if(sUrl && !sUrl.startsWith('http')) sUrl = '../' + sUrl.replace(/^(\.\.\/)+/, '');
+            html = `<img src="${sUrl}" style="width:24px; height:24px; object-fit:contain;">`; 
+        } else if (iconData.type === 'svg') {
+            html = `<svg viewBox="${iconData.viewBox}" fill="${iconData.fill}" stroke="${iconData.stroke}" stroke-width="${iconData.strokeWidth}" style="width:24px; height:24px">${iconData.value}</svg>`;
+        } else { 
+            html = `<i data-lucide="${iconData.value}"></i>`; 
+        }
+        btn.innerHTML = html;
+        if(iconData.type === 'lucide') lucide.createIcons(); 
     }
     closeIconPicker();
 }
@@ -295,13 +365,9 @@ window.savePost = async () => {
         const now = new Date().toISOString().split('T')[0];
         const getVal = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
 
-        // =============================
         // Custom Publish Date Support
-        // =============================
-
         let manualDate = document.getElementById('pDate')?.value;
         let finalDate;
-
         if (manualDate && manualDate.trim() !== '') {
             finalDate = manualDate;
         } else {
@@ -330,6 +396,9 @@ function renderChannels() {
             let iUrl = ch.iconData.value;
             if(iUrl && !iUrl.startsWith('http')) iUrl = '../' + iUrl.replace(/^(\.\.\/)+/, '');
             iconHtml = `<img src="${iUrl}" style="width:${ch.iconData.size||24}px; height:${ch.iconData.size||24}px; object-fit:contain;">`; 
+        } else if (ch.iconData && ch.iconData.type === 'svg') {
+            const size = ch.iconData.size || 24;
+            iconHtml = `<svg viewBox="${ch.iconData.viewBox}" fill="${ch.iconData.fill}" stroke="${ch.iconData.stroke}" stroke-width="${ch.iconData.strokeWidth}" style="width:${size}px; height:${size}px">${ch.iconData.value}</svg>`;
         } else { 
             iconHtml = `<i data-lucide="${(ch.iconData && ch.iconData.value) ? ch.iconData.value : ch.icon || 'star'}"></i>`; 
         }
@@ -465,12 +534,20 @@ async function loadSettings() {
             let data = socialIcons[key]; 
             if (!data || typeof data === 'string') data = { type: 'lucide', value: data || key, size: 24 };
             if(key === 'tiktok' && (!socialIcons[key] || socialIcons[key].value === 'video')) data.value = 'video'; 
+            
             btn.dataset.iconInfo = JSON.stringify(data);
+            
+            let html = '';
             if (data.type === 'image') {
                 let sUrl = data.value;
                 if(sUrl && !sUrl.startsWith('http')) sUrl = '../' + sUrl.replace(/^(\.\.\/)+/, '');
-                btn.innerHTML = `<img src="${sUrl}" style="width:24px; height:24px; object-fit:contain;">`; 
-            } else { btn.innerHTML = `<i data-lucide="${data.value}"></i>`; }
+                html = `<img src="${sUrl}" style="width:24px; height:24px; object-fit:contain;">`; 
+            } else if (data.type === 'svg') {
+                html = `<svg viewBox="${data.viewBox}" fill="${data.fill}" stroke="${data.stroke}" stroke-width="${data.strokeWidth}" style="width:24px; height:24px">${data.value}</svg>`;
+            } else { 
+                html = `<i data-lucide="${data.value}"></i>`; 
+            }
+            btn.innerHTML = html;
         });
         
         lucide.createIcons(); 

@@ -149,6 +149,9 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
         const size = iconData.size || defaultSize;
         if (iconData.type === 'image') {
             return `<img src="${cleanPath(iconData.value)}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
+        } else if (iconData.type === 'svg') {
+            // Render custom SVG
+            return `<svg viewBox="${iconData.viewBox || '0 0 24 24'}" fill="${iconData.fill || 'none'}" stroke="${iconData.stroke || 'currentColor'}" stroke-width="${iconData.strokeWidth || '2'}" style="width:${size}px; height:${size}px;">${iconData.value}</svg>`;
         } else {
             return `<i data-lucide="${iconData.value || defaultIconName}" style="width:${size}px; height:${size}px;"></i>`;
         }

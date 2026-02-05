@@ -33,8 +33,8 @@ class TechTouchSearch {
         // --- RESTRICTION LOGIC ---
         // Do not inject search button on 'about.html' or individual article pages.
         const path = window.location.pathname;
-        const pageName = path.split('/').pop();
-        if (pageName === 'about.html' || path.includes('article-')) {
+        // Check if path ends with about.html or contains it (to be safe)
+        if (path.includes('about.html') || path.endsWith('/about') || path.includes('article-')) {
             return;
         }
         // -------------------------
