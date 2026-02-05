@@ -233,19 +233,7 @@ if (fs.existsSync(POSTS_DIR)) {
             try {
                 const post = JSON.parse(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
                 
-                // --- DATE CORRECTION LOGIC ---
-                // If date is after May 2026 (Month > 5), reset to 2026-01-01
-                if (post.date) {
-                    const d = new Date(post.date);
-                    if (!isNaN(d.getTime())) {
-                        if (d.getFullYear() === 2026 && d.getMonth() + 1 > 5) {
-                            post.date = "2026-01-01";
-                            // Also update updated property if it exists
-                            if(post.updated) post.updated = "2026-01-01";
-                        }
-                    }
-                }
-                // -----------------------------
+                // Logic removed as requested
 
                 post.content = parseMarkdown(post.content);
                 post.effectiveDate = post.updated || post.date;
@@ -500,7 +488,7 @@ const generateIndividualArticles = () => {
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         
-        // --- FIXED HEADER TAG & ADD VIEW COUNTER ---
+        // --- FIXED HEADER TAG (COMPACT & SINGLE LINE META) ---
         const articleHeaderHTML = `
         <header class="mb-8 relative">
             <div class="article-header-card">
@@ -508,19 +496,13 @@ const generateIndividualArticles = () => {
                     ${post.title}
                 </h1>
             </div>
-            <div class="article-meta-bar">
-                <div class="flex items-center gap-1.5">
-                    <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i>
-                    <time class="font-bold">${post.date}</time>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
-                    <span class="font-bold">TechTouch Team</span>
-                </div>
-                <!-- View Counter -->
-                <div class="flex items-center gap-1.5 view-count-wrapper">
-                    <i data-lucide="eye" class="w-4 h-4 text-green-500"></i>
-                    <span class="font-bold view-count-display" data-publish-date="${post.date}">25</span>
+            <div class="article-meta-bar flex items-center justify-center px-4 py-3 border-t border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-x-auto no-scrollbar">
+                <div class="flex items-center gap-3 w-full justify-center">
+                    <div class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i><span>${post.date}</span></div>
+                    <span class="text-gray-300 dark:text-gray-600">|</span>
+                    <div class="flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5"></i><span>TechTouch Team</span></div>
+                    <span class="text-gray-300 dark:text-gray-600">|</span>
+                    <div class="flex items-center gap-1 view-count-wrapper"><i data-lucide="eye" class="w-3.5 h-3.5 text-green-500"></i><span class="view-count-display font-bold" data-publish-date="${post.date}">25</span></div>
                 </div>
             </div>
         </header>
@@ -570,22 +552,22 @@ const generateIndividualArticles = () => {
 
         $('article').html($content.html()); 
 
-        // --- INJECT SHARE BUTTONS ---
+        // --- INJECT ICON-ONLY SHARE BUTTONS (SINGLE LINE) ---
         const shareSectionHTML = `
-        <div class="share-buttons-container mt-10 mb-6 p-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
-            <h3 class="text-center font-bold text-gray-800 dark:text-white mb-4 text-lg">شارك المعلومة</h3>
-            <div class="flex flex-wrap justify-center gap-3" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${fullUrl}">
-                <a href="#" class="share-btn whatsapp bg-[#25D366] text-white hover:opacity-90" aria-label="Share on WhatsApp">
-                    <i data-lucide="message-circle"></i> <span>WhatsApp</span>
+        <div class="share-buttons-container mt-10 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 text-center">
+            <h3 class="font-bold text-gray-800 dark:text-white mb-4 text-sm">شارك المعلومة</h3>
+            <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${fullUrl}">
+                <a href="#" class="share-btn whatsapp w-10 h-10 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on WhatsApp">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
                 </a>
-                <a href="#" class="share-btn telegram bg-[#229ED9] text-white hover:opacity-90" aria-label="Share on Telegram">
-                    <i data-lucide="send"></i> <span>Telegram</span>
+                <a href="#" class="share-btn telegram w-10 h-10 flex items-center justify-center rounded-full bg-[#229ED9] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on Telegram">
+                    <i data-lucide="send" class="w-5 h-5 ml-0.5"></i>
                 </a>
-                <a href="#" class="share-btn facebook bg-[#1877F2] text-white hover:opacity-90" aria-label="Share on Facebook">
-                    <i data-lucide="facebook"></i> <span>Facebook</span>
+                <a href="#" class="share-btn facebook w-10 h-10 flex items-center justify-center rounded-full bg-[#1877F2] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on Facebook">
+                    <i data-lucide="facebook" class="w-5 h-5"></i>
                 </a>
-                <a href="#" class="share-btn instagram bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white hover:opacity-90" aria-label="Share on Instagram">
-                    <i data-lucide="instagram"></i> <span>Instagram</span>
+                <a href="#" class="share-btn instagram w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on Instagram">
+                    <i data-lucide="instagram" class="w-5 h-5"></i>
                 </a>
             </div>
         </div>
