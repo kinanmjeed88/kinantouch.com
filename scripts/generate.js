@@ -329,10 +329,25 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     }
 
     const headerDiv = $('header > div');
-    const actionsContainer = headerDiv.find('div.flex.items-center.gap-2').last();
+    const actionsContainer = headerDiv.find('div.flex.items-center.gap-2').last(); // Usually contains theme toggle
+    
     if(actionsContainer.length) {
         actionsContainer.addClass('header-actions');
         actionsContainer.find('button').removeClass('ml-auto mr-auto');
+        
+        // Remove existing back button (arrow-right) from header if present
+        $('header a:has(i[data-lucide="arrow-right"])').remove();
+        
+        // Inject Home Button (if not already there)
+        if (actionsContainer.find('#home-btn-header').length === 0) {
+            const homeBtn = `
+            <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1" aria-label="الرئيسية">
+                <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+            </a>
+            `;
+            // Insert at the beginning of actions container
+            actionsContainer.prepend(homeBtn);
+        }
     }
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
@@ -485,7 +500,7 @@ const generateIndividualArticles = () => {
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         
-        // --- FIXED HEADER TAG (COMPACT & SINGLE LINE META) ---
+        // --- FIXED HEADER TAG ---
         const articleHeaderHTML = `
         <header class="mb-8 relative">
             <div class="article-header-card">
@@ -549,9 +564,25 @@ const generateIndividualArticles = () => {
 
         $('article').html($content.html()); 
 
-        // --- INJECT ICON-ONLY SHARE BUTTONS (SINGLE LINE) ---
+        // --- TAGS GENERATION ---
+        const tags = [getCatLabel(post.category)];
+        // Add words from title as tags (simple heuristic)
+        if(post.title) {
+            const words = post.title.split(' ').filter(w => w.length > 3 && !['كيف', 'ماذا', 'لماذا', 'هذا', 'التي', 'الذي'].includes(w));
+            tags.push(...words.slice(0, 4));
+        }
+        const uniqueTags = [...new Set(tags)];
+        const tagsHTML = `
+        <div class="article-tags flex flex-wrap items-center gap-2 mt-8 mb-6 p-4 border-t border-gray-100 dark:border-gray-700">
+            <span class="text-sm font-bold text-gray-500 dark:text-gray-400"><i data-lucide="tag" class="w-4 h-4 inline mr-1"></i> كلمات مفتاحية:</span>
+            ${uniqueTags.map(tag => `<span class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full text-xs font-medium hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-colors">#${tag}</span>`).join('')}
+        </div>
+        `;
+        $('article').append(tagsHTML);
+
+        // --- INJECT ICON-ONLY SHARE BUTTONS ---
         const shareSectionHTML = `
-        <div class="share-buttons-container mt-10 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 text-center">
+        <div class="share-buttons-container mt-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 text-center">
             <h3 class="font-bold text-gray-800 dark:text-white mb-4 text-sm">شارك المعلومة</h3>
             <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${fullUrl}">
                 <a href="#" class="share-btn whatsapp w-10 h-10 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on WhatsApp">
@@ -571,16 +602,25 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(shareSectionHTML);
         
-        const relatedPosts = allPosts.filter(p => p.slug !== post.slug).slice(0, 6);
+        // --- RELATED POSTS (LIST VIEW, 6 POSTS FROM ALL CATEGORIES) ---
+        // Pick 6 random posts excluding current
+        const otherPosts = allPosts.filter(p => p.slug !== post.slug);
+        const relatedPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 6); // Random shuffle
+
         if (relatedPosts.length) {
             let relatedHTML = `
             <section class="related-posts mt-12 border-t border-gray-100 dark:border-gray-700 pt-8">
                 <h3 class="text-lg font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="layers" class="w-5 h-5 text-blue-600"></i> قد يعجبك أيضاً</h3>
-                <div class="grid grid-cols-2 gap-4">`;
+                <div class="flex flex-col gap-4">`;
             relatedPosts.forEach(r => {
-                relatedHTML += `<a href="article-${r.slug}.html" class="block bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                    <img src="${cleanPath(r.image)}" class="w-full h-28 object-cover" loading="lazy" />
-                    <div class="p-3"><h4 class="text-sm font-bold line-clamp-2 text-gray-900 dark:text-white">${r.title}</h4></div>
+                relatedHTML += `
+                <a href="article-${r.slug}.html" class="flex items-center gap-4 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
+                    <img src="${cleanPath(r.image)}" class="w-20 h-14 object-cover rounded-lg shrink-0" loading="lazy" />
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-bold text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 transition-colors leading-snug">${r.title}</h4>
+                        <span class="text-[10px] text-gray-400 mt-1 block">${r.date}</span>
+                    </div>
+                    <div class="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors"><i data-lucide="chevron-left" class="w-4 h-4"></i></div>
                 </a>`;
             });
             relatedHTML += `</div></section>`;

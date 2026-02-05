@@ -13,13 +13,26 @@ let cachedAbout = {};
 // Icon Picker State
 let iconPickerTarget = null;
 const commonIcons = [
-    'star', 'heart', 'globe', 'link', 'home', 'user', 'settings', 'search', 'menu', 'x', 
-    'check', 'alert-circle', 'info', 'mail', 'phone', 'map-pin', 'camera', 'image', 'video', 
-    'music', 'mic', 'headphones', 'play', 'pause', 'download', 'upload', 'share', 'edit', 
-    'trash', 'plus', 'minus', 'chevron-right', 'chevron-left', 'arrow-right', 'arrow-left',
-    'facebook', 'instagram', 'youtube', 'twitter', 'linkedin', 'github', 'send', 'message-circle',
-    'smartphone', 'monitor', 'cpu', 'gamepad-2', 'joystick', 'trophy', 'activity', 'tv',
-    'bot', 'folder', 'folder-plus', 'file-text', 'file', 'scissors', 'wand-2'
+    // Social & Communication
+    'facebook', 'instagram', 'twitter', 'linkedin', 'youtube', 'twitch', 'github', 'gitlab', 'video', 
+    'message-circle', 'message-square', 'send', 'mail', 'phone', 'at-sign', 'hash', 'share-2',
+    
+    // Media & Content
+    'image', 'camera', 'mic', 'headphones', 'play', 'pause', 'music', 'film', 'tv', 'radio',
+    'file', 'file-text', 'folder', 'folder-plus',
+    
+    // UI & Navigation
+    'home', 'user', 'settings', 'menu', 'x', 'search', 'bell', 'star', 'heart', 'thumbs-up', 
+    'check', 'alert-circle', 'info', 'help-circle', 'plus', 'minus', 'trash', 'edit',
+    'chevron-right', 'chevron-left', 'arrow-right', 'arrow-left', 'download', 'upload',
+    
+    // Tech & Devices
+    'smartphone', 'monitor', 'cpu', 'hard-drive', 'wifi', 'bluetooth', 'battery', 'zap',
+    'gamepad-2', 'joystick', 'mouse', 'keyboard', 'printer', 'server', 'database',
+    
+    // Misc
+    'globe', 'map-pin', 'link', 'cloud', 'sun', 'moon', 'shopping-cart', 'credit-card', 
+    'dollar-sign', 'gift', 'award', 'trophy', 'activity', 'calendar', 'clock'
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
