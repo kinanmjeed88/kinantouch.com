@@ -225,16 +225,13 @@ const parseMarkdown = (markdown) => {
     return html;
 };
 
-// Load Posts & Apply Date Correction Logic
+// Load Posts
 const allPosts = [];
 if (fs.existsSync(POSTS_DIR)) {
     fs.readdirSync(POSTS_DIR).forEach(file => {
         if (path.extname(file) === '.json') {
             try {
                 const post = JSON.parse(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
-                
-                // Logic removed as requested
-
                 post.content = parseMarkdown(post.content);
                 post.effectiveDate = post.updated || post.date;
                 allPosts.push(post);
