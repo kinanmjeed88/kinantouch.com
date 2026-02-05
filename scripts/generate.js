@@ -225,13 +225,28 @@ const parseMarkdown = (markdown) => {
     return html;
 };
 
-// Load Posts
+// Load Posts & Apply Date Correction Logic
 const allPosts = [];
 if (fs.existsSync(POSTS_DIR)) {
     fs.readdirSync(POSTS_DIR).forEach(file => {
         if (path.extname(file) === '.json') {
             try {
                 const post = JSON.parse(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
+                
+                // --- DATE CORRECTION LOGIC ---
+                // If date is after May 2026 (Month > 5), reset to 2026-01-01
+                if (post.date) {
+                    const d = new Date(post.date);
+                    if (!isNaN(d.getTime())) {
+                        if (d.getFullYear() === 2026 && d.getMonth() + 1 > 5) {
+                            post.date = "2026-01-01";
+                            // Also update updated property if it exists
+                            if(post.updated) post.updated = "2026-01-01";
+                        }
+                    }
+                }
+                // -----------------------------
+
                 post.content = parseMarkdown(post.content);
                 post.effectiveDate = post.updated || post.date;
                 allPosts.push(post);
@@ -485,7 +500,7 @@ const generateIndividualArticles = () => {
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         
-        // --- FIXED HEADER TAG ---
+        // --- FIXED HEADER TAG & ADD VIEW COUNTER ---
         const articleHeaderHTML = `
         <header class="mb-8 relative">
             <div class="article-header-card">
@@ -501,6 +516,11 @@ const generateIndividualArticles = () => {
                 <div class="flex items-center gap-1.5">
                     <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
                     <span class="font-bold">TechTouch Team</span>
+                </div>
+                <!-- View Counter -->
+                <div class="flex items-center gap-1.5 view-count-wrapper">
+                    <i data-lucide="eye" class="w-4 h-4 text-green-500"></i>
+                    <span class="font-bold view-count-display" data-publish-date="${post.date}">25</span>
                 </div>
             </div>
         </header>
@@ -544,7 +564,33 @@ const generateIndividualArticles = () => {
             if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
         });
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
+        
+        // Remove existing Share Buttons to prevent duplicates if regenerating
+        $('.share-buttons-container').remove();
+
         $('article').html($content.html()); 
+
+        // --- INJECT SHARE BUTTONS ---
+        const shareSectionHTML = `
+        <div class="share-buttons-container mt-10 mb-6 p-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+            <h3 class="text-center font-bold text-gray-800 dark:text-white mb-4 text-lg">شارك المعلومة</h3>
+            <div class="flex flex-wrap justify-center gap-3" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${fullUrl}">
+                <a href="#" class="share-btn whatsapp bg-[#25D366] text-white hover:opacity-90" aria-label="Share on WhatsApp">
+                    <i data-lucide="message-circle"></i> <span>WhatsApp</span>
+                </a>
+                <a href="#" class="share-btn telegram bg-[#229ED9] text-white hover:opacity-90" aria-label="Share on Telegram">
+                    <i data-lucide="send"></i> <span>Telegram</span>
+                </a>
+                <a href="#" class="share-btn facebook bg-[#1877F2] text-white hover:opacity-90" aria-label="Share on Facebook">
+                    <i data-lucide="facebook"></i> <span>Facebook</span>
+                </a>
+                <a href="#" class="share-btn instagram bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white hover:opacity-90" aria-label="Share on Instagram">
+                    <i data-lucide="instagram"></i> <span>Instagram</span>
+                </a>
+            </div>
+        </div>
+        `;
+        $('article').append(shareSectionHTML);
         
         const relatedPosts = allPosts.filter(p => p.slug !== post.slug).slice(0, 6);
         if (relatedPosts.length) {

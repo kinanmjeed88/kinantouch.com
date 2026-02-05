@@ -390,3 +390,32 @@ table { display: table; width: 100%; white-space: nowrap; }
     background-color: #374151;
     color: #6b7280;
 }
+
+/* Share Buttons */
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s, opacity 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.share-btn:hover {
+    transform: translateY(-2px);
+}
+.share-btn i, .share-btn svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+@media (max-width: 480px) {
+    .share-btn {
+        flex: 1 1 40%;
+        justify-content: center;
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+}

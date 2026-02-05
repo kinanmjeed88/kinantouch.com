@@ -235,4 +235,63 @@ document.addEventListener('DOMContentLoaded', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
+
+    // 9. Fake View Counter Logic
+    const viewCounters = document.querySelectorAll('.view-count-display');
+    if (viewCounters.length > 0) {
+        viewCounters.forEach(counter => {
+            const publishDateStr = counter.getAttribute('data-publish-date');
+            if (publishDateStr) {
+                const pubDate = new Date(publishDateStr);
+                const today = new Date();
+                
+                // Difference in milliseconds
+                const diffTime = Math.abs(today - pubDate);
+                // Convert to days
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                
+                // Logic: 25 initial + 10 views per day
+                let views = 25;
+                if (diffDays > 0) {
+                    views += (diffDays * 10);
+                }
+                
+                counter.innerText = views.toLocaleString();
+            }
+        });
+    }
+
+    // 10. Share Buttons Dynamic Links
+    const shareContainer = document.getElementById('dynamic-share-buttons');
+    if (shareContainer) {
+        const pageTitle = encodeURIComponent(document.title);
+        const pageUrl = encodeURIComponent(window.location.href);
+        const fullText = `${pageTitle}%0A${pageUrl}`;
+
+        // WhatsApp
+        const waBtn = shareContainer.querySelector('.whatsapp');
+        if(waBtn) waBtn.href = `https://api.whatsapp.com/send?text=${fullText}`;
+
+        // Telegram
+        const tgBtn = shareContainer.querySelector('.telegram');
+        if(tgBtn) tgBtn.href = `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+
+        // Facebook
+        const fbBtn = shareContainer.querySelector('.facebook');
+        if(fbBtn) fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+
+        // Instagram (Fallback as it doesn't support direct URL sharing)
+        // We will link to the app, but user has to paste manually essentially.
+        // However, standard "share" often implies copying or generic intent.
+        // Since user asked to "open app", we try generic link or web intent if mobile.
+        const instaBtn = shareContainer.querySelector('.instagram');
+        if(instaBtn) {
+            // Instagram doesn't have a simple web sharer URL for posts.
+            // Best we can do is open Instagram.
+            instaBtn.href = "https://www.instagram.com/";
+            instaBtn.addEventListener('click', (e) => {
+                // On mobile this might trigger app if installed
+            });
+        }
+    }
 });
