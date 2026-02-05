@@ -341,11 +341,9 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     const headerDiv = $('header > div');
     
     // AGGRESSIVE CLEANUP: Remove any existing buttons from the header (even if outside actions container)
-    // This fixes the duplicate buttons issue in tools.html and about.html
     headerDiv.find('#theme-toggle').remove();
     headerDiv.find('#home-btn-header').remove();
     headerDiv.find('#search-trigger').remove();
-    // Also remove any remaining rogue buttons (like the old arrow-right)
     headerDiv.find('a:has(i[data-lucide="arrow-right"])').remove();
     headerDiv.find('button:has(i[data-lucide="arrow-right"])').remove();
 
@@ -365,28 +363,34 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
     }
 
-    // Inject Buttons in the specific RTL visual order requested:
-    // Left Side of Screen (End of Header): [Theme] [Search] [Home]
-    // In RTL Flexbox (row): Item 1 is Rightmost, Item 3 is Leftmost.
-    // So to appear [Theme | Search | Home] on the Left:
-    // Home must be Order 1 (Rightmost of group)
-    // Search must be Order 2 (Middle) - Injected by JS
-    // Theme must be Order 3 (Leftmost of group)
+    // IMPORTANT: Clear container before injecting
+    actionsContainer.empty();
 
-    const homeBtn = `
-    <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
-        <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
-    </a>`;
+    // Condition for adding buttons back
+    // DO NOT ADD buttons to articles (files starting with 'article-')
+    // Buttons: Home, Search (injected by JS), Theme
+    const isArticle = fileName.startsWith('article-');
 
-    const themeBtn = `
-    <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors order-3">
-        <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
-        <i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
-    </button>`;
+    if (!isArticle) {
+        // Inject Buttons in the specific RTL visual order requested for main pages:
+        // Left Side of Screen (End of Header): [Theme] [Search] [Home]
+        // Search is injected via JS into Order 2.
+        
+        const homeBtn = `
+        <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
+            <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+        </a>`;
 
-    // We append Home and Theme. Search is injected via JS into Order 2.
-    actionsContainer.append(homeBtn);
-    actionsContainer.append(themeBtn);
+        const themeBtn = `
+        <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors order-3">
+            <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
+            <i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
+        </button>`;
+
+        actionsContainer.append(homeBtn);
+        actionsContainer.append(themeBtn);
+    }
+    // Else: If isArticle, the container remains empty (no Home, no Theme, and JS will skip Search).
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
     const dynamicStyle = `
