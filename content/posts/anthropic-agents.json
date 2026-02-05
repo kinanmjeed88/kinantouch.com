@@ -1,0 +1,11 @@
+{
+  "title": "وكلاء الذكاء الاصطناعي المستقلون: رؤية Anthropic للمستقبل",
+  "slug": "anthropic-agents",
+  "description": "الوكيل الذكي لم يعد مجرد دردشة، بل نظام ينفذ مهام معقدة تلقائياً. كيف تخطط Anthropic لمستقبل العمل الهجين بين البشر والآلة؟",
+  "category": "articles",
+  "date": "2026-01-01",
+  "updated": "2026-02-05",
+  "image": "assets/images/1770325099506_da3e13665fafd3b7cf0d52e85fa75b9d_(1).webp",
+  "content": "<h3 class=\"text-2xl font-bold text-purple-600 dark:text-purple-400 mb-4\">ما وراء الشات بوت: عصر الوكلاء (Agents)</h3><p>تنتقل شركة Anthropic ومنافسوها من مجرد بناء نماذج تجيب على الأسئلة إلى بناء \"وكلاء مستقلين\". الوكيل هو نظام ذكي لا يكتفي بالكلام، بل يمتلك القدرة على <strong>التخطيط والتنفيذ</strong>. عندما تطلب منه مهمة مثل \"حجز تذكرة سفر وارسالها للمدير\"، يقوم بتقسيمها إلى خطوات فرعية وينفذها واحدة تلو الأخرى.</p><h4 class=\"font-bold text-lg mb-2\">قدرات تقنية مذهلة</h4><p>يتميز هؤلاء الوكلاء بالقدرة على التكامل مع أدوات خارجية:</p><ul class=\"list-disc list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700\"><li><strong>استخدام المتصفح:</strong> البحث عن معلومات حية ومقارنة الأسعار.</li><li><strong>كتابة وتنفيذ الكود:</strong> لحل مشاكل رياضية أو تحليل بيانات معقدة فورياً.</li><li><strong>الذاكرة طويلة المدى:</strong> تذكر تفضيلات المستخدم وسياق العمل عبر جلسات متعددة.</li></ul><h4 class=\"font-bold text-lg mb-2\">الأمان أولاً</h4><p>مع زيادة استقلالية الذكاء الاصطناعي، تزداد المخاطر. تضع Anthropic الأمان (Constitutional AI) كأولوية قصوى لمنع الوكلاء من تنفيذ مهام ضارة أو غير أخلاقية، خاصة في بيئات الشركات الحساسة.</p><p>المستقبل يتجه نحو فرق عمل هجينة، حيث يعمل البشر والوكلاء جنباً إلى جنب، ليتولى الوكيل المهام الروتينية والمتكررة، بينما يركز البشر على الإبداع واتخاذ القرارات الاستراتيجية.</p><div class=\"my-8 w-full flex justify-center px-1 sm:px-0\"><a href=\"https://www.anthropic.com\" target=\"_blank\" class=\"btn-wrapped-link w-full sm:w-auto sm:min-w-[280px] max-w-md mx-auto\"><i data-lucide=\"external-link\"></i><span class=\"break-words\">موقع Anthropic الرسمي</span></a></div>",
+  "youtubeVideoId": ""
+}
