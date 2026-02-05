@@ -13,26 +13,28 @@ let cachedAbout = {};
 // Icon Picker State
 let iconPickerTarget = null;
 const commonIcons = [
-    // Social & Communication
-    'facebook', 'instagram', 'twitter', 'linkedin', 'youtube', 'twitch', 'github', 'gitlab', 'video', 
-    'message-circle', 'message-square', 'send', 'mail', 'phone', 'at-sign', 'hash', 'share-2',
+    // Social Media & Brands (Requested)
+    'facebook', 'instagram', 'twitter', 'youtube', 'linkedin', 'twitch', 'message-circle', 'send', 'message-square',
+    'github', 'gitlab', 'slack', 'dribbble', 'figma', 'framer', 'chrome', 'codepen', 'codesandbox', 'trello',
+    'pocket', 'rss', 'globe', 'link', 'share-2', 'at-sign', 'hash', 'mail', 'phone', 'video', 'ghost', 'camera', 'music',
     
-    // Media & Content
-    'image', 'camera', 'mic', 'headphones', 'play', 'pause', 'music', 'film', 'tv', 'radio',
-    'file', 'file-text', 'folder', 'folder-plus',
-    
-    // UI & Navigation
-    'home', 'user', 'settings', 'menu', 'x', 'search', 'bell', 'star', 'heart', 'thumbs-up', 
-    'check', 'alert-circle', 'info', 'help-circle', 'plus', 'minus', 'trash', 'edit',
-    'chevron-right', 'chevron-left', 'arrow-right', 'arrow-left', 'download', 'upload',
+    // UI & Navigation (General)
+    'home', 'user', 'users', 'settings', 'menu', 'x', 'search', 'bell', 'star', 'heart', 'thumbs-up', 
+    'check', 'check-circle', 'alert-circle', 'alert-triangle', 'info', 'help-circle', 'plus', 'minus', 
+    'trash', 'trash-2', 'edit', 'edit-2', 'edit-3', 'copy', 'external-link', 'more-horizontal', 'more-vertical',
+    'chevron-right', 'chevron-left', 'chevron-up', 'chevron-down', 'arrow-right', 'arrow-left', 'arrow-up', 'arrow-down',
+    'download', 'upload', 'refresh-cw', 'rotate-cw', 'maximize', 'minimize', 'grid', 'list', 'layout', 'layers',
     
     // Tech & Devices
-    'smartphone', 'monitor', 'cpu', 'hard-drive', 'wifi', 'bluetooth', 'battery', 'zap',
-    'gamepad-2', 'joystick', 'mouse', 'keyboard', 'printer', 'server', 'database',
+    'smartphone', 'monitor', 'laptop', 'tablet', 'watch', 'cpu', 'hard-drive', 'wifi', 'bluetooth', 'battery', 'battery-charging', 'zap',
+    'gamepad', 'gamepad-2', 'joystick', 'mouse', 'keyboard', 'printer', 'server', 'database', 'code', 'terminal', 'command',
     
-    // Misc
-    'globe', 'map-pin', 'link', 'cloud', 'sun', 'moon', 'shopping-cart', 'credit-card', 
-    'dollar-sign', 'gift', 'award', 'trophy', 'activity', 'calendar', 'clock'
+    // Misc & Objects
+    'sun', 'moon', 'cloud', 'cloud-rain', 'umbrella', 'shopping-cart', 'shopping-bag', 'credit-card', 
+    'dollar-sign', 'gift', 'award', 'trophy', 'medal', 'activity', 'calendar', 'clock', 'watch', 'timer',
+    'map', 'map-pin', 'navigation', 'compass', 'flag', 'bookmark', 'book', 'book-open', 'file', 'file-text', 'folder', 'folder-plus',
+    'image', 'film', 'tv', 'radio', 'mic', 'headphones', 'volume-2', 'play', 'pause', 'play-circle', 'stop-circle',
+    'shield', 'lock', 'unlock', 'key', 'eye', 'eye-off', 'briefcase', 'coffee', 'archive', 'box', 'package'
 ];
 
 document.addEventListener('DOMContentLoaded', () => {

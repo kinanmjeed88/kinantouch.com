@@ -30,12 +30,14 @@ class TechTouchSearch {
     }
 
     injectSearchButton() {
-        // Ensure Home button exists (injected by generate.js)
+        // Find existing buttons (Home is order-3, Theme is order-1)
         const homeBtn = document.getElementById('home-btn-header');
+        const themeBtn = document.getElementById('theme-toggle');
         
         if (!document.getElementById('search-trigger')) {
             const searchBtn = document.createElement('button');
             searchBtn.id = 'search-trigger';
+            // Order-2 to be placed between Theme (1) and Home (3) visually on the left side
             searchBtn.className = 'p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-2';
             searchBtn.setAttribute('aria-label', 'بحث');
             // SVG Icon
@@ -46,13 +48,15 @@ class TechTouchSearch {
                 </svg>
             `;
             
-            // Insert AFTER Home Button (Home is order-1)
-            if (homeBtn && homeBtn.parentNode) {
-                homeBtn.parentNode.insertBefore(searchBtn, homeBtn.nextSibling);
-            } else {
-                // Fallback: Prepend to actions container
-                const actionsContainer = document.querySelector('.header-actions');
-                if(actionsContainer) actionsContainer.prepend(searchBtn);
+            // Insert it into the header actions container
+            // Since we use order-{n} classes, append/prepend doesn't matter for visual, 
+            // but appending is safer to ensure it's in the same container.
+            const actionsContainer = document.querySelector('.header-actions');
+            if(actionsContainer) {
+                actionsContainer.appendChild(searchBtn);
+            } else if (themeBtn && themeBtn.parentNode) {
+                // Fallback if class not found
+                themeBtn.parentNode.appendChild(searchBtn);
             }
         }
     }

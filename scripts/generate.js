@@ -239,9 +239,7 @@ const skippedFiles = [
 if (fs.existsSync(POSTS_DIR)) {
     fs.readdirSync(POSTS_DIR).forEach(file => {
         if (path.extname(file) === '.json') {
-            // Skip the duplicate files to effectively delete them from the site build
             if (skippedFiles.includes(file)) return;
-
             try {
                 const post = JSON.parse(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
                 post.content = parseMarkdown(post.content);
@@ -289,7 +287,6 @@ const createCardHTML = (post) => {
 
 // --- GLOBAL SCRIPT INJECTOR ---
 const updateGlobalElements = (htmlContent, fileName = '') => {
-    // Prevent Cheerio from stripping the DOCTYPE
     const $ = cheerio.load(htmlContent, { decodeEntities: false });
 
     // 1. Clean old scripts
@@ -347,20 +344,26 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         actionsContainer.addClass('header-actions');
         actionsContainer.find('button').removeClass('ml-auto mr-auto');
         
+        // Ensure Theme Toggle has correct order class
+        const themeBtn = actionsContainer.find('#theme-toggle');
+        if(themeBtn.length) {
+            themeBtn.addClass('order-1');
+        }
+
         // Remove existing back button (arrow-right) from header if present
         $('header a:has(i[data-lucide="arrow-right"])').remove();
         
         // Remove old Home button from previous injections
         actionsContainer.find('#home-btn-header').remove();
 
-        // Inject Home Button (FIRST in the container)
-        // Order: Home (inserted here) -> Search (inserted by client JS after Home) -> Theme (already exists at end)
+        // Inject Home Button (Order 3 - Inner most)
+        // Search Button (Order 2) is injected by search-engine.js
         const homeBtn = `
-        <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
+        <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-3" aria-label="الرئيسية">
             <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
         </a>
         `;
-        actionsContainer.prepend(homeBtn);
+        actionsContainer.append(homeBtn);
     }
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
@@ -647,20 +650,28 @@ const generateIndividualArticles = () => {
             });
             relatedHTML += `</div>`;
 
-            // --- 2. AD BANNER (Between Grid and List) ---
+            // --- 2. AD BANNER (Between Grid and List) - LINKED & RESPONSIVE ---
             if (aboutData.adBanner && aboutData.adBanner.enabled !== false) {
                 const ad = aboutData.adBanner;
-                const content = ad.type === 'image' 
-                    ? `<img src="${cleanPath(ad.imageUrl)}" class="h-full w-auto object-contain mx-auto" alt="Advertisement">`
-                    : `<span class="font-bold text-sm">${ad.text}</span>`;
+                const adUrl = ad.url || '#';
                 
-                const adStyle = `background-color: ${ad.bgColor || 'rgba(37, 99, 235, 0.1)'}; color: ${ad.textColor || '#2563eb'};`;
+                // Responsive content logic
+                let content = '';
+                if (ad.type === 'image') {
+                    content = `<a href="${adUrl}" target="_blank" class="w-full h-full block relative overflow-hidden group">
+                        <img src="${cleanPath(ad.imageUrl)}" class="w-full h-full object-cover transition-transform group-hover:scale-105" alt="Advertisement">
+                    </a>`;
+                } else {
+                    const adStyle = `background-color: ${ad.bgColor || 'rgba(37, 99, 235, 0.1)'}; color: ${ad.textColor || '#2563eb'};`;
+                    content = `<a href="${adUrl}" target="_blank" class="w-full h-full flex items-center justify-center text-center no-underline hover:underline decoration-current p-4" style="${adStyle}">
+                        <span class="font-bold text-sm md:text-base">${ad.text}</span>
+                    </a>`;
+                }
                 
+                // Container with responsive height (min-h for small screens, expandable for large)
                 relatedHTML += `
-                <div id="custom-ad-banner-related" class="w-full h-[40px] flex items-center justify-center backdrop-blur-sm border border-gray-100 dark:border-gray-800 mb-6 rounded-lg overflow-hidden transition-transform hover:scale-[1.01]" style="${adStyle}">
-                    <a href="${ad.url || '#'}" target="_blank" class="w-full h-full flex items-center justify-center text-center no-underline hover:underline decoration-current">
-                        ${content}
-                    </a>
+                <div id="custom-ad-banner-related" class="w-full min-h-[60px] md:min-h-[100px] h-auto flex items-center justify-center backdrop-blur-sm border border-gray-100 dark:border-gray-800 mb-6 rounded-xl overflow-hidden transition-all shadow-sm">
+                    ${content}
                 </div>
                 `;
             }
