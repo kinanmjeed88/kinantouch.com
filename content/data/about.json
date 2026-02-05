@@ -20,7 +20,7 @@
     }
   },
   "globalFonts": {
-    "nav": 15,
+    "nav": 11,
     "content": 14,
     "titles": 20,
     "mainTitles": 26
@@ -33,7 +33,7 @@
     "imageUrl": "",
     "fontSize": 14,
     "animated": false,
-    "enabled": true
+    "enabled": false
   },
   "social": {
     "facebook": "https://www.facebook.com/share/1EsapVHA6W/",
