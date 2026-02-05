@@ -339,6 +339,16 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     // --- UNIFIED HEADER BUTTONS LOGIC ---
     const headerDiv = $('header > div');
+    
+    // AGGRESSIVE CLEANUP: Remove any existing buttons from the header (even if outside actions container)
+    // This fixes the duplicate buttons issue in tools.html and about.html
+    headerDiv.find('#theme-toggle').remove();
+    headerDiv.find('#home-btn-header').remove();
+    headerDiv.find('#search-trigger').remove();
+    // Also remove any remaining rogue buttons (like the old arrow-right)
+    headerDiv.find('a:has(i[data-lucide="arrow-right"])').remove();
+    headerDiv.find('button:has(i[data-lucide="arrow-right"])').remove();
+
     // Find the container that likely holds the theme toggle (or create if missing)
     let actionsContainer = headerDiv.find('.header-actions');
     
@@ -355,20 +365,12 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
     }
 
-    // Clean up existing buttons to re-inject in correct order
-    actionsContainer.find('#theme-toggle').remove();
-    actionsContainer.find('#home-btn-header').remove();
-    actionsContainer.find('#search-trigger').remove(); // Will be injected by JS, but clean static if any
-    
-    // Also clean any rogue back buttons in header (users want Home button everywhere)
-    $('header a:has(i[data-lucide="arrow-right"])').remove();
-
     // Inject Buttons in the specific RTL visual order requested:
     // Left Side of Screen (End of Header): [Theme] [Search] [Home]
     // In RTL Flexbox (row): Item 1 is Rightmost, Item 3 is Leftmost.
     // So to appear [Theme | Search | Home] on the Left:
     // Home must be Order 1 (Rightmost of group)
-    // Search must be Order 2 (Middle)
+    // Search must be Order 2 (Middle) - Injected by JS
     // Theme must be Order 3 (Leftmost of group)
 
     const homeBtn = `
