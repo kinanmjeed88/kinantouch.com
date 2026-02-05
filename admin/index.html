@@ -224,6 +224,45 @@
                     </div>
                 </div>
 
+                <!-- NEW: Ad Banner Settings -->
+                <div class="mb-8 border-b pb-8 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <h3 class="font-bold text-lg mb-4 text-blue-800">شريط الإعلان (أعلن هنا)</h3>
+                    
+                    <div class="bg-white p-3 rounded-lg border border-blue-100 flex items-center justify-between mb-4">
+                        <label class="label m-0 text-blue-800">تفعيل الشريط</label>
+                        <div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" id="adBannerEnabled" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300" onchange="toggleAdBannerOpacity()"/>
+                            <label for="adBannerEnabled" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                    </div>
+
+                    <div id="adBannerInputs" class="grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity duration-300">
+                        <div class="md:col-span-2 flex gap-4 items-center mb-2">
+                            <span class="label mb-0">نوع المحتوى:</span>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="adType" value="text" checked onchange="toggleAdContent()" class="accent-blue-600"> <span>نص</span></label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="adType" value="image" onchange="toggleAdContent()" class="accent-blue-600"> <span>صورة</span></label>
+                        </div>
+
+                        <!-- Text Mode -->
+                        <div id="adTextGroup" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="label">نص الإعلان</label><input type="text" id="adText" class="input-field" placeholder="أعلن هنا"></div>
+                            <div><label class="label">الرابط</label><input type="text" id="adUrl" class="input-field dir-ltr" placeholder="#"></div>
+                            <div><label class="label">لون النص</label><input type="text" id="adTextColor" class="input-field dir-ltr" placeholder="#2563eb"></div>
+                            <div><label class="label">لون الخلفية (RGBA)</label><input type="text" id="adBgColor" class="input-field dir-ltr" placeholder="rgba(37, 99, 235, 0.1)"></div>
+                        </div>
+
+                        <!-- Image Mode -->
+                        <div id="adImageGroup" class="md:col-span-2 hidden">
+                            <label class="label">رابط الصورة (Banner)</label>
+                            <div class="flex gap-2">
+                                <input type="file" id="fileAdImg" class="hidden" onchange="handleFileSelect(this, 'adImageUrl')">
+                                <button onclick="document.getElementById('fileAdImg').click()" class="btn-secondary whitespace-nowrap"><i data-lucide="image"></i> رفع صورة</button>
+                                <input type="text" id="adImageUrl" class="input-field dir-ltr" placeholder="رابط الصورة...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex flex-col md:flex-row items-center gap-6 mb-8 border-b pb-8">
                     <div class="relative">
                         <img id="previewProfile" src="" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100 bg-gray-100">

@@ -30,15 +30,16 @@ class TechTouchSearch {
     }
 
     injectSearchButton() {
-        // البحث عن منطقة الأزرار في الهيدر
+        // Ensure Home button exists (injected by generate.js)
+        const homeBtn = document.getElementById('home-btn-header');
         const themeBtn = document.getElementById('theme-toggle');
-        // التأكد من عدم وجود الزر مسبقاً
-        if (themeBtn && themeBtn.parentElement && !document.getElementById('search-trigger')) {
+        
+        if (!document.getElementById('search-trigger')) {
             const searchBtn = document.createElement('button');
             searchBtn.id = 'search-trigger';
-            searchBtn.className = 'p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-2';
+            searchBtn.className = 'p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1';
             searchBtn.setAttribute('aria-label', 'بحث');
-            // استخدام SVG مباشر لضمان الظهور
+            // SVG Icon
             searchBtn.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-gray-600 dark:text-gray-300">
                     <circle cx="11" cy="11" r="8"></circle>
@@ -46,13 +47,17 @@ class TechTouchSearch {
                 </svg>
             `;
             
-            // إدراج الزر قبل زر تغيير الثيم
-            themeBtn.parentElement.insertBefore(searchBtn, themeBtn);
+            // Insert AFTER Home Button if possible, otherwise before Theme
+            if (homeBtn && homeBtn.parentNode) {
+                homeBtn.parentNode.insertBefore(searchBtn, homeBtn.nextSibling);
+            } else if (themeBtn && themeBtn.parentElement) {
+                themeBtn.parentElement.insertBefore(searchBtn, themeBtn);
+            }
         }
     }
 
     injectSearchModal() {
-        // التحقق من عدم وجود المودال مسبقاً
+        // Check if modal exists
         if (document.getElementById('search-modal')) return;
 
         const modalHTML = `

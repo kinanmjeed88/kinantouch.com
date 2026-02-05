@@ -337,29 +337,27 @@ window.updateChannel = (index, field, value) => { cachedChannels[index][field] =
 window.removeChannel = (index) => { if(!confirm('حذف؟')) return; cachedChannels.splice(index, 1); renderChannels(); };
 window.saveChannels = async () => { const btn = document.getElementById('btnSaveChannels'); btn.innerText = 'جاري الحفظ...'; try { const dataToSave = cachedChannels.filter(x => x); await api.put('content/data/channels.json', JSON.stringify(dataToSave, null, 2), 'Update Channels', cachedChannels.sha); showToast('تم تحديث القنوات'); const file = await api.get('content/data/channels.json'); cachedChannels.sha = file.sha; } catch(e) { alert(e.message); } btn.innerText = 'حفظ التغييرات على القنوات'; };
 
-// New Function to Toggle Visual State
+// --- NEW FUNCTIONS FOR AD BANNER ---
 window.toggleTickerOpacity = () => {
     const enabled = document.getElementById('tickerEnabled').checked;
     const container = document.getElementById('tickerInputsContainer');
-    if (enabled) {
-        container.classList.remove('opacity-disabled');
-    } else {
-        container.classList.add('opacity-disabled');
-    }
+    if (enabled) { container.classList.remove('opacity-disabled'); } else { container.classList.add('opacity-disabled'); }
 };
-
 window.toggleTickerContent = () => {
     const type = document.querySelector('input[name="tickerType"]:checked')?.value || 'text';
-    const textGroup = document.getElementById('tickerTextGroup');
-    const imageGroup = document.getElementById('tickerImageGroup');
-    
-    if (type === 'text') {
-        textGroup.classList.remove('hidden');
-        imageGroup.classList.add('hidden');
-    } else {
-        textGroup.classList.add('hidden');
-        imageGroup.classList.remove('hidden');
-    }
+    const textGroup = document.getElementById('tickerTextGroup'); const imageGroup = document.getElementById('tickerImageGroup');
+    if (type === 'text') { textGroup.classList.remove('hidden'); imageGroup.classList.add('hidden'); } else { textGroup.classList.add('hidden'); imageGroup.classList.remove('hidden'); }
+};
+
+window.toggleAdBannerOpacity = () => {
+    const enabled = document.getElementById('adBannerEnabled').checked;
+    const container = document.getElementById('adBannerInputs');
+    if (enabled) { container.classList.remove('opacity-disabled'); } else { container.classList.add('opacity-disabled'); }
+};
+window.toggleAdContent = () => {
+    const type = document.querySelector('input[name="adType"]:checked')?.value || 'text';
+    const textGroup = document.getElementById('adTextGroup'); const imageGroup = document.getElementById('adImageGroup');
+    if (type === 'text') { textGroup.classList.remove('hidden'); imageGroup.classList.add('hidden'); } else { textGroup.classList.add('hidden'); imageGroup.classList.remove('hidden'); }
 };
 
 async function loadSettings() {
@@ -411,13 +409,29 @@ async function loadSettings() {
             const isEnabled = cachedAbout.ticker.enabled !== false; 
             if(enabledCheck) enabledCheck.checked = isEnabled;
             
-            // Set Content Type
             const tickerType = cachedAbout.ticker.type || 'text';
             const typeRb = document.querySelector(`input[name="tickerType"][value="${tickerType}"]`);
             if(typeRb) typeRb.checked = true;
 
-            toggleTickerOpacity(); 
-            toggleTickerContent();
+            toggleTickerOpacity(); toggleTickerContent();
+        }
+
+        // --- Load Ad Banner Settings ---
+        if (cachedAbout.adBanner) {
+            const ad = cachedAbout.adBanner;
+            const adCheck = document.getElementById('adBannerEnabled');
+            if(adCheck) adCheck.checked = ad.enabled !== false;
+            
+            const adTypeRb = document.querySelector(`input[name="adType"][value="${ad.type || 'text'}"]`);
+            if(adTypeRb) adTypeRb.checked = true;
+
+            setVal('adText', ad.text);
+            setVal('adUrl', ad.url);
+            setVal('adTextColor', ad.textColor);
+            setVal('adBgColor', ad.bgColor);
+            setVal('adImageUrl', ad.imageUrl);
+
+            toggleAdBannerOpacity(); toggleAdContent();
         }
 
         setVal('valBotInfo', cachedAbout.botInfo || "");
@@ -476,6 +490,7 @@ window.saveSettingsData = async () => {
         const coverType = document.querySelector('input[name="coverType"]:checked').value;
         const logoType = document.querySelector('input[name="logoType"]:checked').value;
         const tickerType = document.querySelector('input[name="tickerType"]:checked').value;
+        const adType = document.querySelector('input[name="adType"]:checked').value;
         const getIconData = (key) => { const el = document.getElementById(`btnIcon_${key}`); return el ? JSON.parse(el.dataset.iconInfo || '{}') : {}; };
         
         const newSettings = {
@@ -502,6 +517,15 @@ window.saveSettingsData = async () => {
                 fontSize: parseInt(document.getElementById('tickerSize').value) || 14, 
                 animated: document.getElementById('tickerAnimated').checked,
                 enabled: document.getElementById('tickerEnabled').checked
+            },
+            adBanner: {
+                enabled: document.getElementById('adBannerEnabled').checked,
+                type: adType,
+                text: document.getElementById('adText').value,
+                url: document.getElementById('adUrl').value,
+                textColor: document.getElementById('adTextColor').value,
+                bgColor: document.getElementById('adBgColor').value,
+                imageUrl: document.getElementById('adImageUrl').value
             },
             social: { facebook: document.getElementById('socFb').value, instagram: document.getElementById('socInsta').value, tiktok: document.getElementById('socTikTok').value, youtube: document.getElementById('socYt').value, telegram: document.getElementById('socTg').value },
             socialIcons: { facebook: getIconData('facebook'), instagram: getIconData('instagram'), tiktok: getIconData('tiktok'), youtube: getIconData('youtube'), telegram: getIconData('telegram') }

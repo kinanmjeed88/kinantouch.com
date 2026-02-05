@@ -102,7 +102,8 @@ let aboutData = {
     globalFonts: { nav: 12, content: 13, titles: 14, mainTitles: 15 },
     social: {},
     socialIcons: {},
-    ticker: { enabled: true, text: "Welcome", label: "New", url: "#" }
+    ticker: { enabled: true, text: "Welcome", label: "New", url: "#" },
+    adBanner: { enabled: false, type: "text", text: "أعلن هنا", url: "#", textColor: "#2563eb", bgColor: "rgba(37, 99, 235, 0.1)" }
 };
 let channelsData = [];
 
@@ -338,14 +339,14 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         // Remove existing back button (arrow-right) from header if present
         $('header a:has(i[data-lucide="arrow-right"])').remove();
         
-        // Inject Home Button (if not already there)
+        // Inject Home Button (FIRST in the container) if not already there
         if (actionsContainer.find('#home-btn-header').length === 0) {
             const homeBtn = `
             <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1" aria-label="الرئيسية">
                 <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
             </a>
             `;
-            // Insert at the beginning of actions container
+            // Insert at the VERY BEGINNING of actions container
             actionsContainer.prepend(homeBtn);
         }
     }
@@ -500,7 +501,7 @@ const generateIndividualArticles = () => {
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         
-        // --- FIXED HEADER TAG ---
+        // --- FIXED HEADER TAG (COMPACT & SINGLE LINE META) ---
         const articleHeaderHTML = `
         <header class="mb-8 relative">
             <div class="article-header-card">
@@ -525,6 +526,32 @@ const generateIndividualArticles = () => {
             existingHeader.replaceWith(articleHeaderHTML);
         } else {
             $('main').prepend(articleHeaderHTML);
+        }
+
+        // --- AD BANNER INJECTION (BELOW HEADER) ---
+        $('#custom-ad-banner').remove();
+        if (aboutData.adBanner && aboutData.adBanner.enabled !== false) {
+            const ad = aboutData.adBanner;
+            const content = ad.type === 'image' 
+                ? `<img src="${cleanPath(ad.imageUrl)}" class="h-full w-auto object-contain mx-auto" alt="Advertisement">`
+                : `<span class="font-bold text-sm">${ad.text}</span>`;
+            
+            const adStyle = `background-color: ${ad.bgColor || 'rgba(37, 99, 235, 0.1)'}; color: ${ad.textColor || '#2563eb'};`;
+            
+            const adHTML = `
+            <div id="custom-ad-banner" class="w-full h-[40px] flex items-center justify-center backdrop-blur-sm border-b border-gray-100 dark:border-gray-800 mb-6 rounded-lg overflow-hidden transition-transform hover:scale-[1.01]" style="${adStyle}">
+                <a href="${ad.url || '#'}" target="_blank" class="w-full h-full flex items-center justify-center text-center no-underline hover:underline decoration-current">
+                    ${content}
+                </a>
+            </div>
+            `;
+            // Insert inside main, before the adaptive image container or header
+            const mainHeader = $('main header').first();
+            if(mainHeader.length) {
+                mainHeader.after(adHTML);
+            } else {
+                $('main').prepend(adHTML);
+            }
         }
 
         let breadcrumbLabel = 'اخبار';
@@ -566,7 +593,6 @@ const generateIndividualArticles = () => {
 
         // --- TAGS GENERATION ---
         const tags = [getCatLabel(post.category)];
-        // Add words from title as tags (simple heuristic)
         if(post.title) {
             const words = post.title.split(' ').filter(w => w.length > 3 && !['كيف', 'ماذا', 'لماذا', 'هذا', 'التي', 'الذي'].includes(w));
             tags.push(...words.slice(0, 4));
@@ -602,25 +628,22 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(shareSectionHTML);
         
-        // --- RELATED POSTS (LIST VIEW, 6 POSTS FROM ALL CATEGORIES) ---
-        // Pick 6 random posts excluding current
+        // --- RELATED POSTS (GRID LAYOUT 2 COLS) ---
         const otherPosts = allPosts.filter(p => p.slug !== post.slug);
-        const relatedPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 6); // Random shuffle
+        const relatedPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 6);
 
         if (relatedPosts.length) {
             let relatedHTML = `
             <section class="related-posts mt-12 border-t border-gray-100 dark:border-gray-700 pt-8">
                 <h3 class="text-lg font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="layers" class="w-5 h-5 text-blue-600"></i> قد يعجبك أيضاً</h3>
-                <div class="flex flex-col gap-4">`;
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">`;
             relatedPosts.forEach(r => {
                 relatedHTML += `
-                <a href="article-${r.slug}.html" class="flex items-center gap-4 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
+                <a href="article-${r.slug}.html" class="flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group h-full">
                     <img src="${cleanPath(r.image)}" class="w-20 h-14 object-cover rounded-lg shrink-0" loading="lazy" />
                     <div class="flex-1 min-w-0">
-                        <h4 class="text-sm font-bold text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 transition-colors leading-snug">${r.title}</h4>
-                        <span class="text-[10px] text-gray-400 mt-1 block">${r.date}</span>
+                        <h4 class="text-xs font-bold text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 transition-colors leading-snug">${r.title}</h4>
                     </div>
-                    <div class="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors"><i data-lucide="chevron-left" class="w-4 h-4"></i></div>
                 </a>`;
             });
             relatedHTML += `</div></section>`;
