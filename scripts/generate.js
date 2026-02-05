@@ -226,11 +226,22 @@ const parseMarkdown = (markdown) => {
     return html;
 };
 
-// Load Posts
+// Load Posts & SKIP Duplicates
 const allPosts = [];
+const skippedFiles = [
+    'future-ai-2026.json',
+    'ai-trend-09.json', // ai-as-business-partner
+    'ai-trend-15.json', // ai-news-labeling-debate
+    'ai-trend-16.json', // ai-investment-opportunities
+    'ai-trend-03.json'  // ai-stock-market-impact
+];
+
 if (fs.existsSync(POSTS_DIR)) {
     fs.readdirSync(POSTS_DIR).forEach(file => {
         if (path.extname(file) === '.json') {
+            // Skip the duplicate files to effectively delete them from the site build
+            if (skippedFiles.includes(file)) return;
+
             try {
                 const post = JSON.parse(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
                 post.content = parseMarkdown(post.content);
@@ -343,6 +354,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         actionsContainer.find('#home-btn-header').remove();
 
         // Inject Home Button (FIRST in the container)
+        // Order: Home (inserted here) -> Search (inserted by client JS after Home) -> Theme (already exists at end)
         const homeBtn = `
         <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
             <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
@@ -528,31 +540,8 @@ const generateIndividualArticles = () => {
             $('main').prepend(articleHeaderHTML);
         }
 
-        // --- AD BANNER INJECTION (BELOW HEADER) ---
+        // --- REMOVE HEADER AD INJECTION (Moved to bottom) ---
         $('#custom-ad-banner').remove();
-        if (aboutData.adBanner && aboutData.adBanner.enabled !== false) {
-            const ad = aboutData.adBanner;
-            const content = ad.type === 'image' 
-                ? `<img src="${cleanPath(ad.imageUrl)}" class="h-full w-auto object-contain mx-auto" alt="Advertisement">`
-                : `<span class="font-bold text-sm">${ad.text}</span>`;
-            
-            const adStyle = `background-color: ${ad.bgColor || 'rgba(37, 99, 235, 0.1)'}; color: ${ad.textColor || '#2563eb'};`;
-            
-            const adHTML = `
-            <div id="custom-ad-banner" class="w-full h-[40px] flex items-center justify-center backdrop-blur-sm border-b border-gray-100 dark:border-gray-800 mb-6 rounded-lg overflow-hidden transition-transform hover:scale-[1.01]" style="${adStyle}">
-                <a href="${ad.url || '#'}" target="_blank" class="w-full h-full flex items-center justify-center text-center no-underline hover:underline decoration-current">
-                    ${content}
-                </a>
-            </div>
-            `;
-            // Insert inside main, before the adaptive image container or header
-            const mainHeader = $('main header').first();
-            if(mainHeader.length) {
-                mainHeader.after(adHTML);
-            } else {
-                $('main').prepend(adHTML);
-            }
-        }
 
         let breadcrumbLabel = 'اخبار';
         let breadcrumbLink = 'index.html#tab-articles';
@@ -628,7 +617,7 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(shareSectionHTML);
         
-        // --- RELATED POSTS (HYBRID: 6 GRID + 6 LIST) ---
+        // --- RELATED POSTS (HYBRID: 6 GRID + AD BANNER + 6 LIST) ---
         // Pick 12 random posts excluding current
         const otherPosts = allPosts.filter(p => p.slug !== post.slug);
         const relatedPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 12);
@@ -658,7 +647,25 @@ const generateIndividualArticles = () => {
             });
             relatedHTML += `</div>`;
 
-            // 2. List Layout (Next 6 Posts)
+            // --- 2. AD BANNER (Between Grid and List) ---
+            if (aboutData.adBanner && aboutData.adBanner.enabled !== false) {
+                const ad = aboutData.adBanner;
+                const content = ad.type === 'image' 
+                    ? `<img src="${cleanPath(ad.imageUrl)}" class="h-full w-auto object-contain mx-auto" alt="Advertisement">`
+                    : `<span class="font-bold text-sm">${ad.text}</span>`;
+                
+                const adStyle = `background-color: ${ad.bgColor || 'rgba(37, 99, 235, 0.1)'}; color: ${ad.textColor || '#2563eb'};`;
+                
+                relatedHTML += `
+                <div id="custom-ad-banner-related" class="w-full h-[40px] flex items-center justify-center backdrop-blur-sm border border-gray-100 dark:border-gray-800 mb-6 rounded-lg overflow-hidden transition-transform hover:scale-[1.01]" style="${adStyle}">
+                    <a href="${ad.url || '#'}" target="_blank" class="w-full h-full flex items-center justify-center text-center no-underline hover:underline decoration-current">
+                        ${content}
+                    </a>
+                </div>
+                `;
+            }
+
+            // 3. List Layout (Next 6 Posts)
             if (listPosts.length > 0) {
                 relatedHTML += `<div class="flex flex-col gap-3">`;
                 listPosts.forEach(r => {

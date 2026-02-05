@@ -32,12 +32,11 @@ class TechTouchSearch {
     injectSearchButton() {
         // Ensure Home button exists (injected by generate.js)
         const homeBtn = document.getElementById('home-btn-header');
-        const themeBtn = document.getElementById('theme-toggle');
         
         if (!document.getElementById('search-trigger')) {
             const searchBtn = document.createElement('button');
             searchBtn.id = 'search-trigger';
-            searchBtn.className = 'p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1';
+            searchBtn.className = 'p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-2';
             searchBtn.setAttribute('aria-label', 'بحث');
             // SVG Icon
             searchBtn.innerHTML = `
@@ -47,11 +46,13 @@ class TechTouchSearch {
                 </svg>
             `;
             
-            // Insert AFTER Home Button if possible, otherwise before Theme
+            // Insert AFTER Home Button (Home is order-1)
             if (homeBtn && homeBtn.parentNode) {
                 homeBtn.parentNode.insertBefore(searchBtn, homeBtn.nextSibling);
-            } else if (themeBtn && themeBtn.parentElement) {
-                themeBtn.parentElement.insertBefore(searchBtn, themeBtn);
+            } else {
+                // Fallback: Prepend to actions container
+                const actionsContainer = document.querySelector('.header-actions');
+                if(actionsContainer) actionsContainer.prepend(searchBtn);
             }
         }
     }
