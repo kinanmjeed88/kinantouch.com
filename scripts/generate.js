@@ -337,39 +337,54 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
     }
 
+    // --- UNIFIED HEADER BUTTONS LOGIC ---
     const headerDiv = $('header > div');
-    const actionsContainer = headerDiv.find('div.flex.items-center.gap-2').last(); // Usually contains theme toggle
+    // Find the container that likely holds the theme toggle (or create if missing)
+    let actionsContainer = headerDiv.find('.header-actions');
     
-    if(actionsContainer.length) {
-        actionsContainer.addClass('header-actions');
-        actionsContainer.find('button').removeClass('ml-auto mr-auto');
-        
-        // Ensure Theme Toggle has correct order class (Order 1: Far Left / End)
-        const themeBtn = actionsContainer.find('#theme-toggle');
-        if(themeBtn.length) {
-            themeBtn.addClass('order-3'); // 3 is Leftmost in standard visual, 1 is Rightmost in visual grouping
-            // Actually, let's use explicit visual order from Right to Left within the container:
-            // Container is LTR.
-            // Home (Right) -> Search (Middle) -> Theme (Left/End)
-            // Use Order css:
-            themeBtn.addClass('order-3'); 
+    if (actionsContainer.length === 0) {
+        // Fallback: Try finding the last div with flex
+        const lastFlex = headerDiv.find('div.flex.items-center.gap-2').last();
+        if(lastFlex.length) {
+            actionsContainer = lastFlex;
+            actionsContainer.addClass('header-actions');
+        } else {
+            // Create if absolutely missing
+            actionsContainer = $('<div class="flex items-center gap-1 header-actions"></div>');
+            headerDiv.append(actionsContainer);
         }
-
-        // Remove existing back button (arrow-right) from header if present
-        $('header a:has(i[data-lucide="arrow-right"])').remove();
-        
-        // Remove old Home button from previous injections
-        actionsContainer.find('#home-btn-header').remove();
-
-        // Inject Home Button (Order 1 - Inner most / Right of the group)
-        const homeBtn = `
-        <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
-            <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
-        </a>
-        `;
-        actionsContainer.append(homeBtn);
-        // Search Button (Order 2) is injected by search-engine.js to sit between
     }
+
+    // Clean up existing buttons to re-inject in correct order
+    actionsContainer.find('#theme-toggle').remove();
+    actionsContainer.find('#home-btn-header').remove();
+    actionsContainer.find('#search-trigger').remove(); // Will be injected by JS, but clean static if any
+    
+    // Also clean any rogue back buttons in header (users want Home button everywhere)
+    $('header a:has(i[data-lucide="arrow-right"])').remove();
+
+    // Inject Buttons in the specific RTL visual order requested:
+    // Left Side of Screen (End of Header): [Theme] [Search] [Home]
+    // In RTL Flexbox (row): Item 1 is Rightmost, Item 3 is Leftmost.
+    // So to appear [Theme | Search | Home] on the Left:
+    // Home must be Order 1 (Rightmost of group)
+    // Search must be Order 2 (Middle)
+    // Theme must be Order 3 (Leftmost of group)
+
+    const homeBtn = `
+    <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
+        <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+    </a>`;
+
+    const themeBtn = `
+    <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors order-3">
+        <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
+        <i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
+    </button>`;
+
+    // We append Home and Theme. Search is injected via JS into Order 2.
+    actionsContainer.append(homeBtn);
+    actionsContainer.append(themeBtn);
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
     const dynamicStyle = `

@@ -30,7 +30,7 @@ class TechTouchSearch {
     }
 
     injectSearchButton() {
-        // Find existing buttons
+        // We rely on CSS 'order' property for positioning.
         // Theme is Order 3 (Leftmost)
         // Home is Order 1 (Rightmost of group)
         // Search should be Order 2 (Middle)

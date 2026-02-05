@@ -13,7 +13,7 @@ let cachedAbout = {};
 // Icon Picker State
 let iconPickerTarget = null;
 const commonIcons = [
-    // Social Media Brands (Lucide Supported or Mapped)
+    // Requested Social Media & Brands
     'facebook', 'instagram', 'twitter', 'youtube', 'linkedin', 'twitch', 'message-circle', 'send', 'message-square',
     'github', 'gitlab', 'slack', 'dribbble', 'figma', 'framer', 'chrome', 'codepen', 'codesandbox', 'trello',
     'pocket', 'rss', 'globe', 'link', 'share-2', 'at-sign', 'hash', 'mail', 'phone', 'video', 'ghost', 'camera', 'music',
