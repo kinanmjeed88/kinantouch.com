@@ -41,7 +41,10 @@ img, iframe, video, object, embed { max-width: 100% !important; display: block; 
 .table-wrapper { overflow-x: auto; width: 100%; margin-bottom: 1rem; }
 table { display: table; width: 100%; white-space: nowrap; }
 
-@media (max-width: 480px) { .related-grid { grid-template-columns: repeat(2, 1fr) !important; } .related-posts h4 { font-size: 12px; line-height: 1.4; } .related-posts img { height: 90px !important; } }
+/* Related Posts Grid (Ensure 2 columns support on tiny screens if needed, mostly handled by tailwind grid-cols-2) */
+@media (max-width: 480px) { 
+    .grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
+}
 
 /* ========================================= */
 /* 1. Glassmorphism Main Navigation          */

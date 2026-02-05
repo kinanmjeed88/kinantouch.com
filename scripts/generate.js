@@ -339,16 +339,16 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         // Remove existing back button (arrow-right) from header if present
         $('header a:has(i[data-lucide="arrow-right"])').remove();
         
-        // Inject Home Button (FIRST in the container) if not already there
-        if (actionsContainer.find('#home-btn-header').length === 0) {
-            const homeBtn = `
-            <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1" aria-label="الرئيسية">
-                <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
-            </a>
-            `;
-            // Insert at the VERY BEGINNING of actions container
-            actionsContainer.prepend(homeBtn);
-        }
+        // Remove old Home button from previous injections
+        actionsContainer.find('#home-btn-header').remove();
+
+        // Inject Home Button (FIRST in the container)
+        const homeBtn = `
+        <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
+            <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+        </a>
+        `;
+        actionsContainer.prepend(homeBtn);
     }
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
@@ -628,25 +628,54 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(shareSectionHTML);
         
-        // --- RELATED POSTS (GRID LAYOUT 2 COLS) ---
+        // --- RELATED POSTS (HYBRID: 6 GRID + 6 LIST) ---
+        // Pick 12 random posts excluding current
         const otherPosts = allPosts.filter(p => p.slug !== post.slug);
-        const relatedPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 6);
+        const relatedPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 12);
 
         if (relatedPosts.length) {
+            // Split into 6 for Grid and 6 for List
+            const gridPosts = relatedPosts.slice(0, 6);
+            const listPosts = relatedPosts.slice(6, 12);
+
             let relatedHTML = `
             <section class="related-posts mt-12 border-t border-gray-100 dark:border-gray-700 pt-8">
                 <h3 class="text-lg font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="layers" class="w-5 h-5 text-blue-600"></i> قد يعجبك أيضاً</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">`;
-            relatedPosts.forEach(r => {
+                
+                <!-- 1. Grid Layout (First 6 Posts) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">`;
+            
+            gridPosts.forEach(r => {
                 relatedHTML += `
-                <a href="article-${r.slug}.html" class="flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group h-full">
-                    <img src="${cleanPath(r.image)}" class="w-20 h-14 object-cover rounded-lg shrink-0" loading="lazy" />
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-bold text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 transition-colors leading-snug">${r.title}</h4>
+                <a href="article-${r.slug}.html" class="block bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all group h-full">
+                    <div class="h-32 overflow-hidden">
+                        <img src="${cleanPath(r.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                    </div>
+                    <div class="p-3">
+                        <h4 class="text-xs font-bold text-gray-900 dark:text-white line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">${r.title}</h4>
                     </div>
                 </a>`;
             });
-            relatedHTML += `</div></section>`;
+            relatedHTML += `</div>`;
+
+            // 2. List Layout (Next 6 Posts)
+            if (listPosts.length > 0) {
+                relatedHTML += `<div class="flex flex-col gap-3">`;
+                listPosts.forEach(r => {
+                    relatedHTML += `
+                    <a href="article-${r.slug}.html" class="flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
+                        <img src="${cleanPath(r.image)}" class="w-16 h-12 object-cover rounded-lg shrink-0" loading="lazy" />
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-xs font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-blue-600 transition-colors">${r.title}</h4>
+                            <span class="text-[10px] text-gray-400 mt-0.5 block">${r.date}</span>
+                        </div>
+                        <div class="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors"><i data-lucide="chevron-left" class="w-4 h-4"></i></div>
+                    </a>`;
+                });
+                relatedHTML += `</div>`;
+            }
+
+            relatedHTML += `</section>`;
             $('article').append(relatedHTML);
         }
 
