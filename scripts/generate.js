@@ -399,36 +399,32 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     });
 
     $('head').append(ONESIGNAL_SCRIPT);
-    $('head').append(AD_SCRIPT);
+    // Conditional AdSense: Do NOT add to Privacy or About
+    const noAdsPages = ['privacy.html', 'about.html'];
+    if (!noAdsPages.includes(fileName)) {
+        $('head').append(AD_SCRIPT);
+    }
+    
     $('head').prepend(GA_SCRIPT);
     $('body').append(IMG_ERROR_SCRIPT);
     
-    // --- GUARANTEE SEARCH ENGINE INJECTION ---
-    const FUSE_CDN = '<script src="https://esm.sh/fuse.js@7.0.0" type="module"></script>';
+    // --- GUARANTEE SEARCH ENGINE INJECTION (No Fuse Double Load) ---
     const SEARCH_MODULE = '<script src="assets/js/search-engine.js" type="module"></script>';
     
-    // Check if Fuse already exists, if not prepend to body
-    let hasFuse = false;
-    $('script').each((i, el) => { if($(el).attr('src')?.includes('fuse.js')) hasFuse = true; });
-    if(!hasFuse) $('body').append(FUSE_CDN);
-
     // Check if Search Engine exists, if not append to body
     let hasSearch = false;
     $('script').each((i, el) => { if($(el).attr('src')?.includes('search-engine.js')) hasSearch = true; });
     if(!hasSearch) $('body').append(SEARCH_MODULE);
 
-    // --- CRITICAL SEO: Canonical Fix ---
+    // --- CRITICAL SEO: Strict Canonical Logic ---
     let canonicalUrl;
     if (fileName === 'index.html') {
-        canonicalUrl = `${BASE_URL}/`; // Root for index
+        canonicalUrl = `${BASE_URL}/`;
     } else {
-        // Ensure no index.html in other canonicals
-        const cleanName = fileName.replace('index.html', '');
-        canonicalUrl = `${BASE_URL}/${cleanName}`;
+        canonicalUrl = `${BASE_URL}/${fileName}`;
     }
-    // Remove existing canonicals
+    
     $('link[rel="canonical"]').remove();
-    // Add single correct canonical
     $('head').append(`<link rel="canonical" href="${canonicalUrl}">`);
 
     if (GOOGLE_SITE_VERIFICATION) {
@@ -517,12 +513,57 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     }
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
+    const baseContentFont = fonts.content || 13;
+    const spacingScale = baseContentFont / 13;
+
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
-        nav .nav-link, nav .nav-link span, .tab-btn, .tab-btn span { font-size: ${fonts.nav || 12}px !important; }
-        body, p, li, .post-card .custom-desc-size, .prose p, .prose li { font-size: ${fonts.content || 13}px !important; line-height: 1.6 !important; }
-        .post-card .custom-title-size, h2, h3, h4, .prose h2, .prose h3 { font-size: ${fonts.titles || 14}px !important; line-height: 1.4 !important; }
-        h1, .text-3xl, .text-4xl { font-size: ${fonts.mainTitles || 15}px !important; }
+        :root {
+            --spacing-scale: ${spacingScale};
+        }
+
+        nav .nav-link, nav .nav-link span, .tab-btn, .tab-btn span {
+            font-size: ${fonts.nav || 12}px !important;
+            padding: ${6 * spacingScale}px ${14 * spacingScale}px !important;
+        }
+
+        body, p, li, .post-card .custom-desc-size, .prose p, .prose li {
+            font-size: ${fonts.content || 13}px !important;
+            line-height: ${1.6 * spacingScale} !important;
+        }
+
+        .post-card .custom-title-size, h2, h3, h4, .prose h2, .prose h3 {
+            font-size: ${fonts.titles || 14}px !important;
+            margin-bottom: ${8 * spacingScale}px !important;
+        }
+
+        h1, .text-3xl, .text-4xl {
+            font-size: ${fonts.mainTitles || 15}px !important;
+            margin-bottom: ${14 * spacingScale}px !important;
+        }
+
+        main {
+            padding-top: ${20 * spacingScale}px !important;
+            padding-bottom: ${20 * spacingScale}px !important;
+        }
+
+        .grid {
+            gap: ${16 * spacingScale}px !important;
+        }
+
+        header + div {
+            margin-top: ${8 * spacingScale}px !important;
+        }
+
+        .related-fixed-title {
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+        }
+        
+        #about-cover-section {
+            padding: calc(40px * var(--spacing-scale, 1));
+        }
+
         .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
     </style>
     `;
@@ -928,7 +969,7 @@ const generateIndividualArticles = () => {
                         <img src="${cleanPath(r.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                     </div>
                     <div class="p-3">
-                        <h4 class="text-xs font-bold text-gray-900 dark:text-white line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">${r.title}</h4>
+                        <h4 class="font-bold text-gray-900 dark:text-white line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors related-fixed-title">${r.title}</h4>
                     </div>
                 </a>`;
             });

@@ -17,13 +17,14 @@ class TechTouchSearch {
         // Expose open function globally
         window.openSearchModal = () => {
             const modal = document.getElementById('search-modal');
+            const modalContainer = document.getElementById('search-modal-container');
             const input = document.getElementById('search-input');
-            if(modal) {
+            if(modal && modalContainer) {
                 modal.classList.remove('hidden');
                 setTimeout(() => {
                     modal.classList.remove('opacity-0');
-                    modal.querySelector('div').classList.remove('scale-95');
-                    input.focus();
+                    modalContainer.classList.remove('scale-95');
+                    if(input) input.focus();
                 }, 10);
                 document.body.style.overflow = 'hidden';
             }
@@ -53,7 +54,7 @@ class TechTouchSearch {
 
         const modalHTML = `
             <div id="search-modal" class="fixed inset-0 z-[100] bg-gray-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-start justify-center pt-20 px-4">
-                <div class="bg-white dark:bg-gray-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700 relative">
+                <div id="search-modal-container" class="bg-white dark:bg-gray-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-700 relative">
                     
                     <!-- Search Header -->
                     <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
@@ -92,11 +93,12 @@ class TechTouchSearch {
         // Target the new Nav Search Button ID (nav-search-btn) and fallback to old ID if needed
         const triggers = document.querySelectorAll('#nav-search-btn, #search-trigger');
         const modal = document.getElementById('search-modal');
+        const modalContainer = document.getElementById('search-modal-container');
         const closeBtn = document.getElementById('close-search');
         const input = document.getElementById('search-input');
         const resultsContainer = document.getElementById('search-results');
 
-        if (!modal) return;
+        if (!modal || !modalContainer) return;
 
         // Open Modal Listener
         triggers.forEach(btn => {
@@ -109,7 +111,7 @@ class TechTouchSearch {
         // Close Logic
         const closeModal = () => {
             modal.classList.add('opacity-0');
-            modal.querySelector('div').classList.add('scale-95');
+            modalContainer.classList.add('scale-95');
             setTimeout(() => {
                 modal.classList.add('hidden');
                 document.body.style.overflow = '';
