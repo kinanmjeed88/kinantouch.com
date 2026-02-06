@@ -661,12 +661,25 @@ const generateIndividualArticles = () => {
             titleContent = `<h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight break-words w-full m-0 text-center">${escapeHtml(post.title)}</h1>`;
         }
 
+        // --- AI SUMMARY BUTTON ---
+        let summaryButtonHTML = '';
+        if (post.summary) {
+             summaryButtonHTML = `
+            <div class="flex justify-center -mt-px relative z-0">
+                <button id="btn-show-summary" class="flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-gray-800 border-x border-b border-gray-200 dark:border-gray-700 rounded-b-lg shadow-sm text-xs font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all hover:shadow-md">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span>تلخيص المحتوى AI</span>
+                </button>
+            </div>
+            `;
+        }
+
         const articleHeaderHTML = `
         <header class="mb-8 relative">
-            <div class="article-header-card">
+            <div class="article-header-card relative z-20">
                 ${titleContent}
             </div>
-            <div class="article-meta-bar flex items-center justify-center px-4 py-3 border-t border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-x-auto no-scrollbar">
+            <div class="article-meta-bar flex items-center justify-center px-4 py-3 border-t border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-x-auto no-scrollbar relative z-10">
                 <div class="flex items-center gap-4 sm:gap-6 w-full justify-center">
                     <!-- Date/Time -->
                     <div class="flex items-center gap-1.5 group" title="تاريخ النشر">
@@ -684,6 +697,7 @@ const generateIndividualArticles = () => {
                     </div>
                 </div>
             </div>
+            ${summaryButtonHTML}
         </header>
         `;
         
@@ -735,35 +749,26 @@ const generateIndividualArticles = () => {
 
         $('article').html($content.html()); 
 
-        // --- AI SUMMARY SECTION (CMS Based) ---
+        // --- AI SUMMARY CONTENT CONTAINER (Appended to end of article) ---
         if (post.summary) {
             const summaryHTML = post.summary
               .split('\n')
               .map(line => parseMarkdown(line))
               .join('');
 
-            // 1. Button (After Header)
-            const summaryBtnHTML = `
-            <div class="mt-6 mb-8 flex justify-center no-print">
-               <button id="btn-show-summary" class="group relative px-6 py-2.5 rounded-full bg-white/30 dark:bg-gray-800/30 backdrop-blur-md border border-white/20 dark:border-gray-700/50 shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-white/50 dark:hover:bg-gray-800/50 text-blue-600 dark:text-blue-400 font-bold flex items-center gap-2 z-10">
-                   <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                   <i data-lucide="sparkles" class="w-4 h-4 animate-pulse"></i>
-                   <span>ملخص الذكاء الاصطناعي</span>
-               </button>
-            </div>`;
-            $('header').after(summaryBtnHTML);
-
-            // 2. Content (At End of Article)
             const summaryContentHTML = `
-            <div id="ai-summary-container" class="hidden w-full max-w-3xl mx-auto mt-8 mb-8 transition-all duration-500 transform translate-y-4 opacity-0">
-              <div class="relative p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-2xl ring-1 ring-black/5">
-                <div class="absolute -top-3 right-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg tracking-wider">
-                    AI SUMMARY
+            <div id="ai-summary-container" class="hidden w-full max-w-3xl mx-auto mt-8 mb-8 transition-all duration-500 transform translate-y-4 opacity-0 border-t-2 border-dashed border-gray-100 dark:border-gray-700 pt-8">
+              <div class="relative p-6 bg-gray-50 dark:bg-gray-800/30 rounded-2xl border border-gray-100 dark:border-gray-700">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 p-1.5 rounded-lg">
+                        <i data-lucide="bot" class="w-5 h-5"></i>
+                    </span>
+                    <h3 class="font-bold text-gray-900 dark:text-white">ملخص الذكاء الاصطناعي</h3>
                 </div>
-                <div id="ai-summary-content" class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <div id="ai-summary-content" class="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed">
                   ${summaryHTML}
                 </div>
-                <button id="btn-hide-summary" class="mt-6 text-xs font-bold text-gray-400 hover:text-red-500 transition-colors flex items-center justify-center w-full gap-1 pt-4 border-t border-indigo-100 dark:border-gray-700">
+                <button id="btn-hide-summary" class="mt-6 text-xs font-bold text-gray-400 hover:text-red-500 transition-colors flex items-center justify-center w-full gap-1 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <i data-lucide="chevron-up" class="w-4 h-4"></i> إغلاق الملخص
                 </button>
               </div>
@@ -806,12 +811,29 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(shareSectionHTML);
         
-        const relatedPosts = allPosts
-            .filter(p => p.slug !== post.slug && p.category === post.category)
-            .sort((a, b) => b.effectiveDate - a.effectiveDate)
-            .slice(0, 12);
+        // --- IMPROVED RELATED POSTS LOGIC (Always 12) ---
+        const otherPosts = allPosts.filter(p => p.slug !== post.slug);
+        
+        // 1. Try to fill with same category
+        let relatedPosts = otherPosts.filter(p => p.category === post.category);
+        
+        // 2. If not enough, fill with newest from other categories
+        if (relatedPosts.length < 12) {
+            const needed = 12 - relatedPosts.length;
+            const others = otherPosts
+                .filter(p => p.category !== post.category)
+                .sort((a, b) => b.effectiveDate - a.effectiveDate)
+                .slice(0, needed);
+            relatedPosts = relatedPosts.concat(others);
+        }
+        
+        // 3. Sort final combined list by date (Newest first)
+        relatedPosts.sort((a, b) => b.effectiveDate - a.effectiveDate);
+        
+        // 4. Force limit to 12
+        relatedPosts = relatedPosts.slice(0, 12);
 
-        if (relatedPosts.length) {
+        if (relatedPosts.length > 0) {
             const gridPosts = relatedPosts.slice(0, 6);
             const listPosts = relatedPosts.slice(6, 12);
 
