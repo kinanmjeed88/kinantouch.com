@@ -714,6 +714,9 @@ const generateIndividualArticles = () => {
             breadcrumbElement.attr('href', breadcrumbLink);
         }
         
+        // FIX: Update breadcrumb title to current article title (Fix for bug where template title persists)
+        $('nav span.truncate').text(post.title);
+        
         const existingImgDiv = $('main > div.rounded-2xl');
         const adaptiveImageHTML = `
         <div class="article-image-container">
