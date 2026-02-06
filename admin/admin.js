@@ -24,7 +24,7 @@ const commonIcons = [
     'gamepad', 'gamepad-2', 'joystick', 'mouse', 'keyboard', 'printer', 'server', 'database', 'code', 'terminal',
     'sun', 'moon', 'cloud', 'umbrella', 'shopping-cart', 'credit-card', 'dollar-sign', 'gift', 'award', 'trophy', 'medal', 
     'activity', 'calendar', 'clock', 'timer', 'map', 'map-pin', 'navigation', 'compass', 'flag', 'bookmark', 'book', 'file-text', 
-    'image', 'film', 'tv', 'radio', 'mic', 'headphones', 'video', 'camera', 'music', 'shield', 'lock', 'key', 'eye'
+    'image', 'film', 'tv', 'radio', 'mic', 'headphones', 'video', 'camera', 'music', 'shield', 'lock', 'key', 'eye', 'bot', 'sparkles'
 ];
 
 // Custom Brand SVG Paths (For icons missing in Lucide)
@@ -352,7 +352,7 @@ function renderPosts() {
 
 window.openPostEditor = () => { 
     document.getElementById('postEditor').classList.remove('hidden'); 
-    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
+    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId', 'pSummary'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
     document.getElementById('pSlug').dataset.mode = 'new'; document.getElementById('pSlug').readOnly = false; document.getElementById('editorTitle').innerText = 'مقال جديد'; 
     document.getElementById('pDate').value = ''; // Reset date field for new posts
     // Default Time: Current Time
@@ -368,6 +368,7 @@ window.openEditByIndex = (index) => {
     setVal('pTitle', p.title); setVal('pSlug', p.slug); setVal('pCat', p.category); setVal('pDesc', p.description); setVal('pContent', p.content); setVal('pImage', p.image); setVal('pYoutubeId', p.youtubeVideoId);
     setVal('pDate', p.date); // Populate date field
     setVal('pTime', p.time || "00:00"); // Populate time field
+    setVal('pSummary', p.summary); // Populate summary field
     
     const slugEl = document.getElementById('pSlug'); if(slugEl) { slugEl.readOnly = true; slugEl.dataset.mode = 'edit'; }
     document.getElementById('editorTitle').innerText = 'تعديل مقال'; document.getElementById('postEditor').classList.remove('hidden');
@@ -405,17 +406,63 @@ window.savePost = async () => {
             description: getVal('pDesc'), 
             category: getVal('pCat'), 
             date: finalDate,
-            time: finalTime, // Add Time Field
+            time: finalTime, 
             updated: (isEdit) ? now : undefined, 
             image: getVal('pImage'), 
             content: getVal('pContent'), 
-            youtubeVideoId: getVal('pYoutubeId') 
+            youtubeVideoId: getVal('pYoutubeId'),
+            summary: getVal('pSummary') // Include Summary
         };
         if(!postData.updated) delete postData.updated;
         await api.put(`content/posts/${slug}.json`, JSON.stringify(postData, null, 2), `Update Post: ${postData.title}`, existingPost ? existingPost.sha : null);
         showToast('تم حفظ المقال!'); closePostEditor(); loadPosts();
     } catch (e) { alert('خطأ في الحفظ: ' + e.message); } finally { btn.innerText = 'حفظ ونشر'; btn.disabled = false; }
 };
+
+// --- AI Summary Generation ---
+window.generateSummaryAI = async () => {
+    const btn = document.getElementById('btnGenerateSummary');
+    const content = document.getElementById('pContent').value;
+    const summaryField = document.getElementById('pSummary');
+
+    if (content.length < 50) {
+        alert("المحتوى قصير جداً للتوليد. اكتب المقال أولاً.");
+        return;
+    }
+
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> جاري التوليد...`;
+    btn.disabled = true;
+
+    try {
+        // Since Admin is client-side, we call the Cloudflare function
+        // Note: In local dev or different domains, this might hit CORS issues unless configured.
+        // Assuming Admin is served from same origin or function allows CORS.
+        const response = await fetch('/api/summarize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: content })
+        });
+
+        if (!response.ok) throw new Error('API Error');
+        const data = await response.json();
+        
+        if (data.summary) {
+            summaryField.value = data.summary;
+            showToast('تم توليد الملخص بنجاح!');
+        } else {
+            alert('فشل التوليد. حاول مرة أخرى.');
+        }
+    } catch (e) {
+        console.error(e);
+        alert('حدث خطأ أثناء الاتصال بـ AI.');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        lucide.createIcons();
+    }
+};
+
 window.insertYoutube = () => { const url = prompt("رابط يوتيوب:"); if (url) window.insertTag(`\n@[youtube](${url})\n`); };
 window.insertLink = () => { const url = prompt("الرابط:"); const text = prompt("النص:"); if(url) window.insertTag(`[${text || 'اضغط هنا'}](${url})`); };
 
