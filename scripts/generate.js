@@ -37,35 +37,17 @@ const validateDate = (d, fallback = new Date()) => {
 
 // --- HELPER: Combine Date & Time with Baghdad Timezone (UTC+3) ---
 const combineDateTime = (dateStr, timeStr = "00:00") => {
-    // Ensure inputs are strings
     const d = typeof dateStr === 'string' ? dateStr : new Date().toISOString().split('T')[0];
     const t = typeof timeStr === 'string' ? timeStr : "00:00";
-    
-    // Construct ISO string with fixed +03:00 offset for Baghdad
-    // Format: YYYY-MM-DDTHH:mm:00+03:00
     const isoString = `${d}T${t}:00+03:00`;
-    
     const parsed = new Date(isoString);
     if (isNaN(parsed.getTime())) {
-        return new Date(); // Fallback
+        return new Date(); 
     }
     return parsed;
 };
 
-// --- HELPER: Normalize Arabic Title ---
-const normalizeArabic = (text) => {
-    if (!text) return '';
-    return text
-        .trim()
-        .toLowerCase()
-        .replace(/[^\w\u0621-\u064A]/g, '') // Remove symbols, keep letters/numbers
-        .replace(/[أإآ]/g, 'ا')
-        .replace(/ة/g, 'ه')
-        .replace(/ى/g, 'ي');
-};
-
 // --- SCRIPTS TEMPLATES ---
-
 const GA_SCRIPT = `
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
@@ -95,19 +77,17 @@ const ONESIGNAL_SCRIPT = `
 </script>
 `;
 
-// Global Image Error Handler Script
 const IMG_ERROR_SCRIPT = `
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const fallbackImage = 'assets/images/me.jpg';
     document.querySelectorAll('img').forEach(img => {
         img.onerror = function() {
-            if (this.src.includes(fallbackImage)) return; // Prevent loop
+            if (this.src.includes(fallbackImage)) return;
             this.src = fallbackImage;
             this.alt = 'Image unavailable';
             this.classList.add('img-fallback-active');
         };
-        // Check if image is already broken (for cached broken images)
         if (img.naturalWidth === 0 && img.complete) {
              img.src = fallbackImage;
         }
@@ -116,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 `;
 
-// Ticker HTML Template
 const TICKER_HTML_TEMPLATE = `
 <div id="news-ticker-bar" class="w-full bg-gray-900 text-white h-10 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
     <div class="h-full flex items-center justify-center px-0 relative z-10 shrink-0">
@@ -131,22 +110,31 @@ const TICKER_HTML_TEMPLATE = `
 </div>
 `;
 
+// NEW CATEGORY NAV TEMPLATE (MPA Style)
+const CATEGORY_NAV_TEMPLATE = `
+<div class="w-full py-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+    <div class="max-w-7xl mx-auto px-2 overflow-x-auto no-scrollbar">
+      <div class="flex md:justify-center items-center gap-2 min-w-max">
+        <a href="index.html" class="tab-link flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-transparent hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i><span>__LABEL_ARTICLES__</span>
+        </a>
+        <a href="apps.html" class="tab-link flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-transparent hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300">
+            <i data-lucide="smartphone" class="w-3.5 h-3.5"></i><span>__LABEL_APPS__</span>
+        </a>
+        <a href="games.html" class="tab-link flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-transparent hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300">
+            <i data-lucide="gamepad-2" class="w-3.5 h-3.5"></i><span>__LABEL_GAMES__</span>
+        </a>
+         <a href="sports.html" class="tab-link flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-transparent hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300">
+            <i data-lucide="trophy" class="w-3.5 h-3.5"></i><span>__LABEL_SPORTS__</span>
+        </a>
+      </div>
+    </div>
+</div>
+`;
+
 // Ensure directories exist
 if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR, { recursive: true });
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
-// OneSignal Worker
-const WORKER_CONTENT = `importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");`;
-try {
-    fs.writeFileSync(path.join(ROOT_DIR, 'OneSignalSDKWorker.js'), WORKER_CONTENT);
-} catch (e) { console.error("Failed to write worker file", e); }
-
-// Files to Process
-const HTML_FILES = [
-    'index.html', 'articles.html', 'tools.html', 'about.html', 
-    'tools-sites.html', 'tools-phones.html', 'tools-compare.html',
-    'tool-analysis.html', 'privacy.html', 'site-map.html', '404.html'
-];
 
 // Load Data
 let aboutData = { 
@@ -183,17 +171,6 @@ const escapeHtml = (str = '') => {
     return str.replace(/[&<>"']/g, s =>
         ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[s])
     );
-};
-
-const detectImageMime = (url = '') => {
-    const ext = url.split('.').pop()?.toLowerCase().split('?')[0];
-    switch (ext) {
-        case 'webp': return 'image/webp';
-        case 'png': return 'image/png';
-        case 'gif': return 'image/gif';
-        case 'svg': return 'image/svg+xml';
-        default: return 'image/jpeg';
-    }
 };
 
 const cleanPath = (p) => {
@@ -269,7 +246,7 @@ const generateSocialFooter = () => {
             <div class="flex items-center justify-center gap-4 mb-4 social-links-container">
                 ${iconsHTML}
             </div>
-            <p class="text-sm text-gray-500 font-medium">© 2026 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
+            <p class="text-sm text-gray-500 font-medium">© 2026 ${aboutData.siteName || "TechTouch"}. جميع الحقوق محفوظة.</p>
         </div>
     </footer>
     `;
@@ -308,9 +285,9 @@ const parseMarkdown = (markdown) => {
     return html;
 };
 
-// --- POST LOADING & TITLE CHECK ---
+// --- POST LOADING ---
 const rawPosts = [];
-const titleRegistry = new Set(); // Registry to track titles for warnings
+const titleRegistry = new Set(); 
 
 if (fs.existsSync(POSTS_DIR)) {
     fs.readdirSync(POSTS_DIR).forEach(file => {
@@ -320,7 +297,6 @@ if (fs.existsSync(POSTS_DIR)) {
                 if (!post.slug) post.slug = file.replace('.json', '');
                 post.slug = post.slug.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
                 
-                // --- WARNING ONLY DUPLICATE CHECK ---
                 if (post.title) {
                     const normalizedTitle = post.title.trim().toLowerCase();
                     if (titleRegistry.has(normalizedTitle)) {
@@ -330,18 +306,13 @@ if (fs.existsSync(POSTS_DIR)) {
                     }
                 }
 
-                // Date & Time Logic: 
-                // Combine date and time into a precise Date object with Baghdad Timezone (UTC+3)
                 post.publishTime = post.time || "00:00";
-                
-                // Fallback for date if missing
                 if (!post.date) post.date = new Date().toISOString().split('T')[0];
                 if (!post.updated) post.updated = post.date;
 
                 post.publishedAt = combineDateTime(post.date, post.publishTime);
-                post.updatedAt = combineDateTime(post.updated, post.publishTime); // Use publish time for update timestamp too unless we want specific update time
-
-                post.effectiveDate = post.publishedAt; // For sorting and display
+                post.updatedAt = combineDateTime(post.updated, post.publishTime); 
+                post.effectiveDate = post.publishedAt; 
 
                 post.content = parseMarkdown(post.content);
                 post._originalFile = file;
@@ -351,10 +322,8 @@ if (fs.existsSync(POSTS_DIR)) {
     });
 }
 
-// 1. Sort by Date + Time Descending (Newest First)
-// Precise sorting using the full timestamp
+// Sort by Date Descending
 rawPosts.sort((a, b) => b.effectiveDate - a.effectiveDate);
-
 const allPosts = rawPosts;
 
 // Category Map
@@ -378,14 +347,9 @@ const createCardHTML = (post) => {
     if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
     
-    // Format Date nicely in Arabic
     const dateStr = post.effectiveDate.toLocaleString('ar-EG', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: true
     });
 
     return `
@@ -409,8 +373,14 @@ const createCardHTML = (post) => {
     </a>`;
 };
 
-const updateGlobalElements = (htmlContent, fileName = '') => {
+const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = '') => {
     const $ = cheerio.load(htmlContent, { decodeEntities: false });
+
+    // SEO Title Logic
+    if (pageTitleOverride) {
+        $('title').text(pageTitleOverride);
+        $('meta[property="og:title"]').attr('content', pageTitleOverride);
+    }
 
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
@@ -418,13 +388,13 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         if (src.includes("cdn.onesignal.com") || content.includes("OneSignal")) { $(el).remove(); }
         if (src.includes('googletagmanager.com') || content.includes("gtag(") || src.includes('G-')) { $(el).remove(); }
         if (src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle")) { $(el).remove(); }
-        if (content.includes("document.addEventListener('DOMContentLoaded', () => {") && content.includes("fallbackImage")) { $(el).remove(); } // Remove old error script if exists
+        if (content.includes("document.addEventListener('DOMContentLoaded', () => {") && content.includes("fallbackImage")) { $(el).remove(); }
     });
 
     $('head').append(ONESIGNAL_SCRIPT);
     $('head').append(AD_SCRIPT);
     $('head').prepend(GA_SCRIPT);
-    $('body').append(IMG_ERROR_SCRIPT); // Global Image Error Handler
+    $('body').append(IMG_ERROR_SCRIPT);
     
     if (GOOGLE_SITE_VERIFICATION) {
         $('meta[name="google-site-verification"]').remove();
@@ -508,6 +478,7 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
 
     $('footer').replaceWith(STANDARD_FOOTER);
 
+    // Ticker Logic: Only on index.html (Home/Articles)
     $('#news-ticker-bar').remove();
     if (fileName === 'index.html' && aboutData.ticker && aboutData.ticker.enabled !== false) {
         $('header').after(TICKER_HTML_TEMPLATE);
@@ -530,13 +501,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
             }
             tickerContentDiv.html(contentHtml);
         }
-    }
-    
-    if (aboutData.categories && aboutData.categories.labels) {
-        $('[data-tab="articles"] span').text(aboutData.categories.labels.articles || 'اخبار');
-        $('[data-tab="apps"] span').text(aboutData.categories.labels.apps || 'تطبيقات');
-        $('[data-tab="games"] span').text(aboutData.categories.labels.games || 'ألعاب');
-        $('[data-tab="sports"] span').text(aboutData.categories.labels.sports || 'رياضة');
     }
     
     if (fileName === 'about.html') {
@@ -581,28 +545,62 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     return finalHtml;
 };
 
-const updateListingPages = () => {
-    const pagesToUpdate = [{ file: 'index.html', limit: 1000 }, { file: 'articles.html', limit: 2000 }];
-    pagesToUpdate.forEach(pageInfo => {
-        const filePath = path.join(ROOT_DIR, pageInfo.file);
-        if (!fs.existsSync(filePath)) return;
-        let html = fs.readFileSync(filePath, 'utf8');
-        const $ = cheerio.load(html);
-        const fillContainer = (catId, posts) => {
-            const container = $(`#tab-${catId} .grid`);
-            if (container.length) {
-                container.empty();
-                posts.slice(0, pageInfo.limit).forEach(post => container.append(createCardHTML(post)));
-                if (posts.length === 0) container.html('<div class="col-span-full text-center py-10 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
-                container.parent().find('.adsbygoogle-container').remove();
-            }
-        };
-        fillContainer('articles', postsByCategory['articles'] || []);
-        fillContainer('apps', postsByCategory['apps'] || []);
-        fillContainer('games', postsByCategory['games'] || []);
-        fillContainer('sports', postsByCategory['sports'] || []);
+// --- NEW PAGE GENERATION LOGIC (MPA) ---
+const generateCategoryPages = () => {
+    // We reuse the basic structure from articles.html or index.html
+    const templatePath = path.join(ROOT_DIR, 'articles.html');
+    if (!fs.existsSync(templatePath)) return;
+    
+    let baseTemplate = fs.readFileSync(templatePath, 'utf8');
+    const labels = aboutData.categories?.labels || {};
+
+    const pages = [
+        { file: 'index.html', cat: 'articles', title: labels.articles || 'الأخبار', desc: 'آخر الأخبار التقنية والمقالات الحصرية من TechTouch.' },
+        { file: 'apps.html', cat: 'apps', title: labels.apps || 'تطبيقات', desc: 'أفضل تطبيقات أندرويد وآيفون المعدلة والمفيدة.' },
+        { file: 'games.html', cat: 'games', title: labels.games || 'ألعاب', desc: 'أحدث الألعاب ومراجعاتها.' },
+        { file: 'sports.html', cat: 'sports', title: labels.sports || 'رياضة', desc: 'تغطية الأحداث الرياضية والتقنيات المتعلقة بها.' }
+    ];
+
+    pages.forEach(p => {
+        const $ = cheerio.load(baseTemplate, { decodeEntities: false });
         
-        safeWrite(filePath, updateGlobalElements($.html(), pageInfo.file));
+        // 1. Inject Category Nav (Replaces old #tab buttons)
+        const oldTabContainer = $('.w-full.py-2');
+        if (oldTabContainer.length) {
+            let navHtml = CATEGORY_NAV_TEMPLATE
+                .replace('__LABEL_ARTICLES__', labels.articles || 'اخبار')
+                .replace('__LABEL_APPS__', labels.apps || 'تطبيقات')
+                .replace('__LABEL_GAMES__', labels.games || 'ألعاب')
+                .replace('__LABEL_SPORTS__', labels.sports || 'رياضة');
+            oldTabContainer.replaceWith(navHtml);
+        }
+
+        // 2. Set Active State for this page
+        $(`a[href="${p.file}"]`).addClass('active-cat-link border-blue-600 text-blue-600 bg-transparent shadow-sm').removeClass('border-transparent text-gray-600 dark:text-gray-300');
+
+        // 3. Populate Content
+        const main = $('main');
+        main.empty(); // Clear old tab divs
+        
+        // Add single grid container
+        const grid = $('<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full"></div>');
+        
+        const posts = postsByCategory[p.cat] || [];
+        if (posts.length > 0) {
+            posts.forEach(post => grid.append(createCardHTML(post)));
+        } else {
+            grid.html('<div class="col-span-full text-center py-20 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
+        }
+        main.append(grid);
+
+        // 4. Update Titles & Meta
+        const pageTitle = `${p.title} | ${aboutData.siteName || "TechTouch"}`;
+        $('title').text(pageTitle);
+        $('meta[name="description"]').attr('content', p.desc);
+
+        // 5. Save
+        const filePath = path.join(ROOT_DIR, p.file);
+        safeWrite(filePath, updateGlobalElements($.html(), p.file, pageTitle));
     });
 };
 
@@ -661,13 +659,13 @@ const generateIndividualArticles = () => {
             titleContent = `<h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight break-words w-full m-0 text-center">${escapeHtml(post.title)}</h1>`;
         }
 
-        // --- AI SUMMARY BUTTON ---
+        // --- AI SUMMARY BUTTON (Moved to Header) ---
         let summaryButtonHTML = '';
         if (post.summary) {
              summaryButtonHTML = `
-            <div class="flex justify-center -mt-px relative z-0">
-                <button id="btn-show-summary" class="flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-gray-800 border-x border-b border-gray-200 dark:border-gray-700 rounded-b-lg shadow-sm text-xs font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all hover:shadow-md">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <div class="flex justify-center -mt-px relative z-0 pt-2">
+                <button class="ai-summary-btn flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-full text-[10px] font-bold text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all hover:bg-white dark:hover:bg-gray-800">
+                    <i data-lucide="sparkles" class="w-3 h-3"></i>
                     <span>تلخيص المحتوى AI</span>
                 </button>
             </div>
@@ -679,25 +677,20 @@ const generateIndividualArticles = () => {
             <div class="article-header-card relative z-20">
                 ${titleContent}
             </div>
-            <div class="article-meta-bar flex items-center justify-center px-4 py-3 border-t border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-x-auto no-scrollbar relative z-10">
+            <div class="article-meta-bar flex flex-col items-center justify-center px-4 py-3 border-t border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-x-auto no-scrollbar relative z-10">
                 <div class="flex items-center gap-4 sm:gap-6 w-full justify-center">
-                    <!-- Date/Time -->
                     <div class="flex items-center gap-1.5 group" title="تاريخ النشر">
                         <i data-lucide="calendar-clock" class="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform"></i>
                         <span dir="ltr" class="font-medium font-mono tracking-tight">${formattedDate}</span>
                     </div>
-                    
-                    <!-- Separator -->
                     <div class="w-px h-3 bg-gray-300 dark:bg-gray-600"></div>
-
-                    <!-- Real Views (Updated via API) -->
                     <div class="flex items-center gap-1.5 view-count-wrapper group" title="المشاهدات">
                         <i data-lucide="eye" class="w-4 h-4 text-green-500 group-hover:scale-110 transition-transform"></i>
                         <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}">0</span>
                     </div>
                 </div>
+                ${summaryButtonHTML}
             </div>
-            ${summaryButtonHTML}
         </header>
         `;
         
@@ -710,11 +703,12 @@ const generateIndividualArticles = () => {
 
         $('#custom-ad-banner').remove();
 
+        // Breadcrumbs: Point to real pages now
         let breadcrumbLabel = 'اخبار';
-        let breadcrumbLink = 'index.html#tab-articles';
-        if (post.category === 'apps') { breadcrumbLabel = 'تطبيقات'; breadcrumbLink = 'index.html#tab-apps'; }
-        else if (post.category === 'games') { breadcrumbLabel = 'ألعاب'; breadcrumbLink = 'index.html#tab-games'; }
-        else if (post.category === 'sports') { breadcrumbLabel = 'رياضة'; breadcrumbLink = 'index.html#tab-sports'; }
+        let breadcrumbLink = 'index.html';
+        if (post.category === 'apps') { breadcrumbLabel = 'تطبيقات'; breadcrumbLink = 'apps.html'; }
+        else if (post.category === 'games') { breadcrumbLabel = 'ألعاب'; breadcrumbLink = 'games.html'; }
+        else if (post.category === 'sports') { breadcrumbLabel = 'رياضة'; breadcrumbLink = 'sports.html'; }
 
         let breadcrumbElement = $('nav a[href="articles.html"]');
         if (!breadcrumbElement.length) {
@@ -749,7 +743,9 @@ const generateIndividualArticles = () => {
 
         $('article').html($content.html()); 
 
-        // --- AI SUMMARY CONTENT CONTAINER (Appended to end of article) ---
+        // --- AI SUMMARY CONTENT ---
+        // Clean up old IDs
+        $('#ai-summary-container').remove();
         if (post.summary) {
             const summaryHTML = post.summary
               .split('\n')
@@ -757,23 +753,22 @@ const generateIndividualArticles = () => {
               .join('');
 
             const summaryContentHTML = `
-            <div id="ai-summary-container" class="hidden w-full max-w-3xl mx-auto mt-8 mb-8 transition-all duration-500 transform translate-y-4 opacity-0 border-t-2 border-dashed border-gray-100 dark:border-gray-700 pt-8">
-              <div class="relative p-6 bg-gray-50 dark:bg-gray-800/30 rounded-2xl border border-gray-100 dark:border-gray-700">
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 p-1.5 rounded-lg">
-                        <i data-lucide="bot" class="w-5 h-5"></i>
+            <div class="ai-summary-box hidden w-full max-w-2xl mx-auto my-6 transition-all duration-300 transform scale-95 opacity-0">
+              <div class="relative p-5 bg-gray-50/80 dark:bg-gray-800/40 rounded-xl border border-blue-100 dark:border-gray-700/50 backdrop-blur-sm shadow-sm">
+                <div class="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
+                    <span class="text-blue-500 animate-pulse">
+                        <i data-lucide="bot" class="w-4 h-4"></i>
                     </span>
-                    <h3 class="font-bold text-gray-900 dark:text-white">ملخص الذكاء الاصطناعي</h3>
+                    <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">الخلاصة الذكية</h3>
+                    <button class="ai-summary-close mr-auto text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
                 </div>
-                <div id="ai-summary-content" class="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed">
+                <div class="prose prose-sm dark:prose-invert max-w-none text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                   ${summaryHTML}
                 </div>
-                <button id="btn-hide-summary" class="mt-6 text-xs font-bold text-gray-400 hover:text-red-500 transition-colors flex items-center justify-center w-full gap-1 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <i data-lucide="chevron-up" class="w-4 h-4"></i> إغلاق الملخص
-                </button>
               </div>
             </div>`;
-            $('article').append(summaryContentHTML);
+            // Insert BEFORE the article content but AFTER the image
+            $('article').prepend(summaryContentHTML);
         }
 
         const tags = [getCatLabel(post.category)];
@@ -811,26 +806,19 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(shareSectionHTML);
         
-        // --- IMPROVED RELATED POSTS LOGIC (Always 12) ---
+        // --- STRICT RELATED POSTS LOGIC (Target 12) ---
         const otherPosts = allPosts.filter(p => p.slug !== post.slug);
         
-        // 1. Try to fill with same category
-        let relatedPosts = otherPosts.filter(p => p.category === post.category);
+        // 1. Gather same category
+        let sameCatPosts = otherPosts.filter(p => p.category === post.category);
         
-        // 2. If not enough, fill with newest from other categories
-        if (relatedPosts.length < 12) {
-            const needed = 12 - relatedPosts.length;
-            const others = otherPosts
-                .filter(p => p.category !== post.category)
-                .sort((a, b) => b.effectiveDate - a.effectiveDate)
-                .slice(0, needed);
-            relatedPosts = relatedPosts.concat(others);
-        }
+        // 2. Gather other categories
+        let diffCatPosts = otherPosts.filter(p => p.category !== post.category);
         
-        // 3. Sort final combined list by date (Newest first)
-        relatedPosts.sort((a, b) => b.effectiveDate - a.effectiveDate);
+        // 3. Combine: Same Cat First + Diff Cat Second
+        let relatedPosts = sameCatPosts.concat(diffCatPosts);
         
-        // 4. Force limit to 12
+        // 4. Slice to exactly 12 (No re-sorting)
         relatedPosts = relatedPosts.slice(0, 12);
 
         if (relatedPosts.length > 0) {
@@ -854,29 +842,6 @@ const generateIndividualArticles = () => {
                 </a>`;
             });
             relatedHTML += `</div>`;
-
-            if (aboutData.adBanner && aboutData.adBanner.enabled !== false) {
-                const ad = aboutData.adBanner;
-                const adUrl = ad.url || '#';
-                
-                let content = '';
-                if (ad.type === 'image') {
-                    content = `<a href="${adUrl}" target="_blank" class="w-full h-full block relative overflow-hidden group">
-                        <img src="${cleanPath(ad.imageUrl)}" class="w-full h-full object-cover transition-transform group-hover:scale-105" alt="Advertisement">
-                    </a>`;
-                } else {
-                    const adStyle = `background-color: ${ad.bgColor || 'rgba(37, 99, 235, 0.1)'}; color: ${ad.textColor || '#2563eb'};`;
-                    content = `<a href="${adUrl}" target="_blank" class="w-full h-full flex items-center justify-center text-center no-underline hover:underline decoration-current p-4" style="${adStyle}">
-                        <span class="font-bold text-sm md:text-base">${ad.text}</span>
-                    </a>`;
-                }
-                
-                relatedHTML += `
-                <div id="custom-ad-banner-related" class="w-full min-h-[60px] md:min-h-[100px] h-auto flex items-center justify-center backdrop-blur-sm border border-gray-100 dark:border-gray-800 mb-6 rounded-xl overflow-hidden transition-all shadow-sm">
-                    ${content}
-                </div>
-                `;
-            }
 
             if (listPosts.length > 0) {
                 relatedHTML += `<div class="flex flex-col gap-3">`;
@@ -935,8 +900,7 @@ const generateRSS = () => {
     allPosts.slice(0, 20).forEach(post => {
         const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
         const fullImg = toAbsoluteUrl(post.image);
-        const mimeType = detectImageMime(fullImg);
-        xml += `<item><title><![CDATA[${post.title}]]></title><link>${fullUrl}</link><guid>${fullUrl}</guid><pubDate>${post.effectiveDate.toUTCString()}</pubDate><description><![CDATA[${post.description}]]></description><enclosure url="${fullImg}" type="${mimeType}" /></item>`;
+        xml += `<item><title><![CDATA[${post.title}]]></title><link>${fullUrl}</link><guid>${fullUrl}</guid><pubDate>${post.effectiveDate.toUTCString()}</pubDate><description><![CDATA[${post.description}]]></description><enclosure url="${fullImg}" type="image/jpeg" /></item>`;
     });
     xml += `</channel></rss>`;
     safeWrite(feedPath, xml);
@@ -947,7 +911,9 @@ const generateSitemap = () => {
     const today = new Date().toISOString().split('T')[0];
     const staticPages = [
         { url: '/', priority: '1.0' }, 
-        { url: '/articles.html', priority: '0.9' }, 
+        { url: '/apps.html', priority: '0.9' }, 
+        { url: '/games.html', priority: '0.9' }, 
+        { url: '/sports.html', priority: '0.9' }, 
         { url: '/tools.html', priority: '0.9' }, 
         { url: '/about.html', priority: '0.7' }, 
         { url: '/tools-sites.html', priority: '0.8' }, 
@@ -968,7 +934,6 @@ const generateSitemap = () => {
     allPosts.forEach(post => { 
         const fullImg = toAbsoluteUrl(post.image); 
         const pageUrl = `${BASE_URL}/article-${post.slug}.html`; 
-        // Use full ISO string for precision
         xml += `<url><loc>${pageUrl}</loc><lastmod>${post.effectiveDate.toISOString()}</lastmod><priority>0.8</priority><image:image><image:loc>${escapeXml(fullImg)}</image:loc><image:title>${escapeXml(post.title)}</image:title></image:image></url>`; 
     });
     
@@ -980,10 +945,9 @@ const generateSitemap = () => {
 updateAboutPageDetails();
 updateChannelsPage();
 updateToolsPage();
-HTML_FILES.forEach(file => { const filePath = path.join(ROOT_DIR, file); if (fs.existsSync(filePath)) safeWrite(filePath, updateGlobalElements(fs.readFileSync(filePath, 'utf8'), file)); });
-updateListingPages();
+generateCategoryPages(); // REPLACES updateListingPages
 generateIndividualArticles();
 updateSearchData();
 generateRSS();
 generateSitemap();
-console.log('Build Complete. Duplicate removal and Broken Image protection applied.');
+console.log('Build Complete. Multi-Page Architecture Implemented.');

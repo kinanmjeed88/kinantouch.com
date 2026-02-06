@@ -27,161 +27,110 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Highlight Active Nav Link (Improved Logic)
+    // 3. Highlight Active Nav Link (Improved for MPA)
     const currentPath = window.location.pathname.replace(/\/$/, "");
+    const filename = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+    // Main Header Nav
     document.querySelectorAll(".nav-link").forEach(link => {
-        try {
-            const linkPath = new URL(link.href).pathname.replace(/\/$/, "");
-            link.classList.remove("active");
-            // Check for exact match or index match
-            if (currentPath === linkPath || currentPath.endsWith(linkPath)) {
-                link.classList.add("active");
-            }
-            // Fallback for root
-            if ((currentPath === '' || currentPath === '/') && linkPath.endsWith('index.html')) {
-                link.classList.add("active");
-            }
-        } catch(e) {
-            // Fallback for relative links if URL parsing fails
-            const href = link.getAttribute('href');
-            if (currentPath.endsWith(href)) {
-                link.classList.add("active");
-            }
+        const href = link.getAttribute('href');
+        if (href === filename || (filename === '' && href === 'index.html')) {
+            link.classList.add("active");
         }
     });
 
-    // 4. Tab Switching Logic (Hash Based Persistence)
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
+    // Category Tabs Active State
+    document.querySelectorAll(".tab-link").forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === filename || (filename === '' && href === 'index.html')) {
+            link.classList.remove('border-transparent', 'text-gray-600', 'dark:text-gray-300');
+            link.classList.add('border-blue-600', 'text-blue-600', 'bg-transparent', 'shadow-sm');
+        }
+    });
 
-    if (tabButtons.length > 0) {
+    // 4. Pagination Logic (Target Main Grid directly)
+    function setupPagination() {
+        const itemsPerPage = 15;
+        // Only target the main grid in the main tag
+        const grid = document.querySelector('main > .grid');
         
-        function activateTabFromHash() {
-            const hash = window.location.hash.replace('#tab-', '');
-            let targetBtn, targetContent;
+        if(!grid) return;
+        
+        const items = Array.from(grid.children);
+        if(items.length <= itemsPerPage) return;
 
-            if (hash) {
-                targetBtn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
-                targetContent = document.getElementById(`tab-${hash}`);
-            }
+        // Check if controls already exist
+        if(document.querySelector('.pagination-controls')) return;
+
+        // Create pagination controls
+        const controls = document.createElement('div');
+        controls.className = 'pagination-controls flex justify-center gap-4 mt-8 pt-4 border-t border-gray-100 dark:border-gray-800 w-full col-span-full';
+        
+        const prevBtn = document.createElement('button');
+        prevBtn.innerHTML = `<span>السابق</span>`;
+        prevBtn.className = 'px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
+        
+        const nextBtn = document.createElement('button');
+        nextBtn.innerHTML = `<span>التالي</span>`;
+        nextBtn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
+
+        controls.appendChild(prevBtn);
+        controls.appendChild(nextBtn);
+        // Append after grid
+        grid.parentNode.appendChild(controls);
+
+        let currentPage = 1;
+        const totalPages = Math.ceil(items.length / itemsPerPage);
+
+        function showPage(page) {
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            items.forEach((item, index) => {
+                if(index >= start && index < end) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            prevBtn.disabled = page === 1;
+            nextBtn.disabled = page === totalPages;
             
-            if (targetBtn && targetContent) {
-                // Deactivate all
-                tabButtons.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.add('hidden'));
-
-                // Activate Target
-                targetBtn.classList.add('active');
-                targetContent.classList.remove('hidden');
-                
-                // Animate
-                targetContent.classList.remove('animate-fade-in');
-                void targetContent.offsetWidth; // Force reflow
-                targetContent.classList.add('animate-fade-in');
+            // Scroll to top of grid
+            if(window.scrollY > grid.offsetTop) {
+                const headerOffset = 150;
+                const elementPosition = grid.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
             }
         }
 
-        // Initial Load
-        activateTabFromHash();
-
-        // Listen for hash changes (Browser Back Button)
-        window.addEventListener('hashchange', activateTabFromHash);
-
-        // Click Handlers
-        tabButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const targetTab = btn.getAttribute('data-tab');
-                // Update URL Hash without scrolling
-                history.pushState(null, null, `#tab-${targetTab}`);
-                activateTabFromHash();
-            });
-        });
-    }
-
-    // 5. Pagination Logic (New Addition)
-    function setupPagination() {
-        const itemsPerPage = 15;
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabContents.forEach(tab => {
-            const grid = tab.querySelector('.grid');
-            if(!grid) return;
-            
-            const items = Array.from(grid.children);
-            if(items.length <= itemsPerPage) return;
-
-            // Check if controls already exist
-            if(tab.querySelector('.pagination-controls')) return;
-
-            // Create pagination controls
-            const controls = document.createElement('div');
-            controls.className = 'pagination-controls flex justify-center gap-4 mt-8 pt-4 border-t border-gray-100 dark:border-gray-800';
-            
-            const prevBtn = document.createElement('button');
-            prevBtn.innerHTML = `<span>السابق</span>`;
-            prevBtn.className = 'px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
-            
-            const nextBtn = document.createElement('button');
-            nextBtn.innerHTML = `<span>التالي</span>`;
-            nextBtn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
-
-            controls.appendChild(prevBtn);
-            controls.appendChild(nextBtn);
-            tab.appendChild(controls);
-
-            let currentPage = 1;
-            const totalPages = Math.ceil(items.length / itemsPerPage);
-
-            function showPage(page) {
-                const start = (page - 1) * itemsPerPage;
-                const end = start + itemsPerPage;
-
-                items.forEach((item, index) => {
-                    if(index >= start && index < end) {
-                        item.classList.remove('hidden');
-                    } else {
-                        item.classList.add('hidden');
-                    }
-                });
-
-                prevBtn.disabled = page === 1;
-                nextBtn.disabled = page === totalPages;
-                
-                // Scroll to top of grid
-                if(window.scrollY > grid.offsetTop) {
-                    const headerOffset = 150;
-                    const elementPosition = grid.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: "smooth"
-                    });
-                }
+        prevBtn.addEventListener('click', () => {
+            if(currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
             }
-
-            prevBtn.addEventListener('click', () => {
-                if(currentPage > 1) {
-                    currentPage--;
-                    showPage(currentPage);
-                }
-            });
-
-            nextBtn.addEventListener('click', () => {
-                if(currentPage < totalPages) {
-                    currentPage++;
-                    showPage(currentPage);
-                }
-            });
-
-            // Init
-            showPage(1);
         });
+
+        nextBtn.addEventListener('click', () => {
+            if(currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        });
+
+        // Init
+        showPage(1);
     }
     
     // Run pagination setup
     setupPagination();
 
-    // 6. PWA Install Logic
+    // 5. PWA Install Logic
     let deferredPrompt;
     const installBtn = document.getElementById('install-app-btn');
 
@@ -204,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 7. News Ticker Auto-Stop Logic (Fixed cleanup)
+    // 6. News Ticker Auto-Stop Logic (Fixed cleanup)
     const tickerContainer = document.getElementById('ticker-content');
     if (tickerContainer) {
         document.fonts.ready.then(() => {
@@ -220,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 8. Back To Top Logic
+    // 7. Back To Top Logic
     const backToTopBtn = document.getElementById('back-to-top');
     if (backToTopBtn) {
         window.addEventListener('scroll', () => {
@@ -236,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 9. Share Buttons Dynamic Links
+    // 8. Share Buttons Dynamic Links
     const shareContainer = document.getElementById('dynamic-share-buttons');
     if (shareContainer) {
         const pageTitle = encodeURIComponent(document.title);
@@ -255,54 +204,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const fbBtn = shareContainer.querySelector('.facebook');
         if(fbBtn) fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
 
-        // Instagram (Fallback as it doesn't support direct URL sharing)
-        // We will link to the app, but user has to paste manually essentially.
-        // However, standard "share" often implies copying or generic intent.
-        // Since user asked to "open app", we try generic link or web intent if mobile.
+        // Instagram (Fallback)
         const instaBtn = shareContainer.querySelector('.instagram');
         if(instaBtn) {
-            // Instagram doesn't have a simple web sharer URL for posts.
-            // Best we can do is open Instagram.
             instaBtn.href = "https://www.instagram.com/";
-            instaBtn.addEventListener('click', (e) => {
-                // On mobile this might trigger app if installed
-            });
         }
     }
 
-    // 10. Toggle Pre-rendered AI Summary (Client Interaction)
-    const showSummaryBtn = document.getElementById('btn-show-summary');
-    const summaryContainer = document.getElementById('ai-summary-container');
-    const hideSummaryBtn = document.getElementById('btn-hide-summary');
-
-    if (showSummaryBtn && summaryContainer) {
-        showSummaryBtn.addEventListener('click', () => {
-            // Show container
-            summaryContainer.classList.remove('hidden');
-            // Allow browser reflow, then animate opacity and translate
-            requestAnimationFrame(() => {
-                summaryContainer.classList.remove('opacity-0', 'translate-y-4');
-            });
-            
-            // Scroll to it
-            summaryContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // 9. AI Summary Logic (Updated Class Based)
+    const summaryBtns = document.querySelectorAll('.ai-summary-btn');
+    summaryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Find specific summary box in this page context
+            const box = document.querySelector('.ai-summary-box');
+            if(box) {
+                box.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    box.classList.remove('opacity-0', 'scale-95');
+                });
+                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         });
+    });
 
-        if (hideSummaryBtn) {
-            hideSummaryBtn.addEventListener('click', () => {
-                // Animate out
-                summaryContainer.classList.add('opacity-0', 'translate-y-4');
-                // Wait for transition end then hide
+    const closeSummaryBtns = document.querySelectorAll('.ai-summary-close');
+    closeSummaryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const box = btn.closest('.ai-summary-box');
+            if(box) {
+                box.classList.add('opacity-0', 'scale-95');
                 setTimeout(() => {
-                    summaryContainer.classList.add('hidden');
-                    // Scroll back up slightly to context
-                    showSummaryBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 500);
-            });
-        }
-    }
+                    box.classList.add('hidden');
+                }, 300);
+            }
+        });
+    });
 
-    // 11. Real View Counter Logic (Client Side API Only)
+    // 10. Real View Counter Logic (Client Side API Only)
     const viewCounter = document.querySelector('.view-count-display');
     if (viewCounter && viewCounter.dataset.slug) {
         const slug = viewCounter.dataset.slug;
@@ -324,7 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(e => {
             // console.debug('View counter API not active or failed:', e);
-            // Fallback is handled by static HTML (empty or ...)
         });
     }
 });

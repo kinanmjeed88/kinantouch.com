@@ -1,3 +1,4 @@
+
 /* Global Reset & Layout Protection */
 *, *::before, *::after { box-sizing: border-box; min-width: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: 140px; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
@@ -89,71 +90,20 @@ table { display: table; width: 100%; white-space: nowrap; }
 }
 
 /* ========================================= */
-/* 2. Minimalist Underline Tabs              */
+/* 2. Category Nav (MPA Style)               */
 /* ========================================= */
 
-.tab-btn {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    position: relative;
-    border-radius: 0 !important; 
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    padding-bottom: 0.75rem !important;
-    padding-top: 0.5rem !important;
-    margin-bottom: -1px; 
-    color: #6b7280; 
-    font-weight: 600;
-}
-
-.tab-btn i, .tab-btn svg {
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.tab-btn.active i, .tab-btn.active svg {
-    transform: translateY(-2px);
-    color: inherit;
-}
-
-.tab-btn.active {
-    color: #2563eb !important; 
+.tab-link.active-cat-link {
     background-color: transparent !important;
-    font-weight: 800;
-}
-.dark .tab-btn.active {
-    color: #60a5fa !important; 
-}
-
-.tab-btn::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 3px;
-    background: #2563eb;
-    border-radius: 10px 10px 0 0;
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1) !important;
 }
 
-.dark .tab-btn::after {
-    background: #60a5fa;
-    box-shadow: 0 0 8px rgba(96, 165, 250, 0.4); 
-}
-
-.tab-btn.active::after {
-    width: 70%;
-    opacity: 1;
-}
-
-.tab-btn:not(.active):hover {
-    color: #374151; 
-}
-.dark .tab-btn:not(.active):hover {
-    color: #e5e7eb; 
+.dark .tab-link.active-cat-link {
+    border-color: #60a5fa !important;
+    color: #60a5fa !important;
+    box-shadow: none !important;
 }
 
 /* ========================================= */
