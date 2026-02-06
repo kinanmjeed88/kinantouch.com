@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 `;
 
 const TICKER_HTML_TEMPLATE = `
-<div id="news-ticker-bar" class="w-full bg-gray-900 text-white h-10 flex items-center overflow-hidden border-b border-gray-800 relative z-40">
+<div id="news-ticker-bar" class="w-full bg-gray-900 text-white flex items-center overflow-hidden border-b border-gray-800 relative z-40">
     <div class="h-full flex items-center justify-center px-0 relative z-10 shrink-0">
         <div id="ticker-label" class="border-l border-white/10 text-blue-500 px-1 py-0.5 font-bold text-xs">
           جديد
@@ -295,9 +295,15 @@ if (fs.existsSync(POSTS_DIR)) {
             try {
                 const post = JSON.parse(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
                 if (!post.slug) post.slug = file.replace('.json', '');
-                // IMPROVED SLUG LOGIC: Allow Arabic, replace spaces with dash
-                post.slug = post.slug.trim().replace(/\s+/g, '-').replace(/[^\w\-\u0600-\u06FF]/g, '');
                 
+                // SEO Safe Normalization: Stable Slug Logic
+                post.slug = post.slug.trim().toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-\u0600-\u06FF]/g, '') // Allow Arabic + Alphanumeric
+                    .replace(/\-\-+/g, '-') // Dedupe dashes
+                    .replace(/^-+|-+$/g, '') // Trim dashes from start/end
+                    .substring(0, 80); // Limit length to 80 chars
+
                 if (post.title) {
                     const normalizedTitle = post.title.trim().toLowerCase();
                     if (titleRegistry.has(normalizedTitle)) {
@@ -323,7 +329,7 @@ if (fs.existsSync(POSTS_DIR)) {
     });
 }
 
-// Sort by Date Descending
+// Sort by Date Descending (Explicit Sort)
 rawPosts.sort((a, b) => b.effectiveDate - a.effectiveDate);
 const allPosts = rawPosts;
 
@@ -397,6 +403,20 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     $('head').prepend(GA_SCRIPT);
     $('body').append(IMG_ERROR_SCRIPT);
     
+    // --- CRITICAL SEO: Canonical Fix ---
+    let canonicalUrl;
+    if (fileName === 'index.html') {
+        canonicalUrl = `${BASE_URL}/`; // Root for index
+    } else {
+        // Ensure no index.html in other canonicals
+        const cleanName = fileName.replace('index.html', '');
+        canonicalUrl = `${BASE_URL}/${cleanName}`;
+    }
+    // Remove existing canonicals
+    $('link[rel="canonical"]').remove();
+    // Add single correct canonical
+    $('head').append(`<link rel="canonical" href="${canonicalUrl}">`);
+
     if (GOOGLE_SITE_VERIFICATION) {
         $('meta[name="google-site-verification"]').remove();
         $('head').append(`<meta name="google-site-verification" content="${GOOGLE_SITE_VERIFICATION}" />`);
@@ -481,7 +501,7 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
 
     // Ticker Logic: Show on Index and Category Pages
     $('#news-ticker-bar').remove();
-    const isCategoryPage = ['index.html', 'apps.html', 'games.html', 'sports.html'].includes(fileName);
+    const isCategoryPage = ['index.html', 'apps.html', 'games.html', 'sports.html'].includes(fileName) || fileName.match(/-page-\d+\.html$/);
     if (isCategoryPage && aboutData.ticker && aboutData.ticker.enabled !== false) {
         $('header').after(TICKER_HTML_TEMPLATE);
         $('#ticker-label').text(aboutData.ticker.label);
@@ -547,7 +567,7 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     return finalHtml;
 };
 
-// --- NEW PAGE GENERATION LOGIC (MPA) ---
+// --- NEW PAGE GENERATION LOGIC (MPA with Static Pagination) ---
 const generateCategoryPages = () => {
     // We reuse the basic structure from articles.html or index.html
     const templatePath = path.join(ROOT_DIR, 'articles.html');
@@ -564,56 +584,81 @@ const generateCategoryPages = () => {
     ];
 
     pages.forEach(p => {
-        const $ = cheerio.load(baseTemplate, { decodeEntities: false });
-        
-        // 1. Inject Category Nav (Replaces old #tab buttons)
-        const oldTabContainer = $('.w-full.py-2');
-        if (oldTabContainer.length) {
-            let navHtml = CATEGORY_NAV_TEMPLATE
-                .replace('__LABEL_ARTICLES__', labels.articles || 'اخبار')
-                .replace('__LABEL_APPS__', labels.apps || 'تطبيقات')
-                .replace('__LABEL_GAMES__', labels.games || 'ألعاب')
-                .replace('__LABEL_SPORTS__', labels.sports || 'رياضة');
-            oldTabContainer.replaceWith(navHtml);
-        }
-
-        // 2. Set Active State for this page
-        $(`a[href="${p.file}"]`).addClass('active-cat-link border-blue-600 text-blue-600 bg-transparent shadow-sm').removeClass('border-transparent text-gray-600 dark:text-gray-300');
-
-        // 3. Populate Content
-        const main = $('main');
-        main.empty(); // Clear old tab divs
-        
-        // Add single grid container
-        const grid = $('<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full"></div>');
-        
         const posts = postsByCategory[p.cat] || [];
-        if (posts.length > 0) {
-            // Sort: Already sorted by date in `allPosts`, but let's ensure category logic if needed.
-            // Current `allPosts` is already sorted descending by date.
-            posts.forEach(post => grid.append(createCardHTML(post)));
-        } else {
-            // Add noindex for empty pages
-            $('head').append('<meta name="robots" content="noindex, follow">');
-            grid.html('<div class="col-span-full text-center py-20 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
-        }
-        main.append(grid);
-
-        // 4. Update Titles & Meta & SEO
-        const pageTitle = `${p.title} | ${aboutData.siteName || "TechTouch"}`;
-        $('title').text(pageTitle);
-        $('meta[name="description"]').attr('content', p.desc);
+        const ITEMS_PER_PAGE = 15;
+        // Strict pagination only if posts exceed 60
+        const shouldPaginate = posts.length > 60;
         
-        // Dynamic Canonical & OG Tags
-        const pageUrl = `${BASE_URL}/${p.file}`;
-        $('head').append(`<link rel="canonical" href="${pageUrl}">`);
-        $('head').append(`<meta property="og:url" content="${pageUrl}">`);
-        $('head').append(`<meta property="og:description" content="${p.desc}">`);
-        $('head').append(`<meta property="og:type" content="website">`);
+        // Calculate total pages if pagination is active, else 1
+        const totalPages = shouldPaginate ? Math.ceil(posts.length / ITEMS_PER_PAGE) : 1;
 
-        // 5. Save
-        const filePath = path.join(ROOT_DIR, p.file);
-        safeWrite(filePath, updateGlobalElements($.html(), p.file, pageTitle));
+        // Loop for pages (at least 1 run)
+        for (let i = 0; i < totalPages; i++) {
+            const $ = cheerio.load(baseTemplate, { decodeEntities: false });
+            
+            // 1. Inject Category Nav
+            const oldTabContainer = $('.w-full.py-2');
+            if (oldTabContainer.length) {
+                let navHtml = CATEGORY_NAV_TEMPLATE
+                    .replace('__LABEL_ARTICLES__', labels.articles || 'اخبار')
+                    .replace('__LABEL_APPS__', labels.apps || 'تطبيقات')
+                    .replace('__LABEL_GAMES__', labels.games || 'ألعاب')
+                    .replace('__LABEL_SPORTS__', labels.sports || 'رياضة');
+                oldTabContainer.replaceWith(navHtml);
+            }
+
+            // 2. Set Active State
+            // The active state applies to base URL (e.g. index.html) even for paged versions
+            const activeHref = p.file;
+            $(`a[href="${activeHref}"]`).addClass('active-cat-link border-blue-600 text-blue-600 bg-transparent shadow-sm').removeClass('border-transparent text-gray-600 dark:text-gray-300');
+
+            // 3. Populate Content (Sliced if pagination active)
+            const main = $('main');
+            main.empty();
+            const grid = $('<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full"></div>');
+            
+            let currentPosts = posts;
+            if (shouldPaginate) {
+                const start = i * ITEMS_PER_PAGE;
+                const end = start + ITEMS_PER_PAGE;
+                currentPosts = posts.slice(start, end);
+            }
+
+            if (currentPosts.length > 0) {
+                currentPosts.forEach(post => grid.append(createCardHTML(post)));
+            } else {
+                $('head').append('<meta name="robots" content="noindex, follow">');
+                grid.html('<div class="col-span-full text-center py-20 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
+            }
+            main.append(grid);
+
+            // 4. Update Titles & Meta
+            const pageTitle = i === 0 ? `${p.title} | ${aboutData.siteName || "TechTouch"}` : `${p.title} - صفحة ${i + 1} | ${aboutData.siteName || "TechTouch"}`;
+            $('title').text(pageTitle);
+            $('meta[name="description"]').attr('content', p.desc);
+            
+            // 5. SEO Link Tags (Prev/Next) for static pagination
+            if (shouldPaginate) {
+                const baseFileName = p.file.replace('.html', '');
+                const currentFileName = i === 0 ? p.file : `${baseFileName}-page-${i + 1}.html`;
+                const nextFileName = `${baseFileName}-page-${i + 2}.html`;
+                const prevFileName = i === 1 ? p.file : `${baseFileName}-page-${i}.html`;
+
+                if (i > 0) {
+                    $('head').append(`<link rel="prev" href="${BASE_URL}/${prevFileName}">`);
+                }
+                if (i < totalPages - 1) {
+                    $('head').append(`<link rel="next" href="${BASE_URL}/${nextFileName}">`);
+                }
+            }
+
+            // 6. Save File
+            const fileName = i === 0 ? p.file : p.file.replace('.html', `-page-${i + 1}.html`);
+            const filePath = path.join(ROOT_DIR, fileName);
+            
+            // Canonical is handled in updateGlobalElements based on filename
+            safeWrite(filePath, updateGlobalElements($.html(), fileName, pageTitle));
+        }
     });
 };
 
@@ -699,7 +744,7 @@ const generateIndividualArticles = () => {
                     <div class="w-px h-3 bg-gray-300 dark:bg-gray-600"></div>
                     <div class="flex items-center gap-1.5 view-count-wrapper group" title="المشاهدات">
                         <i data-lucide="eye" class="w-4 h-4 text-green-500 group-hover:scale-110 transition-transform"></i>
-                        <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}">0</span>
+                        <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}">—</span>
                     </div>
                 </div>
                 ${summaryButtonHTML}
@@ -820,14 +865,16 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(shareSectionHTML);
         
-        // --- IMPROVED RELATED POSTS LOGIC (Prioritize same category first) ---
+        // --- STRICT RELATED POSTS LOGIC (Target 12, Sorted) ---
         const otherPosts = allPosts.filter(p => p.slug !== post.slug);
         
-        // 1. Same category (sorted by date desc)
-        let sameCatPosts = otherPosts.filter(p => p.category === post.category).sort((a,b) => b.effectiveDate - a.effectiveDate);
+        // 1. Gather same category & SORT EXPLICITLY
+        let sameCatPosts = otherPosts.filter(p => p.category === post.category)
+            .sort((a,b) => b.effectiveDate - a.effectiveDate);
         
-        // 2. Different category (sorted by date desc)
-        let diffCatPosts = otherPosts.filter(p => p.category !== post.category).sort((a,b) => b.effectiveDate - a.effectiveDate);
+        // 2. Gather other categories & SORT EXPLICITLY
+        let diffCatPosts = otherPosts.filter(p => p.category !== post.category)
+            .sort((a,b) => b.effectiveDate - a.effectiveDate);
         
         // 3. Combine: Same Cat First + Diff Cat Second
         let relatedPosts = sameCatPosts.concat(diffCatPosts);
@@ -941,7 +988,9 @@ const generateSitemap = () => {
     let xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
     
     staticPages.forEach(page => { 
-        const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`; 
+        // Ensure strictly NO index.html in sitemap locs
+        const cleanUrl = page.url === '/' ? '' : page.url.replace(/^\//, '');
+        const loc = `${BASE_URL}/${cleanUrl}`; 
         xml += `<url><loc>${loc}</loc><lastmod>${today}</lastmod><priority>${page.priority}</priority></url>`; 
     });
     
@@ -959,9 +1008,9 @@ const generateSitemap = () => {
 updateAboutPageDetails();
 updateChannelsPage();
 updateToolsPage();
-generateCategoryPages(); // REPLACES updateListingPages
+generateCategoryPages(); 
 generateIndividualArticles();
 updateSearchData();
 generateRSS();
 generateSitemap();
-console.log('Build Complete. Multi-Page Architecture Implemented.');
+console.log('Build Complete. Multi-Page Architecture Hardened.');

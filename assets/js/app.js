@@ -27,16 +27,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Highlight Active Nav Link (Improved for MPA - Ignore Query/Hash)
+    // 3. Highlight Active Nav Link (Robust Path Logic)
     try {
-        const currentUrl = new URL(window.location.href);
-        const filename = currentUrl.pathname.replace(/^\/|\/$/g, ""); // Remove leading/trailing slashes
+        const url = new URL(window.location.href);
+        // Normalize: Remove trailing slash and get pathname
+        const path = url.pathname.replace(/\/$/, ""); 
+        // Get just the filename (e.g., 'index.html' or empty string for root)
+        const filename = path.split('/').pop() || 'index.html';
 
         // Main Header Nav
         document.querySelectorAll(".nav-link").forEach(link => {
             const href = link.getAttribute('href');
-            // If filename empty or index.html and link is index.html
-            if (href === filename || ((filename === '' || filename === 'index.html') && href === 'index.html')) {
+            // Strict check
+            if (href === filename || (filename === 'index.html' && href === 'index.html')) {
                 link.classList.add("active");
             }
         });
@@ -44,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Category Tabs Active State
         document.querySelectorAll(".tab-link").forEach(link => {
             const href = link.getAttribute('href');
-            if (href === filename || ((filename === '' || filename === 'index.html') && href === 'index.html')) {
+            if (href === filename || (filename === 'index.html' && href === 'index.html')) {
                 link.classList.remove('border-transparent', 'text-gray-600', 'dark:text-gray-300');
                 link.classList.add('border-blue-600', 'text-blue-600', 'bg-transparent', 'shadow-sm');
             }
@@ -235,25 +238,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // 9. AI Summary Logic (Scope Isolated + Safe)
     const summaryBtns = document.querySelectorAll('.ai-summary-btn');
     summaryBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
             // Find summary box specifically within the parent main/article container
-            const container = btn.closest('main') || document.body; 
-            const box = container.querySelector('.ai-summary-box');
-            
-            if(box) {
-                box.classList.remove('hidden');
-                requestAnimationFrame(() => {
-                    box.classList.remove('opacity-0', 'scale-95');
-                });
-                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const container = e.target.closest('main');
+            if (container) {
+                const box = container.querySelector('.ai-summary-box');
+                if(box) {
+                    box.classList.remove('hidden');
+                    requestAnimationFrame(() => {
+                        box.classList.remove('opacity-0', 'scale-95');
+                    });
+                    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
         });
     });
 
     const closeSummaryBtns = document.querySelectorAll('.ai-summary-close');
     closeSummaryBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const box = btn.closest('.ai-summary-box');
+        btn.addEventListener('click', (e) => {
+            const box = e.target.closest('.ai-summary-box');
             if(box) {
                 box.classList.add('opacity-0', 'scale-95');
                 setTimeout(() => {
@@ -278,10 +282,11 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error('API Error');
         })
         .then(data => {
-            if (typeof data.views === 'number') {
-                viewCounter.textContent = data.views.toLocaleString('en-US');
+            // Strict undefined/null check to distinguish 0 views from error
+            if (data.views === undefined || data.views === null) {
+                viewCounter.textContent = "—";
             } else {
-                viewCounter.textContent = '—'; // Fallback visual
+                viewCounter.textContent = Number(data.views).toLocaleString("en-US");
             }
         })
         .catch(e => {

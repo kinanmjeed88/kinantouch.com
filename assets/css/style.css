@@ -115,7 +115,8 @@ table { display: table; width: 100%; white-space: nowrap; }
     align-items: center;
     gap: 0 !important;
     padding: 0 !important;
-    height: 44px; /* Slightly taller for elegance */
+    height: 44px; /* Fixed Height */
+    min-height: 44px; /* Prevent CLS */
     background-color: #111827; /* Gray-900 */
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
