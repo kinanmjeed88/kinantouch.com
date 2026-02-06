@@ -826,8 +826,8 @@ const generateIndividualArticles = () => {
                 </div>
               </div>
             </div>`;
-            // Insert BEFORE the article content but AFTER the image
-            $('article').prepend(summaryContentHTML);
+            // Insert AFTER content (Before tags)
+            $('article').append(summaryContentHTML);
         }
 
         const tags = [getCatLabel(post.category)];

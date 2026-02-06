@@ -235,22 +235,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 9. AI Summary Logic (Scope Isolated + Safe)
+    // 9. AI Summary Logic (Scope Isolated + Safe + Scroll to Bottom)
+    // AI Summary Scroll To Bottom Version
     const summaryBtns = document.querySelectorAll('.ai-summary-btn');
+
     summaryBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            // Find summary box specifically within the parent main/article container
-            const container = e.target.closest('main');
-            if (container) {
-                const box = container.querySelector('.ai-summary-box');
-                if(box) {
-                    box.classList.remove('hidden');
-                    requestAnimationFrame(() => {
-                        box.classList.remove('opacity-0', 'scale-95');
-                    });
-                    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }
+        btn.addEventListener('click', () => {
+
+            // حدد نطاق المقال الحالي فقط
+            const mainContainer = btn.closest('main');
+            if (!mainContainer) return;
+
+            const summaryBox = mainContainer.querySelector('.ai-summary-box');
+            if (!summaryBox) return;
+
+            // 1️⃣ إظهار الصندوق
+            summaryBox.classList.remove('hidden');
+
+            requestAnimationFrame(() => {
+                summaryBox.classList.remove('opacity-0', 'scale-95');
+            });
+
+            // 2️⃣ انتظر 100ms لضمان حساب الارتفاع الصحيح
+            setTimeout(() => {
+
+                const rect = summaryBox.getBoundingClientRect();
+                const absoluteTop = rect.top + window.pageYOffset;
+
+                window.scrollTo({
+                    top: absoluteTop - 80, // مسافة بسيطة فوقه لتفادي التصاقه بالحافة
+                    behavior: 'smooth'
+                });
+
+            }, 120);
         });
     });
 
