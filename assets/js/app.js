@@ -27,28 +27,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Highlight Active Nav Link (Improved for MPA)
-    const currentPath = window.location.pathname.replace(/\/$/, "");
-    const filename = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+    // 3. Highlight Active Nav Link (Improved for MPA - Ignore Query/Hash)
+    try {
+        const currentUrl = new URL(window.location.href);
+        const filename = currentUrl.pathname.replace(/^\/|\/$/g, ""); // Remove leading/trailing slashes
 
-    // Main Header Nav
-    document.querySelectorAll(".nav-link").forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === filename || (filename === '' && href === 'index.html')) {
-            link.classList.add("active");
-        }
-    });
+        // Main Header Nav
+        document.querySelectorAll(".nav-link").forEach(link => {
+            const href = link.getAttribute('href');
+            // If filename empty or index.html and link is index.html
+            if (href === filename || ((filename === '' || filename === 'index.html') && href === 'index.html')) {
+                link.classList.add("active");
+            }
+        });
 
-    // Category Tabs Active State
-    document.querySelectorAll(".tab-link").forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === filename || (filename === '' && href === 'index.html')) {
-            link.classList.remove('border-transparent', 'text-gray-600', 'dark:text-gray-300');
-            link.classList.add('border-blue-600', 'text-blue-600', 'bg-transparent', 'shadow-sm');
-        }
-    });
+        // Category Tabs Active State
+        document.querySelectorAll(".tab-link").forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === filename || ((filename === '' || filename === 'index.html') && href === 'index.html')) {
+                link.classList.remove('border-transparent', 'text-gray-600', 'dark:text-gray-300');
+                link.classList.add('border-blue-600', 'text-blue-600', 'bg-transparent', 'shadow-sm');
+            }
+        });
+    } catch(e) { console.error(e); }
 
-    // 4. Pagination Logic (Target Main Grid directly)
+    // 4. Pagination Logic with URL Params
     function setupPagination() {
         const itemsPerPage = 15;
         // Only target the main grid in the main tag
@@ -59,28 +62,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const items = Array.from(grid.children);
         if(items.length <= itemsPerPage) return;
 
-        // Check if controls already exist
-        if(document.querySelector('.pagination-controls')) return;
-
-        // Create pagination controls
-        const controls = document.createElement('div');
-        controls.className = 'pagination-controls flex justify-center gap-4 mt-8 pt-4 border-t border-gray-100 dark:border-gray-800 w-full col-span-full';
-        
-        const prevBtn = document.createElement('button');
-        prevBtn.innerHTML = `<span>السابق</span>`;
-        prevBtn.className = 'px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
-        
-        const nextBtn = document.createElement('button');
-        nextBtn.innerHTML = `<span>التالي</span>`;
-        nextBtn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
-
-        controls.appendChild(prevBtn);
-        controls.appendChild(nextBtn);
-        // Append after grid
-        grid.parentNode.appendChild(controls);
-
-        let currentPage = 1;
+        // Get Current Page from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentPage = parseInt(urlParams.get('page')) || 1;
         const totalPages = Math.ceil(items.length / itemsPerPage);
+
+        // Controls container
+        let controls = document.querySelector('.pagination-controls');
+        let prevBtn, nextBtn;
+
+        if (!controls) {
+            controls = document.createElement('div');
+            controls.className = 'pagination-controls flex justify-center gap-4 mt-8 pt-4 border-t border-gray-100 dark:border-gray-800 w-full col-span-full';
+            
+            prevBtn = document.createElement('button');
+            prevBtn.innerHTML = `<span>السابق</span>`;
+            prevBtn.className = 'px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
+            
+            nextBtn = document.createElement('button');
+            nextBtn.innerHTML = `<span>التالي</span>`;
+            nextBtn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-bold text-sm transition-colors flex items-center gap-2';
+
+            controls.appendChild(prevBtn);
+            controls.appendChild(nextBtn);
+            // Append after grid
+            grid.parentNode.appendChild(controls);
+
+            prevBtn.addEventListener('click', () => {
+                if(currentPage > 1) {
+                    updatePage(currentPage - 1);
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if(currentPage < totalPages) {
+                    updatePage(currentPage + 1);
+                }
+            });
+        }
 
         function showPage(page) {
             const start = (page - 1) * itemsPerPage;
@@ -94,8 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            prevBtn.disabled = page === 1;
-            nextBtn.disabled = page === totalPages;
+            if(prevBtn) prevBtn.disabled = page === 1;
+            if(nextBtn) nextBtn.disabled = page === totalPages;
             
             // Scroll to top of grid
             if(window.scrollY > grid.offsetTop) {
@@ -109,22 +128,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        prevBtn.addEventListener('click', () => {
-            if(currentPage > 1) {
-                currentPage--;
-                showPage(currentPage);
-            }
-        });
-
-        nextBtn.addEventListener('click', () => {
-            if(currentPage < totalPages) {
-                currentPage++;
-                showPage(currentPage);
-            }
-        });
+        function updatePage(newPage) {
+            currentPage = newPage;
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('page', newPage);
+            window.history.pushState({}, '', newUrl);
+            showPage(newPage);
+        }
 
         // Init
-        showPage(1);
+        showPage(currentPage);
+        
+        // Handle Back Button
+        window.addEventListener('popstate', () => {
+            const params = new URLSearchParams(window.location.search);
+            const p = parseInt(params.get('page')) || 1;
+            currentPage = p;
+            showPage(p);
+        });
     }
     
     // Run pagination setup
@@ -211,12 +232,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 9. AI Summary Logic (Updated Class Based)
+    // 9. AI Summary Logic (Scope Isolated + Safe)
     const summaryBtns = document.querySelectorAll('.ai-summary-btn');
     summaryBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Find specific summary box in this page context
-            const box = document.querySelector('.ai-summary-box');
+            // Find summary box specifically within the parent main/article container
+            const container = btn.closest('main') || document.body; 
+            const box = container.querySelector('.ai-summary-box');
+            
             if(box) {
                 box.classList.remove('hidden');
                 requestAnimationFrame(() => {
@@ -240,12 +263,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 10. Real View Counter Logic (Client Side API Only)
+    // 10. Real View Counter Logic (Client Side API Only with Fallback)
     const viewCounter = document.querySelector('.view-count-display');
     if (viewCounter && viewCounter.dataset.slug) {
         const slug = viewCounter.dataset.slug;
         
-        // Call the view API
         fetch('/api/views', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -258,10 +280,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             if (typeof data.views === 'number') {
                 viewCounter.textContent = data.views.toLocaleString('en-US');
+            } else {
+                viewCounter.textContent = '—'; // Fallback visual
             }
         })
         .catch(e => {
-            // console.debug('View counter API not active or failed:', e);
+            // Quietly fail UI
+            viewCounter.textContent = '—'; 
         });
     }
 });

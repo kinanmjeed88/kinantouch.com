@@ -356,3 +356,25 @@ table { display: table; width: 100%; white-space: nowrap; }
     width: 1.5rem;
     height: 1.5rem;
 }
+
+/* ========================================= */
+/* 6. AI Summary Minimalist Design           */
+/* ========================================= */
+
+.ai-summary-box {
+    margin-bottom: 2rem !important;
+}
+
+.ai-summary-box > div {
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+.ai-summary-box h3 {
+    margin: 0 !important;
+}
+
+.ai-summary-box .prose {
+    font-size: 0.9em !important;
+    line-height: 1.7 !important;
+}

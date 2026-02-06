@@ -295,7 +295,8 @@ if (fs.existsSync(POSTS_DIR)) {
             try {
                 const post = JSON.parse(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
                 if (!post.slug) post.slug = file.replace('.json', '');
-                post.slug = post.slug.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+                // IMPROVED SLUG LOGIC: Allow Arabic, replace spaces with dash
+                post.slug = post.slug.trim().replace(/\s+/g, '-').replace(/[^\w\-\u0600-\u06FF]/g, '');
                 
                 if (post.title) {
                     const normalizedTitle = post.title.trim().toLowerCase();
@@ -478,9 +479,10 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
 
     $('footer').replaceWith(STANDARD_FOOTER);
 
-    // Ticker Logic: Only on index.html (Home/Articles)
+    // Ticker Logic: Show on Index and Category Pages
     $('#news-ticker-bar').remove();
-    if (fileName === 'index.html' && aboutData.ticker && aboutData.ticker.enabled !== false) {
+    const isCategoryPage = ['index.html', 'apps.html', 'games.html', 'sports.html'].includes(fileName);
+    if (isCategoryPage && aboutData.ticker && aboutData.ticker.enabled !== false) {
         $('header').after(TICKER_HTML_TEMPLATE);
         $('#ticker-label').text(aboutData.ticker.label);
         const tickerContentDiv = $('#ticker-content');
@@ -587,16 +589,27 @@ const generateCategoryPages = () => {
         
         const posts = postsByCategory[p.cat] || [];
         if (posts.length > 0) {
+            // Sort: Already sorted by date in `allPosts`, but let's ensure category logic if needed.
+            // Current `allPosts` is already sorted descending by date.
             posts.forEach(post => grid.append(createCardHTML(post)));
         } else {
+            // Add noindex for empty pages
+            $('head').append('<meta name="robots" content="noindex, follow">');
             grid.html('<div class="col-span-full text-center py-20 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
         }
         main.append(grid);
 
-        // 4. Update Titles & Meta
+        // 4. Update Titles & Meta & SEO
         const pageTitle = `${p.title} | ${aboutData.siteName || "TechTouch"}`;
         $('title').text(pageTitle);
         $('meta[name="description"]').attr('content', p.desc);
+        
+        // Dynamic Canonical & OG Tags
+        const pageUrl = `${BASE_URL}/${p.file}`;
+        $('head').append(`<link rel="canonical" href="${pageUrl}">`);
+        $('head').append(`<meta property="og:url" content="${pageUrl}">`);
+        $('head').append(`<meta property="og:description" content="${p.desc}">`);
+        $('head').append(`<meta property="og:type" content="website">`);
 
         // 5. Save
         const filePath = path.join(ROOT_DIR, p.file);
@@ -752,10 +765,11 @@ const generateIndividualArticles = () => {
               .map(line => parseMarkdown(line))
               .join('');
 
+            // Minimalist Design (No Shadows, Low Opacity Background)
             const summaryContentHTML = `
             <div class="ai-summary-box hidden w-full max-w-2xl mx-auto my-6 transition-all duration-300 transform scale-95 opacity-0">
-              <div class="relative p-5 bg-gray-50/80 dark:bg-gray-800/40 rounded-xl border border-blue-100 dark:border-gray-700/50 backdrop-blur-sm shadow-sm">
-                <div class="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <div class="relative p-5 bg-gray-50/40 dark:bg-gray-800/40 rounded-xl border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700/50">
                     <span class="text-blue-500 animate-pulse">
                         <i data-lucide="bot" class="w-4 h-4"></i>
                     </span>
@@ -806,19 +820,19 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(shareSectionHTML);
         
-        // --- STRICT RELATED POSTS LOGIC (Target 12) ---
+        // --- IMPROVED RELATED POSTS LOGIC (Prioritize same category first) ---
         const otherPosts = allPosts.filter(p => p.slug !== post.slug);
         
-        // 1. Gather same category
-        let sameCatPosts = otherPosts.filter(p => p.category === post.category);
+        // 1. Same category (sorted by date desc)
+        let sameCatPosts = otherPosts.filter(p => p.category === post.category).sort((a,b) => b.effectiveDate - a.effectiveDate);
         
-        // 2. Gather other categories
-        let diffCatPosts = otherPosts.filter(p => p.category !== post.category);
+        // 2. Different category (sorted by date desc)
+        let diffCatPosts = otherPosts.filter(p => p.category !== post.category).sort((a,b) => b.effectiveDate - a.effectiveDate);
         
         // 3. Combine: Same Cat First + Diff Cat Second
         let relatedPosts = sameCatPosts.concat(diffCatPosts);
         
-        // 4. Slice to exactly 12 (No re-sorting)
+        // 4. Slice to exactly 12
         relatedPosts = relatedPosts.slice(0, 12);
 
         if (relatedPosts.length > 0) {
