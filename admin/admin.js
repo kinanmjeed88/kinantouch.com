@@ -291,12 +291,23 @@ async function loadPosts() {
             } catch (err) { console.error("Error loading post: " + file.name, err); }
         });
         await Promise.all(promises);
+        
+        // --- Updated Sort Logic: Date + Time ---
         cachedPosts.sort((a, b) => {
-            const dateA = new Date(a.updated || a.date).getTime();
-            const dateB = new Date(b.updated || b.date).getTime();
-            if (isNaN(dateA)) return 1; if (isNaN(dateB)) return -1;
-            return dateB - dateA;
+            const dateStrA = a.updated || a.date;
+            const timeStrA = a.time || "00:00";
+            const dateStrB = b.updated || b.date;
+            const timeStrB = b.time || "00:00";
+            
+            const dateTimeA = new Date(`${dateStrA}T${timeStrA}`);
+            const dateTimeB = new Date(`${dateStrB}T${timeStrB}`);
+            
+            if (isNaN(dateTimeA)) return 1; 
+            if (isNaN(dateTimeB)) return -1;
+            
+            return dateTimeB - dateTimeA;
         });
+        
         loader.classList.add('hidden'); renderPosts();
     } catch (e) { console.error(e); loader.classList.add('hidden'); list.innerHTML = `<div class="text-center text-red-500">حدث خطأ في تحميل المقالات.<br>تأكد من إعدادات الاتصال.</div>`; }
 }
@@ -315,6 +326,9 @@ function renderPosts() {
         }
 
         const dateDisplay = (p.updated && p.updated !== p.date) ? `<span class="text-blue-500 font-bold" title="تم التحديث">♻ ${p.updated}</span>` : `<span>${p.date || ''}</span>`;
+        // Show Time if exists
+        const timeDisplay = p.time ? `<span class="text-gray-400 ml-1 text-[10px]">${p.time}</span>` : '';
+
         const card = document.createElement('div');
         card.className = 'bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center hover:shadow-md transition-all';
         card.innerHTML = `
@@ -323,7 +337,7 @@ function renderPosts() {
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-gray-800 line-clamp-1">${p.title || ''}</h3>
                     <div class="text-xs text-gray-400 flex gap-2 items-center">
-                        ${dateDisplay} <span>•</span> <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category || ''}</span>
+                        ${dateDisplay} ${timeDisplay} <span>•</span> <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${p.category || ''}</span>
                     </div>
                 </div>
             </div>
@@ -341,6 +355,11 @@ window.openPostEditor = () => {
     ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
     document.getElementById('pSlug').dataset.mode = 'new'; document.getElementById('pSlug').readOnly = false; document.getElementById('editorTitle').innerText = 'مقال جديد'; 
     document.getElementById('pDate').value = ''; // Reset date field for new posts
+    // Default Time: Current Time
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('pTime').value = `${hours}:${minutes}`;
 };
 window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
 window.openEditByIndex = (index) => {
@@ -348,6 +367,8 @@ window.openEditByIndex = (index) => {
     const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
     setVal('pTitle', p.title); setVal('pSlug', p.slug); setVal('pCat', p.category); setVal('pDesc', p.description); setVal('pContent', p.content); setVal('pImage', p.image); setVal('pYoutubeId', p.youtubeVideoId);
     setVal('pDate', p.date); // Populate date field
+    setVal('pTime', p.time || "00:00"); // Populate time field
+    
     const slugEl = document.getElementById('pSlug'); if(slugEl) { slugEl.readOnly = true; slugEl.dataset.mode = 'edit'; }
     document.getElementById('editorTitle').innerText = 'تعديل مقال'; document.getElementById('postEditor').classList.remove('hidden');
 };
@@ -374,8 +395,22 @@ window.savePost = async () => {
             const today = new Date();
             finalDate = today.toISOString().split('T')[0];
         }
+        
+        // Time Support
+        const finalTime = document.getElementById('pTime').value || "00:00";
 
-        const postData = { title: getVal('pTitle'), slug: slug, description: getVal('pDesc'), category: getVal('pCat'), date: finalDate, updated: (isEdit) ? now : undefined, image: getVal('pImage'), content: getVal('pContent'), youtubeVideoId: getVal('pYoutubeId') };
+        const postData = { 
+            title: getVal('pTitle'), 
+            slug: slug, 
+            description: getVal('pDesc'), 
+            category: getVal('pCat'), 
+            date: finalDate,
+            time: finalTime, // Add Time Field
+            updated: (isEdit) ? now : undefined, 
+            image: getVal('pImage'), 
+            content: getVal('pContent'), 
+            youtubeVideoId: getVal('pYoutubeId') 
+        };
         if(!postData.updated) delete postData.updated;
         await api.put(`content/posts/${slug}.json`, JSON.stringify(postData, null, 2), `Update Post: ${postData.title}`, existingPost ? existingPost.sha : null);
         showToast('تم حفظ المقال!'); closePostEditor(); loadPosts();

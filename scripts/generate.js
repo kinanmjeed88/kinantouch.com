@@ -35,6 +35,23 @@ const validateDate = (d, fallback = new Date()) => {
     return parsed;
 };
 
+// --- HELPER: Combine Date & Time with Baghdad Timezone (UTC+3) ---
+const combineDateTime = (dateStr, timeStr = "00:00") => {
+    // Ensure inputs are strings
+    const d = typeof dateStr === 'string' ? dateStr : new Date().toISOString().split('T')[0];
+    const t = typeof timeStr === 'string' ? timeStr : "00:00";
+    
+    // Construct ISO string with fixed +03:00 offset for Baghdad
+    // Format: YYYY-MM-DDTHH:mm:00+03:00
+    const isoString = `${d}T${t}:00+03:00`;
+    
+    const parsed = new Date(isoString);
+    if (isNaN(parsed.getTime())) {
+        return new Date(); // Fallback
+    }
+    return parsed;
+};
+
 // --- HELPER: Normalize Arabic Title ---
 const normalizeArabic = (text) => {
     if (!text) return '';
@@ -313,9 +330,18 @@ if (fs.existsSync(POSTS_DIR)) {
                     }
                 }
 
-                // Date Logic: effectiveDate = date (Creation Date)
-                post.date = validateDate(post.date);
-                post.effectiveDate = post.date; 
+                // Date & Time Logic: 
+                // Combine date and time into a precise Date object with Baghdad Timezone (UTC+3)
+                post.publishTime = post.time || "00:00";
+                
+                // Fallback for date if missing
+                if (!post.date) post.date = new Date().toISOString().split('T')[0];
+                if (!post.updated) post.updated = post.date;
+
+                post.publishedAt = combineDateTime(post.date, post.publishTime);
+                post.updatedAt = combineDateTime(post.updated, post.publishTime); // Use publish time for update timestamp too unless we want specific update time
+
+                post.effectiveDate = post.publishedAt; // For sorting and display
 
                 post.content = parseMarkdown(post.content);
                 post._originalFile = file;
@@ -325,7 +351,8 @@ if (fs.existsSync(POSTS_DIR)) {
     });
 }
 
-// 1. Sort by Date Descending (Newest First)
+// 1. Sort by Date + Time Descending (Newest First)
+// Precise sorting using the full timestamp
 rawPosts.sort((a, b) => b.effectiveDate - a.effectiveDate);
 
 const allPosts = rawPosts;
@@ -351,7 +378,15 @@ const createCardHTML = (post) => {
     if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
     
-    const dateStr = post.effectiveDate.toISOString().split('T')[0];
+    // Format Date nicely in Arabic
+    const dateStr = post.effectiveDate.toLocaleString('ar-EG', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
 
     return `
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
@@ -365,7 +400,7 @@ const createCardHTML = (post) => {
             </div>
             <div class="p-4 flex-1 flex flex-col w-full">
                 <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
-                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span>${dateStr}</span>
+                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">${dateStr}</span>
                 </div>
                 <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2 custom-title-size" title="${escapeHtml(post.title)}">${post.title}</h3>
                 <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">${post.description}</p>
@@ -612,22 +647,35 @@ const generateIndividualArticles = () => {
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         
-        const formattedDate = post.effectiveDate.toISOString().split('T')[0];
+        const formattedDate = post.effectiveDate.toLocaleString('ar-EG', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', hour12: true
+        });
         
+        // --- SMART TITLE RENDERING ---
+        let titleContent = '';
+        const titleRaw = (post.title || '').trim();
+        // Check if title is HTML-like or Markdown-like
+        if (titleRaw.startsWith('<') || titleRaw.startsWith('#')) {
+            // Render as-is (passed through parser if markdown) or raw HTML
+            titleContent = parseMarkdown(titleRaw);
+        } else {
+            // Default behavior: Wrapped in centered H1
+            titleContent = `<h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight break-words w-full m-0 text-center">${escapeHtml(post.title)}</h1>`;
+        }
+
         const articleHeaderHTML = `
         <header class="mb-8 relative">
             <div class="article-header-card">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight break-words w-full m-0 text-center">
-                    ${post.title}
-                </h1>
+                ${titleContent}
             </div>
             <div class="article-meta-bar flex items-center justify-center px-4 py-3 border-t border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-x-auto no-scrollbar">
                 <div class="flex items-center gap-3 w-full justify-center">
-                    <div class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i><span>${formattedDate}</span></div>
+                    <div class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i><span dir="ltr">${formattedDate}</span></div>
                     <span class="text-gray-300 dark:text-gray-600">|</span>
                     <div class="flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5"></i><span>TechTouch Team</span></div>
                     <span class="text-gray-300 dark:text-gray-600">|</span>
-                    <div class="flex items-center gap-1 view-count-wrapper"><i data-lucide="eye" class="w-3.5 h-3.5 text-green-500"></i><span class="view-count-display font-bold" data-publish-date="${formattedDate}">25</span></div>
+                    <div class="flex items-center gap-1 view-count-wrapper"><i data-lucide="eye" class="w-3.5 h-3.5 text-green-500"></i><span class="view-count-display font-bold" data-publish-date="${post.effectiveDate.toISOString().split('T')[0]}">25</span></div>
                 </div>
             </div>
         </header>
@@ -791,8 +839,8 @@ const generateIndividualArticles = () => {
             "@type": "Article", 
             "headline": post.title || '', 
             "image": post.image ? [fullImageUrl] : [], 
-            "datePublished": post.date ? post.date.toISOString() : new Date().toISOString(), 
-            "dateModified": post.effectiveDate ? post.effectiveDate.toISOString() : new Date().toISOString(), 
+            "datePublished": post.publishedAt.toISOString(), 
+            "dateModified": post.updatedAt.toISOString(), 
             "author": { "@type": "Person", "name": aboutData.profileName || "TechTouch" }, 
             "publisher": { 
                 "@type": "Organization", 
@@ -855,8 +903,8 @@ const generateSitemap = () => {
     allPosts.forEach(post => { 
         const fullImg = toAbsoluteUrl(post.image); 
         const pageUrl = `${BASE_URL}/article-${post.slug}.html`; 
-        const postDate = post.effectiveDate.toISOString().split('T')[0]; 
-        xml += `<url><loc>${pageUrl}</loc><lastmod>${postDate}</lastmod><priority>0.8</priority><image:image><image:loc>${escapeXml(fullImg)}</image:loc><image:title>${escapeXml(post.title)}</image:title></image:image></url>`; 
+        // Use full ISO string for precision
+        xml += `<url><loc>${pageUrl}</loc><lastmod>${post.effectiveDate.toISOString()}</lastmod><priority>0.8</priority><image:image><image:loc>${escapeXml(fullImg)}</image:loc><image:title>${escapeXml(post.title)}</image:title></image:image></url>`; 
     });
     
     xml += `\n</urlset>`;
