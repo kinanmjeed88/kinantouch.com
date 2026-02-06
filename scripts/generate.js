@@ -37,17 +37,12 @@ const validateDate = (d, fallback = new Date()) => {
 
 // --- HELPER: Combine Date & Time with Baghdad Timezone (UTC+3) ---
 const combineDateTime = (dateStr, timeStr = "00:00") => {
-    // Ensure inputs are strings
     const d = typeof dateStr === 'string' ? dateStr : new Date().toISOString().split('T')[0];
     const t = typeof timeStr === 'string' ? timeStr : "00:00";
-    
-    // Construct ISO string with fixed +03:00 offset for Baghdad
-    // Format: YYYY-MM-DDTHH:mm:00+03:00
     const isoString = `${d}T${t}:00+03:00`;
-    
     const parsed = new Date(isoString);
     if (isNaN(parsed.getTime())) {
-        return new Date(); // Fallback
+        return new Date();
     }
     return parsed;
 };
@@ -58,7 +53,7 @@ const normalizeArabic = (text) => {
     return text
         .trim()
         .toLowerCase()
-        .replace(/[^\w\u0621-\u064A]/g, '') // Remove symbols, keep letters/numbers
+        .replace(/[^\w\u0621-\u064A]/g, '')
         .replace(/[أإآ]/g, 'ا')
         .replace(/ة/g, 'ه')
         .replace(/ى/g, 'ي');
@@ -102,12 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const fallbackImage = 'assets/images/me.jpg';
     document.querySelectorAll('img').forEach(img => {
         img.onerror = function() {
-            if (this.src.includes(fallbackImage)) return; // Prevent loop
+            if (this.src.includes(fallbackImage)) return;
             this.src = fallbackImage;
             this.alt = 'Image unavailable';
             this.classList.add('img-fallback-active');
         };
-        // Check if image is already broken (for cached broken images)
         if (img.naturalWidth === 0 && img.complete) {
              img.src = fallbackImage;
         }
@@ -330,18 +324,14 @@ if (fs.existsSync(POSTS_DIR)) {
                     }
                 }
 
-                // Date & Time Logic: 
-                // Combine date and time into a precise Date object with Baghdad Timezone (UTC+3)
+                // Date & Time Logic
                 post.publishTime = post.time || "00:00";
-                
-                // Fallback for date if missing
                 if (!post.date) post.date = new Date().toISOString().split('T')[0];
                 if (!post.updated) post.updated = post.date;
 
                 post.publishedAt = combineDateTime(post.date, post.publishTime);
-                post.updatedAt = combineDateTime(post.updated, post.publishTime); // Use publish time for update timestamp too unless we want specific update time
-
-                post.effectiveDate = post.publishedAt; // For sorting and display
+                post.updatedAt = combineDateTime(post.updated, post.publishTime);
+                post.effectiveDate = post.publishedAt; 
 
                 post.content = parseMarkdown(post.content);
                 post._originalFile = file;
@@ -351,8 +341,7 @@ if (fs.existsSync(POSTS_DIR)) {
     });
 }
 
-// 1. Sort by Date + Time Descending (Newest First)
-// Precise sorting using the full timestamp
+// Sort by Date + Time Descending
 rawPosts.sort((a, b) => b.effectiveDate - a.effectiveDate);
 
 const allPosts = rawPosts;
@@ -652,10 +641,6 @@ const generateIndividualArticles = () => {
             hour: '2-digit', minute: '2-digit', hour12: true
         });
         
-        // --- REAL VIEW COUNTER ---
-        // Just place a placeholder. Client-side JS fills it via API.
-        // Removed `calculateInitialViews` usage.
-
         // --- SMART TITLE RENDERING ---
         let titleContent = '';
         const titleRaw = (post.title || '').trim();
@@ -681,10 +666,10 @@ const generateIndividualArticles = () => {
                     <!-- Separator -->
                     <div class="w-px h-3 bg-gray-300 dark:bg-gray-600"></div>
 
-                    <!-- Views -->
+                    <!-- Real Views (Updated via API) -->
                     <div class="flex items-center gap-1.5 view-count-wrapper group" title="المشاهدات">
                         <i data-lucide="eye" class="w-4 h-4 text-green-500 group-hover:scale-110 transition-transform"></i>
-                        <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}">...</span>
+                        <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}">0</span>
                     </div>
                 </div>
             </div>
@@ -739,12 +724,11 @@ const generateIndividualArticles = () => {
 
         $('article').html($content.html()); 
 
-        // --- AI SUMMARY SECTION ---
-        // Injected only if summary exists in JSON
+        // --- AI SUMMARY SECTION (CMS Based) ---
         if (post.summary) {
             const summaryHTML = post.summary
               .split('\n')
-              .map(line => parseMarkdown(line)) // Parse markdown in summary too (bold, etc)
+              .map(line => parseMarkdown(line))
               .join('');
 
             const summarySection = `
@@ -757,7 +741,7 @@ const generateIndividualArticles = () => {
                </button>
             </div>
 
-            <!-- AI Summary Container (Hidden by default) -->
+            <!-- AI Summary Container -->
             <div id="ai-summary-container" class="hidden w-full max-w-3xl mx-auto mb-10 transition-all duration-500 transform translate-y-4 opacity-0">
               <div class="relative p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-2xl ring-1 ring-black/5">
                 <div class="absolute -top-3 right-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg tracking-wider">
@@ -772,7 +756,6 @@ const generateIndividualArticles = () => {
               </div>
             </div>
             `;
-            // Insert Summary Button after Header
             $('header').after(summarySection);
         }
 

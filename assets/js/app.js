@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 10. Toggle Pre-rendered AI Summary (No API Calls here)
+    // 10. Toggle Pre-rendered AI Summary (Client Interaction)
     const showSummaryBtn = document.getElementById('btn-show-summary');
     const summaryContainer = document.getElementById('ai-summary-container');
     const hideSummaryBtn = document.getElementById('btn-hide-summary');
@@ -286,9 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Scroll to it
             summaryContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // Optionally hide the show button itself if desired, or keep it as toggle
-            // showSummaryBtn.style.display = 'none'; 
         });
 
         if (hideSummaryBtn) {
