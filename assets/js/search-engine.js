@@ -14,6 +14,21 @@ class TechTouchSearch {
         this.injectSearchButton();
         this.injectSearchModal();
         this.bindEvents();
+        
+        // Expose open function globally
+        window.openSearchModal = () => {
+            const modal = document.getElementById('search-modal');
+            const input = document.getElementById('search-input');
+            if(modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('div').classList.remove('scale-95');
+                    input.focus();
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            }
+        };
     }
 
     initFuse() {
@@ -39,7 +54,7 @@ class TechTouchSearch {
         }
         // -------------------------
 
-        // We rely on CSS 'order' property for positioning.
+        // We rely on CSS 'order' property for positioning in header actions.
         // Theme is Order 3 (Leftmost)
         // Home is Order 1 (Rightmost of group)
         // Search should be Order 2 (Middle)
@@ -121,15 +136,9 @@ class TechTouchSearch {
 
         if (!trigger || !modal) return;
 
-        // Open
+        // Open via header button
         trigger.addEventListener('click', () => {
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.querySelector('div').classList.remove('scale-95');
-                input.focus();
-            }, 10);
-            document.body.style.overflow = 'hidden';
+            if(window.openSearchModal) window.openSearchModal();
         });
 
         // Close Logic
@@ -163,7 +172,7 @@ class TechTouchSearch {
             }
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                 e.preventDefault();
-                trigger.click();
+                if(window.openSearchModal) window.openSearchModal();
             }
         });
 

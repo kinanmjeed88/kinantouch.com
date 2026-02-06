@@ -484,6 +484,19 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
         actionsContainer.append(themeBtn);
     }
 
+    // --- Search Button Injection in Main Nav ---
+    const mainNav = $('nav');
+    const navFlex = mainNav.find('.flex.items-center.justify-center');
+    if (navFlex.length && mainNav.find('#nav-search-btn').length === 0) {
+        // Only inject if not already present
+        const searchBtnHTML = `
+        <button id="nav-search-btn" class="nav-search-btn" aria-label="بحث في الموقع">
+           <i data-lucide="search" class="w-4 h-4"></i>
+           <span>بحث</span>
+        </button>`;
+        navFlex.append(searchBtnHTML);
+    }
+
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
@@ -717,13 +730,13 @@ const generateIndividualArticles = () => {
             titleContent = `<h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight break-words w-full m-0 text-center">${escapeHtml(post.title)}</h1>`;
         }
 
-        // --- AI SUMMARY BUTTON (Moved to Header) ---
+        // --- AI SUMMARY BUTTON (Moved below Meta Bar) ---
         let summaryButtonHTML = '';
         if (post.summary) {
              summaryButtonHTML = `
-            <div class="flex justify-center -mt-px relative z-0 pt-2">
-                <button class="ai-summary-btn flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-full text-[10px] font-bold text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-all hover:bg-white dark:hover:bg-gray-800">
-                    <i data-lucide="sparkles" class="w-3 h-3"></i>
+            <div class="w-full flex justify-center mt-3 mb-5">
+                <button class="ai-summary-btn">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-blue-500"></i>
                     <span>تلخيص المحتوى AI</span>
                 </button>
             </div>
@@ -747,8 +760,8 @@ const generateIndividualArticles = () => {
                         <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}">—</span>
                     </div>
                 </div>
-                ${summaryButtonHTML}
             </div>
+            ${summaryButtonHTML}
         </header>
         `;
         
@@ -813,17 +826,15 @@ const generateIndividualArticles = () => {
             // Minimalist Design (No Shadows, Low Opacity Background)
             const summaryContentHTML = `
             <div class="ai-summary-box hidden w-full max-w-2xl mx-auto my-6 transition-all duration-300 transform scale-95 opacity-0">
-              <div class="relative p-5 bg-gray-50/40 dark:bg-gray-800/40 rounded-xl border border-gray-200 dark:border-gray-700">
-                <div class="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700/50">
+              <div class="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700/50">
                     <span class="text-blue-500 animate-pulse">
                         <i data-lucide="bot" class="w-4 h-4"></i>
                     </span>
                     <h3 class="font-bold text-sm text-gray-800 dark:text-gray-200">الخلاصة الذكية</h3>
                     <button class="ai-summary-close mr-auto text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
-                </div>
-                <div class="prose prose-sm dark:prose-invert max-w-none text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              </div>
+              <div class="prose prose-sm dark:prose-invert max-w-none text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                   ${summaryHTML}
-                </div>
               </div>
             </div>`;
             // Insert AFTER content (Before tags)

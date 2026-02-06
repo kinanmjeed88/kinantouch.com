@@ -256,18 +256,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 summaryBox.classList.remove('opacity-0', 'scale-95');
             });
 
-            // 2️⃣ انتظر 100ms لضمان حساب الارتفاع الصحيح
+            // 2️⃣ Smooth Scroll to avoid Ads (Block: start)
             setTimeout(() => {
-
-                const rect = summaryBox.getBoundingClientRect();
-                const absoluteTop = rect.top + window.pageYOffset;
-
-                window.scrollTo({
-                    top: absoluteTop - 80, // مسافة بسيطة فوقه لتفادي التصاقه بالحافة
-                    behavior: 'smooth'
-                });
-
-            }, 120);
+               summaryBox.scrollIntoView({
+                   behavior: 'smooth',
+                   block: 'start'
+               });
+            }, 100);
         });
     });
 
@@ -284,7 +279,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 10. Real View Counter Logic (Client Side API Only with Fallback)
+    // 10. Nav Search Button Logic
+    const navSearchBtn = document.getElementById('nav-search-btn');
+    if (navSearchBtn) {
+       navSearchBtn.addEventListener('click', () => {
+          if (window.openSearchModal) {
+              window.openSearchModal();
+          } else {
+              // Fallback if module hasn't loaded yet
+              const mainTrigger = document.getElementById('search-trigger');
+              if(mainTrigger) mainTrigger.click();
+          }
+       });
+    }
+
+    // 11. Real View Counter Logic (Client Side API Only with Fallback)
     const viewCounter = document.querySelector('.view-count-display');
     if (viewCounter && viewCounter.dataset.slug) {
         const slug = viewCounter.dataset.slug;
