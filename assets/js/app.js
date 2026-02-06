@@ -236,33 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 9. Fake View Counter Logic
-    const viewCounters = document.querySelectorAll('.view-count-display');
-    if (viewCounters.length > 0) {
-        viewCounters.forEach(counter => {
-            const publishDateStr = counter.getAttribute('data-publish-date');
-            if (publishDateStr) {
-                const pubDate = new Date(publishDateStr);
-                const today = new Date();
-                
-                // Difference in milliseconds
-                const diffTime = Math.abs(today - pubDate);
-                // Convert to days
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                
-                // Logic: 25 initial + 10 views per day
-                let views = 25;
-                if (diffDays > 0) {
-                    views += (diffDays * 10);
-                }
-                
-                // Use English Locale to match static generation and prevent jump
-                counter.innerText = views.toLocaleString('en-US');
-            }
-        });
-    }
-
-    // 10. Share Buttons Dynamic Links
+    // 9. Share Buttons Dynamic Links
     const shareContainer = document.getElementById('dynamic-share-buttons');
     if (shareContainer) {
         const pageTitle = encodeURIComponent(document.title);

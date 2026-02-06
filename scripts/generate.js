@@ -64,15 +64,32 @@ const normalizeArabic = (text) => {
         .replace(/ى/g, 'ي');
 };
 
-// --- HELPER: Calculate Views (Server Side) ---
-const calculateInitialViews = (dateObj) => {
+// --- HELPER: Calculate Views (Server Side & Deterministic) ---
+// Generates a stable but varied view count based on the post slug and date.
+const calculateInitialViews = (dateObj, slug) => {
     const now = new Date();
     const diffTime = Math.abs(now - dateObj);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    let views = 25; // Base views
-    if (diffDays > 0) {
-        views += (diffDays * 10); // Growth factor
+    
+    // Generate a pseudo-random seed from the slug characters
+    // This ensures "Article A" always gets the same base number, distinct from "Article B"
+    let seed = 0;
+    const safeSlug = slug || 'default';
+    for (let i = 0; i < safeSlug.length; i++) {
+        seed += safeSlug.charCodeAt(i);
     }
+    
+    // Base views: Random between 120 and 500
+    let baseViews = 120 + (seed % 380); 
+    
+    // Daily growth: Random between 5 and 25 views per day
+    let dailyRate = 5 + (seed % 20);
+    
+    let views = baseViews;
+    if (diffDays > 0) {
+        views += (diffDays * dailyRate);
+    }
+    
     return views;
 };
 
@@ -665,7 +682,8 @@ const generateIndividualArticles = () => {
         });
         
         // Calculate initial view count server-side to avoid flicker
-        const initialViews = calculateInitialViews(post.effectiveDate);
+        // Uses slug for consistent pseudo-randomness
+        const initialViews = calculateInitialViews(post.effectiveDate, post.slug);
 
         // --- SMART TITLE RENDERING ---
         let titleContent = '';
