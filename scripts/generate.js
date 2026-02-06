@@ -305,11 +305,11 @@ if (fs.existsSync(POSTS_DIR)) {
                 
                 // --- WARNING ONLY DUPLICATE CHECK ---
                 if (post.title) {
-                    const normTitle = normalizeArabic(post.title);
-                    if (titleRegistry.has(normTitle)) {
+                    const normalizedTitle = post.title.trim().toLowerCase();
+                    if (titleRegistry.has(normalizedTitle)) {
                         console.warn(`⚠ Duplicate title detected in "${file}": "${post.title}"`);
                     } else {
-                        titleRegistry.add(normTitle);
+                        titleRegistry.add(normalizedTitle);
                     }
                 }
 
