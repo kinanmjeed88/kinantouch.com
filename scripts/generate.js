@@ -72,18 +72,20 @@ const calculateInitialViews = (dateObj, slug) => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
     
     // Generate a pseudo-random seed from the slug characters
-    // This ensures "Article A" always gets the same base number, distinct from "Article B"
+    // This ensures "Article A" always gets the same number, distinct from "Article B"
     let seed = 0;
     const safeSlug = slug || 'default';
     for (let i = 0; i < safeSlug.length; i++) {
         seed += safeSlug.charCodeAt(i);
     }
     
-    // Base views: Random between 120 and 500
-    let baseViews = 120 + (seed % 380); 
+    // Base views: Start from 50 (Minimum) up to 150 randomly
+    // This ensures new articles don't look "dead" (0 views) but aren't unrealistically high
+    let baseViews = 50 + (seed % 100); 
     
-    // Daily growth: Random between 5 and 25 views per day
-    let dailyRate = 5 + (seed % 20);
+    // Daily growth: Random between 2 and 15 views per day
+    // This creates the "ascending" effect over time
+    let dailyRate = 2 + (seed % 13);
     
     let views = baseViews;
     if (diffDays > 0) {
@@ -683,6 +685,7 @@ const generateIndividualArticles = () => {
         
         // Calculate initial view count server-side to avoid flicker
         // Uses slug for consistent pseudo-randomness
+        // CHANGE: Base views now start from 50+
         const initialViews = calculateInitialViews(post.effectiveDate, post.slug);
 
         // --- SMART TITLE RENDERING ---
