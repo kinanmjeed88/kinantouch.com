@@ -11,24 +11,9 @@ class TechTouchSearch {
 
     init() {
         this.initFuse();
-        this.injectSearchModal();
-        this.bindEvents();
-        
+        this.bindTriggers();
         // Expose open function globally
-        window.openSearchModal = () => {
-            const modal = document.getElementById('search-modal');
-            const modalContainer = document.getElementById('search-modal-container');
-            const input = document.getElementById('search-input');
-            if(modal && modalContainer) {
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modal.classList.remove('opacity-0');
-                    modalContainer.classList.remove('scale-95');
-                    if(input) input.focus();
-                }, 10);
-                document.body.style.overflow = 'hidden';
-            }
-        };
+        window.openSearchModal = () => this.openSearchModal();
     }
 
     initFuse() {
@@ -38,7 +23,10 @@ class TechTouchSearch {
         }
         const options = {
             includeScore: true,
-            threshold: 0.4, // 0.0 = perfect match, 1.0 = match anything. 0.4 is good for typos.
+            threshold: 0.4,
+            minMatchCharLength: 2,
+            ignoreLocation: true,
+            useExtendedSearch: false,
             keys: [
                 { name: 'title', weight: 0.7 },
                 { name: 'desc', weight: 0.2 },
@@ -48,7 +36,7 @@ class TechTouchSearch {
         this.fuse = new Fuse(searchIndex, options);
     }
 
-    // Modal Injection Logic (Only if not present)
+    // Lazy injection logic
     injectSearchModal() {
         if (document.getElementById('search-modal')) return;
 
@@ -89,41 +77,54 @@ class TechTouchSearch {
         document.body.insertAdjacentHTML('beforeend', modalHTML);
     }
 
-    bindEvents() {
-        // Target the new Nav Search Button ID (nav-search-btn) and fallback to old ID if needed
+    bindTriggers() {
         const triggers = document.querySelectorAll('#nav-search-btn, #search-trigger');
+        triggers.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.openSearchModal();
+            });
+        });
+        
+        // Shortcut key (Ctrl+K or Cmd+K)
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                this.openSearchModal();
+            }
+        });
+    }
+
+    bindModalEvents() {
         const modal = document.getElementById('search-modal');
-        const modalContainer = document.getElementById('search-modal-container');
         const closeBtn = document.getElementById('close-search');
         const input = document.getElementById('search-input');
         const resultsContainer = document.getElementById('search-results');
 
-        if (!modal || !modalContainer) return;
+        if (!modal) return;
 
-        // Open Modal Listener
-        triggers.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if(window.openSearchModal) window.openSearchModal();
-            });
-        });
+        // Prevent double binding if called multiple times
+        if(modal.dataset.bound) return;
+        modal.dataset.bound = "true";
 
-        // Close Logic
         const closeModal = () => {
+            const modalContainer = document.getElementById('search-modal-container');
             modal.classList.add('opacity-0');
-            modalContainer.classList.add('scale-95');
+            if (modalContainer) modalContainer.classList.add('scale-95');
             setTimeout(() => {
                 modal.classList.add('hidden');
                 document.body.style.overflow = '';
-                input.value = '';
-                resultsContainer.innerHTML = `
-                    <div class="text-center py-10 text-gray-500 dark:text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 opacity-50">
-                            <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"></path>
-                        </svg>
-                        <p>اكتب للبحث في الموقع...</p>
-                    </div>
-                `;
+                if(input) input.value = '';
+                if(resultsContainer) {
+                    resultsContainer.innerHTML = `
+                        <div class="text-center py-10 text-gray-500 dark:text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 opacity-50">
+                                <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"></path>
+                            </svg>
+                            <p>اكتب للبحث في الموقع...</p>
+                        </div>
+                    `;
+                }
             }, 300);
         };
 
@@ -137,13 +138,8 @@ class TechTouchSearch {
             if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
                 closeModal();
             }
-            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-                e.preventDefault();
-                if(window.openSearchModal) window.openSearchModal();
-            }
         });
 
-        // Search Logic with Fuse.js
         if (input) {
             input.addEventListener('input', (e) => {
                 const query = e.target.value.trim();
@@ -160,17 +156,35 @@ class TechTouchSearch {
                     return;
                 }
 
-                if (!this.fuse) {
-                    console.warn("Fuse.js not initialized yet.");
-                    return;
-                }
+                if (!this.fuse) return;
 
-                // Perform Fuzzy Search
                 const fuseResults = this.fuse.search(query);
-                const results = fuseResults.map(r => r.item).slice(0, 10); // Limit to top 10 matches
+                const results = fuseResults.map(r => r.item).slice(0, 10);
 
                 this.renderResults(results, resultsContainer);
             });
+        }
+    }
+
+    openSearchModal() {
+        // Lazy Inject logic
+        if (!document.getElementById('search-modal')) {
+            this.injectSearchModal();
+            this.bindModalEvents();
+        }
+
+        const modal = document.getElementById('search-modal');
+        const modalContainer = document.getElementById('search-modal-container');
+        const input = document.getElementById('search-input');
+        
+        if(modal && modalContainer) {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContainer.classList.remove('scale-95');
+                if(input) input.focus();
+            }, 10);
+            document.body.style.overflow = 'hidden';
         }
     }
 

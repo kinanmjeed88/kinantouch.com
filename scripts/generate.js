@@ -363,7 +363,7 @@ const createCardHTML = (post) => {
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="${cleanPath(post.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${escapeHtml(post.title)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
+                <img src="${cleanPath(post.image)}" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${escapeHtml(post.title)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                 <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
                     <i data-lucide="${icon}" style="width: 1.2em; height: 1.2em;"></i><span>${getCatLabel(post.category)}</span>
@@ -383,11 +383,26 @@ const createCardHTML = (post) => {
 const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = '') => {
     const $ = cheerio.load(htmlContent, { decodeEntities: false });
 
+    // Safety fallback for fileName
+    if (!fileName || typeof fileName !== 'string') {
+        fileName = 'index.html';
+    }
+
     // SEO Title Logic
     if (pageTitleOverride) {
         $('title').text(pageTitleOverride);
         $('meta[property="og:title"]').attr('content', pageTitleOverride);
     }
+
+    // Preconnect for Performance
+    const preconnectTags = `
+    <link rel="preconnect" href="https://esm.sh" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    `;
+    $('head').prepend(preconnectTags);
 
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
@@ -396,10 +411,16 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
         if (src.includes('googletagmanager.com') || content.includes("gtag(") || src.includes('G-')) { $(el).remove(); }
         if (src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle")) { $(el).remove(); }
         if (content.includes("document.addEventListener('DOMContentLoaded', () => {") && content.includes("fallbackImage")) { $(el).remove(); }
+        // Remove Fuse CDN injection here (handled in search-engine.js module)
+        if (src.includes("fuse.js")) { $(el).remove(); }
     });
 
-    $('head').append(ONESIGNAL_SCRIPT);
-    // Conditional AdSense: Do NOT add to Privacy or About
+    // Conditional Script Loading
+    const isArticlePage = fileName.startsWith('article-');
+    if (!isArticlePage) {
+        $('head').append(ONESIGNAL_SCRIPT);
+    }
+
     const noAdsPages = ['privacy.html', 'about.html'];
     if (!noAdsPages.includes(fileName)) {
         $('head').append(AD_SCRIPT);
@@ -408,7 +429,7 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     $('head').prepend(GA_SCRIPT);
     $('body').append(IMG_ERROR_SCRIPT);
     
-    // --- GUARANTEE SEARCH ENGINE INJECTION (No Fuse Double Load) ---
+    // --- GUARANTEE SEARCH ENGINE INJECTION ---
     const SEARCH_MODULE = '<script src="assets/js/search-engine.js" type="module"></script>';
     
     // Check if Search Engine exists, if not append to body
@@ -480,7 +501,6 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     }
     actionsContainer.empty();
 
-    const isArticle = fileName.startsWith('article-');
     if (!isArticle) {
         const homeBtn = `
         <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
@@ -497,10 +517,7 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
 
     // --- Search Button Injection in Main Nav ---
     const mainNav = $('nav');
-    // Ensure we are targeting the inner flex container of nav
     const navFlex = mainNav.find('.flex.items-center.justify-center');
-    
-    // Remove existing search button if present to prevent duplicates or misplacement
     mainNav.find('#nav-search-btn').remove();
 
     if (navFlex.length) {
@@ -508,7 +525,6 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
         <button id="nav-search-btn" class="nav-search-btn nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="بحث في الموقع">
            <i data-lucide="search" class="w-3.5 h-3.5"></i><span>بحث</span>
         </button>`;
-        // Append to the end of the nav flex container
         navFlex.append(searchBtnHTML);
     }
 
@@ -524,35 +540,35 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
 
         nav .nav-link, nav .nav-link span, .tab-btn, .tab-btn span {
             font-size: ${fonts.nav || 12}px !important;
-            padding: ${6 * spacingScale}px ${14 * spacingScale}px !important;
+            padding: calc(6px * var(--spacing-scale)) calc(14px * var(--spacing-scale)) !important;
         }
 
         body, p, li, .post-card .custom-desc-size, .prose p, .prose li {
             font-size: ${fonts.content || 13}px !important;
-            line-height: ${1.6 * spacingScale} !important;
+            line-height: 1.6 !important;
         }
 
         .post-card .custom-title-size, h2, h3, h4, .prose h2, .prose h3 {
             font-size: ${fonts.titles || 14}px !important;
-            margin-bottom: ${8 * spacingScale}px !important;
+            margin-bottom: calc(8px * var(--spacing-scale)) !important;
         }
 
         h1, .text-3xl, .text-4xl {
             font-size: ${fonts.mainTitles || 15}px !important;
-            margin-bottom: ${14 * spacingScale}px !important;
+            margin-bottom: calc(14px * var(--spacing-scale)) !important;
         }
 
         main {
-            padding-top: ${20 * spacingScale}px !important;
-            padding-bottom: ${20 * spacingScale}px !important;
+            padding-top: calc(20px * var(--spacing-scale)) !important;
+            padding-bottom: calc(20px * var(--spacing-scale)) !important;
         }
 
         .grid {
-            gap: ${16 * spacingScale}px !important;
+            gap: calc(16px * var(--spacing-scale)) !important;
         }
 
         header + div {
-            margin-top: ${8 * spacingScale}px !important;
+            margin-top: calc(8px * var(--spacing-scale)) !important;
         }
 
         .related-fixed-title {
@@ -572,7 +588,7 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
 
     $('footer').replaceWith(STANDARD_FOOTER);
 
-    // Ticker Logic: Show on Index and Category Pages
+    // Ticker Logic
     $('#news-ticker-bar').remove();
     const isCategoryPage = ['index.html', 'apps.html', 'games.html', 'sports.html'].includes(fileName) || fileName.match(/-page-\d+\.html$/);
     if (isCategoryPage && aboutData.ticker && aboutData.ticker.enabled !== false) {
@@ -681,11 +697,10 @@ const generateCategoryPages = () => {
             }
 
             // 2. Set Active State
-            // The active state applies to base URL (e.g. index.html) even for paged versions
             const activeHref = p.file;
             $(`a[href="${activeHref}"]`).addClass('active-cat-link border-blue-600 text-blue-600 bg-transparent shadow-sm').removeClass('border-transparent text-gray-600 dark:text-gray-300');
 
-            // 3. Populate Content (Sliced if pagination active)
+            // 3. Populate Content
             const main = $('main');
             main.empty();
             const grid = $('<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full"></div>');
@@ -710,7 +725,7 @@ const generateCategoryPages = () => {
             $('title').text(pageTitle);
             $('meta[name="description"]').attr('content', p.desc);
             
-            // 5. SEO Link Tags (Prev/Next) for static pagination
+            // 5. SEO Link Tags
             if (shouldPaginate) {
                 const baseFileName = p.file.replace('.html', '');
                 const currentFileName = i === 0 ? p.file : `${baseFileName}-page-${i + 1}.html`;
@@ -728,8 +743,6 @@ const generateCategoryPages = () => {
             // 6. Save File
             const fileName = i === 0 ? p.file : p.file.replace('.html', `-page-${i + 1}.html`);
             const filePath = path.join(ROOT_DIR, fileName);
-            
-            // Canonical is handled in updateGlobalElements based on filename
             safeWrite(filePath, updateGlobalElements($.html(), fileName, pageTitle));
         }
     });
@@ -875,7 +888,6 @@ const generateIndividualArticles = () => {
         $('article').html($content.html()); 
 
         // --- AI SUMMARY CONTENT ---
-        // Clean up old IDs
         $('#ai-summary-container').remove();
         if (post.summary) {
             const summaryHTML = post.summary
@@ -883,7 +895,6 @@ const generateIndividualArticles = () => {
               .map(line => parseMarkdown(line))
               .join('');
 
-            // Minimalist Design (No Shadows, Low Opacity Background)
             const summaryContentHTML = `
             <div class="ai-summary-box hidden w-full max-w-2xl mx-auto my-6 transition-all duration-300 transform scale-95 opacity-0">
               <div class="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700/50">
@@ -897,7 +908,6 @@ const generateIndividualArticles = () => {
                   ${summaryHTML}
               </div>
             </div>`;
-            // Insert AFTER content (Before tags)
             $('article').append(summaryContentHTML);
         }
 
