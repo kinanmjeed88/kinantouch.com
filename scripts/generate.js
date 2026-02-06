@@ -307,7 +307,10 @@ if (fs.existsSync(POSTS_DIR)) {
                 if (post.title) {
                     const normalizedTitle = post.title.trim().toLowerCase();
                     if (titleRegistry.has(normalizedTitle)) {
-                        console.warn(`⚠ Duplicate title detected in "${file}": "${post.title}"`);
+                        // Suppress warnings in production to avoid log noise
+                        if (process.env.NODE_ENV !== 'production') {
+                            console.warn(`⚠ Duplicate title detected in "${file}": "${post.title}"`);
+                        }
                     } else {
                         titleRegistry.add(normalizedTitle);
                     }
@@ -383,6 +386,9 @@ const createCardHTML = (post) => {
 const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = '') => {
     const $ = cheerio.load(htmlContent, { decodeEntities: false });
 
+    // 1. Safe Definition - Defined at the TOP of the function scope
+    const isArticle = typeof fileName === 'string' && fileName.startsWith('article-');
+
     // Safety fallback for fileName
     if (!fileName || typeof fileName !== 'string') {
         fileName = 'index.html';
@@ -415,9 +421,8 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
         if (src.includes("fuse.js")) { $(el).remove(); }
     });
 
-    // Conditional Script Loading
-    const isArticlePage = fileName.startsWith('article-');
-    if (!isArticlePage) {
+    // Conditional Script Loading - USING isArticle
+    if (!isArticle) {
         $('head').append(ONESIGNAL_SCRIPT);
     }
 
@@ -501,6 +506,7 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     }
     actionsContainer.empty();
 
+    // USING isArticle check
     if (!isArticle) {
         const homeBtn = `
         <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
@@ -774,10 +780,12 @@ const updateChannelsPage = () => {
 const generateIndividualArticles = () => {
     const templatePath = path.join(ROOT_DIR, 'article-asus-gx10.html');
     let template = '';
+    // Fix 4: Handle missing template gracefully
     if (fs.existsSync(templatePath)) { 
         template = fs.readFileSync(templatePath, 'utf8'); 
     } else { 
-        throw new Error("❌ Article template 'article-asus-gx10.html' missing. Cannot generate articles.");
+        console.error("Article template missing. Skipping article generation.");
+        return;
     }
 
     allPosts.forEach(post => {
@@ -1086,12 +1094,18 @@ const generateSitemap = () => {
     console.log('✅ sitemap.xml regenerated automatically.');
 };
 
-updateAboutPageDetails();
-updateChannelsPage();
-updateToolsPage();
-generateCategoryPages(); 
-generateIndividualArticles();
-updateSearchData();
-generateRSS();
-generateSitemap();
-console.log('Build Complete. Multi-Page Architecture Hardened.');
+// Fix 5: Wrap execution in try/catch to catch any build errors and exit with code 1
+try {
+    updateAboutPageDetails();
+    updateChannelsPage();
+    updateToolsPage();
+    generateCategoryPages(); 
+    generateIndividualArticles();
+    updateSearchData();
+    generateRSS();
+    generateSitemap();
+    console.log('Build Complete. Multi-Page Architecture Hardened.');
+} catch (err) {
+    console.error('Build error:', err);
+    process.exit(1);
+}
