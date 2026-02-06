@@ -269,4 +269,50 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+
+    // 10. AI Summarize Button Logic
+    const aiBtn = document.getElementById('btn-ai-summarize');
+    if (aiBtn) {
+        aiBtn.addEventListener('click', async () => {
+            const articleContent = document.querySelector('article')?.innerText || '';
+            if (articleContent.length < 50) return alert('المحتوى قصير جداً للتلخيص');
+
+            const container = document.getElementById('ai-summary-container');
+            const contentBox = document.getElementById('ai-summary-content');
+            const originalBtnText = aiBtn.innerHTML;
+
+            aiBtn.disabled = true;
+            aiBtn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>جاري التحليل...</span>`;
+
+            try {
+                const response = await fetch('/api/summarize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: articleContent })
+                });
+                
+                if (!response.ok) throw new Error('API Error');
+                
+                const data = await response.json();
+                if (data.summary) {
+                    container.classList.remove('hidden');
+                    // Simple formatting: convert markdown bold to html, and bullets to breaks
+                    let formatted = data.summary
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/- /g, '<br>• ')
+                        .replace(/\* /g, '<br>• ');
+                    contentBox.innerHTML = formatted;
+                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    alert('لم يتمكن الذكاء الاصطناعي من تلخيص هذا المحتوى حالياً.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('حدث خطأ أثناء الاتصال بخدمة التلخيص. يرجى المحاولة لاحقاً.');
+            } finally {
+                aiBtn.disabled = false;
+                aiBtn.innerHTML = originalBtnText;
+            }
+        });
+    }
 });

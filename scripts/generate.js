@@ -723,6 +723,30 @@ const generateIndividualArticles = () => {
                     </div>
                 </div>
             </div>
+
+            <!-- AI Summary Section -->
+            <div class="mt-6 px-4 flex flex-col items-center">
+                <button id="btn-ai-summarize" class="relative inline-flex items-center justify-center gap-2 px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-full group hover:bg-indigo-700 hover:ring-4 hover:ring-indigo-300 dark:hover:ring-indigo-900 focus:outline-none">
+                    <span class="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
+                    <i data-lucide="sparkles" class="w-5 h-5 text-yellow-300 animate-pulse"></i>
+                    <span class="relative">تلخيص المقال بالذكاء الاصطناعي</span>
+                </button>
+
+                <div id="ai-summary-container" class="hidden w-full max-w-3xl mt-6">
+                    <div class="relative p-6 bg-white dark:bg-gray-800 rounded-2xl border border-indigo-100 dark:border-indigo-900 shadow-xl overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500"></div>
+                        <div class="flex items-center gap-3 mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
+                            <div class="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg">
+                                <i data-lucide="bot" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">ملخص سريع</h3>
+                        </div>
+                        <div id="ai-summary-content" class="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed space-y-2">
+                            <!-- Content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </header>
         `;
         
