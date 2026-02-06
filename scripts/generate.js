@@ -25,6 +25,28 @@ const AD_CLIENT_ID = 'ca-pub-7355327732066930';
 const ONESIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID'; 
 const GOOGLE_SITE_VERIFICATION = ''; 
 
+// --- HELPER: Validate Date ---
+const validateDate = (d, fallback = new Date()) => {
+    if (!d) return fallback;
+    const parsed = new Date(d);
+    if (isNaN(parsed.getTime())) {
+        return fallback;
+    }
+    return parsed;
+};
+
+// --- HELPER: Normalize Arabic Title ---
+const normalizeArabic = (text) => {
+    if (!text) return '';
+    return text
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\u0621-\u064A]/g, '') // Remove symbols, keep letters/numbers
+        .replace(/[أإآ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي');
+};
+
 // --- SCRIPTS TEMPLATES ---
 
 const GA_SCRIPT = `
@@ -34,7 +56,6 @@ const GA_SCRIPT = `
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', '${GA_ID}');
 </script>`;
 
@@ -45,18 +66,36 @@ const ONESIGNAL_SCRIPT = `
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(function(OneSignal) {
-    // Check if already initialized to prevent errors
     if (!OneSignal.initialized) {
         OneSignal.init({
           appId: "${ONESIGNAL_APP_ID}",
           safari_web_id: "web.onesignal.auto.xxxxx",
-          notifyButton: {
-            enable: true,
-          },
+          notifyButton: { enable: true },
         });
         OneSignal.initialized = true;
     }
   });
+</script>
+`;
+
+// Global Image Error Handler Script
+const IMG_ERROR_SCRIPT = `
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const fallbackImage = 'assets/images/me.jpg';
+    document.querySelectorAll('img').forEach(img => {
+        img.onerror = function() {
+            if (this.src.includes(fallbackImage)) return; // Prevent loop
+            this.src = fallbackImage;
+            this.alt = 'Image unavailable';
+            this.classList.add('img-fallback-active');
+        };
+        // Check if image is already broken (for cached broken images)
+        if (img.naturalWidth === 0 && img.complete) {
+             img.src = fallbackImage;
+        }
+    });
+});
 </script>
 `;
 
@@ -81,7 +120,9 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
 // OneSignal Worker
 const WORKER_CONTENT = `importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");`;
-fs.writeFileSync(path.join(ROOT_DIR, 'OneSignalSDKWorker.js'), WORKER_CONTENT);
+try {
+    fs.writeFileSync(path.join(ROOT_DIR, 'OneSignalSDKWorker.js'), WORKER_CONTENT);
+} catch (e) { console.error("Failed to write worker file", e); }
 
 // Files to Process
 const HTML_FILES = [
@@ -114,7 +155,30 @@ if (fs.existsSync(path.join(DATA_DIR, 'channels.json'))) {
     try { channelsData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'channels.json'), 'utf8')); } catch (e) { console.error("Error parsing channels.json", e); }
 }
 
-// --- UTILITY: Clean Path Function ---
+// --- UTILITY FUNCTIONS ---
+
+const safeWrite = (filePath, content) => {
+    try { fs.writeFileSync(filePath, content); } catch (err) { console.error(`❌ Write failed for: ${filePath}`); throw err; }
+};
+
+const escapeHtml = (str = '') => {
+    if (typeof str !== 'string') return '';
+    return str.replace(/[&<>"']/g, s =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[s])
+    );
+};
+
+const detectImageMime = (url = '') => {
+    const ext = url.split('.').pop()?.toLowerCase().split('?')[0];
+    switch (ext) {
+        case 'webp': return 'image/webp';
+        case 'png': return 'image/png';
+        case 'gif': return 'image/gif';
+        case 'svg': return 'image/svg+xml';
+        default: return 'image/jpeg';
+    }
+};
+
 const cleanPath = (p) => {
     if (!p) return '';
     if (p.startsWith('http')) return p;
@@ -140,7 +204,6 @@ const escapeXml = (unsafe) => {
     });
 };
 
-// --- Helper Functions ---
 const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     if (typeof iconData === 'string') {
         return `<i data-lucide="${iconData || defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
@@ -148,9 +211,8 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     if (iconData && typeof iconData === 'object') {
         const size = iconData.size || defaultSize;
         if (iconData.type === 'image') {
-            return `<img src="${cleanPath(iconData.value)}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon">`;
+            return `<img src="${cleanPath(iconData.value)}" style="width:${size}px; height:${size}px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'">`;
         } else if (iconData.type === 'svg') {
-            // Render custom SVG
             return `<svg viewBox="${iconData.viewBox || '0 0 24 24'}" fill="${iconData.fill || 'none'}" stroke="${iconData.stroke || 'currentColor'}" stroke-width="${iconData.strokeWidth || '2'}" style="width:${size}px; height:${size}px;">${iconData.value}</svg>`;
         } else {
             return `<i data-lucide="${iconData.value || defaultIconName}" style="width:${size}px; height:${size}px;"></i>`;
@@ -159,7 +221,6 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     return `<i data-lucide="${defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
 };
 
-// --- DYNAMIC SOCIAL ICONS GENERATION ---
 const generateSocialFooter = () => {
     const socialKeys = ['facebook', 'instagram', 'tiktok', 'youtube', 'telegram'];
     const brandColors = {
@@ -199,7 +260,6 @@ const generateSocialFooter = () => {
 
 const STANDARD_FOOTER = generateSocialFooter();
 
-// Markdown Parser
 const parseMarkdown = (markdown) => {
     if (!markdown) return '';
     let html = markdown;
@@ -213,7 +273,8 @@ const parseMarkdown = (markdown) => {
         }
         return '';
     });
-    html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<div class="article-image-container"><img src="${src}" alt="${alt}"></div>`);
+    // Add onerror to content images
+    html = html.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => `<div class="article-image-container"><img src="${src}" alt="${alt}" onerror="this.onerror=null;this.src='assets/images/me.jpg';"></div>`);
     html = html.replace(/\[(.*?)\]\((.*?)\)/g, `<div class="my-6 w-full flex justify-center px-2"><a href="$2" target="_blank" class="btn-wrapped-link w-full sm:w-auto"><i data-lucide="external-link" class="shrink-0 w-4 h-4"></i><span class="break-words whitespace-normal text-center">$1</span></a></div>`);
     html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mt-6 mb-3 break-words whitespace-normal w-full">$1</h3>');
     html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 break-words whitespace-normal w-full">$1</h2>');
@@ -221,6 +282,7 @@ const parseMarkdown = (markdown) => {
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/^- (.*$)/gim, '<li class="ml-4 list-disc marker:text-blue-500 break-words whitespace-normal">$1</li>');
     html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-inside space-y-2 mb-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm w-full">$&</ul>');
+    
     html = html.split('\n').map(line => {
         if (line.trim() === '') return '';
         if (line.match(/^<(h|ul|li|div|img|iframe|p|script)/)) return line;
@@ -229,30 +291,52 @@ const parseMarkdown = (markdown) => {
     return html;
 };
 
-// Load Posts & SKIP Duplicates
-const allPosts = [];
-const skippedFiles = [
-    'future-ai-2026.json',
-    'ai-trend-09.json', // ai-as-business-partner
-    'ai-trend-15.json', // ai-news-labeling-debate
-    'ai-trend-16.json', // ai-investment-opportunities
-    'ai-trend-03.json'  // ai-stock-market-impact
-];
+// --- POST LOADING & TITLE CHECK ---
+const rawPosts = [];
+const titleRegistry = new Set(); // Registry to track titles for warnings
 
 if (fs.existsSync(POSTS_DIR)) {
     fs.readdirSync(POSTS_DIR).forEach(file => {
         if (path.extname(file) === '.json') {
-            if (skippedFiles.includes(file)) return;
             try {
                 const post = JSON.parse(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
+                if (!post.slug) post.slug = file.replace('.json', '');
+                post.slug = post.slug.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+                
+                // --- WARNING ONLY DUPLICATE CHECK ---
+                if (post.title) {
+                    const normTitle = normalizeArabic(post.title);
+                    if (titleRegistry.has(normTitle)) {
+                        console.warn(`⚠ Duplicate title detected in "${file}": "${post.title}"`);
+                    } else {
+                        titleRegistry.add(normTitle);
+                    }
+                }
+
+                // Date Logic: effectiveDate = date (Creation Date)
+                post.date = validateDate(post.date);
+                post.effectiveDate = post.date; 
+
                 post.content = parseMarkdown(post.content);
-                post.effectiveDate = post.date;
-                allPosts.push(post);
+                post._originalFile = file;
+                rawPosts.push(post);
             } catch (e) { console.error(`Error reading post ${file}:`, e); }
         }
     });
 }
-allPosts.sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate));
+
+// 1. Sort by Date Descending (Newest First)
+rawPosts.sort((a, b) => b.effectiveDate - a.effectiveDate);
+
+const allPosts = rawPosts;
+
+// Category Map
+const postsByCategory = allPosts.reduce((acc, post) => {
+    const cat = post.category || 'general';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(post);
+    return acc;
+}, {});
 
 const getCatLabel = (cat) => {
     const defaults = { 'articles': 'اخبار', 'apps': 'تطبيقات', 'games': 'ألعاب', 'sports': 'رياضة' };
@@ -267,11 +351,13 @@ const createCardHTML = (post) => {
     if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
     if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
     
+    const dateStr = post.effectiveDate.toISOString().split('T')[0];
+
     return `
     <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="${cleanPath(post.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${post.title}" loading="lazy" decoding="async" />
+                <img src="${cleanPath(post.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${escapeHtml(post.title)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                 <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
                     <i data-lucide="${icon}" style="width: 1.2em; height: 1.2em;"></i><span>${getCatLabel(post.category)}</span>
@@ -279,40 +365,37 @@ const createCardHTML = (post) => {
             </div>
             <div class="p-4 flex-1 flex flex-col w-full">
                 <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
-                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span>${post.date}</span>
+                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span>${dateStr}</span>
                 </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2 custom-title-size" title="${post.title}">${post.title}</h3>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2 custom-title-size" title="${escapeHtml(post.title)}">${post.title}</h3>
                 <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">${post.description}</p>
             </div>
         </div>
     </a>`;
 };
 
-// --- GLOBAL SCRIPT INJECTOR ---
 const updateGlobalElements = (htmlContent, fileName = '') => {
     const $ = cheerio.load(htmlContent, { decodeEntities: false });
 
-    // 1. Clean old scripts
     $('script').each((i, el) => {
         const src = $(el).attr('src') || '';
         const content = $(el).html() || '';
         if (src.includes("cdn.onesignal.com") || content.includes("OneSignal")) { $(el).remove(); }
         if (src.includes('googletagmanager.com') || content.includes("gtag(") || src.includes('G-')) { $(el).remove(); }
         if (src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle")) { $(el).remove(); }
+        if (content.includes("document.addEventListener('DOMContentLoaded', () => {") && content.includes("fallbackImage")) { $(el).remove(); } // Remove old error script if exists
     });
 
-    // 2. Inject Fresh Scripts
     $('head').append(ONESIGNAL_SCRIPT);
     $('head').append(AD_SCRIPT);
     $('head').prepend(GA_SCRIPT);
+    $('body').append(IMG_ERROR_SCRIPT); // Global Image Error Handler
     
-    // 3. Search Console Meta
     if (GOOGLE_SITE_VERIFICATION) {
         $('meta[name="google-site-verification"]').remove();
         $('head').append(`<meta name="google-site-verification" content="${GOOGLE_SITE_VERIFICATION}" />`);
     }
 
-    // 4. Common UI Updates
     let profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
     profileImgSrc = cleanPath(profileImgSrc);
     $('#header-profile-img').attr('src', profileImgSrc);
@@ -330,70 +413,50 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     if (siteTitleEl.length) {
         if (aboutData.logoType === 'image' && aboutData.logoUrl) {
             const logoUrl = cleanPath(aboutData.logoUrl);
-            siteTitleEl.html(`<img src="${logoUrl}" alt="${aboutData.siteName}" style="max-height: 40px; width: auto; display: block;" />`);
+            siteTitleEl.html(`<img src="${logoUrl}" alt="${escapeHtml(aboutData.siteName)}" style="max-height: 40px; width: auto; display: block;" />`);
             siteTitleEl.removeClass('text-xl text-lg font-black text-blue-600 dark:text-blue-400 tracking-tight truncate'); 
             siteTitleEl.addClass('flex items-center');
         } else {
-            siteTitleEl.html(aboutData.siteName || 'TechTouch');
+            siteTitleEl.html(escapeHtml(aboutData.siteName || 'TechTouch'));
             siteTitleEl.removeClass('flex items-center');
             siteTitleEl.addClass('text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight truncate');
         }
     }
 
-    // --- UNIFIED HEADER BUTTONS LOGIC ---
     const headerDiv = $('header > div');
-    
-    // AGGRESSIVE CLEANUP: Remove any existing buttons from the header (even if outside actions container)
     headerDiv.find('#theme-toggle').remove();
     headerDiv.find('#home-btn-header').remove();
     headerDiv.find('#search-trigger').remove();
     headerDiv.find('a:has(i[data-lucide="arrow-right"])').remove();
     headerDiv.find('button:has(i[data-lucide="arrow-right"])').remove();
 
-    // Find the container that likely holds the theme toggle (or create if missing)
     let actionsContainer = headerDiv.find('.header-actions');
-    
     if (actionsContainer.length === 0) {
-        // Fallback: Try finding the last div with flex
         const lastFlex = headerDiv.find('div.flex.items-center.gap-2').last();
         if(lastFlex.length) {
             actionsContainer = lastFlex;
             actionsContainer.addClass('header-actions');
         } else {
-            // Create if absolutely missing
             actionsContainer = $('<div class="flex items-center gap-1 header-actions"></div>');
             headerDiv.append(actionsContainer);
         }
     }
-
-    // IMPORTANT: Clear container before injecting
     actionsContainer.empty();
 
-    // Condition for adding buttons back
-    // DO NOT ADD buttons to articles (files starting with 'article-')
-    // Buttons: Home, Search (injected by JS), Theme
     const isArticle = fileName.startsWith('article-');
-
     if (!isArticle) {
-        // Inject Buttons in the specific RTL visual order requested for main pages:
-        // Left Side of Screen (End of Header): [Theme] [Search] [Home]
-        // Search is injected via JS into Order 2.
-        
         const homeBtn = `
         <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
             <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
         </a>`;
-
         const themeBtn = `
         <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors order-3">
             <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
             <i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
         </button>`;
-
         actionsContainer.append(homeBtn);
         actionsContainer.append(themeBtn);
     }
-    // Else: If isArticle, the container remains empty (no Home, no Theme, and JS will skip Search).
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
     const dynamicStyle = `
@@ -423,12 +486,12 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
         if (aboutData.ticker.type === 'image' && aboutData.ticker.imageUrl) {
             const imgUrl = cleanPath(aboutData.ticker.imageUrl);
-            const contentHtml = `<img src="${imgUrl}" alt="Ticker Banner" class="h-full object-contain mx-auto" style="max-height: 40px; width: auto;" />`;
+            const contentHtml = `<img src="${imgUrl}" alt="Ticker Banner" class="h-full object-contain mx-auto" style="max-height: 40px; width: auto;" onerror="this.style.display='none'"/>`;
             tickerContentDiv.html(contentHtml);
         } else {
-            let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block">${aboutData.ticker.text}</span>`;
+            let contentHtml = `<span class="mx-4 font-medium text-gray-100 ticker-text whitespace-nowrap inline-block">${escapeHtml(aboutData.ticker.text)}</span>`;
             if(aboutData.ticker.url && aboutData.ticker.url !== '#') {
-                contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block ticker-text text-gray-100">${aboutData.ticker.text}</a>`;
+                contentHtml = `<a href="${aboutData.ticker.url}" class="hover:text-blue-300 transition-colors whitespace-nowrap inline-block ticker-text text-gray-100">${escapeHtml(aboutData.ticker.text)}</a>`;
             }
             tickerContentDiv.html(contentHtml);
         }
@@ -457,12 +520,12 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
         }
         $('#about-bot-list').parent().find('h2').contents().last().replaceWith(' ' + (aboutData.botTitle || 'مركز خدمة الطلبات (Bot)'));
         if(aboutData.botInfo) {
-            const botItems = aboutData.botInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-blue-500 text-xl">✪</span><span>${i}</span></li>`).join('');
+            const botItems = aboutData.botInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-blue-500 text-xl">✪</span><span>${escapeHtml(i)}</span></li>`).join('');
             $('#about-bot-list').html(botItems);
         }
         $('#about-search-list').parent().find('h2').contents().last().replaceWith(' ' + (aboutData.searchTitle || 'دليل الوصول الذكي للمحتوى'));
         if(aboutData.searchInfo) {
-            const searchItems = aboutData.searchInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-green-500 text-xl">✪</span><span>${i}</span></li>`).join('');
+            const searchItems = aboutData.searchInfo.split('\n').filter(i => i.trim()).map(i => `<li class="flex items-start gap-2"><span class="text-green-500 text-xl">✪</span><span>${escapeHtml(i)}</span></li>`).join('');
             $('#about-search-list').html(searchItems);
         }
         $('.prose p:first').text(aboutData.bio);
@@ -483,7 +546,6 @@ const updateGlobalElements = (htmlContent, fileName = '') => {
     return finalHtml;
 };
 
-// Updated: Increased limit to allow frontend pagination to handle all posts
 const updateListingPages = () => {
     const pagesToUpdate = [{ file: 'index.html', limit: 1000 }, { file: 'articles.html', limit: 2000 }];
     pagesToUpdate.forEach(pageInfo => {
@@ -500,11 +562,12 @@ const updateListingPages = () => {
                 container.parent().find('.adsbygoogle-container').remove();
             }
         };
-        fillContainer('articles', allPosts.filter(p => p.category === 'articles'));
-        fillContainer('apps', allPosts.filter(p => p.category === 'apps'));
-        fillContainer('games', allPosts.filter(p => p.category === 'games'));
-        fillContainer('sports', allPosts.filter(p => p.category === 'sports'));
-        fs.writeFileSync(filePath, updateGlobalElements($.html(), pageInfo.file));
+        fillContainer('articles', postsByCategory['articles'] || []);
+        fillContainer('apps', postsByCategory['apps'] || []);
+        fillContainer('games', postsByCategory['games'] || []);
+        fillContainer('sports', postsByCategory['sports'] || []);
+        
+        safeWrite(filePath, updateGlobalElements($.html(), pageInfo.file));
     });
 };
 
@@ -518,23 +581,27 @@ const updateToolsPage = () => {
         main.find('.adsbygoogle-container').remove(); 
         main.find('a[href="tool-analysis.html"]').remove(); 
     } 
-    fs.writeFileSync(filePath, updateGlobalElements($.html(), 'tools.html')); 
+    safeWrite(filePath, updateGlobalElements($.html(), 'tools.html')); 
 };
 
-const updateAboutPageDetails = () => { const aboutPath = path.join(ROOT_DIR, 'about.html'); if (!fs.existsSync(aboutPath)) return; let html = fs.readFileSync(aboutPath, 'utf8'); const $ = cheerio.load(html); fs.writeFileSync(aboutPath, updateGlobalElements($.html(), 'about.html')); };
+const updateAboutPageDetails = () => { const aboutPath = path.join(ROOT_DIR, 'about.html'); if (!fs.existsSync(aboutPath)) return; let html = fs.readFileSync(aboutPath, 'utf8'); const $ = cheerio.load(html); safeWrite(aboutPath, updateGlobalElements($.html(), 'about.html')); };
 const updateChannelsPage = () => {
     const toolsPath = path.join(ROOT_DIR, 'tools-sites.html'); if (!fs.existsSync(toolsPath)) return; let html = fs.readFileSync(toolsPath, 'utf8'); const $ = cheerio.load(html); const grid = $('main .grid'); grid.empty();
     channelsData.forEach(ch => {
         const renderedIcon = renderIconHTML(ch.iconData || ch.icon, 'star', 24);
-        grid.append(`<a href="${ch.url}" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group w-full"><div class="flex items-center gap-4 h-full"><div class="w-12 h-12 bg-${ch.color}-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden">${renderedIcon}</div><div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1 break-words whitespace-normal">${ch.name}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${ch.desc}</p></div><div class="text-gray-300 group-hover:text-${ch.color}-600 shrink-0 transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></div></div></a>`);
+        grid.append(`<a href="${ch.url}" target="_blank" class="block bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all group w-full"><div class="flex items-center gap-4 h-full"><div class="w-12 h-12 bg-${ch.color}-600 rounded-lg flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden">${renderedIcon}</div><div class="flex-1 min-w-0"><h3 class="font-bold text-gray-900 dark:text-white text-sm mb-1 break-words whitespace-normal">${escapeHtml(ch.name)}</h3><p class="text-xs text-gray-500 dark:text-gray-400 truncate">${escapeHtml(ch.desc)}</p></div><div class="text-gray-300 group-hover:text-${ch.color}-600 shrink-0 transition-colors"><i data-lucide="chevron-left" class="w-5 h-5"></i></div></div></a>`);
     });
-    fs.writeFileSync(toolsPath, updateGlobalElements($.html(), 'tools-sites.html'));
+    safeWrite(toolsPath, updateGlobalElements($.html(), 'tools-sites.html'));
 };
 
 const generateIndividualArticles = () => {
     const templatePath = path.join(ROOT_DIR, 'article-asus-gx10.html');
     let template = '';
-    if (fs.existsSync(templatePath)) { template = fs.readFileSync(templatePath, 'utf8'); } else { template = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>Article</title></head><body><main><article></article></main></body></html>`; }
+    if (fs.existsSync(templatePath)) { 
+        template = fs.readFileSync(templatePath, 'utf8'); 
+    } else { 
+        throw new Error("❌ Article template 'article-asus-gx10.html' missing. Cannot generate articles.");
+    }
 
     allPosts.forEach(post => {
         const $ = cheerio.load(template);
@@ -545,21 +612,22 @@ const generateIndividualArticles = () => {
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
         
-        // --- FIXED HEADER TAG (COMPACT & SINGLE LINE META) ---
+        const formattedDate = post.effectiveDate.toISOString().split('T')[0];
+        
         const articleHeaderHTML = `
         <header class="mb-8 relative">
             <div class="article-header-card">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight break-words w-full m-0">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight break-words w-full m-0 text-center">
                     ${post.title}
                 </h1>
             </div>
             <div class="article-meta-bar flex items-center justify-center px-4 py-3 border-t border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-x-auto no-scrollbar">
                 <div class="flex items-center gap-3 w-full justify-center">
-                    <div class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i><span>${post.date}</span></div>
+                    <div class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i><span>${formattedDate}</span></div>
                     <span class="text-gray-300 dark:text-gray-600">|</span>
                     <div class="flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5"></i><span>TechTouch Team</span></div>
                     <span class="text-gray-300 dark:text-gray-600">|</span>
-                    <div class="flex items-center gap-1 view-count-wrapper"><i data-lucide="eye" class="w-3.5 h-3.5 text-green-500"></i><span class="view-count-display font-bold" data-publish-date="${post.date}">25</span></div>
+                    <div class="flex items-center gap-1 view-count-wrapper"><i data-lucide="eye" class="w-3.5 h-3.5 text-green-500"></i><span class="view-count-display font-bold" data-publish-date="${formattedDate}">25</span></div>
                 </div>
             </div>
         </header>
@@ -572,7 +640,6 @@ const generateIndividualArticles = () => {
             $('main').prepend(articleHeaderHTML);
         }
 
-        // --- REMOVE HEADER AD INJECTION (Moved to bottom) ---
         $('#custom-ad-banner').remove();
 
         let breadcrumbLabel = 'اخبار';
@@ -593,7 +660,7 @@ const generateIndividualArticles = () => {
         const existingImgDiv = $('main > div.rounded-2xl');
         const adaptiveImageHTML = `
         <div class="article-image-container">
-            <img src="${cleanPath(post.image)}" alt="${post.title}" class="article-featured-image" loading="eager" />
+            <img src="${cleanPath(post.image)}" alt="${escapeHtml(post.title)}" class="article-featured-image" loading="eager" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
         </div>
         `;
         
@@ -604,15 +671,15 @@ const generateIndividualArticles = () => {
         $content('img').each((i, img) => {
             const originalSrc = $content(img).attr('src');
             if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
+            // Add fallback for broken images inside content
+            $content(img).attr('onerror', "this.onerror=null;this.src='assets/images/me.jpg';");
         });
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         
-        // Remove existing Share Buttons to prevent duplicates if regenerating
         $('.share-buttons-container').remove();
 
         $('article').html($content.html()); 
 
-        // --- TAGS GENERATION ---
         const tags = [getCatLabel(post.category)];
         if(post.title) {
             const words = post.title.split(' ').filter(w => w.length > 3 && !['كيف', 'ماذا', 'لماذا', 'هذا', 'التي', 'الذي'].includes(w));
@@ -627,7 +694,6 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(tagsHTML);
 
-        // --- INJECT ICON-ONLY SHARE BUTTONS ---
         const shareSectionHTML = `
         <div class="share-buttons-container mt-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 text-center">
             <h3 class="font-bold text-gray-800 dark:text-white mb-4 text-sm">شارك المعلومة</h3>
@@ -649,28 +715,25 @@ const generateIndividualArticles = () => {
         `;
         $('article').append(shareSectionHTML);
         
-        // --- RELATED POSTS (HYBRID: 6 GRID + AD BANNER + 6 LIST) ---
-        // Pick 12 random posts excluding current
-        const otherPosts = allPosts.filter(p => p.slug !== post.slug);
-        const relatedPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 12);
+        const relatedPosts = allPosts
+            .filter(p => p.slug !== post.slug && p.category === post.category)
+            .sort((a, b) => b.effectiveDate - a.effectiveDate)
+            .slice(0, 12);
 
         if (relatedPosts.length) {
-            // Split into 6 for Grid and 6 for List
             const gridPosts = relatedPosts.slice(0, 6);
             const listPosts = relatedPosts.slice(6, 12);
 
             let relatedHTML = `
             <section class="related-posts mt-12 border-t border-gray-100 dark:border-gray-700 pt-8">
                 <h3 class="text-lg font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="layers" class="w-5 h-5 text-blue-600"></i> قد يعجبك أيضاً</h3>
-                
-                <!-- 1. Grid Layout (First 6 Posts) -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">`;
             
             gridPosts.forEach(r => {
                 relatedHTML += `
                 <a href="article-${r.slug}.html" class="block bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all group h-full">
-                    <div class="h-32 overflow-hidden">
-                        <img src="${cleanPath(r.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                    <div class="h-32 overflow-hidden bg-gray-200 dark:bg-gray-700">
+                        <img src="${cleanPath(r.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                     </div>
                     <div class="p-3">
                         <h4 class="text-xs font-bold text-gray-900 dark:text-white line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors">${r.title}</h4>
@@ -679,12 +742,10 @@ const generateIndividualArticles = () => {
             });
             relatedHTML += `</div>`;
 
-            // --- 2. AD BANNER (Between Grid and List) - LINKED & RESPONSIVE ---
             if (aboutData.adBanner && aboutData.adBanner.enabled !== false) {
                 const ad = aboutData.adBanner;
                 const adUrl = ad.url || '#';
                 
-                // Responsive content logic
                 let content = '';
                 if (ad.type === 'image') {
                     content = `<a href="${adUrl}" target="_blank" class="w-full h-full block relative overflow-hidden group">
@@ -697,7 +758,6 @@ const generateIndividualArticles = () => {
                     </a>`;
                 }
                 
-                // Container with responsive height (min-h for small screens, expandable for large)
                 relatedHTML += `
                 <div id="custom-ad-banner-related" class="w-full min-h-[60px] md:min-h-[100px] h-auto flex items-center justify-center backdrop-blur-sm border border-gray-100 dark:border-gray-800 mb-6 rounded-xl overflow-hidden transition-all shadow-sm">
                     ${content}
@@ -705,16 +765,16 @@ const generateIndividualArticles = () => {
                 `;
             }
 
-            // 3. List Layout (Next 6 Posts)
             if (listPosts.length > 0) {
                 relatedHTML += `<div class="flex flex-col gap-3">`;
                 listPosts.forEach(r => {
+                    const rDate = r.effectiveDate.toISOString().split('T')[0];
                     relatedHTML += `
                     <a href="article-${r.slug}.html" class="flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
-                        <img src="${cleanPath(r.image)}" class="w-16 h-12 object-cover rounded-lg shrink-0" loading="lazy" />
+                        <img src="${cleanPath(r.image)}" class="w-16 h-12 object-cover rounded-lg shrink-0 bg-gray-200 dark:bg-gray-700" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                         <div class="flex-1 min-w-0">
                             <h4 class="text-xs font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-blue-600 transition-colors">${r.title}</h4>
-                            <span class="text-[10px] text-gray-400 mt-0.5 block">${r.date}</span>
+                            <span class="text-[10px] text-gray-400 mt-0.5 block">${rDate}</span>
                         </div>
                         <div class="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors"><i data-lucide="chevron-left" class="w-4 h-4"></i></div>
                     </a>`;
@@ -726,18 +786,33 @@ const generateIndividualArticles = () => {
             $('article').append(relatedHTML);
         }
 
-        const jsonLd = { "@context": "https://schema.org", "@type": "Article", "headline": post.title, "image": [fullImageUrl], "datePublished": new Date(post.date).toISOString(), "dateModified": new Date(post.effectiveDate).toISOString(), "author": { "@type": "Person", "name": aboutData.profileName }, "publisher": { "@type": "Organization", "name": aboutData.siteName || "TechTouch", "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } }, "description": post.description, "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } };
+        const safeJsonLd = { 
+            "@context": "https://schema.org", 
+            "@type": "Article", 
+            "headline": post.title || '', 
+            "image": post.image ? [fullImageUrl] : [], 
+            "datePublished": post.date ? post.date.toISOString() : new Date().toISOString(), 
+            "dateModified": post.effectiveDate ? post.effectiveDate.toISOString() : new Date().toISOString(), 
+            "author": { "@type": "Person", "name": aboutData.profileName || "TechTouch" }, 
+            "publisher": { 
+                "@type": "Organization", 
+                "name": aboutData.siteName || "TechTouch", 
+                "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } 
+            }, 
+            "description": post.description || '', 
+            "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } 
+        };
         $('script[type="application/ld+json"]').remove();
-        $('head').append(`<script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>`);
+        $('head').append(`<script type="application/ld+json">${JSON.stringify(safeJsonLd, null, 2)}</script>`);
         
-        fs.writeFileSync(path.join(ROOT_DIR, pageSlug), updateGlobalElements($.html(), pageSlug));
+        safeWrite(path.join(ROOT_DIR, pageSlug), updateGlobalElements($.html(), pageSlug));
     });
 };
 
 const updateSearchData = () => {
     const searchPath = path.join(ROOT_DIR, 'assets/js/search-data.js');
     const searchItems = [ ...allPosts.map(p => ({ title: p.title, desc: p.description, url: `article-${p.slug}.html`, category: p.category.charAt(0).toUpperCase() + p.category.slice(1), image: cleanPath(p.image) })), ...channelsData.map(c => ({ title: c.name, desc: c.desc, url: c.url, category: 'Channels', image: 'assets/images/me.jpg' })) ];
-    fs.writeFileSync(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
+    safeWrite(searchPath, `export const searchIndex = ${JSON.stringify(searchItems, null, 2)};`);
 };
 
 const generateRSS = () => {
@@ -747,31 +822,55 @@ const generateRSS = () => {
     allPosts.slice(0, 20).forEach(post => {
         const fullUrl = `${BASE_URL}/article-${post.slug}.html`;
         const fullImg = toAbsoluteUrl(post.image);
-        xml += `<item><title><![CDATA[${post.title}]]></title><link>${fullUrl}</link><guid>${fullUrl}</guid><pubDate>${new Date(post.effectiveDate).toUTCString()}</pubDate><description><![CDATA[${post.description}]]></description><enclosure url="${fullImg}" type="image/jpeg" /></item>`;
+        const mimeType = detectImageMime(fullImg);
+        xml += `<item><title><![CDATA[${post.title}]]></title><link>${fullUrl}</link><guid>${fullUrl}</guid><pubDate>${post.effectiveDate.toUTCString()}</pubDate><description><![CDATA[${post.description}]]></description><enclosure url="${fullImg}" type="${mimeType}" /></item>`;
     });
     xml += `</channel></rss>`;
-    fs.writeFileSync(feedPath, xml);
+    safeWrite(feedPath, xml);
 };
 
 const generateSitemap = () => {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
     const today = new Date().toISOString().split('T')[0];
-    const staticPages = [{ file: 'index.html', url: '/', priority: '1.0' }, { file: 'articles.html', url: '/articles.html', priority: '0.9' }, { file: 'tools.html', url: '/tools.html', priority: '0.9' }, { file: 'about.html', url: '/about.html', priority: '0.7' }, { file: 'tools-sites.html', url: '/tools-sites.html', priority: '0.8' }, { file: 'tools-phones.html', url: '/tools-phones.html', priority: '0.8' }, { file: 'tools-compare.html', url: '/tools-compare.html', priority: '0.7' }, { file: 'tool-analysis.html', url: '/tool-analysis.html', priority: '0.7' }, { file: 'privacy.html', url: '/privacy.html', priority: '0.3' }, { file: 'site-map.html', url: '/site-map.html', priority: '0.5' }];
+    const staticPages = [
+        { url: '/', priority: '1.0' }, 
+        { url: '/articles.html', priority: '0.9' }, 
+        { url: '/tools.html', priority: '0.9' }, 
+        { url: '/about.html', priority: '0.7' }, 
+        { url: '/tools-sites.html', priority: '0.8' }, 
+        { url: '/tools-phones.html', priority: '0.8' }, 
+        { url: '/tools-compare.html', priority: '0.7' }, 
+        { url: '/tool-analysis.html', priority: '0.7' }, 
+        { url: '/privacy.html', priority: '0.3' }, 
+        { url: '/site-map.html', priority: '0.5' }
+    ];
+    
     let xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
-    staticPages.forEach(page => { if (page.file === '404.html') return; const filePath = path.join(ROOT_DIR, page.file); let lastmod = today; if (fs.existsSync(filePath)) { try { lastmod = fs.statSync(filePath).mtime.toISOString().split('T')[0]; } catch(e) {} } const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`; xml += `<url><loc>${loc}</loc><lastmod>${lastmod}</lastmod><priority>${page.priority}</priority></url>`; });
-    allPosts.forEach(post => { const fullImg = toAbsoluteUrl(post.image); const pageUrl = `${BASE_URL}/article-${post.slug}.html`; const postDate = new Date(post.effectiveDate).toISOString().split('T')[0]; xml += `<url><loc>${pageUrl}</loc><lastmod>${postDate}</lastmod><priority>0.8</priority><image:image><image:loc>${escapeXml(fullImg)}</image:loc><image:title>${escapeXml(post.title)}</image:title></image:image></url>`; });
+    
+    staticPages.forEach(page => { 
+        const loc = page.url === '/' ? `${BASE_URL}/` : `${BASE_URL}${page.url}`; 
+        xml += `<url><loc>${loc}</loc><lastmod>${today}</lastmod><priority>${page.priority}</priority></url>`; 
+    });
+    
+    allPosts.forEach(post => { 
+        const fullImg = toAbsoluteUrl(post.image); 
+        const pageUrl = `${BASE_URL}/article-${post.slug}.html`; 
+        const postDate = post.effectiveDate.toISOString().split('T')[0]; 
+        xml += `<url><loc>${pageUrl}</loc><lastmod>${postDate}</lastmod><priority>0.8</priority><image:image><image:loc>${escapeXml(fullImg)}</image:loc><image:title>${escapeXml(post.title)}</image:title></image:image></url>`; 
+    });
+    
     xml += `\n</urlset>`;
-    fs.writeFileSync(sitemapPath, xml);
+    safeWrite(sitemapPath, xml);
     console.log('✅ sitemap.xml regenerated automatically.');
 };
 
 updateAboutPageDetails();
 updateChannelsPage();
 updateToolsPage();
-HTML_FILES.forEach(file => { const filePath = path.join(ROOT_DIR, file); if (fs.existsSync(filePath)) fs.writeFileSync(filePath, updateGlobalElements(fs.readFileSync(filePath, 'utf8'), file)); });
+HTML_FILES.forEach(file => { const filePath = path.join(ROOT_DIR, file); if (fs.existsSync(filePath)) safeWrite(filePath, updateGlobalElements(fs.readFileSync(filePath, 'utf8'), file)); });
 updateListingPages();
 generateIndividualArticles();
 updateSearchData();
 generateRSS();
 generateSitemap();
-console.log('Build Complete. Auto-Injection & Data Sync Fixed.');
+console.log('Build Complete. Duplicate removal and Broken Image protection applied.');
