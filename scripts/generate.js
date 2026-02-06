@@ -719,7 +719,7 @@ const generateIndividualArticles = () => {
                     <!-- Views -->
                     <div class="flex items-center gap-1.5 view-count-wrapper group" title="المشاهدات">
                         <i data-lucide="eye" class="w-4 h-4 text-green-500 group-hover:scale-110 transition-transform"></i>
-                        <span class="view-count-display font-bold font-mono tracking-tight" data-publish-date="${post.effectiveDate.toISOString().split('T')[0]}">${initialViews.toLocaleString('en-US')}</span>
+                        <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}" data-publish-date="${post.effectiveDate.toISOString().split('T')[0]}">${initialViews.toLocaleString('en-US')}</span>
                     </div>
                 </div>
             </div>
