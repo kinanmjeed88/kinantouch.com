@@ -64,6 +64,18 @@ const normalizeArabic = (text) => {
         .replace(/ى/g, 'ي');
 };
 
+// --- HELPER: Calculate Views (Server Side) ---
+const calculateInitialViews = (dateObj) => {
+    const now = new Date();
+    const diffTime = Math.abs(now - dateObj);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    let views = 25; // Base views
+    if (diffDays > 0) {
+        views += (diffDays * 10); // Growth factor
+    }
+    return views;
+};
+
 // --- SCRIPTS TEMPLATES ---
 
 const GA_SCRIPT = `
@@ -652,6 +664,9 @@ const generateIndividualArticles = () => {
             hour: '2-digit', minute: '2-digit', hour12: true
         });
         
+        // Calculate initial view count server-side to avoid flicker
+        const initialViews = calculateInitialViews(post.effectiveDate);
+
         // --- SMART TITLE RENDERING ---
         let titleContent = '';
         const titleRaw = (post.title || '').trim();
@@ -683,7 +698,7 @@ const generateIndividualArticles = () => {
                     <!-- Views -->
                     <div class="flex items-center gap-1.5 view-count-wrapper group" title="المشاهدات">
                         <i data-lucide="eye" class="w-4 h-4 text-green-500 group-hover:scale-110 transition-transform"></i>
-                        <span class="view-count-display font-bold font-mono tracking-tight" data-publish-date="${post.effectiveDate.toISOString().split('T')[0]}">25</span>
+                        <span class="view-count-display font-bold font-mono tracking-tight" data-publish-date="${post.effectiveDate.toISOString().split('T')[0]}">${initialViews.toLocaleString('en-US')}</span>
                     </div>
                 </div>
             </div>

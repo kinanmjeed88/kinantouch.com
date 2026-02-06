@@ -256,7 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     views += (diffDays * 10);
                 }
                 
-                counter.innerText = views.toLocaleString();
+                // Use English Locale to match static generation and prevent jump
+                counter.innerText = views.toLocaleString('en-US');
             }
         });
     }
