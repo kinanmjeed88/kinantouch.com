@@ -163,22 +163,7 @@
                                 <button onclick="insertLink()" class="badge bg-green-50 text-green-700">Link</button>
                                 <button onclick="insertYoutube()" class="badge bg-red-50 text-red-700">YouTube</button>
                             </div>
-                            <textarea id="pContent" rows="10" class="input-field font-mono text-sm leading-relaxed"></textarea>
-                        </div>
-
-                        <!-- AI Summary Field (New) -->
-                        <div class="col-span-2 bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="label text-indigo-800 flex items-center gap-2">
-                                    <i data-lucide="sparkles" class="w-4 h-4 text-indigo-500"></i>
-                                    ملخص الذكاء الاصطناعي (يظهر في نهاية المقال)
-                                </label>
-                                <button onclick="generateSummaryAI()" id="btnGenerateSummary" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg transition-colors flex items-center gap-1">
-                                    <i data-lucide="bot" class="w-3 h-3"></i>
-                                    توليد الآن
-                                </button>
-                            </div>
-                            <textarea id="pSummary" rows="5" class="input-field font-mono text-sm bg-white" placeholder="اضغط زر التوليد لإنشاء ملخص احترافي من 5 نقاط..."></textarea>
+                            <textarea id="pContent" rows="15" class="input-field font-mono text-sm leading-relaxed"></textarea>
                         </div>
                     </div>
                     
@@ -190,7 +175,7 @@
             </div>
         </section>
 
-        <!-- Rest of sections (Settings, Channels) same as before -->
+        <!-- Rest of sections unchanged... -->
         <section id="sec-channels" class="hidden-section space-y-6">
             <div class="flex justify-between items-center"><h2 class="text-2xl font-bold">القنوات والمواقع</h2><button onclick="addChannel()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2"><i data-lucide="plus"></i> إضافة</button></div>
             <div id="channelsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div></div>

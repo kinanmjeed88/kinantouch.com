@@ -35,24 +35,6 @@ function json(data, status = 200) {
   });
 }
 
-const SYSTEM_PROMPT = `
-أنت خبير محتوى تقني ومحرر SEO محترف. مهمتك تلخيص المقال المقدم باللغة العربية في هيكلية محددة جداً وجذابة.
-المطلوب:
-1. عنوان فرعي جذاب للملخص (مثلاً: 📌 الزبدة التقنية).
-2. استخراج 5 نقاط رئيسية مركزة وواضحة جداً (Bullet points).
-3. أسلوب الكتابة يجب أن يكون مباشراً، خالياً من الحشو، ومناسباً للقراءة السريعة (Skimming).
-4. استخدم التنسيق التالي بدقة (Markdown):
-
-### 🚀 الخلاصة في نقاط
-* **النقطة الأولى القوية:** شرح مختصر.
-* **النقطة الثانية:** شرح مختصر.
-* **النقطة الثالثة:** شرح مختصر.
-* **النقطة الرابعة:** شرح مختصر.
-* **النقطة الخامسة:** شرح مختصر.
-
-لا تضف أي مقدمات أو خاتمات خارج هذا الهيكل.
-`;
-
 async function summarizeWithGroq(content, env) {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -63,7 +45,7 @@ async function summarizeWithGroq(content, env) {
     body: JSON.stringify({
       model: "llama-3.1-8b-instant",
       messages: [
-        { role: "system", content: SYSTEM_PROMPT },
+        { role: "system", content: "لخص المقال في نقاط مركزة وواضحة." },
         { role: "user", content }
       ],
       temperature: 0.3
@@ -85,7 +67,7 @@ async function summarizeWithGemini(content, env) {
         contents: [
           {
             parts: [
-              { text: SYSTEM_PROMPT },
+              { text: "لخص المقال في نقاط واضحة:" },
               { text: content }
             ]
           }
@@ -100,7 +82,6 @@ async function summarizeWithGemini(content, env) {
 }
 
 async function summarizeWithHF(content, env) {
-  // HuggingFace models usually take plain text, prompt engineering is harder here but we try.
   const response = await fetch(
     "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",
     {
@@ -109,7 +90,7 @@ async function summarizeWithHF(content, env) {
         "Authorization": `Bearer ${env.HF_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ inputs: "Summarize this in 5 bullet points in Arabic: " + content }),
+      body: JSON.stringify({ inputs: content }),
     }
   );
 

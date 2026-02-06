@@ -37,12 +37,17 @@ const validateDate = (d, fallback = new Date()) => {
 
 // --- HELPER: Combine Date & Time with Baghdad Timezone (UTC+3) ---
 const combineDateTime = (dateStr, timeStr = "00:00") => {
+    // Ensure inputs are strings
     const d = typeof dateStr === 'string' ? dateStr : new Date().toISOString().split('T')[0];
     const t = typeof timeStr === 'string' ? timeStr : "00:00";
+    
+    // Construct ISO string with fixed +03:00 offset for Baghdad
+    // Format: YYYY-MM-DDTHH:mm:00+03:00
     const isoString = `${d}T${t}:00+03:00`;
+    
     const parsed = new Date(isoString);
     if (isNaN(parsed.getTime())) {
-        return new Date();
+        return new Date(); // Fallback
     }
     return parsed;
 };
@@ -53,10 +58,41 @@ const normalizeArabic = (text) => {
     return text
         .trim()
         .toLowerCase()
-        .replace(/[^\w\u0621-\u064A]/g, '')
+        .replace(/[^\w\u0621-\u064A]/g, '') // Remove symbols, keep letters/numbers
         .replace(/[أإآ]/g, 'ا')
         .replace(/ة/g, 'ه')
         .replace(/ى/g, 'ي');
+};
+
+// --- HELPER: Calculate Views (Server Side & Deterministic) ---
+// Generates a stable but varied view count based on the post slug and date.
+const calculateInitialViews = (dateObj, slug) => {
+    const now = new Date();
+    const diffTime = Math.abs(now - dateObj);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    
+    // Generate a pseudo-random seed from the slug characters
+    // This ensures "Article A" always gets the same number, distinct from "Article B"
+    let seed = 0;
+    const safeSlug = slug || 'default';
+    for (let i = 0; i < safeSlug.length; i++) {
+        seed += safeSlug.charCodeAt(i);
+    }
+    
+    // Base views: Start from 50 (Minimum) up to 150 randomly
+    // This ensures new articles don't look "dead" (0 views) but aren't unrealistically high
+    let baseViews = 50 + (seed % 100); 
+    
+    // Daily growth: Random between 2 and 15 views per day
+    // This creates the "ascending" effect over time
+    let dailyRate = 2 + (seed % 13);
+    
+    let views = baseViews;
+    if (diffDays > 0) {
+        views += (diffDays * dailyRate);
+    }
+    
+    return views;
 };
 
 // --- SCRIPTS TEMPLATES ---
@@ -97,11 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const fallbackImage = 'assets/images/me.jpg';
     document.querySelectorAll('img').forEach(img => {
         img.onerror = function() {
-            if (this.src.includes(fallbackImage)) return;
+            if (this.src.includes(fallbackImage)) return; // Prevent loop
             this.src = fallbackImage;
             this.alt = 'Image unavailable';
             this.classList.add('img-fallback-active');
         };
+        // Check if image is already broken (for cached broken images)
         if (img.naturalWidth === 0 && img.complete) {
              img.src = fallbackImage;
         }
@@ -324,14 +361,18 @@ if (fs.existsSync(POSTS_DIR)) {
                     }
                 }
 
-                // Date & Time Logic
+                // Date & Time Logic: 
+                // Combine date and time into a precise Date object with Baghdad Timezone (UTC+3)
                 post.publishTime = post.time || "00:00";
+                
+                // Fallback for date if missing
                 if (!post.date) post.date = new Date().toISOString().split('T')[0];
                 if (!post.updated) post.updated = post.date;
 
                 post.publishedAt = combineDateTime(post.date, post.publishTime);
-                post.updatedAt = combineDateTime(post.updated, post.publishTime);
-                post.effectiveDate = post.publishedAt; 
+                post.updatedAt = combineDateTime(post.updated, post.publishTime); // Use publish time for update timestamp too unless we want specific update time
+
+                post.effectiveDate = post.publishedAt; // For sorting and display
 
                 post.content = parseMarkdown(post.content);
                 post._originalFile = file;
@@ -341,7 +382,8 @@ if (fs.existsSync(POSTS_DIR)) {
     });
 }
 
-// Sort by Date + Time Descending
+// 1. Sort by Date + Time Descending (Newest First)
+// Precise sorting using the full timestamp
 rawPosts.sort((a, b) => b.effectiveDate - a.effectiveDate);
 
 const allPosts = rawPosts;
@@ -641,12 +683,20 @@ const generateIndividualArticles = () => {
             hour: '2-digit', minute: '2-digit', hour12: true
         });
         
+        // Calculate initial view count server-side to avoid flicker
+        // Uses slug for consistent pseudo-randomness
+        // CHANGE: Base views now start from 50+
+        const initialViews = calculateInitialViews(post.effectiveDate, post.slug);
+
         // --- SMART TITLE RENDERING ---
         let titleContent = '';
         const titleRaw = (post.title || '').trim();
+        // Check if title is HTML-like or Markdown-like
         if (titleRaw.startsWith('<') || titleRaw.startsWith('#')) {
+            // Render as-is (passed through parser if markdown) or raw HTML
             titleContent = parseMarkdown(titleRaw);
         } else {
+            // Default behavior: Wrapped in centered H1
             titleContent = `<h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight break-words w-full m-0 text-center">${escapeHtml(post.title)}</h1>`;
         }
 
@@ -666,10 +716,34 @@ const generateIndividualArticles = () => {
                     <!-- Separator -->
                     <div class="w-px h-3 bg-gray-300 dark:bg-gray-600"></div>
 
-                    <!-- Real Views (Updated via API) -->
+                    <!-- Views -->
                     <div class="flex items-center gap-1.5 view-count-wrapper group" title="المشاهدات">
                         <i data-lucide="eye" class="w-4 h-4 text-green-500 group-hover:scale-110 transition-transform"></i>
-                        <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}">0</span>
+                        <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}" data-publish-date="${post.effectiveDate.toISOString().split('T')[0]}">${initialViews.toLocaleString('en-US')}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Summary Section -->
+            <div class="mt-6 px-4 flex flex-col items-center">
+                <button id="btn-ai-summarize" class="relative inline-flex items-center justify-center gap-2 px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-indigo-600 rounded-full group hover:bg-indigo-700 hover:ring-4 hover:ring-indigo-300 dark:hover:ring-indigo-900 focus:outline-none">
+                    <span class="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
+                    <i data-lucide="sparkles" class="w-5 h-5 text-yellow-300 animate-pulse"></i>
+                    <span class="relative">تلخيص المقال بالذكاء الاصطناعي</span>
+                </button>
+
+                <div id="ai-summary-container" class="hidden w-full max-w-3xl mt-6">
+                    <div class="relative p-6 bg-white dark:bg-gray-800 rounded-2xl border border-indigo-100 dark:border-indigo-900 shadow-xl overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500"></div>
+                        <div class="flex items-center gap-3 mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
+                            <div class="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg">
+                                <i data-lucide="bot" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">ملخص سريع</h3>
+                        </div>
+                        <div id="ai-summary-content" class="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed space-y-2">
+                            <!-- Content -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -700,6 +774,7 @@ const generateIndividualArticles = () => {
             breadcrumbElement.attr('href', breadcrumbLink);
         }
         
+        // FIX: Update breadcrumb title to current article title (Fix for bug where template title persists)
         $('nav span.truncate').text(post.title);
         
         const existingImgDiv = $('main > div.rounded-2xl');
@@ -716,6 +791,7 @@ const generateIndividualArticles = () => {
         $content('img').each((i, img) => {
             const originalSrc = $content(img).attr('src');
             if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
+            // Add fallback for broken images inside content
             $content(img).attr('onerror', "this.onerror=null;this.src='assets/images/me.jpg';");
         });
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
@@ -723,41 +799,6 @@ const generateIndividualArticles = () => {
         $('.share-buttons-container').remove();
 
         $('article').html($content.html()); 
-
-        // --- AI SUMMARY SECTION (CMS Based) ---
-        if (post.summary) {
-            const summaryHTML = post.summary
-              .split('\n')
-              .map(line => parseMarkdown(line))
-              .join('');
-
-            const summarySection = `
-            <!-- AI Summary Button -->
-            <div class="mt-6 mb-8 flex justify-center no-print">
-               <button id="btn-show-summary" class="group relative px-6 py-2.5 rounded-full bg-white/30 dark:bg-gray-800/30 backdrop-blur-md border border-white/20 dark:border-gray-700/50 shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-white/50 dark:hover:bg-gray-800/50 text-blue-600 dark:text-blue-400 font-bold flex items-center gap-2 z-10">
-                   <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                   <i data-lucide="sparkles" class="w-4 h-4 animate-pulse"></i>
-                   <span>ملخص الذكاء الاصطناعي</span>
-               </button>
-            </div>
-
-            <!-- AI Summary Container -->
-            <div id="ai-summary-container" class="hidden w-full max-w-3xl mx-auto mb-10 transition-all duration-500 transform translate-y-4 opacity-0">
-              <div class="relative p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-2xl ring-1 ring-black/5">
-                <div class="absolute -top-3 right-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg tracking-wider">
-                    AI SUMMARY
-                </div>
-                <div id="ai-summary-content" class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
-                  ${summaryHTML}
-                </div>
-                <button id="btn-hide-summary" class="mt-6 text-xs font-bold text-gray-400 hover:text-red-500 transition-colors flex items-center justify-center w-full gap-1 pt-4 border-t border-indigo-100 dark:border-gray-700">
-                    <i data-lucide="chevron-up" class="w-4 h-4"></i> إغلاق الملخص
-                </button>
-              </div>
-            </div>
-            `;
-            $('header').after(summarySection);
-        }
 
         const tags = [getCatLabel(post.category)];
         if(post.title) {
