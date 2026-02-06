@@ -670,12 +670,21 @@ const generateIndividualArticles = () => {
                 ${titleContent}
             </div>
             <div class="article-meta-bar flex items-center justify-center px-4 py-3 border-t border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap overflow-x-auto no-scrollbar">
-                <div class="flex items-center gap-3 w-full justify-center">
-                    <div class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i><span dir="ltr">${formattedDate}</span></div>
-                    <span class="text-gray-300 dark:text-gray-600">|</span>
-                    <div class="flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5"></i><span>TechTouch Team</span></div>
-                    <span class="text-gray-300 dark:text-gray-600">|</span>
-                    <div class="flex items-center gap-1 view-count-wrapper"><i data-lucide="eye" class="w-3.5 h-3.5 text-green-500"></i><span class="view-count-display font-bold" data-publish-date="${post.effectiveDate.toISOString().split('T')[0]}">25</span></div>
+                <div class="flex items-center gap-4 sm:gap-6 w-full justify-center">
+                    <!-- Date/Time -->
+                    <div class="flex items-center gap-1.5 group" title="تاريخ النشر">
+                        <i data-lucide="calendar-clock" class="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform"></i>
+                        <span dir="ltr" class="font-medium font-mono tracking-tight">${formattedDate}</span>
+                    </div>
+                    
+                    <!-- Separator -->
+                    <div class="w-px h-3 bg-gray-300 dark:bg-gray-600"></div>
+
+                    <!-- Views -->
+                    <div class="flex items-center gap-1.5 view-count-wrapper group" title="المشاهدات">
+                        <i data-lucide="eye" class="w-4 h-4 text-green-500 group-hover:scale-110 transition-transform"></i>
+                        <span class="view-count-display font-bold font-mono tracking-tight" data-publish-date="${post.effectiveDate.toISOString().split('T')[0]}">25</span>
+                    </div>
                 </div>
             </div>
         </header>
