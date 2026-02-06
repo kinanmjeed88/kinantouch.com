@@ -246,7 +246,7 @@ if (fs.existsSync(POSTS_DIR)) {
             try {
                 const post = JSON.parse(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
                 post.content = parseMarkdown(post.content);
-                post.effectiveDate = post.updated || post.date;
+                post.effectiveDate = post.date;
                 allPosts.push(post);
             } catch (e) { console.error(`Error reading post ${file}:`, e); }
         }
