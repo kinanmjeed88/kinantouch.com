@@ -742,18 +742,20 @@ const generateIndividualArticles = () => {
               .map(line => parseMarkdown(line))
               .join('');
 
-            const summarySection = `
-            <!-- AI Summary Button -->
+            // 1. Button (After Header)
+            const summaryBtnHTML = `
             <div class="mt-6 mb-8 flex justify-center no-print">
                <button id="btn-show-summary" class="group relative px-6 py-2.5 rounded-full bg-white/30 dark:bg-gray-800/30 backdrop-blur-md border border-white/20 dark:border-gray-700/50 shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-white/50 dark:hover:bg-gray-800/50 text-blue-600 dark:text-blue-400 font-bold flex items-center gap-2 z-10">
                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                    <i data-lucide="sparkles" class="w-4 h-4 animate-pulse"></i>
                    <span>ملخص الذكاء الاصطناعي</span>
                </button>
-            </div>
+            </div>`;
+            $('header').after(summaryBtnHTML);
 
-            <!-- AI Summary Container -->
-            <div id="ai-summary-container" class="hidden w-full max-w-3xl mx-auto mb-10 transition-all duration-500 transform translate-y-4 opacity-0">
+            // 2. Content (At End of Article)
+            const summaryContentHTML = `
+            <div id="ai-summary-container" class="hidden w-full max-w-3xl mx-auto mt-8 mb-8 transition-all duration-500 transform translate-y-4 opacity-0">
               <div class="relative p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-2xl ring-1 ring-black/5">
                 <div class="absolute -top-3 right-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg tracking-wider">
                     AI SUMMARY
@@ -765,39 +767,8 @@ const generateIndividualArticles = () => {
                     <i data-lucide="chevron-up" class="w-4 h-4"></i> إغلاق الملخص
                 </button>
               </div>
-            </div>
-            `;
-            // Add summary section after the article (as requested)
-            // But usually button is before content. The user said: "button same position... content hidden appears at end of post".
-            // So we inject the BUTTON after header, but the CONTAINER at the end.
-            
-            // 1. Inject Button after Header
-            $('header').after(`
-            <div class="mt-6 mb-8 flex justify-center no-print">
-               <button id="btn-show-summary" class="group relative px-6 py-2.5 rounded-full bg-white/30 dark:bg-gray-800/30 backdrop-blur-md border border-white/20 dark:border-gray-700/50 shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-white/50 dark:hover:bg-gray-800/50 text-blue-600 dark:text-blue-400 font-bold flex items-center gap-2 z-10">
-                   <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                   <i data-lucide="sparkles" class="w-4 h-4 animate-pulse"></i>
-                   <span>ملخص الذكاء الاصطناعي</span>
-               </button>
-            </div>
-            `);
-
-            // 2. Inject Content Container at the end of article
-            $('article').append(`
-            <div id="ai-summary-container" class="hidden w-full max-w-3xl mx-auto mt-12 mb-10 transition-all duration-500 transform translate-y-4 opacity-0">
-              <div class="relative p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-2xl ring-1 ring-black/5">
-                <div class="absolute -top-3 right-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg tracking-wider">
-                    AI SUMMARY
-                </div>
-                <div id="ai-summary-content" class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
-                  ${summaryHTML}
-                </div>
-                <button id="btn-hide-summary" class="mt-6 text-xs font-bold text-gray-400 hover:text-red-500 transition-colors flex items-center justify-center w-full gap-1 pt-4 border-t border-indigo-100 dark:border-gray-700">
-                    <i data-lucide="chevron-up" class="w-4 h-4"></i> إغلاق الملخص
-                </button>
-              </div>
-            </div>
-            `);
+            </div>`;
+            $('article').append(summaryContentHTML);
         }
 
         const tags = [getCatLabel(post.category)];
