@@ -403,6 +403,20 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     $('head').prepend(GA_SCRIPT);
     $('body').append(IMG_ERROR_SCRIPT);
     
+    // --- GUARANTEE SEARCH ENGINE INJECTION ---
+    const FUSE_CDN = '<script src="https://esm.sh/fuse.js@7.0.0" type="module"></script>';
+    const SEARCH_MODULE = '<script src="assets/js/search-engine.js" type="module"></script>';
+    
+    // Check if Fuse already exists, if not prepend to body
+    let hasFuse = false;
+    $('script').each((i, el) => { if($(el).attr('src')?.includes('fuse.js')) hasFuse = true; });
+    if(!hasFuse) $('body').append(FUSE_CDN);
+
+    // Check if Search Engine exists, if not append to body
+    let hasSearch = false;
+    $('script').each((i, el) => { if($(el).attr('src')?.includes('search-engine.js')) hasSearch = true; });
+    if(!hasSearch) $('body').append(SEARCH_MODULE);
+
     // --- CRITICAL SEO: Canonical Fix ---
     let canonicalUrl;
     if (fileName === 'index.html') {
@@ -452,6 +466,7 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     const headerDiv = $('header > div');
     headerDiv.find('#theme-toggle').remove();
     headerDiv.find('#home-btn-header').remove();
+    // Remove old search trigger from header
     headerDiv.find('#search-trigger').remove();
     headerDiv.find('a:has(i[data-lucide="arrow-right"])').remove();
     headerDiv.find('button:has(i[data-lucide="arrow-right"])').remove();
@@ -486,14 +501,18 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
 
     // --- Search Button Injection in Main Nav ---
     const mainNav = $('nav');
+    // Ensure we are targeting the inner flex container of nav
     const navFlex = mainNav.find('.flex.items-center.justify-center');
-    if (navFlex.length && mainNav.find('#nav-search-btn').length === 0) {
-        // Only inject if not already present
+    
+    // Remove existing search button if present to prevent duplicates or misplacement
+    mainNav.find('#nav-search-btn').remove();
+
+    if (navFlex.length) {
         const searchBtnHTML = `
-        <button id="nav-search-btn" class="nav-search-btn" aria-label="بحث في الموقع">
-           <i data-lucide="search" class="w-4 h-4"></i>
-           <span>بحث</span>
+        <button id="nav-search-btn" class="nav-search-btn nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="بحث في الموقع">
+           <i data-lucide="search" class="w-3.5 h-3.5"></i><span>بحث</span>
         </button>`;
+        // Append to the end of the nav flex container
         navFlex.append(searchBtnHTML);
     }
 

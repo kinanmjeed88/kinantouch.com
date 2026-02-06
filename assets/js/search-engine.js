@@ -11,7 +11,6 @@ class TechTouchSearch {
 
     init() {
         this.initFuse();
-        this.injectSearchButton();
         this.injectSearchModal();
         this.bindEvents();
         
@@ -32,6 +31,10 @@ class TechTouchSearch {
     }
 
     initFuse() {
+        if (!searchIndex) {
+            console.error("Search index is empty or undefined.");
+            return;
+        }
         const options = {
             includeScore: true,
             threshold: 0.4, // 0.0 = perfect match, 1.0 = match anything. 0.4 is good for typos.
@@ -44,50 +47,8 @@ class TechTouchSearch {
         this.fuse = new Fuse(searchIndex, options);
     }
 
-    injectSearchButton() {
-        // --- RESTRICTION LOGIC ---
-        // Do not inject search button on 'about.html' or individual article pages.
-        const path = window.location.pathname;
-        // Check if path ends with about.html or contains it (to be safe)
-        if (path.includes('about.html') || path.endsWith('/about') || path.includes('article-')) {
-            return;
-        }
-        // -------------------------
-
-        // We rely on CSS 'order' property for positioning in header actions.
-        // Theme is Order 3 (Leftmost)
-        // Home is Order 1 (Rightmost of group)
-        // Search should be Order 2 (Middle)
-        
-        const homeBtn = document.getElementById('home-btn-header');
-        const themeBtn = document.getElementById('theme-toggle');
-        
-        if (!document.getElementById('search-trigger')) {
-            const searchBtn = document.createElement('button');
-            searchBtn.id = 'search-trigger';
-            // Order 2 places it between Home (1) and Theme (3) visually in flex row
-            searchBtn.className = 'p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-2';
-            searchBtn.setAttribute('aria-label', 'بحث');
-            // SVG Icon
-            searchBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-gray-600 dark:text-gray-300">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-            `;
-            
-            // Append to the actions container. The CSS order property handles the visual position.
-            const actionsContainer = document.querySelector('.header-actions');
-            if(actionsContainer) {
-                actionsContainer.appendChild(searchBtn);
-            } else if (themeBtn && themeBtn.parentNode) {
-                themeBtn.parentNode.appendChild(searchBtn);
-            }
-        }
-    }
-
+    // Modal Injection Logic (Only if not present)
     injectSearchModal() {
-        // Check if modal exists
         if (document.getElementById('search-modal')) return;
 
         const modalHTML = `
@@ -128,17 +89,21 @@ class TechTouchSearch {
     }
 
     bindEvents() {
+        // Target the new Nav Search Button ID (nav-search-btn) and fallback to old ID if needed
+        const triggers = document.querySelectorAll('#nav-search-btn, #search-trigger');
         const modal = document.getElementById('search-modal');
-        const trigger = document.getElementById('search-trigger');
         const closeBtn = document.getElementById('close-search');
         const input = document.getElementById('search-input');
         const resultsContainer = document.getElementById('search-results');
 
-        if (!trigger || !modal) return;
+        if (!modal) return;
 
-        // Open via header button
-        trigger.addEventListener('click', () => {
-            if(window.openSearchModal) window.openSearchModal();
+        // Open Modal Listener
+        triggers.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(window.openSearchModal) window.openSearchModal();
+            });
         });
 
         // Close Logic
@@ -160,7 +125,7 @@ class TechTouchSearch {
             }, 300);
         };
 
-        closeBtn.addEventListener('click', closeModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
         
         modal.addEventListener('click', (e) => {
             if (e.target === modal) closeModal();
@@ -177,27 +142,34 @@ class TechTouchSearch {
         });
 
         // Search Logic with Fuse.js
-        input.addEventListener('input', (e) => {
-            const query = e.target.value.trim();
-            
-            if (query.length === 0) {
-                resultsContainer.innerHTML = `
-                    <div class="text-center py-10 text-gray-500 dark:text-gray-400">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 opacity-50">
-                            <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"></path>
-                        </svg>
-                        <p>اكتب للبحث في الموقع...</p>
-                    </div>
-                `;
-                return;
-            }
+        if (input) {
+            input.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+                
+                if (query.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="text-center py-10 text-gray-500 dark:text-gray-400">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 opacity-50">
+                                <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"></path>
+                            </svg>
+                            <p>اكتب للبحث في الموقع...</p>
+                        </div>
+                    `;
+                    return;
+                }
 
-            // Perform Fuzzy Search
-            const fuseResults = this.fuse.search(query);
-            const results = fuseResults.map(r => r.item).slice(0, 10); // Limit to top 10 matches
+                if (!this.fuse) {
+                    console.warn("Fuse.js not initialized yet.");
+                    return;
+                }
 
-            this.renderResults(results, resultsContainer);
-        });
+                // Perform Fuzzy Search
+                const fuseResults = this.fuse.search(query);
+                const results = fuseResults.map(r => r.item).slice(0, 10); // Limit to top 10 matches
+
+                this.renderResults(results, resultsContainer);
+            });
+        }
     }
 
     renderResults(results, container) {
@@ -231,7 +203,7 @@ class TechTouchSearch {
     }
 }
 
-// تهيئة قوية للبحث
+// Initializer
 const initSearch = () => {
     if (!window.techTouchSearchInitialized) {
         window.techTouchSearchInitialized = true;

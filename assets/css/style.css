@@ -87,51 +87,48 @@ table { display: table; width: 100%; white-space: nowrap; }
 }
 
 /* ========================================= */
-/* 2. Nav Search Button (New)                */
+/* 2. Nav Search Button (Refined)            */
 /* ========================================= */
 
+/* Ensure search button mimics nav-link exactly in flex containers */
 .nav-search-btn {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid rgba(0,0,0,0.1);
+    padding: 6px 14px; /* Matches Nav Link Padding */
+    border-radius: 9999px; /* Matches Nav Link Radius */
+    border: 1px solid transparent; /* Ensure border exists for layout but is transparent */
     background: transparent;
     color: inherit;
-    font-size: 13px;
+    font-size: 13px; /* Matches Nav Link Font */
     font-weight: 700;
     transition: all 0.2s ease;
     cursor: pointer;
-    margin-right: 8px; /* Spacing from previous item */
+    margin: 0 !important; /* Reset margins to rely on flex gap */
 }
 
 .dark .nav-search-btn {
-    border-color: rgba(255,255,255,0.15);
-    color: #d1d5db;
+    color: #d1d5db; /* Matches dark mode nav text */
 }
 
+/* Hover States matching nav-link */
 .nav-search-btn:hover {
-    border-color: rgba(37,99,235,0.5);
-    background: rgba(37,99,235,0.05);
+    background: rgba(0, 0, 0, 0.03);
     color: #2563eb;
 }
 
 .dark .nav-search-btn:hover {
-    border-color: rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.05);
-    color: white;
+    background: rgba(255, 255, 255, 0.05);
+    color: #60a5fa;
 }
 
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
     .nav-search-btn span {
         display: none;
     }
     .nav-search-btn {
         padding: 6px;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
         justify-content: center;
     }
 }
