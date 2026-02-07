@@ -573,9 +573,9 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     const mainNav = $('nav');
     
     // Replace the entire Nav structure with strict 4-column Grid
-    // Removed icons from text tabs, removed text from search tab
+    // Reduced padding and height structure
     const newNavHTML = `
-    <div class="grid grid-cols-4 gap-2 px-3 py-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+    <div class="grid grid-cols-4 gap-1 px-3 py-1 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800" style="height: 48px;">
         <a href="index.html" class="nav-tab">
             <span>الرئيسية</span>
         </a>
@@ -593,7 +593,6 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     
     // We replace the internal container of nav, preserving the wrapper if needed, 
     // or replacing the whole nav logic to fit the grid structure directly.
-    // Ideally, we want to replace the standard Nav structure with this grid.
     mainNav.empty().removeClass().addClass('w-full sticky top-16 z-30').html(newNavHTML);
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
@@ -604,48 +603,73 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     <style id="dynamic-theme-styles">
 
 /* =====================================
-   STRUCTURAL PRESERVATION (No Fonts)
+   STRUCTURAL PRESERVATION
 ===================================== */
 .nav-tab {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 10px 0;
-    border-radius: 12px;
-    font-weight: 600;
+    padding: 0;
+    margin: 0;
+    border-radius: 8px;
+    font-weight: 700;
     color: #6b7280;
     background: transparent;
     transition: all 0.2s ease;
     width: 100%;
+    height: 100%;
+    border: 1px solid transparent;
 }
 .dark .nav-tab { color: #9ca3af; }
-.nav-tab i { width: 20px; height: 20px; }
-.nav-tab:hover { background: #f3f4f6; color: #1f2937; }
-.dark .nav-tab:hover { background: #1f2937; color: #f3f4f6; }
-.nav-tab.active { background: #2563eb; color: white; }
-.dark .nav-tab.active { background: #2563eb; color: white; }
+.nav-tab i { width: 18px; height: 18px; }
 
+/* Active Main Nav: Glassy Blue, Smaller */
+.nav-tab.active {
+    background: rgba(37, 99, 235, 0.12); /* Glassy Blue */
+    color: #2563eb;
+    border: 1px solid rgba(37, 99, 235, 0.2); /* Subtle Border */
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.05);
+    transform: scale(0.95); /* Slightly smaller visual footprint */
+}
+.dark .nav-tab.active {
+    background: rgba(37, 99, 235, 0.2);
+    color: #60a5fa;
+    border-color: rgba(37, 99, 235, 0.4);
+}
+
+.nav-tab:hover:not(.active) { background: #f3f4f6; color: #1f2937; }
+.dark .nav-tab:hover:not(.active) { background: #1f2937; color: #f3f4f6; }
+
+/* Category Nav: Outline Style */
 .cat-tab {
     display: flex;
     align-items: center;
     gap: 6px;
     padding: 6px 14px;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: 999px;
-    background: #f3f4f6;
+    background: transparent;
     color: #6b7280;
     white-space: nowrap;
     transition: all 0.2s ease;
-    border: 1px solid transparent;
+    border: 2px solid transparent; /* Prepare for outline */
 }
-.dark .cat-tab { background: #1f2937; color: #9ca3af; }
-.cat-tab i { width: 14px; height: 14px; }
-.cat-tab:hover { background: #e5e7eb; color: #1f2937; }
-.dark .cat-tab:hover { background: #374151; color: white; }
-.cat-tab.active { background: #2563eb; color: white; border-color: #2563eb; }
-.dark .cat-tab.active { background: #2563eb; color: white; }
+.dark .cat-tab { color: #9ca3af; }
+
+/* Active Category: Outline Only */
+.cat-tab.active {
+    background: transparent;
+    color: #2563eb;
+    border-color: #2563eb; /* The Outline */
+}
+.dark .cat-tab.active {
+    color: #60a5fa;
+    border-color: #60a5fa;
+}
+
+.cat-tab:hover:not(.active) { background: #f3f4f6; color: #1f2937; }
+.dark .cat-tab:hover:not(.active) { background: #374151; color: white; }
 
 .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
 
@@ -894,6 +918,13 @@ const generateCategoryPages = () => {
             }
             main.append(grid);
 
+            // Inject Ad Banner between Grid & List
+            const adHTML = generateAdBannerHTML();
+            if (adHTML) {
+                // Not in grid, append after? No, requirement was "Between related posts in article".
+                // For category pages, user said "only between related posts". So NO AD here.
+            }
+            
             // 4. Update Titles & Meta
             const pageTitle = i === 0 ? `${p.title} | ${aboutData.siteName || "TechTouch"}` : `${p.title} - صفحة ${i + 1} | ${aboutData.siteName || "TechTouch"}`;
             $('title').text(pageTitle);
