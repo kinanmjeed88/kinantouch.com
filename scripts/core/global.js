@@ -78,31 +78,23 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
         $('head').append(`<meta name="google-site-verification" content="${GOOGLE_SITE_VERIFICATION}" />`);
     }
 
+    // --- STRICT PROFILE IMAGE LOGIC (No Injection) ---
+    // Reads directly from aboutData, cleans path, and updates existing DOM elements only.
     let profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
     profileImgSrc = cleanPath(profileImgSrc);
     
-    // --- ROBUST PROFILE IMAGE LOGIC ---
-    // 1. Try to find the image by ID and update it.
-    const profileImg = $('#header-profile-img');
-    if (profileImg.length > 0) {
-        profileImg.attr('src', profileImgSrc);
-    } else {
-        // 2. Fallback: If not found, inject it into the first flex container in the header.
-        // This handles templates that might be missing the image structure.
-        const headerContainer = $('header .max-w-7xl .flex.items-center').first();
-        if (headerContainer.length) {
-             headerContainer.prepend(`
-                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-md shrink-0">
-                    <img id="header-profile-img" src="${profileImgSrc}" alt="Profile photo" class="w-full h-full object-cover profile-img-display" />
-                </div>
-             `);
-        }
-    }
+    // 1. Update Header Image by ID (Primary)
+    $('#header-profile-img').attr('src', profileImgSrc);
     
+    // 2. Update any other class instances (e.g. Mobile menus, About page cover overlay)
     $('.profile-img-display').attr('src', profileImgSrc);
+    
+    // 3. Update Header Name
+    $('#header-profile-name').text(aboutData.profileName);
+
+    // 4. Update Meta & Favicons
     $('link[rel*="icon"]').attr('href', profileImgSrc);
     $('meta[property="og:image"]').attr('content', toAbsoluteUrl(profileImgSrc));
-    $('#header-profile-name').text(aboutData.profileName);
     
     // Site Title Logic
     let siteTitleEl = $('header a[href="index.html"]').filter((i, el) => {

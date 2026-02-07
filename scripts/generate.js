@@ -26,6 +26,12 @@ async function updateSearchData(allPosts, channelsData) {
         
         const { aboutData, channelsData, posts } = await loadSiteData();
         
+        // --- 🔎 DEBUG: Profile Image Check ---
+        console.log("========================================");
+        console.log("🔍 [DEBUG] PROFILE IMAGE FROM JSON:", aboutData.profileImage);
+        console.log("========================================");
+        // -------------------------------------
+
         // Group posts for category pages
         const postsByCategory = posts.reduce((acc, post) => {
             const cat = post.category || 'general';
