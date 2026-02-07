@@ -159,7 +159,7 @@ export const generateSocialFooter = (aboutData) => {
             if (!iconData) iconData = defaultIcons[key];
             const iconHTML = renderIconHTML(iconData, defaultIcons[key], 20);
             const hoverClass = brandColors[key] || 'hover:bg-blue-600';
-            iconsHTML += `<a href="${url}" target="_blank" class="social-icon-btn ${hoverClass} hover:text-white shadow-lg" aria-label="${key}">${iconHTML}</a>`;
+            iconsHTML += `<a href="${url}" target="_blank" class="social-icon-btn ${hoverClass} text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="${key}">${iconHTML}</a>`;
         }
     });
 

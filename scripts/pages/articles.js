@@ -168,17 +168,17 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         <div class="share-buttons-container mt-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 text-center">
             <h3 class="font-bold text-gray-800 dark:text-white mb-4 text-sm">شارك المعلومة</h3>
             <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${fullUrl}">
-                <a href="#" class="share-btn whatsapp w-10 h-10 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on WhatsApp">
-                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                <a href="#" class="share-btn whatsapp w-9 h-9 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on WhatsApp">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
                 </a>
-                <a href="#" class="share-btn telegram w-10 h-10 flex items-center justify-center rounded-full bg-[#229ED9] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on Telegram">
-                    <i data-lucide="send" class="w-5 h-5 ml-0.5"></i>
+                <a href="#" class="share-btn telegram w-9 h-9 flex items-center justify-center rounded-full bg-[#229ED9] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on Telegram">
+                    <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
                 </a>
-                <a href="#" class="share-btn facebook w-10 h-10 flex items-center justify-center rounded-full bg-[#1877F2] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on Facebook">
-                    <i data-lucide="facebook" class="w-5 h-5"></i>
+                <a href="#" class="share-btn facebook w-9 h-9 flex items-center justify-center rounded-full bg-[#1877F2] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on Facebook">
+                    <i data-lucide="facebook" class="w-4 h-4"></i>
                 </a>
-                <a href="#" class="share-btn instagram w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on Instagram">
-                    <i data-lucide="instagram" class="w-5 h-5"></i>
+                <a href="#" class="share-btn instagram w-9 h-9 flex items-center justify-center rounded-full bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on Instagram">
+                    <i data-lucide="instagram" class="w-4 h-4"></i>
                 </a>
             </div>
         </div>
