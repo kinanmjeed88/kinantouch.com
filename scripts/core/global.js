@@ -84,6 +84,7 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
     profileImgSrc = cleanPath(profileImgSrc);
     
     // 1. Update Header Image by ID (Primary)
+    // IMPORTANT: This requires <img id="header-profile-img"> to exist in the template.
     $('#header-profile-img').attr('src', profileImgSrc);
     
     // 2. Update any other class instances (e.g. Mobile menus, About page cover overlay)
