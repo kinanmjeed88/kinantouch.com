@@ -156,6 +156,13 @@
                         <div class="col-span-2">
                             <label class="label">المحتوى الكامل (Markdown/HTML)</label>
                             <p class="text-xs text-green-600 mb-2 font-bold bg-green-50 p-2 rounded border border-green-200"><i data-lucide="check-circle" class="w-3 h-3 inline"></i> سيتم إضافة إعلانات Google وتتبع Analytics تلقائياً عند النشر.</p>
+                           <div class="mb-3">
+    <label class="label text-xs">وضع العرض</label>
+    <select id="pRenderMode" class="input-field text-sm">
+        <option value="markdown">Markdown (افتراضي)</option>
+        <option value="html">HTML كامل</option>
+    </select>
+                           </div>
                             <div class="flex flex-wrap gap-2 mb-2 bg-gray-50 p-2 rounded-lg border border-gray-100">
                                 <button onclick="insertTag('# ')" class="badge bg-white">H1</button>
                                 <button onclick="insertTag('## ')" class="badge bg-white">H2</button>
