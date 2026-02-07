@@ -454,7 +454,7 @@ window.savePost = async () => {
             image: getVal('pImage'),
             content: getVal('pContent'),
             youtubeVideoId: getVal('pYoutubeId'),
-            summary: getVal('pSummary')
+            summary: getVal('pSummary'),
             renderMode: document.getElementById('pRenderMode')?.value || 'markdown'
         };
 
