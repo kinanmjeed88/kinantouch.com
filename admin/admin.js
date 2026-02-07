@@ -442,6 +442,7 @@ window.savePost = async () => {
             content: getVal('pContent'),
             youtubeVideoId: getVal('pYoutubeId'),
             summary: getVal('pSummary')
+            renderMode: document.getElementById('pRenderMode')?.value || 'markdown'
         };
 
         if (!postData.updated) delete postData.updated;
