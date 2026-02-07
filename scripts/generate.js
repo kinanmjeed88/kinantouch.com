@@ -80,6 +80,7 @@ const ONESIGNAL_SCRIPT = `
 const IMG_ERROR_SCRIPT = `
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Image Fallback
     const fallbackImage = 'assets/images/me.jpg';
     document.querySelectorAll('img').forEach(img => {
         img.onerror = function() {
@@ -91,6 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (img.naturalWidth === 0 && img.complete) {
              img.src = fallbackImage;
         }
+    });
+
+    // Dynamic Active State for Nav Tabs
+    const current = location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll(".nav-tab, .cat-tab").forEach(tab => {
+      const href = tab.getAttribute("href");
+      if (href && (href === current || (current === 'index.html' && href === 'index.html'))) {
+        tab.classList.add("active");
+      }
     });
 });
 </script>
@@ -110,6 +120,7 @@ const TICKER_HTML_TEMPLATE = `
 </div>
 `;
 
+// AD BANNER TEMPLATE (Placeholder, real content generated via function)
 const AD_BANNER_TEMPLATE = `
 <div id="custom-ad-banner" class="w-full my-6 flex justify-center">
     <div class="max-w-4xl w-full rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm">
@@ -118,22 +129,22 @@ const AD_BANNER_TEMPLATE = `
 </div>
 `;
 
-// NEW CATEGORY NAV TEMPLATE (MPA Style)
+// NEW CATEGORY NAV TEMPLATE (Restructured: No Container, Scrollable)
 const CATEGORY_NAV_TEMPLATE = `
-<div class="w-full py-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-    <div class="max-w-7xl mx-auto px-2 overflow-x-auto no-scrollbar">
-      <div class="flex md:justify-center items-center gap-2 min-w-max">
-        <a href="index.html" class="tab-link flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-transparent hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300">
-            <i data-lucide="file-text" class="w-3.5 h-3.5"></i><span>__LABEL_ARTICLES__</span>
+<div class="w-full py-2 bg-gray-950 border-b border-gray-800">
+    <div class="w-full px-3 overflow-x-auto no-scrollbar">
+      <div class="flex items-center gap-2 min-w-max">
+        <a href="index.html" class="cat-tab">
+            <i data-lucide="file-text"></i><span>__LABEL_ARTICLES__</span>
         </a>
-        <a href="apps.html" class="tab-link flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-transparent hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300">
-            <i data-lucide="smartphone" class="w-3.5 h-3.5"></i><span>__LABEL_APPS__</span>
+        <a href="apps.html" class="cat-tab">
+            <i data-lucide="smartphone"></i><span>__LABEL_APPS__</span>
         </a>
-        <a href="games.html" class="tab-link flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-transparent hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300">
-            <i data-lucide="gamepad-2" class="w-3.5 h-3.5"></i><span>__LABEL_GAMES__</span>
+        <a href="games.html" class="cat-tab">
+            <i data-lucide="gamepad-2"></i><span>__LABEL_GAMES__</span>
         </a>
-         <a href="sports.html" class="tab-link flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-transparent hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300">
-            <i data-lucide="trophy" class="w-3.5 h-3.5"></i><span>__LABEL_SPORTS__</span>
+         <a href="sports.html" class="cat-tab">
+            <i data-lucide="trophy"></i><span>__LABEL_SPORTS__</span>
         </a>
       </div>
     </div>
@@ -223,34 +234,33 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     return `<i data-lucide="${defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
 };
 
+// --- Updated Ad Banner Generator ---
 const generateAdBannerHTML = () => {
     if (!aboutData.adBanner || aboutData.adBanner.enabled === false) return '';
 
-    let content = '';
+    const ad = aboutData.adBanner;
 
-    if (aboutData.adBanner.type === 'image' && aboutData.adBanner.imageUrl) {
-        const imgUrl = cleanPath(aboutData.adBanner.imageUrl);
-
-        content = `
-        <a href="${aboutData.adBanner.url || '#'}" target="_blank" class="block w-full">
-            <img src="${imgUrl}" 
-                 alt="Advertisement Banner" 
-                 class="w-full h-auto object-contain"
-                 onerror="this.onerror=null;this.style.display='none';">
-        </a>`;
-    } 
-    else if (aboutData.adBanner.type === 'text') {
-        content = `
-        <a href="${aboutData.adBanner.url || '#'}"
-           target="_blank"
-           class="block text-center py-4 font-bold transition-colors"
-           style="background:${aboutData.adBanner.bgColor || 'rgba(37,99,235,0.1)'}; 
-                  color:${aboutData.adBanner.textColor || '#2563eb'};">
-           ${escapeHtml(aboutData.adBanner.text || 'أعلن هنا')}
-        </a>`;
+    if (ad.type === 'image' && ad.imageUrl) {
+        return `
+        <div class="my-6 w-full flex justify-center">
+            <a href="${ad.url || '#'}" target="_blank" class="block">
+                <img src="${cleanPath(ad.imageUrl)}" 
+                     alt="Advertisement" 
+                     class="rounded-xl shadow-md max-w-full h-auto border border-gray-200 dark:border-gray-700"
+                     onerror="this.style.display='none'">
+            </a>
+        </div>`;
     }
 
-    return AD_BANNER_TEMPLATE.replace('__AD_CONTENT__', content);
+    return `
+    <div class="my-6 w-full flex justify-center">
+        <a href="${ad.url || '#'}"
+           target="_blank"
+           class="px-6 py-3 rounded-xl shadow-md font-bold transition-all"
+           style="background:${ad.bgColor || 'rgba(37,99,235,0.1)'}; color:${ad.textColor || '#2563eb'};">
+           ${escapeHtml(ad.text || 'أعلن هنا')}
+        </a>
+    </div>`;
 };
 
 const generateSocialFooter = () => {
@@ -559,18 +569,36 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
         actionsContainer.append(themeBtn);
     }
 
-    // --- Search Button Injection in Main Nav ---
+    // --- MAIN NAV RESTRUCTURING (Grid System) ---
     const mainNav = $('nav');
-    const navFlex = mainNav.find('.flex.items-center.justify-center');
-    mainNav.find('#nav-search-btn').remove();
-
-    if (navFlex.length) {
-        const searchBtnHTML = `
-        <button id="nav-search-btn" class="nav-search-btn nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="بحث في الموقع">
-           <i data-lucide="search" class="w-3.5 h-3.5"></i><span>بحث</span>
-        </button>`;
-        navFlex.append(searchBtnHTML);
-    }
+    const existingNavContent = mainNav.find('.flex.items-center.justify-center');
+    
+    // Replace the entire Nav structure with strict 4-column Grid
+    const newNavHTML = `
+    <div class="grid grid-cols-4 gap-2 px-3 py-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <a href="index.html" class="nav-tab">
+            <i data-lucide="home"></i>
+            <span>الرئيسية</span>
+        </a>
+        <a href="tools.html" class="nav-tab">
+            <i data-lucide="wrench"></i>
+            <span>الأدوات</span>
+        </a>
+        <a href="about.html" class="nav-tab">
+            <i data-lucide="info"></i>
+            <span>حول</span>
+        </a>
+        <button id="nav-search-btn" class="nav-tab">
+            <i data-lucide="search"></i>
+            <span>بحث</span>
+        </button>
+    </div>
+    `;
+    
+    // We replace the internal container of nav, or the nav tag itself if easier
+    // Here we preserve the nav tag wrapper for semantics but replace content
+    mainNav.html(newNavHTML);
+    mainNav.removeClass().addClass('w-full sticky top-16 z-30'); // Clean classes
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
     const baseContentFont = fonts.content || 13;
@@ -580,6 +608,85 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     <style id="dynamic-theme-styles">
         :root {
             --spacing-scale: ${spacingScale};
+        }
+
+        /* Nav Tab Styles */
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 10px 0;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280; /* gray-500 */
+            background: transparent;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .dark .nav-tab { color: #9ca3af; /* gray-400 */ }
+        
+        .nav-tab i { width: 20px; height: 20px; }
+        
+        .nav-tab:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+        .dark .nav-tab:hover {
+            background: #1f2937;
+            color: #f3f4f6;
+        }
+        
+        .nav-tab.active {
+            background: #2563eb;
+            color: white;
+        }
+        .dark .nav-tab.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* Category Tab Styles */
+        .cat-tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 999px;
+            background: #f3f4f6;
+            color: #6b7280;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        .dark .cat-tab {
+            background: #1f2937;
+            color: #9ca3af;
+        }
+
+        .cat-tab i { width: 14px; height: 14px; }
+
+        .cat-tab:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+        .dark .cat-tab:hover {
+            background: #374151;
+            color: white;
+        }
+
+        .cat-tab.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+        .dark .cat-tab.active {
+            background: #2563eb;
+            color: white;
         }
 
         nav .nav-link, nav .nav-link span, .tab-btn, .tab-btn span {
@@ -742,7 +849,7 @@ const generateCategoryPages = () => {
 
             // 2. Set Active State
             const activeHref = p.file;
-            $(`a[href="${activeHref}"]`).addClass('active-cat-link border-blue-600 text-blue-600 bg-transparent shadow-sm').removeClass('border-transparent text-gray-600 dark:text-gray-300');
+            $(`a[href="${activeHref}"]`).addClass('active');
 
             // 3. Populate Content
             const main = $('main');
@@ -939,13 +1046,6 @@ const generateIndividualArticles = () => {
 
         $('article').html($content.html()); 
 
-        // Inject Ad Banner here
-        $('#custom-ad-banner').remove(); // Just in case
-        const adBannerHTML = generateAdBannerHTML();
-        if (adBannerHTML) {
-            $('article').prepend(adBannerHTML);
-        }
-
         // --- AI SUMMARY CONTENT ---
         $('#ai-summary-container').remove();
         if (post.summary) {
@@ -1043,6 +1143,12 @@ const generateIndividualArticles = () => {
                 </a>`;
             });
             relatedHTML += `</div>`;
+
+            // Inject Ad Banner between Grid & List
+            const adHTML = generateAdBannerHTML();
+            if (adHTML) {
+                relatedHTML += adHTML;
+            }
 
             if (listPosts.length > 0) {
                 relatedHTML += `<div class="flex flex-col gap-3">`;
