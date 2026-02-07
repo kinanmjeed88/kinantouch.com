@@ -80,12 +80,31 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
 
     let profileImgSrc = aboutData.profileImage || 'assets/images/me.jpg';
     profileImgSrc = cleanPath(profileImgSrc);
-    $('#header-profile-img').attr('src', profileImgSrc);
+    
+    // --- ROBUST PROFILE IMAGE LOGIC ---
+    // 1. Try to find the image by ID and update it.
+    const profileImg = $('#header-profile-img');
+    if (profileImg.length > 0) {
+        profileImg.attr('src', profileImgSrc);
+    } else {
+        // 2. Fallback: If not found, inject it into the first flex container in the header.
+        // This handles templates that might be missing the image structure.
+        const headerContainer = $('header .max-w-7xl .flex.items-center').first();
+        if (headerContainer.length) {
+             headerContainer.prepend(`
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-md shrink-0">
+                    <img id="header-profile-img" src="${profileImgSrc}" alt="Profile photo" class="w-full h-full object-cover profile-img-display" />
+                </div>
+             `);
+        }
+    }
+    
     $('.profile-img-display').attr('src', profileImgSrc);
     $('link[rel*="icon"]').attr('href', profileImgSrc);
     $('meta[property="og:image"]').attr('content', toAbsoluteUrl(profileImgSrc));
     $('#header-profile-name').text(aboutData.profileName);
     
+    // Site Title Logic
     let siteTitleEl = $('header a[href="index.html"]').filter((i, el) => {
         const cls = $(el).attr('class') || '';
         const content = $(el).html() || '';
