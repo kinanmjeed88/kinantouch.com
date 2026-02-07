@@ -403,7 +403,7 @@ window.openEditByIndex = (index) => {
     setVal('pDate', p.date);
     setVal('pTime', p.time || "00:00");
     setVal('pSummary', p.summary);
-
+    setVal('pRenderMode', p.renderMode || 'markdown');
     const slugEl = document.getElementById('pSlug');
     slugEl.readOnly = true;
     slugEl.dataset.mode = 'edit';
