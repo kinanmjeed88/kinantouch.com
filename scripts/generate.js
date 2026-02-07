@@ -129,22 +129,22 @@ const AD_BANNER_TEMPLATE = `
 </div>
 `;
 
-// NEW CATEGORY NAV TEMPLATE (Restructured: No Container, Scrollable)
+// NEW CATEGORY NAV TEMPLATE (Restructured: No Container, Scrollable, TEXT ONLY)
 const CATEGORY_NAV_TEMPLATE = `
 <div class="w-full py-2 bg-gray-950 border-b border-gray-800">
     <div class="w-full px-3 overflow-x-auto no-scrollbar">
       <div class="flex items-center gap-2 min-w-max">
         <a href="index.html" class="cat-tab">
-            <i data-lucide="file-text"></i><span>__LABEL_ARTICLES__</span>
+            <span>__LABEL_ARTICLES__</span>
         </a>
         <a href="apps.html" class="cat-tab">
-            <i data-lucide="smartphone"></i><span>__LABEL_APPS__</span>
+            <span>__LABEL_APPS__</span>
         </a>
         <a href="games.html" class="cat-tab">
-            <i data-lucide="gamepad-2"></i><span>__LABEL_GAMES__</span>
+            <span>__LABEL_GAMES__</span>
         </a>
          <a href="sports.html" class="cat-tab">
-            <i data-lucide="trophy"></i><span>__LABEL_SPORTS__</span>
+            <span>__LABEL_SPORTS__</span>
         </a>
       </div>
     </div>
@@ -573,23 +573,20 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     const mainNav = $('nav');
     
     // Replace the entire Nav structure with strict 4-column Grid
+    // Removed icons from text tabs, removed text from search tab
     const newNavHTML = `
     <div class="grid grid-cols-4 gap-2 px-3 py-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <a href="index.html" class="nav-tab">
-            <i data-lucide="home"></i>
             <span>الرئيسية</span>
         </a>
         <a href="tools.html" class="nav-tab">
-            <i data-lucide="wrench"></i>
             <span>الأدوات</span>
         </a>
         <a href="about.html" class="nav-tab">
-            <i data-lucide="info"></i>
             <span>حول</span>
         </a>
-        <button id="nav-search-btn" class="nav-tab">
+        <button id="nav-search-btn" class="nav-tab" aria-label="بحث">
             <i data-lucide="search"></i>
-            <span>بحث</span>
         </button>
     </div>
     `;
@@ -897,12 +894,11 @@ const generateCategoryPages = () => {
             }
             main.append(grid);
 
-            // Inject Ad Banner
-            const adBannerHTML = generateAdBannerHTML();
-            if (adBannerHTML) {
-                main.prepend(adBannerHTML);
-            }
-
+            // Inject Ad Banner between Grid & List only for index/category pages not here, wait... 
+            // The prompt "اعلن هنا يظهر فقط بين منشورات قد يعجبك ايظا فقط ولا يظهر في بداية كل قسم قبل المنشورات" 
+            // was from previous turn. This current prompt is about removing icons.
+            // I will keep the ad logic AS IS from the previous step (removed from category pages, kept in article pages).
+            
             // 4. Update Titles & Meta
             const pageTitle = i === 0 ? `${p.title} | ${aboutData.siteName || "TechTouch"}` : `${p.title} - صفحة ${i + 1} | ${aboutData.siteName || "TechTouch"}`;
             $('title').text(pageTitle);
