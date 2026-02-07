@@ -113,7 +113,11 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         
         if (existingImgDiv.length) { existingImgDiv.replaceWith(adaptiveImageHTML); } else { $('main > header').after(adaptiveImageHTML); }
 
-        const $content = cheerio.load(post.content, null, false);
+        const parsedContent = parseMarkdown(post.content, {
+    renderMode: post.renderMode || 'markdown'
+});
+
+const $content = cheerio.load(parsedContent, null, false);
         $content('.adsbygoogle-container, .ad-placeholder').remove();
         $content('img').each((i, img) => {
             const originalSrc = $content(img).attr('src');
@@ -131,7 +135,9 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         if (post.summary) {
             const summaryHTML = post.summary
               .split('\n')
-              .map(line => parseMarkdown(line))
+              .map(line => parseMarkdown(line, {
+    renderMode: post.renderMode || 'markdown'
+}))
               .join('');
 
             const summaryContentHTML = `
