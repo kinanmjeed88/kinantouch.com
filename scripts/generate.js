@@ -110,6 +110,14 @@ const TICKER_HTML_TEMPLATE = `
 </div>
 `;
 
+const AD_BANNER_TEMPLATE = `
+<div id="custom-ad-banner" class="w-full my-6 flex justify-center">
+    <div class="max-w-4xl w-full rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm">
+        __AD_CONTENT__
+    </div>
+</div>
+`;
+
 // NEW CATEGORY NAV TEMPLATE (MPA Style)
 const CATEGORY_NAV_TEMPLATE = `
 <div class="w-full py-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
@@ -213,6 +221,36 @@ const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
         }
     }
     return `<i data-lucide="${defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
+};
+
+const generateAdBannerHTML = () => {
+    if (!aboutData.adBanner || aboutData.adBanner.enabled === false) return '';
+
+    let content = '';
+
+    if (aboutData.adBanner.type === 'image' && aboutData.adBanner.imageUrl) {
+        const imgUrl = cleanPath(aboutData.adBanner.imageUrl);
+
+        content = `
+        <a href="${aboutData.adBanner.url || '#'}" target="_blank" class="block w-full">
+            <img src="${imgUrl}" 
+                 alt="Advertisement Banner" 
+                 class="w-full h-auto object-contain"
+                 onerror="this.onerror=null;this.style.display='none';">
+        </a>`;
+    } 
+    else if (aboutData.adBanner.type === 'text') {
+        content = `
+        <a href="${aboutData.adBanner.url || '#'}"
+           target="_blank"
+           class="block text-center py-4 font-bold transition-colors"
+           style="background:${aboutData.adBanner.bgColor || 'rgba(37,99,235,0.1)'}; 
+                  color:${aboutData.adBanner.textColor || '#2563eb'};">
+           ${escapeHtml(aboutData.adBanner.text || 'أعلن هنا')}
+        </a>`;
+    }
+
+    return AD_BANNER_TEMPLATE.replace('__AD_CONTENT__', content);
 };
 
 const generateSocialFooter = () => {
@@ -726,6 +764,12 @@ const generateCategoryPages = () => {
             }
             main.append(grid);
 
+            // Inject Ad Banner
+            const adBannerHTML = generateAdBannerHTML();
+            if (adBannerHTML) {
+                main.prepend(adBannerHTML);
+            }
+
             // 4. Update Titles & Meta
             const pageTitle = i === 0 ? `${p.title} | ${aboutData.siteName || "TechTouch"}` : `${p.title} - صفحة ${i + 1} | ${aboutData.siteName || "TechTouch"}`;
             $('title').text(pageTitle);
@@ -894,6 +938,13 @@ const generateIndividualArticles = () => {
         $('.share-buttons-container').remove();
 
         $('article').html($content.html()); 
+
+        // Inject Ad Banner here
+        $('#custom-ad-banner').remove(); // Just in case
+        const adBannerHTML = generateAdBannerHTML();
+        if (adBannerHTML) {
+            $('article').prepend(adBannerHTML);
+        }
 
         // --- AI SUMMARY CONTENT ---
         $('#ai-summary-container').remove();

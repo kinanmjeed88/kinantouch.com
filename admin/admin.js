@@ -9,6 +9,7 @@ let ghConfig = {
 let cachedPosts = [];
 let cachedChannels = [];
 let cachedAbout = {};
+let currentEditingPost = null; // Store path/sha for updates
 
 // Icon Picker State
 let iconPickerTarget = null;
@@ -362,61 +363,118 @@ window.openPostEditor = () => {
     document.getElementById('pTime').value = `${hours}:${minutes}`;
 };
 window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
+
+// --- Updated openEditByIndex ---
 window.openEditByIndex = (index) => {
-    const p = cachedPosts[index]; if (!p) return alert('المقال غير موجود');
-    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-    setVal('pTitle', p.title); setVal('pSlug', p.slug); setVal('pCat', p.category); setVal('pDesc', p.description); setVal('pContent', p.content); setVal('pImage', p.image); setVal('pYoutubeId', p.youtubeVideoId);
-    setVal('pDate', p.date); // Populate date field
-    setVal('pTime', p.time || "00:00"); // Populate time field
-    setVal('pSummary', p.summary); // Populate summary field
-    
-    const slugEl = document.getElementById('pSlug'); if(slugEl) { slugEl.readOnly = true; slugEl.dataset.mode = 'edit'; }
-    document.getElementById('editorTitle').innerText = 'تعديل مقال'; document.getElementById('postEditor').classList.remove('hidden');
+    const p = cachedPosts[index];
+    if (!p) return alert('المقال غير موجود');
+
+    // Store path and sha for update
+    currentEditingPost = {
+        path: p.path,
+        sha: p.sha
+    };
+
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val || '';
+    };
+
+    setVal('pTitle', p.title);
+    setVal('pSlug', p.slug);
+    setVal('pCat', p.category);
+    setVal('pDesc', p.description);
+    setVal('pContent', p.content);
+    setVal('pImage', p.image);
+    setVal('pYoutubeId', p.youtubeVideoId);
+    setVal('pDate', p.date);
+    setVal('pTime', p.time || "00:00");
+    setVal('pSummary', p.summary);
+
+    const slugEl = document.getElementById('pSlug');
+    slugEl.readOnly = true;
+    slugEl.dataset.mode = 'edit';
+
+    document.getElementById('editorTitle').innerText = 'تعديل مقال';
+    document.getElementById('postEditor').classList.remove('hidden');
 };
+
 window.deleteByIndex = async (index) => {
     if (!confirm('هل أنت متأكد من الحذف؟')) return;
     const p = cachedPosts[index]; if (!p) return;
     try { await api.delete(p.path, p.sha, `Delete Post: ${p.slug}`); showToast('تم الحذف بنجاح'); loadPosts(); } catch (e) { alert(e.message); }
 };
+
+// --- Updated savePost ---
 window.savePost = async () => {
-    const btn = document.getElementById('btnSavePost'); btn.innerText = 'جاري الحفظ...'; btn.disabled = true;
+    const btn = document.getElementById('btnSavePost');
+    btn.innerText = 'جاري الحفظ...';
+    btn.disabled = true;
+
     try {
-        let slug = document.getElementById('pSlug').value.trim(); if (!slug) slug = 'post-' + Date.now();
-        const isEdit = document.getElementById('pSlug').dataset.mode === 'edit'; 
-        const existingPost = isEdit ? cachedPosts.find(p => p.slug === slug) : null; 
-        const now = new Date().toISOString().split('T')[0];
-        const getVal = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+        let slug = document.getElementById('pSlug').value.trim();
+        if (!slug) slug = 'post-' + Date.now();
 
-        // Custom Publish Date Support
-        let manualDate = document.getElementById('pDate')?.value;
-        let finalDate;
-        if (manualDate && manualDate.trim() !== '') {
-            finalDate = manualDate;
-        } else {
-            const today = new Date();
-            finalDate = today.toISOString().split('T')[0];
-        }
-        
-        // Time Support
-        const finalTime = document.getElementById('pTime').value || "00:00";
+        const isEdit = document.getElementById('pSlug').dataset.mode === 'edit';
 
-        const postData = { 
-            title: getVal('pTitle'), 
-            slug: slug, 
-            description: getVal('pDesc'), 
-            category: getVal('pCat'), 
-            date: finalDate,
-            time: finalTime, 
-            updated: (isEdit) ? now : undefined, 
-            image: getVal('pImage'), 
-            content: getVal('pContent'), 
-            youtubeVideoId: getVal('pYoutubeId'),
-            summary: getVal('pSummary') // Include Summary
+        const getVal = (id) => {
+            const el = document.getElementById(id);
+            return el ? el.value : '';
         };
-        if(!postData.updated) delete postData.updated;
-        await api.put(`content/posts/${slug}.json`, JSON.stringify(postData, null, 2), `Update Post: ${postData.title}`, existingPost ? existingPost.sha : null);
-        showToast('تم حفظ المقال!'); closePostEditor(); loadPosts();
-    } catch (e) { alert('خطأ في الحفظ: ' + e.message); } finally { btn.innerText = 'حفظ ونشر'; btn.disabled = false; }
+
+        let manualDate = document.getElementById('pDate')?.value;
+        let finalDate = manualDate && manualDate.trim() !== ''
+            ? manualDate
+            : new Date().toISOString().split('T')[0];
+
+        const finalTime = document.getElementById('pTime').value || "00:00";
+        const now = new Date().toISOString().split('T')[0];
+
+        const postData = {
+            title: getVal('pTitle'),
+            slug: slug,
+            description: getVal('pDesc'),
+            category: getVal('pCat'),
+            date: finalDate,
+            time: finalTime,
+            updated: isEdit ? now : undefined,
+            image: getVal('pImage'),
+            content: getVal('pContent'),
+            youtubeVideoId: getVal('pYoutubeId'),
+            summary: getVal('pSummary')
+        };
+
+        if (!postData.updated) delete postData.updated;
+
+        let path;
+        let sha;
+
+        if (isEdit && currentEditingPost) {
+            path = currentEditingPost.path;
+            sha = currentEditingPost.sha;
+        } else {
+            path = `content/posts/${slug}.json`;
+            sha = null;
+        }
+
+        await api.put(
+            path,
+            JSON.stringify(postData, null, 2),
+            `${isEdit ? 'Update' : 'Create'} Post: ${postData.title}`,
+            sha
+        );
+
+        showToast('تم حفظ المقال!');
+        closePostEditor();
+        currentEditingPost = null;
+        loadPosts();
+
+    } catch (e) {
+        alert('خطأ في الحفظ: ' + e.message);
+    } finally {
+        btn.innerText = 'حفظ ونشر';
+        btn.disabled = false;
+    }
 };
 
 // --- AI Summary Generation ---
