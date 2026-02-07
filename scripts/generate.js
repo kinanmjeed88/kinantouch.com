@@ -569,9 +569,8 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
         actionsContainer.append(themeBtn);
     }
 
-    // --- MAIN NAV RESTRUCTURING (Grid System) ---
+    // --- MAIN NAV RESTRUCTURING (4-Col Grid System) ---
     const mainNav = $('nav');
-    const existingNavContent = mainNav.find('.flex.items-center.justify-center');
     
     // Replace the entire Nav structure with strict 4-column Grid
     const newNavHTML = `
@@ -595,10 +594,10 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
     </div>
     `;
     
-    // We replace the internal container of nav, or the nav tag itself if easier
-    // Here we preserve the nav tag wrapper for semantics but replace content
-    mainNav.html(newNavHTML);
-    mainNav.removeClass().addClass('w-full sticky top-16 z-30'); // Clean classes
+    // We replace the internal container of nav, preserving the wrapper if needed, 
+    // or replacing the whole nav logic to fit the grid structure directly.
+    // Ideally, we want to replace the standard Nav structure with this grid.
+    mainNav.empty().removeClass().addClass('w-full sticky top-16 z-30').html(newNavHTML);
 
     const fonts = aboutData.globalFonts || { nav: 12, content: 13, titles: 14, mainTitles: 15 };
     const baseContentFont = fonts.content || 13;
@@ -606,133 +605,160 @@ const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = ''
 
     const dynamicStyle = `
     <style id="dynamic-theme-styles">
-        :root {
-            --spacing-scale: ${spacingScale};
-        }
 
-        /* Nav Tab Styles */
-        .nav-tab {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            padding: 10px 0;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #6b7280; /* gray-500 */
-            background: transparent;
-            transition: all 0.2s ease;
-            width: 100%;
-        }
-        .dark .nav-tab { color: #9ca3af; /* gray-400 */ }
-        
-        .nav-tab i { width: 20px; height: 20px; }
-        
-        .nav-tab:hover {
-            background: #f3f4f6;
-            color: #1f2937;
-        }
-        .dark .nav-tab:hover {
-            background: #1f2937;
-            color: #f3f4f6;
-        }
-        
-        .nav-tab.active {
-            background: #2563eb;
-            color: white;
-        }
-        .dark .nav-tab.active {
-            background: #2563eb;
-            color: white;
-        }
+/* =====================================
+   STRUCTURAL PRESERVATION (No Fonts)
+===================================== */
+.nav-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 0;
+    border-radius: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    background: transparent;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+.dark .nav-tab { color: #9ca3af; }
+.nav-tab i { width: 20px; height: 20px; }
+.nav-tab:hover { background: #f3f4f6; color: #1f2937; }
+.dark .nav-tab:hover { background: #1f2937; color: #f3f4f6; }
+.nav-tab.active { background: #2563eb; color: white; }
+.dark .nav-tab.active { background: #2563eb; color: white; }
 
-        /* Category Tab Styles */
-        .cat-tab {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 999px;
-            background: #f3f4f6;
-            color: #6b7280;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-        }
-        .dark .cat-tab {
-            background: #1f2937;
-            color: #9ca3af;
-        }
+.cat-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-weight: 600;
+    border-radius: 999px;
+    background: #f3f4f6;
+    color: #6b7280;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+.dark .cat-tab { background: #1f2937; color: #9ca3af; }
+.cat-tab i { width: 14px; height: 14px; }
+.cat-tab:hover { background: #e5e7eb; color: #1f2937; }
+.dark .cat-tab:hover { background: #374151; color: white; }
+.cat-tab.active { background: #2563eb; color: white; border-color: #2563eb; }
+.dark .cat-tab.active { background: #2563eb; color: white; }
 
-        .cat-tab i { width: 14px; height: 14px; }
+.ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
 
-        .cat-tab:hover {
-            background: #e5e7eb;
-            color: #1f2937;
-        }
-        .dark .cat-tab:hover {
-            background: #374151;
-            color: white;
-        }
+/* =====================================
+   ROOT SCALE SYSTEM
+===================================== */
 
-        .cat-tab.active {
-            background: #2563eb;
-            color: white;
-            border-color: #2563eb;
-        }
-        .dark .cat-tab.active {
-            background: #2563eb;
-            color: white;
-        }
+:root {
+  --spacing-scale: ${spacingScale};
+}
 
-        nav .nav-link, nav .nav-link span, .tab-btn, .tab-btn span {
-            font-size: ${fonts.nav || 12}px !important;
-            padding: calc(6px * var(--spacing-scale)) calc(14px * var(--spacing-scale)) !important;
-        }
+/* =====================================
+   NAVIGATION CONTROL
+   (Main Nav + Category Nav)
+===================================== */
 
-        body, p, li, .post-card .custom-desc-size, .prose p, .prose li {
-            font-size: ${fonts.content || 13}px !important;
-            line-height: 1.6 !important;
-        }
+.nav-tab,
+.nav-tab span,
+.cat-tab,
+.cat-tab span,
+nav .nav-link,
+nav .nav-link span {
+  font-size: ${fonts.nav || 12}px !important;
+}
 
-        .post-card .custom-title-size, h2, h3, h4, .prose h2, .prose h3 {
-            font-size: ${fonts.titles || 14}px !important;
-            margin-bottom: calc(8px * var(--spacing-scale)) !important;
-        }
+/* =====================================
+   CONTENT BODY CONTROL
+===================================== */
 
-        h1, .text-3xl, .text-4xl {
-            font-size: ${fonts.mainTitles || 15}px !important;
-            margin-bottom: calc(14px * var(--spacing-scale)) !important;
-        }
+body,
+p,
+li,
+.post-card .custom-desc-size,
+.prose p,
+.prose li,
+article p,
+article li {
+  font-size: ${fonts.content || 14}px !important;
+  line-height: 1.6 !important;
+}
 
-        main {
-            padding-top: calc(20px * var(--spacing-scale)) !important;
-            padding-bottom: calc(20px * var(--spacing-scale)) !important;
-        }
+/* =====================================
+   TITLES CONTROL (H2 / H3 / Cards)
+===================================== */
 
-        .grid {
-            gap: calc(16px * var(--spacing-scale)) !important;
-        }
+h2,
+h3,
+h4,
+.prose h2,
+.prose h3,
+.post-card .custom-title-size,
+.related-fixed-title {
+  font-size: ${fonts.titles || 18}px !important;
+  margin-bottom: calc(8px * var(--spacing-scale)) !important;
+}
 
-        header + div {
-            margin-top: calc(8px * var(--spacing-scale)) !important;
-        }
+/* =====================================
+   MAIN TITLES (H1)
+===================================== */
 
-        .related-fixed-title {
-            font-size: 14px !important;
-            line-height: 1.4 !important;
-        }
-        
-        #about-cover-section {
-            padding: calc(40px * var(--spacing-scale, 1));
-        }
+h1,
+.article-header-card h1,
+.text-3xl,
+.text-4xl {
+  font-size: ${fonts.mainTitles || 26}px !important;
+  margin-bottom: calc(14px * var(--spacing-scale)) !important;
+}
 
-        .ticker-text, .ticker-text a { font-size: ${aboutData.ticker?.fontSize || 14}px !important; }
-    </style>
+/* =====================================
+   COMPACT SPACING SYSTEM
+===================================== */
+
+/* تقليل padding الرئيسي */
+main {
+  padding-top: calc(12px * var(--spacing-scale)) !important;
+  padding-bottom: calc(12px * var(--spacing-scale)) !important;
+}
+
+/* تقليل المسافة بين البطاقات */
+.grid {
+  gap: calc(12px * var(--spacing-scale)) !important;
+}
+
+/* تقليل المسافات بين الأقسام */
+section {
+  margin-top: calc(16px * var(--spacing-scale)) !important;
+  margin-bottom: calc(16px * var(--spacing-scale)) !important;
+}
+
+/* ضبط قسم related */
+.related-posts {
+  margin-top: calc(18px * var(--spacing-scale)) !important;
+  padding-top: calc(12px * var(--spacing-scale)) !important;
+}
+
+/* تقليل مسافة المقال */
+article {
+  margin-top: 8px !important;
+}
+
+/* تقليل padding البطاقات */
+.post-card .p-4 {
+  padding: 12px !important;
+}
+
+#about-cover-section {
+  padding: calc(30px * var(--spacing-scale)) !important;
+}
+
+</style>
     `;
     $('#dynamic-theme-styles').remove();
     $('head').append(dynamicStyle);
