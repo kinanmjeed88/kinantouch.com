@@ -204,16 +204,21 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             let relatedHTML = `
             <section class="related-posts mt-12 border-t border-gray-100 dark:border-gray-700 pt-8">
                 <h3 class="text-lg font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2"><i data-lucide="layers" class="w-5 h-5 text-blue-600"></i> قد يعجبك أيضاً</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">`;
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">`;
             
             gridPosts.forEach(r => {
+                const rDate = r.effectiveDate.toISOString().split('T')[0];
                 relatedHTML += `
-                <a href="article-${r.slug}.html" class="block bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all group h-full">
-                    <div class="h-32 overflow-hidden bg-gray-200 dark:bg-gray-700">
+                <a href="article-${r.slug}.html" class="flex flex-col bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all group h-full">
+                    <div class="h-28 overflow-hidden bg-gray-200 dark:bg-gray-700 shrink-0">
                         <img src="${cleanPath(r.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                     </div>
-                    <div class="p-3">
-                        <h4 class="font-bold text-gray-900 dark:text-white line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors related-fixed-title">${r.title}</h4>
+                    <div class="p-2 flex-1 flex flex-col">
+                        <h4 class="text-xs font-bold text-gray-900 dark:text-white leading-relaxed group-hover:text-blue-600 transition-colors mb-2">${r.title}</h4>
+                        <div class="mt-auto pt-2 border-t border-gray-50 dark:border-gray-700/50 flex items-center justify-between text-[10px] text-gray-400">
+                             <span class="truncate text-blue-500/80">${getCatLabel(r.category, aboutData)}</span>
+                             <span dir="ltr" class="font-mono">${rDate}</span>
+                        </div>
                     </div>
                 </a>`;
             });
@@ -226,17 +231,18 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             }
 
             if (listPosts.length > 0) {
-                relatedHTML += `<div class="flex flex-col gap-3">`;
+                relatedHTML += `<div class="flex flex-col gap-2">`;
                 listPosts.forEach(r => {
                     const rDate = r.effectiveDate.toISOString().split('T')[0];
                     relatedHTML += `
-                    <a href="article-${r.slug}.html" class="flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
+                    <a href="article-${r.slug}.html" class="flex items-start gap-3 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
                         <img src="${cleanPath(r.image)}" class="w-16 h-12 object-cover rounded-lg shrink-0 bg-gray-200 dark:bg-gray-700" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
-                        <div class="flex-1 min-w-0">
-                            <h4 class="text-xs font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-blue-600 transition-colors">${r.title}</h4>
-                            <span class="text-[10px] text-gray-400 mt-0.5 block">${rDate}</span>
+                        <div class="flex-1 min-w-0 self-center">
+                            <h4 class="text-xs font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 transition-colors">${r.title}</h4>
+                            <div class="flex gap-2 mt-1">
+                                <span class="text-[10px] text-gray-400 font-mono" dir="ltr">${rDate}</span>
+                            </div>
                         </div>
-                        <div class="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors"><i data-lucide="chevron-left" class="w-4 h-4"></i></div>
                     </a>`;
                 });
                 relatedHTML += `</div>`;
