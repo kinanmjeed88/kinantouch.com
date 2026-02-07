@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الاخبار | TechTouch</title>
+    
+    <!-- Google Analytics 4 (Professional Setup) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZVS1EN9RG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-NZVS1EN9RG');
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'] } } }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col min-h-screen">
+    
+    <!-- Header -->
+    <header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-md">
+                    <img src="assets/images/me.jpg" alt="Profile photo" class="w-full h-full object-cover" />
+                </div>
+                <span class="font-bold text-lg text-gray-800 dark:text-gray-100 hidden sm:block">كنان الصائغ</span>
+            </div>
+            <a href="index.html" class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight">TechTouch</a>
+            <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
+                <i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Nav -->
+    <nav class="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-16 z-30 overflow-x-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center space-x-reverse space-x-2 h-10 min-w-max">
+                 <a href="index.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i data-lucide="home" class="w-3.5 h-3.5"></i><span>الرئيسية</span>
+                </a>
+                 <a href="tools.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i data-lucide="wrench" class="w-3.5 h-3.5"></i><span>الأدوات</span>
+                </a>
+                <a href="about.html" class="nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i><span>حول</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Categories Tabs (New Addition) -->
+    <div class="w-full py-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-2 overflow-x-auto no-scrollbar">
+          <div class="flex md:justify-center items-center gap-2 min-w-max">
+            <button class="tab-btn flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border-2 border-blue-600 text-blue-600 bg-transparent shadow-sm" data-tab="articles">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i><span>اخبار</span>
+            </button>
+            <button class="tab-btn flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700" data-tab="apps">
+                <i data-lucide="smartphone" class="w-3.5 h-3.5"></i><span>تطبيقات</span>
+            </button>
+            <button class="tab-btn flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700" data-tab="games">
+                <i data-lucide="gamepad-2" class="w-3.5 h-3.5"></i><span>ألعاب</span>
+            </button>
+             <button class="tab-btn flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700" data-tab="sports">
+                <i data-lucide="trophy" class="w-3.5 h-3.5"></i><span>رياضة</span>
+            </button>
+          </div>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in min-h-[60vh]">
+        
+        <!-- Tab Content: ARTICLES (News) -->
+        <div id="tab-articles" class="tab-content w-full">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                <!-- Content Injected via Generator -->
+            </div>
+        </div>
+
+        <!-- Tab Content: APPS -->
+        <div id="tab-apps" class="tab-content w-full hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                 <!-- Content Injected via Generator -->
+            </div>
+        </div>
+
+        <!-- Tab Content: GAMES -->
+        <div id="tab-games" class="tab-content w-full hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                <!-- Content Injected via Generator -->
+            </div>
+        </div>
+
+        <!-- Tab Content: SPORTS -->
+        <div id="tab-sports" class="tab-content w-full hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                <!-- Content Injected via Generator -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+            <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
+        </div>
+    </footer>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

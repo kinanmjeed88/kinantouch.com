@@ -1,9 +1,9 @@
-
 {
   "name": "techtouch-cms",
   "version": "1.0.0",
   "description": "Static Site Generator for TechTouch",
   "main": "scripts/generate.js",
+  "type": "module",
   "scripts": {
     "build": "node scripts/generate.js"
   },
