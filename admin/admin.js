@@ -353,17 +353,30 @@ function renderPosts() {
 
 window.openPostEditor = () => { 
     document.getElementById('postEditor').classList.remove('hidden'); 
-    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId', 'pSummary'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
-    document.getElementById('pSlug').dataset.mode = 'new'; document.getElementById('pSlug').readOnly = false; document.getElementById('editorTitle').innerText = 'مقال جديد'; 
-    document.getElementById('pDate').value = ''; // Reset date field for new posts
-    // Default Time: Current Time
+
+    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId', 'pSummary']
+        .forEach(id => { 
+            const el = document.getElementById(id); 
+            if (el) el.value = ''; 
+        }); 
+
+    document.getElementById('pSlug').dataset.mode = 'new'; 
+    document.getElementById('pSlug').readOnly = false; 
+
+    document.getElementById('editorTitle').innerText = 'مقال جديد';
+
+    // إعادة وضع العرض إلى الافتراضي
+    document.getElementById('pRenderMode').value = 'markdown';
+
+    // إعادة تعيين التاريخ
+    document.getElementById('pDate').value = '';
+
+    // ضبط الوقت الحالي تلقائياً
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     document.getElementById('pTime').value = `${hours}:${minutes}`;
 };
-window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
-
 // --- Updated openEditByIndex ---
 window.openEditByIndex = (index) => {
     const p = cachedPosts[index];
