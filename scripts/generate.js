@@ -894,11 +894,6 @@ const generateCategoryPages = () => {
             }
             main.append(grid);
 
-            // Inject Ad Banner between Grid & List only for index/category pages not here, wait... 
-            // The prompt "اعلن هنا يظهر فقط بين منشورات قد يعجبك ايظا فقط ولا يظهر في بداية كل قسم قبل المنشورات" 
-            // was from previous turn. This current prompt is about removing icons.
-            // I will keep the ad logic AS IS from the previous step (removed from category pages, kept in article pages).
-            
             // 4. Update Titles & Meta
             const pageTitle = i === 0 ? `${p.title} | ${aboutData.siteName || "TechTouch"}` : `${p.title} - صفحة ${i + 1} | ${aboutData.siteName || "TechTouch"}`;
             $('title').text(pageTitle);
