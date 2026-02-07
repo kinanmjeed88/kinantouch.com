@@ -36,13 +36,13 @@
     "enabled": false
   },
   "adBanner": {
-    "enabled": false,
-    "type": "text",
+    "enabled": true,
+    "type": "image",
     "text": "",
-    "url": "",
+    "url": "https://kinantouch.com/tools-sites",
     "textColor": "",
     "bgColor": "",
-    "imageUrl": ""
+    "imageUrl": "assets/images/1770427965987_images_(17).webp"
   },
   "social": {
     "facebook": "https://www.facebook.com/share/1EsapVHA6W/",
