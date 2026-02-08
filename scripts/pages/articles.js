@@ -153,12 +153,16 @@ $('.share-buttons-container').remove();
 $('article').html(finalContentHTML);        // --- AI SUMMARY CONTENT ---
         $('#ai-summary-container').remove();
         if (post.summary) {
-            const summaryHTML = post.summary
-              .split('\n')
-              .map(line => parseMarkdown(line, {
-    renderMode: post.renderMode || 'markdown'
-}))
-              .join('');
+       let summaryHTML = '';
+
+if (post.renderMode === 'html') {
+    summaryHTML = post.summary;
+} else {
+    summaryHTML = post.summary
+        .split('\n')
+        .map(line => parseMarkdown(line, { renderMode: 'markdown' }))
+        .join('');
+}
 
             const summaryContentHTML = `
             <div class="ai-summary-box hidden w-full max-w-2xl mx-auto my-6 transition-all duration-300 transform scale-95 opacity-0">
