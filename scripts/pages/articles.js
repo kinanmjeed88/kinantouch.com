@@ -113,56 +113,26 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         
         if (existingImgDiv.length) { existingImgDiv.replaceWith(adaptiveImageHTML); } else { $('main > header').after(adaptiveImageHTML); }
 
-        let finalContentHTML;
+        const $content = cheerio.load(post.content, null, false);
+        $content('.adsbygoogle-container, .ad-placeholder').remove();
+        $content('img').each((i, img) => {
+            const originalSrc = $content(img).attr('src');
+            if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
+            $content(img).attr('onerror', "this.onerror=null;this.src='assets/images/me.jpg';");
+        });
+        $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
+        
+        $('.share-buttons-container').remove();
 
-if (post.renderMode === 'html') {
+        $('article').html($content.html()); 
 
-    // HTML كامل — لا نمرره عبر cheerio ولا markdown
-    finalContentHTML = post.content;
-
-} else {
-
-    const parsedContent = parseMarkdown(post.content, {
-        renderMode: 'markdown'
-    });
-
-    const $content = cheerio.load(parsedContent, null, false);
-
-    $content('.adsbygoogle-container, .ad-placeholder').remove();
-
-    $content('img').each((i, img) => {
-        const originalSrc = $content(img).attr('src');
-        if (originalSrc) {
-            $content(img).attr('src', cleanPath(originalSrc));
-        }
-        $content(img).attr(
-            'onerror',
-            "this.onerror=null;this.src='assets/images/me.jpg';"
-        );
-    });
-
-    $content('img').addClass(
-        'w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700'
-    );
-
-    finalContentHTML = $content.html();
-}
-
-$('.share-buttons-container').remove();
-
-$('article').html(finalContentHTML);        // --- AI SUMMARY CONTENT ---
+        // --- AI SUMMARY CONTENT ---
         $('#ai-summary-container').remove();
         if (post.summary) {
-       let summaryHTML = '';
-
-if (post.renderMode === 'html') {
-    summaryHTML = post.summary;
-} else {
-    summaryHTML = post.summary
-        .split('\n')
-        .map(line => parseMarkdown(line, { renderMode: 'markdown' }))
-        .join('');
-}
+            const summaryHTML = post.summary
+              .split('\n')
+              .map(line => parseMarkdown(line))
+              .join('');
 
             const summaryContentHTML = `
             <div class="ai-summary-box hidden w-full max-w-2xl mx-auto my-6 transition-all duration-300 transform scale-95 opacity-0">

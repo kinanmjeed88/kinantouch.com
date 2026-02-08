@@ -62,7 +62,11 @@ export async function loadSiteData() {
                     post.updatedAt = combineDateTime(post.updated, post.publishTime); 
                     post.effectiveDate = post.publishedAt; 
 
-                    post.content = parseMarkdown(post.content);
+                    // --- PASS RENDER MODE ---
+                    // Default to 'markdown' if not specified
+                    const renderMode = post.renderMode || 'markdown';
+                    post.content = parseMarkdown(post.content, renderMode);
+                    
                     post._originalFile = file;
                     rawPosts.push(post);
                 } catch (e) { console.error(`Error reading post ${file}:`, e); }

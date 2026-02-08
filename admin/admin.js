@@ -1,4 +1,3 @@
-
 // --- Configuration & State ---
 let ghConfig = {
     owner: localStorage.getItem('gh_owner') || '',
@@ -40,7 +39,7 @@ const brandIcons = {
     "WhatsApp": { path: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
     "LinkedIn": { path: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
     "Pinterest": { path: '<path d="M8 14.5c-3-1-3-5 0-6 2-1 5-1 6 1 2 2 1 6-1 7-2 1-4 0-5-2"/><line x1="8" y1="20" x2="12" y2="10"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
-    "Reddit": { path: '<circle cx="12" cy="12" r="10"/><path d="M16 12a2 2 0 1 1-2-2 2 2 0 0 1 2 2z"/><path d="M10 12a2 2 0 1 1-2-2 2 2 0 0 1 2 2z"/><path d="M9 16c1.5 1 4.5 1 6 0"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
+    "Reddit": { path: '<circle cx="12" cy="12" r="1"/><path d="M16 12a2 2 0 1 1-2-2 2 2 0 0 1 2 2z"/><path d="M10 12a2 2 0 1 1-2-2 2 2 0 0 1 2 2z"/><path d="M9 16c1.5 1 4.5 1 6 0"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
     "Threads": { path: '<path d="M12 2a10 10 0 1 0 10 10 10 10 0 0 0-5-9"/><path d="M15 11.5a3.5 3.5 0 1 1-3.5-3.5 3.5 3.5 0 0 1 3.5 3.5c0 3-2.5 5.5-5 5.5"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
     "Discord": { path: '<circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M7.5 7.5c3.5-1 5.5-1 9 0"/><path d="M7 16.5c3.5 1 5.5 1 9 0"/><path d="M15.5 17c0 1 1.5 3 2 3 1.5 0 2.8-3.3 3.2-6 .4-3.3-.3-5.5-1.3-8.7A10 10 0 0 0 13 4.3c-1 .3-1.4 1-1.4 1s-1-.7-2-1a10 10 0 0 0-6.4 1c-1 3.2-1.7 5.4-1.3 8.7.4 2.7 1.7 6 3.2 6 .5 0 2-2 2-3"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
     "Tumblr": { path: '<path d="M14 6a4 4 0 0 0-4-4v4H6v4h4v6a4 4 0 0 0 4 4h4v-4h-2a2 2 0 0 1-2-2v-4h4V6h-4z"/>', viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" },
@@ -353,33 +352,21 @@ function renderPosts() {
 
 window.openPostEditor = () => { 
     document.getElementById('postEditor').classList.remove('hidden'); 
+    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId', 'pSummary'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
+    document.getElementById('pSlug').dataset.mode = 'new'; document.getElementById('pSlug').readOnly = false; document.getElementById('editorTitle').innerText = 'مقال جديد'; 
+    document.getElementById('pDate').value = ''; // Reset date field for new posts
+    
+    // Set default render mode to Markdown
+    document.querySelector('input[name="pRenderMode"][value="markdown"]').checked = true;
 
-    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId', 'pSummary']
-        .forEach(id => { 
-            const el = document.getElementById(id); 
-            if (el) el.value = ''; 
-        }); 
-
-    document.getElementById('pSlug').dataset.mode = 'new'; 
-    document.getElementById('pSlug').readOnly = false; 
-
-    document.getElementById('editorTitle').innerText = 'مقال جديد';
-
-    // إعادة وضع العرض إلى الافتراضي
-    document.getElementById('pRenderMode').value = 'markdown';
-
-    // إعادة تعيين التاريخ
-    document.getElementById('pDate').value = '';
-
-    // ضبط الوقت الحالي تلقائياً
+    // Default Time: Current Time
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     document.getElementById('pTime').value = `${hours}:${minutes}`;
 };
-    window.closePostEditor = () => {
-    document.getElementById('postEditor').classList.add('hidden');
-};
+window.closePostEditor = () => document.getElementById('postEditor').classList.add('hidden');
+
 // --- Updated openEditByIndex ---
 window.openEditByIndex = (index) => {
     const p = cachedPosts[index];
@@ -406,7 +393,12 @@ window.openEditByIndex = (index) => {
     setVal('pDate', p.date);
     setVal('pTime', p.time || "00:00");
     setVal('pSummary', p.summary);
-    setVal('pRenderMode', p.renderMode || 'markdown');
+
+    // Set render mode radio
+    const renderMode = p.renderMode || 'markdown';
+    const modeRadio = document.querySelector(`input[name="pRenderMode"][value="${renderMode}"]`);
+    if(modeRadio) modeRadio.checked = true;
+
     const slugEl = document.getElementById('pSlug');
     slugEl.readOnly = true;
     slugEl.dataset.mode = 'edit';
@@ -445,6 +437,9 @@ window.savePost = async () => {
 
         const finalTime = document.getElementById('pTime').value || "00:00";
         const now = new Date().toISOString().split('T')[0];
+        
+        // Get selected render mode
+        const renderMode = document.querySelector('input[name="pRenderMode"]:checked').value;
 
         const postData = {
             title: getVal('pTitle'),
@@ -458,7 +453,7 @@ window.savePost = async () => {
             content: getVal('pContent'),
             youtubeVideoId: getVal('pYoutubeId'),
             summary: getVal('pSummary'),
-            renderMode: document.getElementById('pRenderMode')?.value || 'markdown'
+            renderMode: renderMode // Save the render mode preference
         };
 
         if (!postData.updated) delete postData.updated;
