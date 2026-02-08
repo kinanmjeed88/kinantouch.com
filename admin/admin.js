@@ -377,6 +377,9 @@ window.openPostEditor = () => {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     document.getElementById('pTime').value = `${hours}:${minutes}`;
 };
+    window.closePostEditor = () => {
+    document.getElementById('postEditor').classList.add('hidden');
+};
 // --- Updated openEditByIndex ---
 window.openEditByIndex = (index) => {
     const p = cachedPosts[index];
