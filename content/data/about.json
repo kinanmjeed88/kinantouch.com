@@ -53,33 +53,29 @@
   },
   "socialIcons": {
     "facebook": {
-      "type": "lucide",
-      "value": "facebook",
-      "size": 24
+      "type": "image",
+      "value": "assets/images/1770571140448_09b6e529c7fd6a430ebe68363eb29d56.webp",
+      "size": "128"
     },
     "instagram": {
-      "type": "lucide",
-      "value": "instagram",
-      "size": 24
+      "type": "image",
+      "value": "assets/images/1770571177732_a4615d8d20cbe48adcaf985690c46d9a.webp",
+      "size": "128"
     },
     "tiktok": {
       "type": "image",
-      "value": "assets/images/1770570570055_٢٠٢٦٠٢٠٨_٢٠٠٨٥٨.webp",
+      "value": "assets/images/1770571194656_87e7ea9953e7b312bcd242e47f56218d.webp",
       "size": "128"
     },
     "youtube": {
-      "type": "lucide",
-      "value": "youtube",
-      "size": 24
+      "type": "image",
+      "value": "assets/images/1770571207032_60d5a142dda8a05fb992e3e00c3959b4.webp",
+      "size": "128"
     },
     "telegram": {
-      "type": "svg",
-      "value": "<line x1=\"22\" y1=\"2\" x2=\"11\" y2=\"13\"></line><polygon points=\"22 2 15 22 11 13 2 9 22 2\"></polygon>",
-      "viewBox": "0 0 24 24",
-      "fill": "none",
-      "stroke": "currentColor",
-      "strokeWidth": "2",
-      "size": "24"
+      "type": "image",
+      "value": "assets/images/1770571222367_817d585a7dd0775dbc9b41927bd043ca.webp",
+      "size": "128"
     }
   }
 }
