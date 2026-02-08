@@ -1,0 +1,13 @@
+{
+  "title": "طريقة التحميل من تيكتوك بدون العلامة المائية",
+  "slug": "tryqh-althmyl-mn-tyk",
+  "description": "يمكن تحميل المحتوى من تيكتوك بدون وجود العلامة المائية، مما يتيح للمستخدمين الحصول على الفيديوهات بشكل نظيف وواضح.",
+  "category": "apps",
+  "date": "2026-02-08",
+  "time": "19:14",
+  "image": "assets/images/1770567334040_٢٠٢٦٠٢٠٣_١١٣٩٢٢.webp",
+  "content": "<section class=\"max-w-3xl mx-auto px-4 py-10 text-center font-sans\">\n\n  <!-- Card Container -->\n  <div class=\"bg-white shadow-xl rounded-3xl p-8 border border-gray-200 hover:shadow-2xl transition-all duration-300\">\n\n    <!-- Title -->\n    <h2 class=\"text-2xl md:text-3xl font-extrabold text-gray-900 mb-6 tracking-tight\">\n      🎥 شاهد طريقة استخدام التطبيق\n    </h2>\n\n    <!-- YouTube Link -->\n    <a href=\"https://youtube.com/shorts/m6--rXMfVqQ?si=UsNUdB8y3LSAQRon\" \n       target=\"_blank\" \n       rel=\"noopener noreferrer\"\n       class=\"inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-md hover:scale-105\">\n       ▶ مشاهدة الفيديو على YouTube\n    </a>\n\n    <!-- Raw Link (Optional Display) -->\n    <div class=\"mt-6 text-sm text-gray-500 break-all\">\n      https://youtube.com/shorts/m6--rXMfVqQ?si=UsNUdB8y3LSAQRon\n    </div>\n\n  </div>\n\n</section>",
+  "youtubeVideoId": "",
+  "summary": "### 🚀 الخلاصة في نقاط\n* **النقطة الأولى القوية:** تضمين رابط الفيديو على YouTube لتعليم طريقة استخدام التطبيق.\n* **النقطة الثانية:** استخدام عنصر HTML لإنشاء رابط مخصص لفتح الفيديو في نافذة جديدة.\n* **النقطة الثالثة:** إضافة رابط الفيديو بشكل مسطول لاستخدامة كخيار بديل.\n* **النقطة الرابعة:** استخدام عناصر CSS لتعزيز تجربة المستخدم وتحسين ظهور الرابط.\n* **النقطة الخامسة:** إمكانية إضافة رابط الفيديو بشكل ديناميكي لاستخدامة في مختلف المنصات.",
+  "renderMode": "markdown"
+}
