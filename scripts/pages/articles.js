@@ -113,24 +113,44 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         
         if (existingImgDiv.length) { existingImgDiv.replaceWith(adaptiveImageHTML); } else { $('main > header').after(adaptiveImageHTML); }
 
-        const parsedContent = parseMarkdown(post.content, {
-    renderMode: post.renderMode || 'markdown'
-});
+        let finalContentHTML;
 
-const $content = cheerio.load(parsedContent, null, false);
-        $content('.adsbygoogle-container, .ad-placeholder').remove();
-        $content('img').each((i, img) => {
-            const originalSrc = $content(img).attr('src');
-            if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
-            $content(img).attr('onerror', "this.onerror=null;this.src='assets/images/me.jpg';");
-        });
-        $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
-        
-        $('.share-buttons-container').remove();
+if (post.renderMode === 'html') {
 
-        $('article').html($content.html()); 
+    // HTML كامل — لا نمرره عبر cheerio ولا markdown
+    finalContentHTML = post.content;
 
-        // --- AI SUMMARY CONTENT ---
+} else {
+
+    const parsedContent = parseMarkdown(post.content, {
+        renderMode: 'markdown'
+    });
+
+    const $content = cheerio.load(parsedContent, null, false);
+
+    $content('.adsbygoogle-container, .ad-placeholder').remove();
+
+    $content('img').each((i, img) => {
+        const originalSrc = $content(img).attr('src');
+        if (originalSrc) {
+            $content(img).attr('src', cleanPath(originalSrc));
+        }
+        $content(img).attr(
+            'onerror',
+            "this.onerror=null;this.src='assets/images/me.jpg';"
+        );
+    });
+
+    $content('img').addClass(
+        'w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700'
+    );
+
+    finalContentHTML = $content.html();
+}
+
+$('.share-buttons-container').remove();
+
+$('article').html(finalContentHTML);        // --- AI SUMMARY CONTENT ---
         $('#ai-summary-container').remove();
         if (post.summary) {
             const summaryHTML = post.summary
