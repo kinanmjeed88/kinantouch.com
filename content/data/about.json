@@ -20,10 +20,10 @@
     }
   },
   "globalFonts": {
-    "nav": 15,
+    "nav": 14,
     "content": 14,
     "titles": 18,
-    "mainTitles": 25
+    "mainTitles": 24
   },
   "ticker": {
     "label": "جديد",
