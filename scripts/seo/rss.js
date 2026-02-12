@@ -4,16 +4,17 @@ import { safeWrite } from '../utils/fs.js';
 import { toAbsoluteUrl, escapeXml } from '../utils/helpers.js';
 import { BASE_URL } from '../config/constants.js';
 
-/**
- * Remove HTML tags safely
- */
 function stripHtml(input = '') {
     return input.replace(/<\/?[^>]+(>|$)/g, '').trim();
 }
 
-/**
- * Detect correct MIME type for enclosure
- */
+function sanitizeContent(html = '') {
+    return html
+        .replace(/\sclass="[^"]*"/g, '')
+        .replace(/\sstyle="[^"]*"/g, '')
+        .replace(/\sdata-[^=]+="[^"]*"/g, '');
+}
+
 function getMimeType(url = '') {
     if (url.endsWith('.png')) return 'image/png';
     if (url.endsWith('.webp')) return 'image/webp';
@@ -28,19 +29,19 @@ export function generateRSS(allPosts, aboutData) {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<rss version="2.0"
         xmlns:atom="http://www.w3.org/2005/Atom"
-        xmlns:content="http://purl.org/rss/1.0/modules/content/">\n`;
-    xml += `<channel>\n`;
-    xml += `    <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>\n`;
-    xml += `    <link>${BASE_URL}</link>\n`;
-    xml += `    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>\n`;
-    xml += `    <language>ar</language>\n`;
-    xml += `    <lastBuildDate>${now}</lastBuildDate>\n`;
-    xml += `    <ttl>60</ttl>\n`;
-    xml += `    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />\n`;
+        xmlns:content="http://purl.org/rss/1.0/modules/content/"
+        xmlns:media="http://search.yahoo.com/mrss/"
+        xmlns:dc="http://purl.org/dc/elements/1.1/">\n`;
 
-    // =============================
-    // Latest 20 Posts (Clean URLs)
-    // =============================
+    xml += `<channel>\n`;
+    xml += `  <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>\n`;
+    xml += `  <link>${BASE_URL}</link>\n`;
+    xml += `  <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>\n`;
+    xml += `  <language>ar</language>\n`;
+    xml += `  <lastBuildDate>${now}</lastBuildDate>\n`;
+    xml += `  <ttl>60</ttl>\n`;
+    xml += `  <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />\n`;
+
     allPosts.slice(0, 20).forEach(post => {
         const cleanUrl = `${BASE_URL}/article-${post.slug}`;
         const fullImg = toAbsoluteUrl(post.image);
@@ -48,23 +49,26 @@ export function generateRSS(allPosts, aboutData) {
 
         const cleanTitle = stripHtml(post.title);
         const cleanDescription = stripHtml(post.description);
+        const cleanContent = sanitizeContent(post.content || '');
 
         xml += `
-    <item>
-        <title><![CDATA[${cleanTitle}]]></title>
-        <link>${cleanUrl}</link>
-        <guid isPermaLink="true">${cleanUrl}</guid>
-        <pubDate>${post.effectiveDate.toUTCString()}</pubDate>
-        <category>${escapeXml(post.category || 'tech')}</category>
-        <description><![CDATA[${cleanDescription}]]></description>
-        <content:encoded><![CDATA[${post.content || ''}]]></content:encoded>
-        <enclosure url="${escapeXml(fullImg)}" type="${mimeType}" />
-    </item>`;
+  <item>
+    <title><![CDATA[${cleanTitle}]]></title>
+    <link>${cleanUrl}</link>
+    <guid isPermaLink="true">${cleanUrl}</guid>
+    <pubDate>${post.effectiveDate.toUTCString()}</pubDate>
+    <dc:creator><![CDATA[${aboutData.profileName || "TechTouch"}]]></dc:creator>
+    <category>${escapeXml(post.category || 'tech')}</category>
+    <description><![CDATA[${cleanDescription}]]></description>
+    <content:encoded><![CDATA[${cleanContent}]]></content:encoded>
+    <media:content url="${escapeXml(fullImg)}" type="${mimeType}" medium="image" />
+    <enclosure url="${escapeXml(fullImg)}" type="${mimeType}" />
+  </item>`;
     });
 
     xml += `\n</channel>\n</rss>`;
 
     safeWrite(feedPath, xml);
 
-    console.log('✅ RSS feed regenerated with clean URLs and improved structure.');
+    console.log('✅ Professional RSS (SEO + Media + Clean HTML) generated successfully.');
 }
