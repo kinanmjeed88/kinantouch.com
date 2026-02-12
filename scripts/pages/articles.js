@@ -171,7 +171,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         const shareSectionHTML = `
         <div class="share-buttons-container mt-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 text-center">
             <h3 class="font-bold text-gray-800 dark:text-white mb-4 text-sm">شارك المعلومة</h3>
-            <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${fullUrl}">
+            <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${canonicalUrl}"
                 <a href="#" class="share-btn whatsapp w-9 h-9 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on WhatsApp">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
                 </a>
