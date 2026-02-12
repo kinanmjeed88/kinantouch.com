@@ -271,11 +271,42 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
                 "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } 
             }, 
             "description": post.description || '', 
-            "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } 
+            ""mainEntityOfPage": { "@type": "WebPage", "@id": canonicalUrl }
         };
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(safeJsonLd, null, 2)}</script>`);
         
-        safeWrite(path.join(ROOT_DIR, pageSlug), updateGlobalElements($.html(), pageSlug, '', aboutData));
+        // === Canonical بدون .html ===
+        const canonicalUrl = `${BASE_URL}/article-${post.slug}`;
+
+        // حذف أي canonical قديم
+        $('link[rel="canonical"]').remove();
+
+        // إضافة canonical جديد بدون .html
+        $('head').append(
+            `<link rel="canonical" href="${canonicalUrl}" />`
+        );
+
+        // تحديث JSON-LD ليتطابق مع canonical
+        $('script[type="application/ld+json"]').each((i, el) => {
+            try {
+                const data = JSON.parse($(el).html());
+
+                if (data.mainEntityOfPage) {
+                    data.mainEntityOfPage["@id"] = canonicalUrl;
+                }
+
+                $(el).html(JSON.stringify(data, null, 2));
+            } catch (err) {
+                console.warn("JSON-LD parse skipped:", err.message);
+            }
+        });
+
+        // === حفظ الصفحة (لا يُحذف هذا السطر) ===
+        safeWrite(
+            path.join(ROOT_DIR, pageSlug),
+            updateGlobalElements($.html(), pageSlug, '', aboutData)
+        );
+
     });
-}
+            }
