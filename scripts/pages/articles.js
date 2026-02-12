@@ -20,10 +20,15 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
     let template = fs.readFileSync(templatePath, 'utf8');
 
     allPosts.forEach(post => {
-        const $ = cheerio.load(template);
-        const pageSlug = `article-${post.slug}.html`;
-        const fullUrl = `${BASE_URL}/${pageSlug}`;
-        const fullImageUrl = toAbsoluteUrl(post.image);
+    const $ = cheerio.load(template);
+
+    const pageSlug = `article-${post.slug}.html`;   // يبقى كما هو
+    const fullUrl = `${BASE_URL}/${pageSlug}`;     // رابط الملف الحقيقي
+
+    // 👇 هذا الجديد (رابط بدون .html)
+    const canonicalUrl = `${BASE_URL}/article-${post.slug}`;
+
+    const fullImageUrl = toAbsoluteUrl(post.image);
         
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
