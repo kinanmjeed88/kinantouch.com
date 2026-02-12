@@ -20,14 +20,10 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
     let template = fs.readFileSync(templatePath, 'utf8');
 
     allPosts.forEach(post => {
-    const $ = cheerio.load(template);
-
-    const pageSlug = `article-${post.slug}.html`;   // يبقى كما هو
-    const fullUrl = `${BASE_URL}/${pageSlug}`;     // رابط الملف الحقيقي
-
-    // 👇 هذا الجديد (رابط بدون .html)
-
-    const fullImageUrl = toAbsoluteUrl(post.image);
+        const $ = cheerio.load(template);
+        const pageSlug = `article-${post.slug}.html`;
+        const fullUrl = `${BASE_URL}/${pageSlug}`;
+        const fullImageUrl = toAbsoluteUrl(post.image);
         
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
         $('meta[name="description"]').attr('content', post.description);
@@ -171,7 +167,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         const shareSectionHTML = `
         <div class="share-buttons-container mt-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 text-center">
             <h3 class="font-bold text-gray-800 dark:text-white mb-4 text-sm">شارك المعلومة</h3>
-            <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${canonicalUrl}"
+            <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${fullUrl}">
                 <a href="#" class="share-btn whatsapp w-9 h-9 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on WhatsApp">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
                 </a>
@@ -213,7 +209,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             gridPosts.forEach(r => {
                 const rDate = r.effectiveDate.toISOString().split('T')[0];
                 relatedHTML += `
-                <a href="/article-${r.slug}" class="flex flex-col bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all group h-full">
+                <a href="article-${r.slug}.html" class="flex flex-col bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all group h-full">
                     <div class="h-28 overflow-hidden bg-gray-200 dark:bg-gray-700 shrink-0">
                         <img src="${cleanPath(r.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                     </div>
@@ -239,7 +235,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
                 listPosts.forEach(r => {
                     const rDate = r.effectiveDate.toISOString().split('T')[0];
                     relatedHTML += `
-                    <a href="/article-${r.slug}" class="flex items-start gap-3 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
+                    <a href="article-${r.slug}.html" class="flex items-start gap-3 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
                         <img src="${cleanPath(r.image)}" class="w-16 h-12 object-cover rounded-lg shrink-0 bg-gray-200 dark:bg-gray-700" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                         <div class="flex-1 min-w-0 self-center">
                             <h4 class="text-xs font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 transition-colors">${r.title}</h4>
@@ -256,9 +252,6 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             $('article').append(relatedHTML);
         }
 
-        // === Canonical بدون .html ===
-        const canonicalUrl = `${BASE_URL}/article-${post.slug}`;
-
         const safeJsonLd = { 
             "@context": "https://schema.org", 
             "@type": "Article", 
@@ -266,43 +259,18 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             "image": post.image ? [fullImageUrl] : [], 
             "datePublished": post.publishedAt.toISOString(), 
             "dateModified": post.updatedAt.toISOString(), 
-            "author": { 
-                "@type": "Person", 
-                "name": aboutData.profileName || "TechTouch" 
-            }, 
+            "author": { "@type": "Person", "name": aboutData.profileName || "TechTouch" }, 
             "publisher": { 
                 "@type": "Organization", 
                 "name": aboutData.siteName || "TechTouch", 
-                "logo": { 
-                    "@type": "ImageObject", 
-                    "url": toAbsoluteUrl(aboutData.profileImage) 
-                } 
+                "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } 
             }, 
             "description": post.description || '', 
-            "mainEntityOfPage": { 
-                "@type": "WebPage", 
-                "@id": canonicalUrl 
-            }
+            "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } 
         };
-
-        // حذف أي JSON-LD قديم
         $('script[type="application/ld+json"]').remove();
-
-        // إضافة JSON-LD جديد
-        $('head').append(
-            `<script type="application/ld+json">${JSON.stringify(safeJsonLd, null, 2)}</script>`
-        );
-
-        // حذف canonical قديم
-        $('link[rel="canonical"]').remove();
-
-        // إضافة canonical بدون .html
-        $('head').append(
-            `<link rel="canonical" href="${canonicalUrl}" />`
-        );
-
-        // حفظ الصفحة
-        safeWrite(
-            path.join(ROOT_DIR, pageSlug),
-            updateGlobalElements($.html(), pageSlug, '', aboutData)
-        );
+        $('head').append(`<script type="application/ld+json">${JSON.stringify(safeJsonLd, null, 2)}</script>`);
+        
+        safeWrite(path.join(ROOT_DIR, pageSlug), updateGlobalElements($.html(), pageSlug, '', aboutData));
+    });
+            }
