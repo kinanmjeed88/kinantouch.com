@@ -286,7 +286,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             }
         };
 
-        // حذف JSON-LD قديم
+        // حذف أي JSON-LD قديم
         $('script[type="application/ld+json"]').remove();
 
         // إضافة JSON-LD جديد
@@ -297,7 +297,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         // حذف canonical قديم
         $('link[rel="canonical"]').remove();
 
-        // إضافة canonical جديد بدون .html
+        // إضافة canonical بدون .html
         $('head').append(
             `<link rel="canonical" href="${canonicalUrl}" />`
         );
