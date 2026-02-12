@@ -257,6 +257,9 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             $('article').append(relatedHTML);
         }
 
+        // === Canonical بدون .html ===
+        const canonicalUrl = `${BASE_URL}/article-${post.slug}`;
+
         const safeJsonLd = { 
             "@context": "https://schema.org", 
             "@type": "Article", 
@@ -264,22 +267,34 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             "image": post.image ? [fullImageUrl] : [], 
             "datePublished": post.publishedAt.toISOString(), 
             "dateModified": post.updatedAt.toISOString(), 
-            "author": { "@type": "Person", "name": aboutData.profileName || "TechTouch" }, 
+            "author": { 
+                "@type": "Person", 
+                "name": aboutData.profileName || "TechTouch" 
+            }, 
             "publisher": { 
                 "@type": "Organization", 
                 "name": aboutData.siteName || "TechTouch", 
-                "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } 
+                "logo": { 
+                    "@type": "ImageObject", 
+                    "url": toAbsoluteUrl(aboutData.profileImage) 
+                } 
             }, 
             "description": post.description || '', 
-            ""mainEntityOfPage": { "@type": "WebPage", "@id": canonicalUrl }
+            "mainEntityOfPage": { 
+                "@type": "WebPage", 
+                "@id": canonicalUrl 
+            }
         };
-        $('script[type="application/ld+json"]').remove();
-        $('head').append(`<script type="application/ld+json">${JSON.stringify(safeJsonLd, null, 2)}</script>`);
-        
-        // === Canonical بدون .html ===
-        const canonicalUrl = `${BASE_URL}/article-${post.slug}`;
 
-        // حذف أي canonical قديم
+        // حذف JSON-LD قديم
+        $('script[type="application/ld+json"]').remove();
+
+        // إضافة JSON-LD جديد
+        $('head').append(
+            `<script type="application/ld+json">${JSON.stringify(safeJsonLd, null, 2)}</script>`
+        );
+
+        // حذف canonical قديم
         $('link[rel="canonical"]').remove();
 
         // إضافة canonical جديد بدون .html
@@ -287,26 +302,8 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             `<link rel="canonical" href="${canonicalUrl}" />`
         );
 
-        // تحديث JSON-LD ليتطابق مع canonical
-        $('script[type="application/ld+json"]').each((i, el) => {
-            try {
-                const data = JSON.parse($(el).html());
-
-                if (data.mainEntityOfPage) {
-                    data.mainEntityOfPage["@id"] = canonicalUrl;
-                }
-
-                $(el).html(JSON.stringify(data, null, 2));
-            } catch (err) {
-                console.warn("JSON-LD parse skipped:", err.message);
-            }
-        });
-
-        // === حفظ الصفحة (لا يُحذف هذا السطر) ===
+        // حفظ الصفحة
         safeWrite(
             path.join(ROOT_DIR, pageSlug),
             updateGlobalElements($.html(), pageSlug, '', aboutData)
         );
-
-    });
-            }
