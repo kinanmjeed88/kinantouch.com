@@ -26,7 +26,6 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
     const fullUrl = `${BASE_URL}/${pageSlug}`;     // رابط الملف الحقيقي
 
     // 👇 هذا الجديد (رابط بدون .html)
-    const canonicalUrl = `${BASE_URL}/article-${post.slug}`;
 
     const fullImageUrl = toAbsoluteUrl(post.image);
         
