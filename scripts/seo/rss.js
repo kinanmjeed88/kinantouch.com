@@ -4,35 +4,61 @@ import { safeWrite } from '../utils/fs.js';
 import { toAbsoluteUrl, escapeXml } from '../utils/helpers.js';
 import { BASE_URL } from '../config/constants.js';
 
+/**
+ * Remove HTML tags safely
+ */
+function stripHtml(input = '') {
+    return input.replace(/<\/?[^>]+(>|$)/g, '').trim();
+}
+
+/**
+ * Detect correct MIME type for enclosure
+ */
+function getMimeType(url = '') {
+    if (url.endsWith('.png')) return 'image/png';
+    if (url.endsWith('.webp')) return 'image/webp';
+    if (url.endsWith('.jpg') || url.endsWith('.jpeg')) return 'image/jpeg';
+    return 'image/jpeg';
+}
+
 export function generateRSS(allPosts, aboutData) {
     const feedPath = path.join(ROOT_DIR, 'feed.xml');
     const now = new Date().toUTCString();
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    xml += `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n`;
+    xml += `<rss version="2.0"
+        xmlns:atom="http://www.w3.org/2005/Atom"
+        xmlns:content="http://purl.org/rss/1.0/modules/content/">\n`;
     xml += `<channel>\n`;
     xml += `    <title>${escapeXml(aboutData.siteName || "TechTouch")}</title>\n`;
     xml += `    <link>${BASE_URL}</link>\n`;
     xml += `    <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>\n`;
     xml += `    <language>ar</language>\n`;
     xml += `    <lastBuildDate>${now}</lastBuildDate>\n`;
+    xml += `    <ttl>60</ttl>\n`;
     xml += `    <atom:link href="${BASE_URL}/feed.xml" rel="self" type="application/rss+xml" />\n`;
 
     // =============================
-    // Latest 20 Posts (Clean URL)
+    // Latest 20 Posts (Clean URLs)
     // =============================
     allPosts.slice(0, 20).forEach(post => {
         const cleanUrl = `${BASE_URL}/article-${post.slug}`;
         const fullImg = toAbsoluteUrl(post.image);
+        const mimeType = getMimeType(fullImg);
+
+        const cleanTitle = stripHtml(post.title);
+        const cleanDescription = stripHtml(post.description);
 
         xml += `
     <item>
-        <title><![CDATA[${post.title}]]></title>
+        <title><![CDATA[${cleanTitle}]]></title>
         <link>${cleanUrl}</link>
         <guid isPermaLink="true">${cleanUrl}</guid>
         <pubDate>${post.effectiveDate.toUTCString()}</pubDate>
-        <description><![CDATA[${post.description}]]></description>
-        <enclosure url="${escapeXml(fullImg)}" type="image/jpeg" />
+        <category>${escapeXml(post.category || 'tech')}</category>
+        <description><![CDATA[${cleanDescription}]]></description>
+        <content:encoded><![CDATA[${post.content || ''}]]></content:encoded>
+        <enclosure url="${escapeXml(fullImg)}" type="${mimeType}" />
     </item>`;
     });
 
@@ -40,5 +66,5 @@ export function generateRSS(allPosts, aboutData) {
 
     safeWrite(feedPath, xml);
 
-    console.log('✅ RSS feed regenerated with clean URLs.');
+    console.log('✅ RSS feed regenerated with clean URLs and improved structure.');
 }
