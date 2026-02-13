@@ -20,9 +20,9 @@
     }
   },
   "globalFonts": {
-    "nav": 12,
+    "nav": 14,
     "content": 15,
-    "titles": 20,
+    "titles": 15,
     "mainTitles": 26
   },
   "ticker": {
