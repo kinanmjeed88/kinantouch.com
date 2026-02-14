@@ -49,7 +49,7 @@ export async function onRequestPost(context) {
 
       // تخزين IP لمدة ساعة واحدة (3600 ثانية)
       await env.ARTICLE_VIEWS.put(ipKey, "1", {
-        expirationTtl: 3600
+        expirationTtl: 21600
       });
 
       return new Response(JSON.stringify({ views: newViews }), {
