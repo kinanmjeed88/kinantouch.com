@@ -61,19 +61,22 @@ img, iframe, video, object, embed, canvas {
     min-width: 0 !important;
 }
 
-/* 2. GLOBAL ADS HARD LIMIT (تطبيق الحدود القصوى على كل عناصر جوجل) */
+/* 2. GLOBAL ADS HARD LIMIT & HARD RESET */
+/* يمنع تجاوز العرض ويصفر التحويلات التي تحقنها جوجل لاحقاً */
 [class*="adsbygoogle"],
 [id*="google_ads"],
 iframe[src*="googleads"] {
     max-width: 100% !important;
     min-width: 0 !important;
     width: 100% !important;
+    transform: none !important; /* تصفير التحويلات الإجبارية */
 }
 
-/* 3. إصلاح الإعلانات التلقائية العائمة (Auto Ads Fix) */
+/* 3. GPU PERFORMANCE & AUTO ADS */
 .google-auto-placed, 
 .adsbygoogle-noablate,
-ins.adsbygoogle {
+ins.adsbygoogle,
+iframe[src*="googleads"] {
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
@@ -115,18 +118,25 @@ ins.adsbygoogle {
     display: block !important;
 }
 
-/* 6. إصلاح خاص للمواقع العربية (RTL Fix) */
+/* 6. MOBILE CLS FIX (زيادة الارتفاع للإعلانات المربعة) */
+@media (max-width: 768px) {
+    ins.adsbygoogle {
+        min-height: 120px; /* استيعاب إعلانات 300x250 بشكل أفضل */
+    }
+}
+
+/* 7. إصلاح خاص للمواقع العربية (RTL Fix) */
 html[dir="rtl"] .google-auto-placed {
     right: auto !important;
     left: 0 !important;
 }
 
-/* 7. حماية إضافية للجوال */
-@media (max-width: 480px) {
-    ins.adsbygoogle {
-        max-width: 100% !important;
-        width: 100% !important;
-    }
+/* 8. RARE BUG FIX: Google Body Injection Protection */
+/* حماية ضد الإعلانات التي يتم حقنها كأبناء مباشرين للـ body */
+body > div[id*="google_ads"] {
+    max-width: 100vw !important;
+    overflow: hidden !important;
+    position: relative !important;
 }
 
 /* Video Container Fix */
