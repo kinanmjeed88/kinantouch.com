@@ -2,7 +2,7 @@
 /* Global Reset & Layout Protection */
 *, *::before, *::after { box-sizing: border-box; min-width: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: 140px; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: visible; width: 100%; max-width: 100vw; min-height: 100vh; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; width: 100%; max-width: 100vw; min-height: 100vh; margin: 0; padding: 0; }
 
 /* Typography */
 h1 { font-size: 1.75rem; line-height: 1.5; } h2 { font-size: 1.5rem; line-height: 1.5; } h3 { font-size: 1.25rem; line-height: 1.5; } p, li { font-size: 1rem; line-height: 1.8; }
@@ -11,12 +11,33 @@ h1 { font-size: 1.75rem; line-height: 1.5; } h2 { font-size: 1.5rem; line-height
 /* Content Wrapping */
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6, .prose p, .prose span, .prose a, .prose li, .prose div, .prose blockquote, .prose pre { overflow-wrap: break-word !important; word-wrap: break-word !important; word-break: break-word !important; white-space: normal !important; max-width: 100%; }
 .ticker-text, .animate-marquee span, .whitespace-nowrap { white-space: nowrap !important; }
-img, iframe, video, object, embed { max-width: 100% !important; display: block; }
+
+/* --- FIX: Strict Media Constraint (Ad/Image Overflow Fix) --- */
+img, iframe, video, object, embed, canvas { 
+    max-width: 100% !important; 
+    height: auto !important; 
+    display: block; 
+    margin-left: auto;
+    margin-right: auto;
+}
 .prose img { height: auto !important; }
 
-/* Components */
-.adsbygoogle-container { width: 100%; max-width: 100%; overflow: hidden; margin: 1.5rem 0; padding: 0.5rem; background: transparent; display: flex; justify-content: center; align-items: center; border-radius: 0.75rem; }
-.adsbygoogle { display: block !important; width: 100% !important; }
+/* Components - AD Fix */
+.adsbygoogle-container { 
+    width: 100%; 
+    max-width: 100% !important; 
+    overflow: hidden !important; /* Force clipping of overflow */
+    margin: 1.5rem 0; 
+    padding: 0; 
+    background: transparent; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    border-radius: 0.75rem; 
+    box-sizing: border-box;
+}
+.adsbygoogle { display: block !important; width: 100% !important; max-width: 100% !important; overflow: hidden !important; }
+
 .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.75rem; margin: 1.5rem 0; background-color: #000; width: 100%; max-width: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 .video-container iframe { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; border: 0; }
 .btn-wrapped-link { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%); color: white !important; font-weight: 700; padding: 0.75rem 1rem; border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; width: 100%; max-width: 100%; margin: 1rem 0; }
