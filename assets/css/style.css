@@ -71,23 +71,37 @@ img, iframe, video, object, embed, canvas {
 }
 
 /* ========================================= */
-/*  AD CONFIGURATION (ENTERPRISE GOLD)       */
+/*  FIXED AD CONTAINER (MANUAL PLACEMENT)    */
 /* ========================================= */
 
-/* 1. Manual Ad Container */
-.ad-centered-card {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    margin: 1.5rem auto !important;
-    padding: 10px 0 !important;
-    background: transparent !important;
-    overflow: hidden !important;
+.ad-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 2rem auto;
+  text-align: center;
+  overflow: hidden; /* Prevents overflow if ad is too wide */
+  min-height: 280px; /* Reserves space to prevent CLS (Layout Shift) */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  clear: both;
 }
 
-/* 2. General Ad Protection */
+/* Optional: Slight background in debug mode or whilst loading */
+.ad-container:empty {
+    display: none;
+}
+
+/* Mobile Ad Adjustment */
+@media (max-width: 480px) {
+    .ad-container {
+        min-height: 250px; /* Standard MPU size */
+        margin: 1.5rem auto;
+    }
+}
+
+/* General Ad Protection */
 [class*="adsbygoogle"],
 [id*="google_ads"],
 iframe[src*="googleads"],
@@ -96,49 +110,28 @@ iframe[src*="googleads"],
     overflow: hidden !important;
 }
 
-/* 3. Performance & Layout Stability (CLS Fixes) */
+/* Performance & Isolation */
 ins.adsbygoogle {
     display: block !important;
-    min-height: 100px; /* Default reserve */
-    width: 100%;
-    contain: layout paint style; /* PERFORMANCE: Strict isolation */
+    background: transparent !important;
 }
 
-/* Smart Mobile Reservation (Standard MPU) */
-@media (max-width: 768px) {
-    ins.adsbygoogle {
-        min-height: 250px; 
-    }
-}
-
-/* 4. Optimized Small Screen Reservation (Balance UX/CLS) */
-@media (max-width: 480px) {
-    ins.adsbygoogle {
-        min-height: 180px;
-    }
-}
-
-/* 5. RTL Isolation Fix (CRITICAL) */
+/* RTL Isolation Fix (CRITICAL) */
 /* Prevents horizontal overflow caused by Google iframes inheriting RTL */
 html[dir="rtl"] .adsbygoogle {
     direction: ltr; 
-    text-align: left;
+    text-align: center;
 }
 
-/* 6. Iframe Hardening */
+/* Iframe Hardening */
 iframe[src*="googleads"] {
     border: 0 !important;
-    transform: none !important; /* FIX: Prevents Google form scaling bugs */
+    transform: none !important;
 }
 
-/* 7. RTL Layout Fixes */
-html[dir="rtl"] body {
-    overflow-x: clip !important;
-}
-
-/* 8. Handle Auto Placed Container */
+/* Handle Auto Placed Container (Suppress it if manual is preferred, but keep safe) */
 .google-auto-placed {
-    display: block !important; /* Safer than contents in block layout */
+    display: block !important; 
     width: 100%;
     clear: both;
 }
