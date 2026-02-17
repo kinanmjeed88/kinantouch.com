@@ -1,3 +1,4 @@
+
 import { escapeHtml, cleanPath } from '../utils/helpers.js';
 
 export const GA_SCRIPT = (id) => `
@@ -110,32 +111,36 @@ export const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     return `<i data-lucide="${defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
 };
 
+// --- UPDATED: Use .ad-centered-card for containment ---
 export const generateAdBannerHTML = (aboutData) => {
     if (!aboutData.adBanner || aboutData.adBanner.enabled === false) return '';
 
     const ad = aboutData.adBanner;
 
+    // Use the transparent card wrapper for everything
+    let innerContent = '';
+
     if (ad.type === 'image' && ad.imageUrl) {
-        return `
-        <div class="my-6 w-full flex justify-center">
-            <a href="${ad.url || '#'}" target="_blank" class="block">
+        innerContent = `
+            <a href="${ad.url || '#'}" target="_blank" class="block w-full">
                 <img src="${cleanPath(ad.imageUrl)}" 
                      alt="Advertisement" 
-                     class="rounded-xl shadow-md max-w-full h-auto border border-gray-200 dark:border-gray-700"
+                     class="rounded-xl shadow-md max-w-full h-auto border border-gray-200 dark:border-gray-700 mx-auto"
                      onerror="this.style.display='none'">
-            </a>
-        </div>`;
-    }
-
-    return `
-    <div class="my-6 w-full flex justify-center">
+            </a>`;
+    } else {
+        // Text Based Ad
+        innerContent = `
         <a href="${ad.url || '#'}"
            target="_blank"
-           class="px-6 py-3 rounded-xl shadow-md font-bold transition-all"
+           class="px-6 py-3 rounded-xl shadow-md font-bold transition-all text-center block max-w-full"
            style="background:${ad.bgColor || 'rgba(37,99,235,0.1)'}; color:${ad.textColor || '#2563eb'};">
            ${escapeHtml(ad.text || 'أعلن هنا')}
-        </a>
-    </div>`;
+        </a>`;
+    }
+
+    // Wrap in the specific strict centering card
+    return `<div class="ad-centered-card">${innerContent}</div>`;
 };
 
 export const generateSocialFooter = (aboutData) => {
@@ -193,8 +198,9 @@ export const createCardHTML = (post, aboutData) => {
         hour: '2-digit', minute: '2-digit', hour12: true
     });
 
+    // Updated href to use clean URL (no .html)
     return `
-    <a href="article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
+    <a href="/article-${post.slug}" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
                 <img src="${cleanPath(post.image)}" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${escapeHtml(post.title)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
