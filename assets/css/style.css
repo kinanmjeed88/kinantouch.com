@@ -6,7 +6,7 @@ html {
     scroll-behavior: smooth; 
     scroll-padding-top: 140px; 
     -webkit-text-size-adjust: 100%; 
-    height: 100%;
+    min-height: 100%; /* FIX: Changed from height:100% to avoid AdSense calculation errors */
 }
 
 /* --- CORE LAYOUT FIX: Sticky Footer Strategy --- */
@@ -64,7 +64,7 @@ img, iframe, video, object, embed, canvas {
 }
 
 /* ========================================= */
-/*  AD CONFIGURATION (CLEAN & SAFE)          */
+/*  AD CONFIGURATION (ENTERPRISE GRADE)      */
 /* ========================================= */
 
 /* 1. Manual Ad Container */
@@ -80,8 +80,7 @@ img, iframe, video, object, embed, canvas {
     overflow: hidden !important;
 }
 
-/* 2. General Ad Protection (No Position Hacks) */
-/* نمنع التمدد العرضي فقط، ونترك الارتفاع والتموضع لجوجل */
+/* 2. General Ad Protection */
 [class*="adsbygoogle"],
 [id*="google_ads"],
 iframe[src*="googleads"],
@@ -91,8 +90,32 @@ iframe[src*="googleads"],
     overflow: hidden !important;
 }
 
-/* 3. RTL Specific Fix */
-/* منع ظهور شريط تمرير أفقي في المواقع العربية بسبب إزاحة الإعلانات */
+/* 3. Performance & Layout Stability (CLS Fixes) */
+ins.adsbygoogle {
+    display: block !important;
+    min-height: 100px; /* Default reserve */
+    contain: content; /* PERFORMANCE: Isolates repaint */
+}
+
+/* Smart Mobile Reservation (For 300x250 MPUs) */
+@media (max-width: 768px) {
+    ins.adsbygoogle {
+        min-height: 250px; 
+    }
+}
+
+/* 4. RTL Isolation Fix (Critical for Arabic Sites) */
+/* Prevents horizontal overflow caused by Google iframes inheriting RTL */
+html[dir="rtl"] .adsbygoogle {
+    direction: ltr; 
+}
+
+/* 5. Clean Borders */
+iframe[src*="googleads"] {
+    border: 0 !important;
+}
+
+/* 6. RTL Layout Fixes */
 html[dir="rtl"] body {
     overflow-x: hidden !important;
 }
@@ -101,19 +124,6 @@ html[dir="rtl"] .google-auto-placed {
     left: 0 !important;
     right: auto !important;
     max-width: 100% !important;
-}
-
-/* 4. CLS Protection (Layout Shift) */
-/* حجز مساحة دنيا للإعلانات لمنع قفز المحتوى */
-ins.adsbygoogle {
-    min-height: 90px; 
-    display: block !important;
-}
-
-@media (max-width: 768px) {
-    ins.adsbygoogle {
-        min-height: 120px; 
-    }
 }
 
 /* Video Container Fix */
