@@ -1,3 +1,4 @@
+
 import fs from 'fs';
 import path from 'path';
 import * as cheerio from 'cheerio';
@@ -6,7 +7,7 @@ import { safeWrite } from '../utils/fs.js';
 import { updateGlobalElements } from '../core/global.js';
 import { cleanPath, escapeHtml, escapeXml, toAbsoluteUrl } from '../utils/helpers.js';
 import { parseMarkdown } from '../core/markdown.js';
-import { getCatLabel, generateAdBannerHTML } from '../core/renderer.js';
+import { getCatLabel, generateAdBannerHTML, FIXED_AD_UNIT } from '../core/renderer.js';
 import { BASE_URL } from '../config/constants.js';
 
 export async function generateIndividualArticles({ allPosts, aboutData }) {
@@ -21,8 +22,11 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
 
     allPosts.forEach(post => {
         const $ = cheerio.load(template);
-        const pageSlug = `article-${post.slug}.html`;
-        const fullUrl = `${BASE_URL}/${pageSlug}`;
+        
+        // --- CLEAN URL IMPLEMENTATION ---
+        const pageSlug = `article-${post.slug}.html`; // Physical file name (MUST keep .html for save)
+        const canonicalUrl = `${BASE_URL}/article-${post.slug}`; // Logical URL (Clean, for SEO/Share)
+        const fullUrl = `${BASE_URL}/${pageSlug}`; // Fallback/Physical Ref
         const fullImageUrl = toAbsoluteUrl(post.image);
         
         $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
@@ -113,8 +117,11 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         
         if (existingImgDiv.length) { existingImgDiv.replaceWith(adaptiveImageHTML); } else { $('main > header').after(adaptiveImageHTML); }
 
+        // --- CONTENT PROCESSING & AD INJECTION ---
         const $content = cheerio.load(post.content, null, false);
         $content('.adsbygoogle-container, .ad-placeholder').remove();
+        
+        // Optimize Images
         $content('img').each((i, img) => {
             const originalSrc = $content(img).attr('src');
             if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
@@ -123,6 +130,29 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         
         $('.share-buttons-container').remove();
+
+        // Smart Ad Injection Strategy
+        const paragraphs = $content('p');
+        // Only inject if article is long enough (at least 2 paragraphs)
+        if (paragraphs.length > 2) {
+            // 1. Top Ad: After first paragraph
+            $content(paragraphs[0]).after(FIXED_AD_UNIT);
+
+            // 2. Middle Ad: If article has enough length
+            if (paragraphs.length > 4) {
+                const midPoint = Math.floor(paragraphs.length / 2);
+                $content(paragraphs[midPoint]).after(FIXED_AD_UNIT);
+            }
+
+            // 3. Bottom Ad: Before last paragraph (or append to end)
+            // We'll append one at the end of the container as well to be safe
+        } else {
+            // Very short article, just append to bottom
+            $content.root().append(FIXED_AD_UNIT);
+        }
+        
+        // Explicit bottom ad (always)
+        $content.root().append(FIXED_AD_UNIT);
 
         $('article').html($content.html()); 
 
@@ -164,10 +194,11 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         `;
         $('article').append(tagsHTML);
 
+        // Updated Share Section using CANONICAL URL
         const shareSectionHTML = `
         <div class="share-buttons-container mt-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 text-center">
             <h3 class="font-bold text-gray-800 dark:text-white mb-4 text-sm">شارك المعلومة</h3>
-            <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${fullUrl}">
+            <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${canonicalUrl}">
                 <a href="#" class="share-btn whatsapp w-9 h-9 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on WhatsApp">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
                 </a>
@@ -208,8 +239,9 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             
             gridPosts.forEach(r => {
                 const rDate = r.effectiveDate.toISOString().split('T')[0];
+                // Clean Link (No .html)
                 relatedHTML += `
-                <a href="article-${r.slug}.html" class="flex flex-col bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all group h-full">
+                <a href="/article-${r.slug}.html" class="flex flex-col bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all group h-full">
                     <div class="h-28 overflow-hidden bg-gray-200 dark:bg-gray-700 shrink-0">
                         <img src="${cleanPath(r.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                     </div>
@@ -224,7 +256,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             });
             relatedHTML += `</div>`;
 
-            // Inject Ad Banner between Grid & List
+            // Inject Custom/Ad Banner between Grid & List
             const adHTML = generateAdBannerHTML(aboutData);
             if (adHTML) {
                 relatedHTML += adHTML;
@@ -234,8 +266,9 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
                 relatedHTML += `<div class="flex flex-col gap-2">`;
                 listPosts.forEach(r => {
                     const rDate = r.effectiveDate.toISOString().split('T')[0];
+                    // Clean Link (No .html)
                     relatedHTML += `
-                    <a href="article-${r.slug}.html" class="flex items-start gap-3 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
+                    <a href="/article-${r.slug}.html" class="flex items-start gap-3 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
                         <img src="${cleanPath(r.image)}" class="w-16 h-12 object-cover rounded-lg shrink-0 bg-gray-200 dark:bg-gray-700" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                         <div class="flex-1 min-w-0 self-center">
                             <h4 class="text-xs font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 transition-colors">${r.title}</h4>
@@ -266,11 +299,19 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
                 "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } 
             }, 
             "description": post.description || '', 
-            "mainEntityOfPage": { "@type": "WebPage", "@id": fullUrl } 
+            "mainEntityOfPage": { "@type": "WebPage", "@id": canonicalUrl } 
         };
+        
         $('script[type="application/ld+json"]').remove();
         $('head').append(`<script type="application/ld+json">${JSON.stringify(safeJsonLd, null, 2)}</script>`);
         
-        safeWrite(path.join(ROOT_DIR, pageSlug), updateGlobalElements($.html(), pageSlug, '', aboutData));
+        // --- FORCE CANONICAL UPDATE ---
+        $('link[rel="canonical"]').remove();
+        $('head').append(`<link rel="canonical" href="${canonicalUrl}" />`);
+
+        safeWrite(
+            path.join(ROOT_DIR, pageSlug),
+            updateGlobalElements($.html(), pageSlug, '', aboutData)
+        );
     });
-            }
+}
