@@ -12,43 +12,54 @@ h1 { font-size: 1.75rem; line-height: 1.5; } h2 { font-size: 1.5rem; line-height
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6, .prose p, .prose span, .prose a, .prose li, .prose div, .prose blockquote, .prose pre { overflow-wrap: break-word !important; word-wrap: break-word !important; word-break: break-word !important; white-space: normal !important; max-width: 100%; }
 .ticker-text, .animate-marquee span, .whitespace-nowrap { white-space: nowrap !important; }
 
-/* --- FIX: Strict Media Constraint (Ad/Image Overflow Fix) --- */
+/* --- FIX: Strict Media Constraint & Centering --- */
 img, iframe, video, object, embed, canvas { 
     max-width: 100% !important; 
     height: auto !important; 
-    display: block; 
-    margin-left: auto;
-    margin-right: auto;
+    display: block !important; 
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border: none !important;
 }
-.prose img { height: auto !important; }
+.prose img { 
+    height: auto !important; 
+    display: block !important; 
+    margin: 1.5rem auto !important; /* Force center inside text */
+}
 
-/* Components - AD Fix */
+/* Components - AD Fix (Centering Logic) */
 .adsbygoogle-container { 
     width: 100%; 
     max-width: 100% !important; 
-    overflow: hidden !important; /* Force clipping of overflow */
-    margin: 1.5rem auto !important; /* Center the container strictly */
+    overflow: hidden !important; 
+    margin: 2rem auto !important; /* Vertical spacing and horizontal center */
     padding: 0; 
     background: transparent; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+    display: flex !important; /* Flex allows perfect centering */
+    justify-content: center !important; /* Center horizontally */
+    align-items: center !important; /* Center vertically */
     border-radius: 0.75rem; 
     box-sizing: border-box;
-    text-align: center;
-    direction: ltr; /* Force LTR inside ads to prevent RTL calculation errors */
+    text-align: center !important;
+    position: relative;
+    z-index: 10;
 }
-.adsbygoogle { 
+
+/* Force inner ad elements to center */
+.adsbygoogle, .adsbygoogle ins, .adsbygoogle iframe { 
     display: block !important; 
-    width: 100% !important; 
+    width: auto !important;
     max-width: 100% !important; 
     overflow: hidden !important;
     margin-left: auto !important;
     margin-right: auto !important;
+    text-align: center !important;
 }
 
-.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.75rem; margin: 1.5rem 0; background-color: #000; width: 100%; max-width: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+/* Video Container Fix */
+.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.75rem; margin: 1.5rem auto; background-color: #000; width: 100%; max-width: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 .video-container iframe { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; border: 0; }
+
 .btn-wrapped-link { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%); color: white !important; font-weight: 700; padding: 0.75rem 1rem; border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; width: 100%; max-width: 100%; margin: 1rem 0; }
 .btn-wrapped-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.3); will-change: transform; }
 
