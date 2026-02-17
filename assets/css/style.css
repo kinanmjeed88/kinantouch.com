@@ -1,3 +1,4 @@
+
 /* Global Reset & Layout Protection */
 *, *::before, *::after { box-sizing: border-box; min-width: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: 140px; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
@@ -27,48 +28,50 @@ img, iframe, video, object, embed, canvas {
 }
 
 /* ========================================= */
-/*  AD CARD CONTAINER (Final Fix)            */
+/*  AD CONTAINER (Google Compliant & RTL Fix) */
 /* ========================================= */
 .ad-centered-card {
+    /* 1. Container Structure */
     width: 100%;
     max-width: 100% !important;
     margin: 2rem auto !important;
-    padding: 10px;
+    padding: 10px 0; /* Padding vertical only to save width */
+    
+    /* 2. Visuals */
     background: transparent !important;
+    border-radius: 12px;
+    overflow: hidden !important; /* Prevent scrollbars from ads */
+    
+    /* 3. Centering Magic (Flexbox is safer than block for centering varying widths) */
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
     flex-direction: column;
-    overflow: visible !important; /* Allow shadow/content to be seen */
-    box-sizing: border-box;
-    /* Removed direction: ltr to fix RTL shifting */
     text-align: center !important;
-    border-radius: 12px;
+    
+    /* 4. IMPORTANT: Allow RTL/LTR inheritance naturally or force center */
+    /* direction: ltr;  <-- REMOVED to stop left shifting */
 }
 
-/* Ensure inner elements center */
+/* Force specific Google elements to behave */
+.ad-centered-card ins.adsbygoogle,
+.ad-centered-card iframe,
 .ad-centered-card > * {
-    max-width: 100% !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-}
-
-.ad-centered-card .adsbygoogle {
     display: block !important;
-    width: auto !important;
-    max-width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
+    max-width: 100% !important;
 }
 
-/* Google Auto Ads Fix */
+/* FIX: Google Auto Ads (The ones injected automatically outside your divs) */
 .google-auto-placed {
     text-align: center !important;
     width: 100% !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    margin: 2rem auto !important;
+    margin: 20px auto !important;
+    clear: both; /* Prevent wrapping around floating elements */
 }
 
 /* Video Container Fix */
