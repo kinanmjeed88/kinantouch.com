@@ -24,36 +24,54 @@ img, iframe, video, object, embed, canvas {
 .prose img { 
     height: auto !important; 
     display: block !important; 
-    margin: 1.5rem auto !important; /* Force center inside text */
+    margin: 1.5rem auto !important; 
 }
 
-/* Components - AD Fix (Centering Logic) */
-.adsbygoogle-container { 
-    width: 100%; 
-    max-width: 100% !important; 
-    overflow: hidden !important; 
-    margin: 2rem auto !important; /* Vertical spacing and horizontal center */
-    padding: 0; 
-    background: transparent; 
-    display: flex !important; /* Flex allows perfect centering */
-    justify-content: center !important; /* Center horizontally */
-    align-items: center !important; /* Center vertically */
-    border-radius: 0.75rem; 
-    box-sizing: border-box;
-    text-align: center !important;
-    position: relative;
-    z-index: 10;
-}
-
-/* Force inner ad elements to center */
-.adsbygoogle, .adsbygoogle ins, .adsbygoogle iframe { 
-    display: block !important; 
-    width: auto !important;
-    max-width: 100% !important; 
+/* ========================================= */
+/*  AD CARD CONTAINER (New Fix)              */
+/* ========================================= */
+.ad-centered-card {
+    width: 100%;
+    max-width: 100% !important;
+    /* مسافة أمان من الأعلى والأسفل */
+    margin: 2rem auto !important;
+    padding: 10px;
+    
+    /* خلفية شفافة كما طلبت */
+    background: transparent !important;
+    
+    /* تقنية التوسيط الصارم */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column;
+    
+    /* منع الخروج عن الحدود */
     overflow: hidden !important;
+    box-sizing: border-box;
+    
+    /* إجبار اتجاه المحتوى لليسار لمنع مشاكل الحسابات في RTL */
+    direction: ltr !important; 
+    text-align: center !important;
+    
+    /* حدود شفافة اختيارية للتوضيح (يمكن إزالتها) */
+    border: 1px dashed rgba(156, 163, 175, 0.2); 
+    border-radius: 12px;
+}
+
+/* ضمان أن أي عنصر داخل البطاقة لا يتجاوز عرضها */
+.ad-centered-card > * {
+    max-width: 100% !important;
+    height: auto !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    text-align: center !important;
+}
+
+/* AdSense Specific Overrides inside the card */
+.ad-centered-card .adsbygoogle {
+    display: block !important;
+    width: auto !important; /* Let AdSense decide width up to max */
+    max-width: 100% !important;
 }
 
 /* Video Container Fix */
@@ -131,47 +149,29 @@ table { display: table; width: 100%; white-space: nowrap; }
 /* 2. Nav Search Button (Refined)            */
 /* ========================================= */
 
-/* Ensure search button mimics nav-link exactly in flex containers */
 .nav-search-btn {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 14px; /* Matches Nav Link Padding */
-    border-radius: 9999px; /* Matches Nav Link Radius */
-    border: 1px solid transparent; /* Ensure border exists for layout but is transparent */
+    padding: 6px 14px; 
+    border-radius: 9999px;
+    border: 1px solid transparent; 
     background: transparent;
     color: inherit;
-    font-size: 13px; /* Matches Nav Link Font */
+    font-size: 13px; 
     font-weight: 700;
     transition: all 0.2s ease;
     cursor: pointer;
-    margin: 0 !important; /* Reset margins to rely on flex gap */
+    margin: 0 !important;
 }
 
-.dark .nav-search-btn {
-    color: #d1d5db; /* Matches dark mode nav text */
-}
+.dark .nav-search-btn { color: #d1d5db; }
+.nav-search-btn:hover { background: rgba(0, 0, 0, 0.03); color: #2563eb; }
+.dark .nav-search-btn:hover { background: rgba(255, 255, 255, 0.05); color: #60a5fa; }
 
-/* Hover States matching nav-link */
-.nav-search-btn:hover {
-    background: rgba(0, 0, 0, 0.03);
-    color: #2563eb;
-}
-
-.dark .nav-search-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #60a5fa;
-}
-
-/* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .nav-search-btn span {
-        display: none;
-    }
-    .nav-search-btn {
-        padding: 6px;
-        justify-content: center;
-    }
+    .nav-search-btn span { display: none; }
+    .nav-search-btn { padding: 6px; justify-content: center; }
 }
 
 /* ========================================= */
@@ -222,7 +222,7 @@ table { display: table; width: 100%; white-space: nowrap; }
     margin-bottom: 25px;
     padding: 20px;
     border-radius: 14px;
-    background: rgba(249, 250, 251, 0.8); /* gray-50 with opacity */
+    background: rgba(249, 250, 251, 0.8);
     border: 1px solid rgba(0,0,0,0.05);
     font-size: 15px;
     line-height: 1.8;
@@ -233,9 +233,7 @@ table { display: table; width: 100%; white-space: nowrap; }
     border-color: rgba(255,255,255,0.08);
 }
 
-.ai-summary-box h3 {
-    margin: 0 0 10px 0 !important;
-}
+.ai-summary-box h3 { margin: 0 0 10px 0 !important; }
 
 /* ========================================= */
 /* 5. Ticker & Category Nav                  */
