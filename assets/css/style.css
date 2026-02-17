@@ -27,7 +27,7 @@ img, iframe, video, object, embed, canvas {
     width: 100%; 
     max-width: 100% !important; 
     overflow: hidden !important; /* Force clipping of overflow */
-    margin: 1.5rem 0; 
+    margin: 1.5rem auto !important; /* Center the container strictly */
     padding: 0; 
     background: transparent; 
     display: flex; 
@@ -35,8 +35,17 @@ img, iframe, video, object, embed, canvas {
     align-items: center; 
     border-radius: 0.75rem; 
     box-sizing: border-box;
+    text-align: center;
+    direction: ltr; /* Force LTR inside ads to prevent RTL calculation errors */
 }
-.adsbygoogle { display: block !important; width: 100% !important; max-width: 100% !important; overflow: hidden !important; }
+.adsbygoogle { 
+    display: block !important; 
+    width: 100% !important; 
+    max-width: 100% !important; 
+    overflow: hidden !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
 
 .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.75rem; margin: 1.5rem 0; background-color: #000; width: 100%; max-width: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 .video-container iframe { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; border: 0; }
