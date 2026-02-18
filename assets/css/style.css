@@ -1,6 +1,6 @@
 /* TechTouch Global Styles
-   Final Production Version (v3.0)
-   Optimized for: Performance, AdSense Safety, Layout Stability, and Mobile.
+   Version: 3.1 (The Nuclear Gap Fix Edition)
+   Optimized for: Performance, AdSense Safety, Layout Stability, and ZERO Bottom Gap.
 */
 
 /* ========================================= */
@@ -37,24 +37,29 @@
     box-sizing: border-box; 
 }
 
-/* Smart Flexbox Reset: 
-   Prevent text overflow in flex containers, 
-   BUT protect tables from collapsing to zero width.
-*/
+/* Smart Flexbox Reset: Protect tables from collapsing */
 .flex > div, .flex > p, .flex > section, .grid > div, .grid > p, .grid > section {
     min-width: 0;
 }
 .flex > table, .grid > table {
-    min-width: auto; /* Protect Tables */
+    min-width: auto; 
 }
 
 html { 
     scroll-behavior: smooth; 
     scroll-padding-top: 140px; 
     -webkit-text-size-adjust: 100%; 
-    height: 100%; 
+    /* Fix: Force height to auto to prevent scroll locking */
+    height: auto !important;
+    min-height: 100%;
     overflow-x: hidden; 
     overflow-x: clip; 
+    /* Visual Trick: Match background to footer to hide 1px gaps */
+    background-color: var(--color-bg-light);
+}
+
+.dark html {
+    background-color: var(--color-bg-dark);
 }
 
 body { 
@@ -72,6 +77,7 @@ body {
     overflow-x: clip; 
     background-color: var(--color-bg-light);
     color: var(--color-text-light);
+    position: relative;
 }
 
 .dark body { 
@@ -91,8 +97,10 @@ main {
 footer {
     width: 100%;
     position: relative;
-    z-index: var(--z-footer); /* Kept low to avoid overlapping dropdowns */
+    z-index: var(--z-footer);
     margin-top: auto; 
+    /* Safety: Ensure no margin pushes bottom */
+    margin-bottom: 0 !important;
 }
 
 /* ========================================= */
@@ -148,7 +156,6 @@ img, iframe, video, object, embed, canvas {
     margin: 2rem auto;
     text-align: center;
     overflow: hidden;
-    /* Default to auto to prevent huge gaps on small ads */
     min-height: auto; 
     display: flex;
     justify-content: center;
@@ -157,7 +164,6 @@ img, iframe, video, object, embed, canvas {
     clear: both;
 }
 
-/* Specific class if you KNOW the ad is a rectangle (Better for CLS) */
 .ad-container.rect-ad {
     min-height: 250px;
 }
@@ -189,7 +195,6 @@ ins.adsbygoogle[data-ad-status="unfilled"] {
     display: none !important; 
 }
 
-/* RTL Isolation */
 html[dir="rtl"] .adsbygoogle {
     direction: ltr; 
     text-align: center;
@@ -239,7 +244,6 @@ iframe[src*="googleads"] {
     width: 100%; 
     max-width: 100%; 
     margin: 1rem 0; 
-    /* Wrap text on small screens */
     text-align: center;
     white-space: normal;
     line-height: 1.3;
@@ -451,7 +455,7 @@ table { display: table; width: 100%; white-space: nowrap; }
     background-color: var(--color-bg-dark);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
-    z-index: var(--z-ticker); /* Optimized Z-Index */
+    z-index: var(--z-ticker);
     overflow: hidden;
 }
 
@@ -521,7 +525,6 @@ table { display: table; width: 100%; white-space: nowrap; }
     padding: 1.5rem;
     box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
     position: relative;
-    /* Optimized Z-Index to stay below Nav/Ticker but above content */
     z-index: 20; 
     margin-bottom: 0;
 }
@@ -623,17 +626,40 @@ table { display: table; width: 100%; white-space: nowrap; }
 .share-btn i, .share-btn svg { width: 1.1rem; height: 1.1rem; }
 
 /* ========================================= */
-/* 9. Final Safety Overrides (The Gap Killer) */
+/* 9. THE NUCLEAR FIX (Gap Killer)           */
 /* ========================================= */
 
 /* Ensure last elements in footer do not push layout */
 footer p:last-child,
-footer div:last-child {
+footer div:last-child,
+footer section:last-child {
     margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 /* Ensure footer ads don't create gaps if empty */
 footer .ad-container {
     margin-bottom: 0 !important;
-    min-height: 0 !important; /* Only in footer */
+    min-height: 0 !important; 
+}
+
+/* Kill generic empty elements injected at bottom */
+body > div:empty,
+body > span:empty {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Specifically target Google auto-placed containers */
+.google-auto-placed:empty,
+.adsbygoogle-noablate:empty {
+    display: none !important;
+    height: 0 !important;
+}
+
+/* Prevent any injected iframe/script from taking space at bottom */
+body > iframe[style*="display: none"] {
+    display: none !important;
 }
