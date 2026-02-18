@@ -1,213 +1,341 @@
+/* 
+   TechTouch Global Styles
+   Refactored for Performance, Accessibility, and AdSense Compliance
+*/
 
-/* Global Reset & Layout Protection */
-*, *::before, *::after { box-sizing: border-box; min-width: 0; }
+/* ========================================= */
+/* 1. Variables & Configuration              */
+/* ========================================= */
+:root {
+    /* Colors */
+    --color-bg-light: #f9fafb;
+    --color-bg-dark: #111827;
+    --color-text-light: #111827;
+    --color-text-dark: #f3f4f6;
+    --color-primary: #2563eb;
+    --color-primary-dark: #60a5fa;
+    
+    /* Spacing */
+    --header-height: 64px;
+    --ticker-height: 40px;
+    
+    /* Transitions */
+    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================= */
+/* 2. Reset & Base Styles                    */
+/* ========================================= */
+*, *::before, *::after { 
+    box-sizing: border-box; 
+}
+
+/* Scope min-width to flex/grid children to avoid issues with tables/inputs */
+.flex > *, .grid > * {
+    min-width: 0;
+}
 
 html { 
     scroll-behavior: smooth; 
     scroll-padding-top: 140px; 
     -webkit-text-size-adjust: 100%; 
-    height: 100%; /* Ensure HTML takes full height */
+    height: 100%; 
+    overflow-x: hidden; /* Fallback for clip */
     overflow-x: clip; 
 }
 
-/* --- MODERN STICKY FOOTER STRATEGY (Flexbox) --- */
 body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Full viewport height */
+    min-height: 100vh; 
     width: 100%;
     max-width: 100vw;
     margin: 0; 
     padding: 0; 
+    /* CRITICAL FIX: Override Google's injected padding */
+    padding-bottom: 0 !important;
+    overflow-x: hidden; /* Fallback */
     overflow-x: clip; 
-    background-color: #f9fafb;
+    background-color: var(--color-bg-light);
+    color: var(--color-text-light);
 }
 
-/* --- MAIN CONTENT GROWS TO FILL SPACE --- */
+.dark body { 
+    background-color: var(--color-bg-dark); 
+    color: var(--color-text-dark);
+}
+
+/* Main Content */
 main {
     width: 100%;
-    flex: 1; /* Magic Rule: Takes all available space, pushing footer down */
+    flex: 1; 
     display: block;
 }
 
-/* Prevent Footer Collapse */
 footer {
     width: 100%;
     position: relative;
     z-index: 10;
-    margin-top: auto; /* Extra safety for flex items */
-}
-
-/* Dark Mode Background */
-.dark body { background-color: #111827; }
-
-/* Typography */
-h1 { font-size: 1.75rem; line-height: 1.5; } h2 { font-size: 1.5rem; line-height: 1.5; } h3 { font-size: 1.25rem; line-height: 1.5; } p, li { font-size: 1rem; line-height: 1.8; }
-@media (max-width: 640px) { h1 { font-size: 1.35rem; line-height: 1.4; } h2 { font-size: 1.2rem; line-height: 1.4; } h3 { font-size: 1.1rem; line-height: 1.4; } p, li, span, a { font-size: 0.95rem; line-height: 1.7; } main { padding-left: 1rem !important; padding-right: 1rem !important; width: 100%; } }
-
-/* Content Wrapping */
-.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6, .prose p, .prose span, .prose a, .prose li, .prose div, .prose blockquote, .prose pre { overflow-wrap: break-word !important; word-wrap: break-word !important; word-break: break-word !important; white-space: normal !important; max-width: 100%; }
-.ticker-text, .animate-marquee span, .whitespace-nowrap { white-space: nowrap !important; }
-
-/* --- FIX: Strict Media Constraint & Centering --- */
-img, iframe, video, object, embed, canvas { 
-    max-width: 100% !important; 
-    height: auto !important; 
-    display: block !important; 
-    margin-left: auto !important;
-    margin-right: auto !important;
-    border: none !important;
-    vertical-align: bottom; 
-}
-.prose img { 
-    height: auto !important; 
-    display: block !important; 
-    margin: 1.5rem auto !important; 
+    margin-top: auto; 
 }
 
 /* ========================================= */
-/*  FIXED AD CONTAINER (Dynamic Height)      */
+/* 3. Typography                             */
+/* ========================================= */
+h1 { font-size: 1.75rem; line-height: 1.5; } 
+h2 { font-size: 1.5rem; line-height: 1.5; } 
+h3 { font-size: 1.25rem; line-height: 1.5; } 
+p, li { font-size: 1rem; line-height: 1.8; }
+
+@media (max-width: 640px) { 
+    h1 { font-size: 1.35rem; line-height: 1.4; } 
+    h2 { font-size: 1.2rem; line-height: 1.4; } 
+    h3 { font-size: 1.1rem; line-height: 1.4; } 
+    p, li, span, a { font-size: 0.95rem; line-height: 1.7; } 
+    main { padding-left: 1rem; padding-right: 1rem; } 
+}
+
+/* Content Wrapping - using specificity instead of !important where possible */
+.prose :is(h1, h2, h3, h4, h5, h6, p, span, a, li, div, blockquote, pre) { 
+    overflow-wrap: break-word; 
+    word-wrap: break-word; 
+    word-break: break-word; 
+    max-width: 100%; 
+}
+
+.ticker-text, .animate-marquee span, .whitespace-nowrap { 
+    white-space: nowrap; 
+}
+
+/* Media Constraints */
+img, iframe, video, object, embed, canvas { 
+    max-width: 100%; 
+    height: auto; 
+    display: block; 
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    vertical-align: bottom; 
+}
+
+.prose img { 
+    margin: 1.5rem auto; 
+}
+
+/* ========================================= */
+/* 4. AdSense & Third-Party Safety           */
 /* ========================================= */
 
 .ad-container {
-  width: 100%;
-  max-width: 100%;
-  margin: 2rem auto;
-  text-align: center;
-  overflow: hidden;
-  /* CHANGED: Removed fixed min-height to prevent empty whitespace */
-  min-height: auto; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
-  clear: both;
+    width: 100%;
+    max-width: 100%;
+    margin: 2rem auto;
+    text-align: center;
+    overflow: hidden;
+    /* Safety: Reserve space to minimize CLS */
+    min-height: 250px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    clear: both;
 }
 
-/* Collapse completely if empty */
+/* Allow collapsing if explicitly empty and not waiting for ad */
 .ad-container:empty {
     display: none;
 }
 
-/* --- ADSORB GOOGLE INJECTIONS (CRITICAL FIX) --- */
-
-/* 1. Reset Global Ad Styling */
+/* Reset Google Styles safely */
 ins.adsbygoogle {
-    background: transparent !important;
-    text-decoration: none !important;
+    background: transparent;
+    text-decoration: none;
 }
 
-/* 2. Apply Constraints ONLY to our Manual Container */
 .ad-container ins.adsbygoogle {
-    display: block !important;
+    display: block;
     width: 100%;
 }
 
-/* 3. Kill Auto-Placed Containers & Injected Body Padding */
+/* 
+   Google Auto-Placed Ads:
+   Instead of display: none !important (which risks policy violation),
+   we use containment to prevent them from breaking layout if they do load.
+*/
 .google-auto-placed,
 .adsbygoogle-noablate {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
-    position: absolute !important;
-    top: -9999px !important;
-    left: -9999px !important;
+    /* Safe containment */
+    contain: content;
+    /* If you strictly want to hide them without 'display: none', use visibility or size constraints */
+    /* However, for the anchor ad fix, the body padding-bottom override is the key. */
 }
 
-/* 4. Hide Status-Unfilled Ads */
+/* Hide unfilled ads safely */
 ins.adsbygoogle[data-ad-status="unfilled"] {
-    display: none !important;
+    display: none !important; /* This is safe/recommended by Google */
 }
 
-/* RTL Isolation Fix */
+/* RTL Isolation */
 html[dir="rtl"] .adsbygoogle {
     direction: ltr; 
     text-align: center;
 }
 
-/* Iframe Hardening */
 iframe[src*="googleads"] {
-    border: 0 !important;
-    transform: none !important;
+    border: 0;
 }
 
-/* Video Container Fix */
-.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.75rem; margin: 1.5rem auto; background-color: #000; width: 100%; max-width: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-.video-container iframe { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; border: 0; }
+/* ========================================= */
+/* 5. Components                             */
+/* ========================================= */
 
-.btn-wrapped-link { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%); color: white !important; font-weight: 700; padding: 0.75rem 1rem; border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; width: 100%; max-width: 100%; margin: 1rem 0; }
-.btn-wrapped-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.3); will-change: transform; }
+/* Video Container */
+.video-container { 
+    position: relative; 
+    padding-bottom: 56.25%; 
+    height: 0; 
+    overflow: hidden; 
+    border-radius: 0.75rem; 
+    margin: 1.5rem auto; 
+    background-color: #000; 
+    width: 100%; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+}
+.video-container iframe { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+}
 
-/* Header Actions Adjustment */
-.header-actions { display: flex; align-items: center; gap: 4px !important; }
+/* Buttons */
+.btn-wrapped-link { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 0.5rem; 
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%); 
+    color: white; 
+    font-weight: 700; 
+    padding: 0.75rem 1rem; 
+    border-radius: 0.75rem; 
+    text-decoration: none; 
+    transition: var(--transition-base); 
+    width: 100%; 
+    max-width: 100%; 
+    margin: 1rem 0; 
+}
+.btn-wrapped-link:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.3); 
+}
 
-/* Animations */
+.header-actions { 
+    display: flex; 
+    align-items: center; 
+    gap: 4px; 
+}
+
+/* ========================================= */
+/* 6. Animations & Accessibility             */
+/* ========================================= */
+
 @keyframes marquee { 
     0% { transform: translateX(-100%); } 
     100% { transform: translateX(100%); } 
 }
-.animate-marquee { animation: marquee 30s linear infinite; }
-@keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
-.animate-fade-in { animation: fadeIn 0.5s ease-out; }
 
-/* Utilities */
-::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; } .dark ::-webkit-scrollbar-track { background: #1f2937; } ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: #555; }
-.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.animate-marquee { 
+    animation: marquee 30s linear infinite; 
+}
 
-/* Table Fix */
-.table-wrapper { overflow-x: auto; width: 100%; margin-bottom: 1rem; }
-table { display: table; width: 100%; white-space: nowrap; }
+/* Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+    .animate-marquee {
+        animation: none;
+        transform: none; /* Or handle static display */
+        white-space: normal; /* Wrap text if not scrolling */
+    }
+}
 
-/* Related Posts Grid */
-@media (max-width: 480px) { 
-    .grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
+@keyframes fadeIn { 
+    0% { opacity: 0; transform: translateY(10px); } 
+    100% { opacity: 1; transform: translateY(0); } 
+}
+.animate-fade-in { 
+    animation: fadeIn 0.5s ease-out; 
 }
 
 /* ========================================= */
-/* 1. Glassmorphism Main Navigation          */
+/* 7. Utilities & Scrollbars                 */
+/* ========================================= */
+
+::-webkit-scrollbar { width: 6px; } 
+::-webkit-scrollbar-track { background: #f1f1f1; } 
+.dark ::-webkit-scrollbar-track { background: #1f2937; } 
+::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; } 
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; } 
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.table-wrapper { overflow-x: auto; width: 100%; margin-bottom: 1rem; }
+table { display: table; width: 100%; white-space: nowrap; }
+
+@media (max-width: 480px) { 
+    .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ========================================= */
+/* 8. Navigation & Glassmorphism             */
 /* ========================================= */
 
 .nav-link {
     position: relative;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: var(--transition-base);
     border: 1px solid transparent;
-    border-radius: 9999px !important;
+    border-radius: 9999px;
 }
 
 .nav-link.active {
-    background: rgba(255, 255, 255, 0.65) !important;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-color: rgba(255, 255, 255, 0.4) !important;
+    background: rgba(255, 255, 255, 0.65);
+    /* Fallback for browsers without backdrop-filter */
+    background: rgba(255, 255, 255, 0.9); 
+    @supports (backdrop-filter: blur(16px)) or (-webkit-backdrop-filter: blur(16px)) {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+    border-color: rgba(255, 255, 255, 0.4);
     box-shadow: 0 4px 15px rgba(31, 38, 135, 0.08);
-    color: #2563eb !important;
+    color: var(--color-primary);
     transform: translateY(-1px);
     font-weight: 800;
     will-change: backdrop-filter;
 }
 
 .dark .nav-link.active {
-    background: rgba(30, 41, 59, 0.6) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    color: #60a5fa !important;
+    background: rgba(30, 41, 59, 0.9);
+    @supports (backdrop-filter: blur(16px)) or (-webkit-backdrop-filter: blur(16px)) {
+        background: rgba(30, 41, 59, 0.6);
+    }
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-primary-dark);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .nav-link:not(.active):hover {
     background: rgba(0, 0, 0, 0.03);
-    color: #2563eb;
+    color: var(--color-primary);
 }
 .dark .nav-link:not(.active):hover {
     background: rgba(255, 255, 255, 0.05);
-    color: #60a5fa;
+    color: var(--color-primary-dark);
 }
 
-/* ========================================= */
-/* 2. Nav Search Button (Refined)            */
-/* ========================================= */
-
+/* Nav Search Button */
 .nav-search-btn {
     display: flex;
     align-items: center;
@@ -219,36 +347,33 @@ table { display: table; width: 100%; white-space: nowrap; }
     color: inherit;
     font-size: 13px; 
     font-weight: 700;
-    transition: all 0.2s ease;
+    transition: 0.2s ease;
     cursor: pointer;
-    margin: 0 !important;
+    margin: 0;
 }
 
 .dark .nav-search-btn { color: #d1d5db; }
-.nav-search-btn:hover { background: rgba(0, 0, 0, 0.03); color: #2563eb; }
-.dark .nav-search-btn:hover { background: rgba(255, 255, 255, 0.05); color: #60a5fa; }
+.nav-search-btn:hover { background: rgba(0, 0, 0, 0.03); color: var(--color-primary); }
+.dark .nav-search-btn:hover { background: rgba(255, 255, 255, 0.05); color: var(--color-primary-dark); }
 
 @media (max-width: 768px) {
     .nav-search-btn span { display: none; }
     .nav-search-btn { padding: 6px; justify-content: center; }
 }
 
-/* ========================================= */
-/* 3. AI Summary Button (Subtle Design)      */
-/* ========================================= */
-
+/* AI Summary Button */
 .ai-summary-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 5px 14px;
+    padding: 5px 14px; 
     border-radius: 18px;
     border: 1px solid rgba(0,0,0,0.08);
     background: rgba(255,255,255,0.5);
     font-size: 13px;
     font-weight: 500;
     color: #6b7280;
-    transition: all 0.2s ease;
+    transition: 0.2s ease;
     cursor: pointer;
     opacity: 0.85;
 }
@@ -263,22 +388,18 @@ table { display: table; width: 100%; white-space: nowrap; }
     opacity: 1;
     border-color: rgba(37,99,235,0.3);
     background: white;
-    color: #2563eb;
+    color: var(--color-primary);
 }
 
 .dark .ai-summary-btn:hover {
     border-color: rgba(255,255,255,0.3);
     background: rgba(255,255,255,0.04);
-    color: #60a5fa;
+    color: var(--color-primary-dark);
 }
 
-/* ========================================= */
-/* 4. AI Summary Box (Subtle Design)         */
-/* ========================================= */
-
+/* AI Summary Box */
 .ai-summary-box {
-    margin-top: 25px;
-    margin-bottom: 25px;
+    margin: 25px 0;
     padding: 20px;
     border-radius: 14px;
     background: rgba(249, 250, 251, 0.8);
@@ -292,33 +413,30 @@ table { display: table; width: 100%; white-space: nowrap; }
     border-color: rgba(255,255,255,0.08);
 }
 
-.ai-summary-box h3 { margin: 0 0 10px 0 !important; }
+.ai-summary-box h3 { margin: 0 0 10px 0; }
 
-/* ========================================= */
-/* 5. Ticker & Category Nav                  */
-/* ========================================= */
-
+/* Ticker & Category Nav */
 .tab-link.active-cat-link {
-    background-color: transparent !important;
-    border-color: #2563eb !important;
-    color: #2563eb !important;
-    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1) !important;
+    background-color: transparent;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
 }
 
 .dark .tab-link.active-cat-link {
-    border-color: #60a5fa !important;
-    color: #60a5fa !important;
-    box-shadow: none !important;
+    border-color: var(--color-primary-dark);
+    color: var(--color-primary-dark);
+    box-shadow: none;
 }
 
 #news-ticker-bar {
     display: flex;
     align-items: center;
-    gap: 0 !important;
-    padding: 0 !important;
+    gap: 0;
+    padding: 0;
     height: 44px;
     min-height: 44px;
-    background-color: #111827;
+    background-color: var(--color-bg-dark);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
     z-index: 40;
@@ -326,27 +444,29 @@ table { display: table; width: 100%; white-space: nowrap; }
 }
 
 #ticker-label {
-    margin: 0 !important;
-    padding: 0 8px !important;
+    margin: 0;
+    padding: 0 8px;
     height: 100%;
     align-self: stretch;
     display: flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
-    border-radius: 0 !important;
+    border-radius: 0;
     font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.025em;
     flex-shrink: 0;
     z-index: 10;
-    will-change: backdrop-filter;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.1); /* Fallback */
+    @supports (backdrop-filter: blur(8px)) {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
     border-left: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    color: #60a5fa;
+    color: var(--color-primary-dark);
     text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
 }
 
@@ -364,25 +484,25 @@ table { display: table; width: 100%; white-space: nowrap; }
 }
 
 #ticker-content span, #ticker-content a {
-    color: #f3f4f6;
+    color: var(--color-text-dark);
     font-weight: 500;
     text-decoration: none;
     transition: color 0.2s;
 }
 
 #ticker-content a:hover {
-    color: #60a5fa;
+    color: var(--color-primary-dark);
     text-decoration: underline;
 }
 
-/* ========================================= */
-/* 6. Article Styles                         */
-/* ========================================= */
-
+/* Article Styles */
 .article-header-card {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.9); /* Fallback */
+    @supports (backdrop-filter: blur(12px)) {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
     border: 1px solid rgba(229, 231, 235, 0.8);
     border-bottom: none;
     border-radius: 1rem 1rem 0 0;
@@ -394,7 +514,10 @@ table { display: table; width: 100%; white-space: nowrap; }
 }
 
 .dark .article-header-card {
-    background: rgba(17, 24, 39, 0.75);
+    background: rgba(17, 24, 39, 0.9); /* Fallback */
+    @supports (backdrop-filter: blur(12px)) {
+        background: rgba(17, 24, 39, 0.75);
+    }
     border-color: rgba(55, 65, 81, 0.8);
 }
 
@@ -432,29 +555,29 @@ table { display: table; width: 100%; white-space: nowrap; }
 }
 
 .article-image-container img {
-    width: auto !important;
-    height: auto !important;
-    max-width: 100% !important;
-    max-height: 85vh !important;
-    object-fit: contain !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 0;
+    margin: 0;
+    box-shadow: none;
+    border: none;
 }
 
 .social-icon-btn {
-    width: 2.5rem !important;
-    height: 2.5rem !important;
+    width: 2.5rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
-    transition: all 0.3s ease;
+    transition: var(--transition-base);
     background-color: rgb(31 41 55);
     border-width: 1px;
     border-color: rgb(55 65 81);
-    color: inherit; /* Allow text-color to be inherited/controlled by JS */
+    color: inherit;
     text-decoration: none;
     overflow: hidden;
 }
@@ -464,9 +587,9 @@ table { display: table; width: 100%; white-space: nowrap; }
     border-color: transparent;
 }
 
-.social-icon-btn svg.lucide { width: 1.25rem !important; height: 1.25rem !important; fill: none !important; stroke: currentColor !important; stroke-width: 2px; }
-.social-icon-btn svg:not(.lucide) { width: 1.25rem !important; height: 1.25rem !important; fill: currentColor !important; }
-.social-icon-btn img { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 50% !important; }
+.social-icon-btn svg.lucide { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 2px; }
+.social-icon-btn svg:not(.lucide) { width: 1.25rem; height: 1.25rem; fill: currentColor; }
+.social-icon-btn img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
 .pagination-controls button:disabled { opacity: 0.5; cursor: not-allowed; background-color: #e5e7eb; color: #9ca3af; }
 .dark .pagination-controls button:disabled { background-color: #374151; color: #6b7280; }
@@ -475,10 +598,10 @@ table { display: table; width: 100%; white-space: nowrap; }
     display: inline-flex; 
     align-items: center; 
     justify-content: center; 
-    width: 2.25rem !important; /* Smaller size: 36px */
-    height: 2.25rem !important; 
-    padding: 0 !important; 
-    border-radius: 9999px !important; 
+    width: 2.25rem; 
+    height: 2.25rem; 
+    padding: 0; 
+    border-radius: 9999px; 
     text-decoration: none; 
     transition: transform 0.2s, opacity 0.2s; 
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
