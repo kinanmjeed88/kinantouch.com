@@ -6,33 +6,28 @@ html {
     scroll-behavior: smooth; 
     scroll-padding-top: 140px; 
     -webkit-text-size-adjust: 100%; 
-    min-height: 100%; 
+    height: 100%; /* Ensure HTML takes full height */
     overflow-x: clip; 
 }
 
-/* --- ENTERPRISE LAYOUT FIX: Block Model Strategy --- */
-/* Switching from Flexbox to Block on Body prevents AdSense injection issues */
+/* --- MODERN STICKY FOOTER STRATEGY (Flexbox) --- */
 body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    display: block; /* CHANGED: From flex to block */
-    position: relative;
-    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Full viewport height */
     width: 100%;
     max-width: 100vw;
     margin: 0; 
     padding: 0; 
-    /* Force remove Google Anchor Ad padding spacer */
-    padding-bottom: 0 !important; 
     overflow-x: clip; 
     background-color: #f9fafb;
 }
 
-/* --- STICKY FOOTER CALCULATION --- */
-/* Pushes footer down by ensuring main takes remaining height */
-/* Calculation estimates: Header(64) + Nav(48) + Ticker(40) + Footer(~200) ≈ 350-400px */
+/* --- MAIN CONTENT GROWS TO FILL SPACE --- */
 main {
     width: 100%;
-    min-height: calc(100vh - 350px); /* Adjusted to prevent over-pushing */
+    flex: 1; /* Magic Rule: Takes all available space, pushing footer down */
     display: block;
 }
 
@@ -41,6 +36,7 @@ footer {
     width: 100%;
     position: relative;
     z-index: 10;
+    margin-top: auto; /* Extra safety for flex items */
 }
 
 /* Dark Mode Background */
@@ -71,7 +67,7 @@ img, iframe, video, object, embed, canvas {
 }
 
 /* ========================================= */
-/*  FIXED AD CONTAINER (MANUAL PLACEMENT)    */
+/*  FIXED AD CONTAINER (Dynamic Height)      */
 /* ========================================= */
 
 .ad-container {
@@ -79,8 +75,9 @@ img, iframe, video, object, embed, canvas {
   max-width: 100%;
   margin: 2rem auto;
   text-align: center;
-  overflow: hidden; /* Prevents overflow if ad is too wide */
-  min-height: 280px; /* Reserves space to prevent CLS (Layout Shift) */
+  overflow: hidden;
+  /* CHANGED: Removed fixed min-height to prevent empty whitespace */
+  min-height: auto; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -88,7 +85,7 @@ img, iframe, video, object, embed, canvas {
   clear: both;
 }
 
-/* Optional: Slight background in debug mode or whilst loading */
+/* Collapse completely if empty */
 .ad-container:empty {
     display: none;
 }
@@ -96,22 +93,18 @@ img, iframe, video, object, embed, canvas {
 /* --- ADSORB GOOGLE INJECTIONS (CRITICAL FIX) --- */
 
 /* 1. Reset Global Ad Styling */
-/* Do NOT force min-height globally on all 'ins' tags, as Google injects invisible ones at the bottom */
 ins.adsbygoogle {
     background: transparent !important;
     text-decoration: none !important;
 }
 
 /* 2. Apply Constraints ONLY to our Manual Container */
-/* This ensures only the ads we placed take up space */
 .ad-container ins.adsbygoogle {
     display: block !important;
-    min-height: 250px;
     width: 100%;
 }
 
-/* 3. Kill Auto-Placed Containers */
-/* Since you want Fixed Ads ONLY, we aggressively hide the auto-placement container */
+/* 3. Kill Auto-Placed Containers & Injected Body Padding */
 .google-auto-placed,
 .adsbygoogle-noablate {
     display: none !important;
@@ -124,12 +117,11 @@ ins.adsbygoogle {
 }
 
 /* 4. Hide Status-Unfilled Ads */
-/* If an ad slot is empty, collapse it completely */
 ins.adsbygoogle[data-ad-status="unfilled"] {
     display: none !important;
 }
 
-/* RTL Isolation Fix (CRITICAL) */
+/* RTL Isolation Fix */
 html[dir="rtl"] .adsbygoogle {
     direction: ltr; 
     text-align: center;
