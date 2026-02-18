@@ -31,8 +31,11 @@
 }
 
 /* Scope min-width to flex/grid children to avoid issues with tables/inputs */
-.flex > *, .grid > * {
+.flex > div, .flex > p, .flex > section, .grid > div, .grid > p, .grid > section {
     min-width: 0;
+}
+.flex > table, .grid > table {
+    min-width: auto;
 }
 
 html { 
@@ -76,7 +79,7 @@ main {
 footer {
     width: 100%;
     position: relative;
-    z-index: 10;
+    z-index: 5; /* Lower z-index to avoid overlapping sticky headers/content */
     margin-top: auto; 
 }
 
@@ -133,8 +136,8 @@ img, iframe, video, object, embed, canvas {
     margin: 2rem auto;
     text-align: center;
     overflow: hidden;
-    /* Safety: Reserve space to minimize CLS */
-    min-height: 250px; 
+    /* Safety: Use auto to avoid huge gaps for small ads. Add specific classes for fixed heights if needed. */
+    min-height: auto; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -226,6 +229,10 @@ iframe[src*="googleads"] {
     width: 100%; 
     max-width: 100%; 
     margin: 1rem 0; 
+    /* Fix for long text on mobile */
+    text-align: center;
+    white-space: normal;
+    line-height: 1.2;
 }
 .btn-wrapped-link:hover { 
     transform: translateY(-2px); 
