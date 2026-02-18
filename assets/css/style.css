@@ -32,7 +32,7 @@ body {
 /* Calculation estimates: Header(64) + Nav(48) + Ticker(40) + Footer(~200) ≈ 350-400px */
 main {
     width: 100%;
-    min-height: calc(100vh - 400px); 
+    min-height: calc(100vh - 350px); /* Adjusted to prevent over-pushing */
     display: block;
 }
 
@@ -93,31 +93,43 @@ img, iframe, video, object, embed, canvas {
     display: none;
 }
 
-/* Mobile Ad Adjustment */
-@media (max-width: 480px) {
-    .ad-container {
-        min-height: 250px; /* Standard MPU size */
-        margin: 1.5rem auto;
-    }
-}
+/* --- ADSORB GOOGLE INJECTIONS (CRITICAL FIX) --- */
 
-/* General Ad Protection */
-[class*="adsbygoogle"],
-[id*="google_ads"],
-iframe[src*="googleads"],
-.adsbygoogle-noablate {
-    max-width: 100vw !important;
-    overflow: hidden !important;
-}
-
-/* Performance & Isolation */
+/* 1. Reset Global Ad Styling */
+/* Do NOT force min-height globally on all 'ins' tags, as Google injects invisible ones at the bottom */
 ins.adsbygoogle {
-    display: block !important;
     background: transparent !important;
+    text-decoration: none !important;
+}
+
+/* 2. Apply Constraints ONLY to our Manual Container */
+/* This ensures only the ads we placed take up space */
+.ad-container ins.adsbygoogle {
+    display: block !important;
+    min-height: 250px;
+    width: 100%;
+}
+
+/* 3. Kill Auto-Placed Containers */
+/* Since you want Fixed Ads ONLY, we aggressively hide the auto-placement container */
+.google-auto-placed,
+.adsbygoogle-noablate {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+}
+
+/* 4. Hide Status-Unfilled Ads */
+/* If an ad slot is empty, collapse it completely */
+ins.adsbygoogle[data-ad-status="unfilled"] {
+    display: none !important;
 }
 
 /* RTL Isolation Fix (CRITICAL) */
-/* Prevents horizontal overflow caused by Google iframes inheriting RTL */
 html[dir="rtl"] .adsbygoogle {
     direction: ltr; 
     text-align: center;
@@ -127,13 +139,6 @@ html[dir="rtl"] .adsbygoogle {
 iframe[src*="googleads"] {
     border: 0 !important;
     transform: none !important;
-}
-
-/* Handle Auto Placed Container (Suppress it if manual is preferred, but keep safe) */
-.google-auto-placed {
-    display: block !important; 
-    width: 100%;
-    clear: both;
 }
 
 /* Video Container Fix */
