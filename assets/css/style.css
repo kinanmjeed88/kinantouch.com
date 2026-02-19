@@ -1,5 +1,5 @@
 /* TechTouch Global Styles
-   Version: 3.7 (The True 3.1 Core + Header Gap Killer)
+   Version: 3.8 (Ticker Color Fix + Zero Gaps)
    Optimized for: Performance, AdSense Safety, Layout Stability, ZERO Bottom Gap, and ZERO Header Gap.
 */
 
@@ -452,11 +452,17 @@ table { display: table; width: 100%; white-space: nowrap; }
     padding: 0;
     height: 44px;
     min-height: 44px;
-    background-color: var(--color-bg-dark);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: var(--color-bg-light); /* أصبح لونه فاتحاً هنا */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* حدود تناسب اللون الفاتح */
     position: relative;
     z-index: var(--z-ticker);
     overflow: hidden;
+}
+
+/* تفعيل اللون الأسود فقط عندما يعمل الوضع الداكن (Dark Mode) */
+.dark #news-ticker-bar {
+    background-color: var(--color-bg-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 #ticker-label {
@@ -482,6 +488,11 @@ table { display: table; width: 100%; white-space: nowrap; }
     }
     border-left: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: var(--color-primary); /* تغيير ليتناسب مع الخلفية الفاتحة */
+    text-shadow: none;
+}
+
+.dark #ticker-label {
     color: var(--color-primary-dark);
     text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
 }
@@ -500,15 +511,23 @@ table { display: table; width: 100%; white-space: nowrap; }
 }
 
 #ticker-content span, #ticker-content a {
-    color: var(--color-text-dark);
+    color: var(--color-text-light); /* تغيير ليتناسب مع الخلفية الفاتحة */
     font-weight: 500;
     text-decoration: none;
     transition: color 0.2s;
 }
 
+.dark #ticker-content span, .dark #ticker-content a {
+    color: var(--color-text-dark); /* يعود فاتحاً في الوضع الداكن */
+}
+
 #ticker-content a:hover {
-    color: var(--color-primary-dark);
+    color: var(--color-primary);
     text-decoration: underline;
+}
+
+.dark #ticker-content a:hover {
+    color: var(--color-primary-dark);
 }
 
 /* Article Styles */
@@ -685,4 +704,4 @@ main > .ad-container:first-child {
 
 #news-ticker-bar {
     margin-top: 0 !important;
-       }
+}
