@@ -1,6 +1,6 @@
 /* TechTouch Global Styles
-   Version: 3.4 (The Ultimate Edition)
-   Optimized for: Performance, AdSense Safety, Layout Stability, Sticky Fix, Zero Gaps, and Anti-FOUC (No Flash).
+   Version: 3.5 (The Anti-FOUC & Zero Gap Edition)
+   Optimized for: Performance, AdSense Safety, Layout Stability, Sticky Fix, Zero Gaps, and Immediate Dark Mode Rendering.
 */
 
 /* ========================================= */
@@ -42,15 +42,13 @@
     min-width: auto; 
 }
 
-/* إزالة الألوان من html لمنع الوميض الأبيض الكارثي عند التحميل */
 html { 
     scroll-behavior: smooth; 
     scroll-padding-top: 140px; 
     -webkit-text-size-adjust: 100%; 
-    background-color: transparent; 
+    background-color: var(--color-bg-light); 
 }
 
-/* فرض الخلفية الداكنة بقوة إذا كان وضع الدارك مفعلاً */
 html.dark, .dark html {
     background-color: var(--color-bg-dark) !important;
 }
@@ -67,8 +65,6 @@ body {
     background-color: var(--color-bg-light);
     color: var(--color-text-light);
     position: relative;
-    /* انتقال ناعم جداً لتغطية أي تأخير في جافاسكريبت */
-    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
 html.dark body, .dark body { 
