@@ -1,13 +1,12 @@
 /* TechTouch Global Styles
-   Version: 3.3 (The Refined Structural Edition + Zero Header Gap)
-   Optimized for: Performance, AdSense Safety, Layout Stability, Sticky Compatibility, ZERO Bottom Gap, and ZERO Header Gap.
+   Version: 3.4 (The Ultimate Edition)
+   Optimized for: Performance, AdSense Safety, Layout Stability, Sticky Fix, Zero Gaps, and Anti-FOUC (No Flash).
 */
 
 /* ========================================= */
 /* 1. Variables & Configuration              */
 /* ========================================= */
 :root {
-    /* Colors */
     --color-bg-light: #f9fafb;
     --color-bg-dark: #111827;
     --color-text-light: #111827;
@@ -15,14 +14,11 @@
     --color-primary: #2563eb;
     --color-primary-dark: #60a5fa;
     
-    /* Spacing */
     --header-height: 64px;
     --ticker-height: 40px;
     
-    /* Transitions */
     --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* Layer Management (Z-Index) */
     --z-nav: 50;
     --z-ticker: 40;
     --z-card: 20;      
@@ -39,7 +35,6 @@
     box-sizing: border-box; 
 }
 
-/* Smart Flexbox Reset: Protect tables from collapsing */
 .flex > div, .flex > p, .flex > section, .grid > div, .grid > p, .grid > section {
     min-width: 0;
 }
@@ -47,15 +42,17 @@
     min-width: auto; 
 }
 
+/* إزالة الألوان من html لمنع الوميض الأبيض الكارثي عند التحميل */
 html { 
     scroll-behavior: smooth; 
     scroll-padding-top: 140px; 
     -webkit-text-size-adjust: 100%; 
-    background-color: var(--color-bg-light);
+    background-color: transparent; 
 }
 
-.dark html {
-    background-color: var(--color-bg-dark);
+/* فرض الخلفية الداكنة بقوة إذا كان وضع الدارك مفعلاً */
+html.dark, .dark html {
+    background-color: var(--color-bg-dark) !important;
 }
 
 body { 
@@ -70,11 +67,13 @@ body {
     background-color: var(--color-bg-light);
     color: var(--color-text-light);
     position: relative;
+    /* انتقال ناعم جداً لتغطية أي تأخير في جافاسكريبت */
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 
-.dark body { 
-    background-color: var(--color-bg-dark); 
-    color: var(--color-text-dark);
+html.dark body, .dark body { 
+    background-color: var(--color-bg-dark) !important; 
+    color: var(--color-text-dark) !important;
 }
 
 .site-wrapper {
@@ -91,7 +90,6 @@ main {
     display: block;
     position: relative;
     z-index: var(--z-content);
-    /* ضمان عدم وجود مساحة علوية من حاوية main نفسها */
     margin-top: 0 !important;
     padding-top: 0 !important;
 }
@@ -119,7 +117,6 @@ p, li { font-size: 1rem; line-height: 1.8; }
     main { padding-left: 1rem; padding-right: 1rem; } 
 }
 
-/* Content Wrapping */
 .prose :is(h1, h2, h3, h4, h5, h6, p, span, a, li, div, blockquote, pre) { 
     overflow-wrap: break-word; 
     word-wrap: break-word; 
@@ -131,7 +128,6 @@ p, li { font-size: 1rem; line-height: 1.8; }
     white-space: nowrap; 
 }
 
-/* Media Constraints */
 img, iframe, video, object, embed, canvas { 
     max-width: 100%; 
     height: auto; 
@@ -637,25 +633,21 @@ body > div[style*="display: none"] {
 /* 10. HEADER GAP KILLER                     */
 /* ========================================= */
 
-/* 1. إزالة أي مساحة سفلية من الهيدر نفسه */
 header {
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
 }
 
-/* 2. إجبار أول عنصر داخل main (سواء كان إعلان أو محتوى) على الالتصاق التام بدون هوامش */
 main > *:first-child,
 .site-wrapper > *:first-child {
     margin-top: 0 !important;
 }
 
-/* 3. التعامل مع الإعلانات التلقائية إذا ظهرت أسفل الهيدر مباشرة */
 .ad-container:first-child,
 main > .ad-container:first-child {
     margin-top: 0 !important;
 }
 
-/* 4. إزالة الفراغ من شريط الأخبار إذا كان هو العنصر التالي للهيدر */
 #news-ticker-bar {
     margin-top: 0 !important;
 }
