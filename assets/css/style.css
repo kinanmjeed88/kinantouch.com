@@ -1,6 +1,6 @@
 /* TechTouch Global Styles
-   Version: 3.1 (The Nuclear Gap Fix Edition)
-   Optimized for: Performance, AdSense Safety, Layout Stability, and ZERO Bottom Gap.
+   Version: 3.3 (The Refined Structural Edition + Zero Header Gap)
+   Optimized for: Performance, AdSense Safety, Layout Stability, Sticky Compatibility, ZERO Bottom Gap, and ZERO Header Gap.
 */
 
 /* ========================================= */
@@ -25,9 +25,11 @@
     /* Layer Management (Z-Index) */
     --z-nav: 50;
     --z-ticker: 40;
-    --z-modal: 100;
+    --z-card: 20;      
+    --z-card-meta: 19; 
     --z-content: 10;
     --z-footer: 5;
+    --z-modal: 100;
 }
 
 /* ========================================= */
@@ -49,12 +51,6 @@ html {
     scroll-behavior: smooth; 
     scroll-padding-top: 140px; 
     -webkit-text-size-adjust: 100%; 
-    /* Fix: Force height to auto to prevent scroll locking */
-    height: auto !important;
-    min-height: 100%;
-    overflow-x: hidden; 
-    overflow-x: clip; 
-    /* Visual Trick: Match background to footer to hide 1px gaps */
     background-color: var(--color-bg-light);
 }
 
@@ -68,13 +64,9 @@ body {
     flex-direction: column;
     min-height: 100vh; 
     width: 100%;
-    max-width: 100vw;
     margin: 0; 
     padding: 0; 
-    /* CRITICAL FIX: Override Google's injected padding completely */
     padding-bottom: 0 !important;
-    overflow-x: hidden; 
-    overflow-x: clip; 
     background-color: var(--color-bg-light);
     color: var(--color-text-light);
     position: relative;
@@ -85,6 +77,13 @@ body {
     color: var(--color-text-dark);
 }
 
+.site-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: clip;
+}
+
 /* Main Content */
 main {
     width: 100%;
@@ -92,6 +91,9 @@ main {
     display: block;
     position: relative;
     z-index: var(--z-content);
+    /* ضمان عدم وجود مساحة علوية من حاوية main نفسها */
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
 footer {
@@ -99,8 +101,6 @@ footer {
     position: relative;
     z-index: var(--z-footer);
     margin-top: auto; 
-    /* Safety: Ensure no margin pushes bottom */
-    margin-bottom: 0 !important;
 }
 
 /* ========================================= */
@@ -156,7 +156,7 @@ img, iframe, video, object, embed, canvas {
     margin: 2rem auto;
     text-align: center;
     overflow: hidden;
-    min-height: auto; 
+    min-height: 0; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -168,12 +168,6 @@ img, iframe, video, object, embed, canvas {
     min-height: 250px;
 }
 
-/* Allow collapsing if explicitly empty */
-.ad-container:empty {
-    display: none;
-}
-
-/* Reset Google Styles safely */
 ins.adsbygoogle {
     background: transparent;
     text-decoration: none;
@@ -184,15 +178,14 @@ ins.adsbygoogle {
     width: 100%;
 }
 
-/* Safe Containment for Auto-Ads */
 .google-auto-placed,
 .adsbygoogle-noablate {
-    contain: content;
+    contain: layout style;
 }
 
-/* Hide unfilled ads safely */
 ins.adsbygoogle[data-ad-status="unfilled"] {
     display: none !important; 
+    height: 0 !important;
 }
 
 html[dir="rtl"] .adsbygoogle {
@@ -208,7 +201,6 @@ iframe[src*="googleads"] {
 /* 5. Components                             */
 /* ========================================= */
 
-/* Video Container */
 .video-container { 
     position: relative; 
     padding-bottom: 56.25%; 
@@ -228,7 +220,6 @@ iframe[src*="googleads"] {
     height: 100%; 
 }
 
-/* Buttons (Robust Mobile Fix) */
 .btn-wrapped-link { 
     display: flex; 
     align-items: center; 
@@ -320,7 +311,7 @@ table { display: table; width: 100%; white-space: nowrap; }
 }
 
 .nav-link.active {
-    background: rgba(255, 255, 255, 0.9); /* Fallback */
+    background: rgba(255, 255, 255, 0.9);
     @supports (backdrop-filter: blur(16px)) or (-webkit-backdrop-filter: blur(16px)) {
         background: rgba(255, 255, 255, 0.65);
         backdrop-filter: blur(16px);
@@ -352,7 +343,6 @@ table { display: table; width: 100%; white-space: nowrap; }
     color: var(--color-primary-dark);
 }
 
-/* Nav Search Button */
 .nav-search-btn {
     display: flex;
     align-items: center;
@@ -378,7 +368,6 @@ table { display: table; width: 100%; white-space: nowrap; }
     .nav-search-btn { padding: 6px; justify-content: center; }
 }
 
-/* AI Summary */
 .ai-summary-btn {
     display: inline-flex;
     align-items: center;
@@ -431,7 +420,6 @@ table { display: table; width: 100%; white-space: nowrap; }
 
 .ai-summary-box h3 { margin: 0 0 10px 0; }
 
-/* Ticker */
 .tab-link.active-cat-link {
     background-color: transparent;
     border-color: var(--color-primary);
@@ -511,7 +499,6 @@ table { display: table; width: 100%; white-space: nowrap; }
     text-decoration: underline;
 }
 
-/* Article Styles */
 .article-header-card {
     background: rgba(255, 255, 255, 0.9);
     @supports (backdrop-filter: blur(12px)) {
@@ -525,7 +512,7 @@ table { display: table; width: 100%; white-space: nowrap; }
     padding: 1.5rem;
     box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
     position: relative;
-    z-index: 20; 
+    z-index: var(--z-card); 
     margin-bottom: 0;
 }
 
@@ -543,7 +530,7 @@ table { display: table; width: 100%; white-space: nowrap; }
     border-top: 1px dashed rgba(229, 231, 235, 0.5);
     border-radius: 0 0 1rem 1rem;
     position: relative;
-    z-index: 19;
+    z-index: var(--z-card-meta); 
 }
 
 .dark .article-meta-bar {
@@ -626,40 +613,49 @@ table { display: table; width: 100%; white-space: nowrap; }
 .share-btn i, .share-btn svg { width: 1.1rem; height: 1.1rem; }
 
 /* ========================================= */
-/* 9. THE NUCLEAR FIX (Gap Killer)           */
+/* 9. THE NUCLEAR FIX (Gap & Layout Safety)  */
 /* ========================================= */
 
-/* Ensure last elements in footer do not push layout */
 footer p:last-child,
 footer div:last-child,
 footer section:last-child {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
-/* Ensure footer ads don't create gaps if empty */
-footer .ad-container {
-    margin-bottom: 0 !important;
-    min-height: 0 !important; 
-}
-
-/* Kill generic empty elements injected at bottom */
-body > div:empty,
-body > span:empty {
+body > iframe[style*="display: none"],
+body > iframe[style*="visibility: hidden"],
+body > div[style*="display: none"] {
     display: none !important;
     height: 0 !important;
+    width: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
 }
 
-/* Specifically target Google auto-placed containers */
-.google-auto-placed:empty,
-.adsbygoogle-noablate:empty {
-    display: none !important;
-    height: 0 !important;
+/* ========================================= */
+/* 10. HEADER GAP KILLER                     */
+/* ========================================= */
+
+/* 1. إزالة أي مساحة سفلية من الهيدر نفسه */
+header {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 
-/* Prevent any injected iframe/script from taking space at bottom */
-body > iframe[style*="display: none"] {
-    display: none !important;
+/* 2. إجبار أول عنصر داخل main (سواء كان إعلان أو محتوى) على الالتصاق التام بدون هوامش */
+main > *:first-child,
+.site-wrapper > *:first-child {
+    margin-top: 0 !important;
+}
+
+/* 3. التعامل مع الإعلانات التلقائية إذا ظهرت أسفل الهيدر مباشرة */
+.ad-container:first-child,
+main > .ad-container:first-child {
+    margin-top: 0 !important;
+}
+
+/* 4. إزالة الفراغ من شريط الأخبار إذا كان هو العنصر التالي للهيدر */
+#news-ticker-bar {
+    margin-top: 0 !important;
 }
