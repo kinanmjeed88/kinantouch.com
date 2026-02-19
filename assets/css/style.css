@@ -1,6 +1,6 @@
 /* TechTouch Global Styles
-   Version: 3.5 (The Anti-FOUC & Zero Gap Edition)
-   Optimized for: Performance, AdSense Safety, Layout Stability, Sticky Fix, Zero Gaps, and Immediate Dark Mode Rendering.
+   Version: 3.6 (The Anti-FOUC & Zero Gap Edition - 3.1 Logic Applied)
+   Optimized for: Performance, AdSense Safety, Layout Stability, Sticky Compatibility, and Immediate Dark Mode Rendering.
 */
 
 /* ========================================= */
@@ -42,15 +42,20 @@
     min-width: auto; 
 }
 
+/* تطبيق نفس منطق 3.1 لمنع الوميض: 
+   إزالة تمدد الخلفية القسري وإضافة الـ visual trick للون */
 html { 
     scroll-behavior: smooth; 
     scroll-padding-top: 140px; 
     -webkit-text-size-adjust: 100%; 
-    background-color: var(--color-bg-light); 
+    height: auto !important; /* إعادة الفكرة القديمة لإخفاء الوميض */
+    min-height: 100%;
+    overflow-x: clip; 
+    background-color: var(--color-bg-light);
 }
 
-html.dark, .dark html {
-    background-color: var(--color-bg-dark) !important;
+.dark html {
+    background-color: var(--color-bg-dark);
 }
 
 body { 
@@ -62,14 +67,15 @@ body {
     margin: 0; 
     padding: 0; 
     padding-bottom: 0 !important;
+    overflow-x: clip; /* معالجة التمرير الأفقي بأمان */
     background-color: var(--color-bg-light);
     color: var(--color-text-light);
     position: relative;
 }
 
-html.dark body, .dark body { 
-    background-color: var(--color-bg-dark) !important; 
-    color: var(--color-text-dark) !important;
+.dark body { 
+    background-color: var(--color-bg-dark); 
+    color: var(--color-text-dark);
 }
 
 .site-wrapper {
@@ -95,6 +101,7 @@ footer {
     position: relative;
     z-index: var(--z-footer);
     margin-top: auto; 
+    margin-bottom: 0 !important;
 }
 
 /* ========================================= */
@@ -148,7 +155,7 @@ img, iframe, video, object, embed, canvas {
     margin: 2rem auto;
     text-align: center;
     overflow: hidden;
-    min-height: 0; 
+    min-height: auto; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -158,6 +165,10 @@ img, iframe, video, object, embed, canvas {
 
 .ad-container.rect-ad {
     min-height: 250px;
+}
+
+.ad-container:empty {
+    display: none;
 }
 
 ins.adsbygoogle {
@@ -177,7 +188,6 @@ ins.adsbygoogle {
 
 ins.adsbygoogle[data-ad-status="unfilled"] {
     display: none !important; 
-    height: 0 !important;
 }
 
 html[dir="rtl"] .adsbygoogle {
@@ -611,18 +621,31 @@ table { display: table; width: 100%; white-space: nowrap; }
 footer p:last-child,
 footer div:last-child,
 footer section:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 
-body > iframe[style*="display: none"],
-body > iframe[style*="visibility: hidden"],
-body > div[style*="display: none"] {
+footer .ad-container {
+    margin-bottom: 0 !important;
+    min-height: 0 !important; 
+}
+
+body > div:empty,
+body > span:empty {
     display: none !important;
     height: 0 !important;
-    width: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
+}
+
+.google-auto-placed:empty,
+.adsbygoogle-noablate:empty {
+    display: none !important;
+    height: 0 !important;
+}
+
+body > iframe[style*="display: none"] {
+    display: none !important;
 }
 
 /* ========================================= */
