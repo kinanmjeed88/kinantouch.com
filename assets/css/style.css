@@ -1,6 +1,6 @@
 /* TechTouch Global Styles
-   Version: 3.1 (The Nuclear Gap Fix Edition)
-   Optimized for: Performance, AdSense Safety, Layout Stability, and ZERO Bottom Gap.
+   Version: 3.7 (The True 3.1 Core + Header Gap Killer)
+   Optimized for: Performance, AdSense Safety, Layout Stability, ZERO Bottom Gap, and ZERO Header Gap.
 */
 
 /* ========================================= */
@@ -663,3 +663,26 @@ body > span:empty {
 body > iframe[style*="display: none"] {
     display: none !important;
 }
+
+/* ========================================= */
+/* 10. HEADER GAP KILLER                     */
+/* ========================================= */
+
+header {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+main > *:first-child,
+.site-wrapper > *:first-child {
+    margin-top: 0 !important;
+}
+
+.ad-container:first-child,
+main > .ad-container:first-child {
+    margin-top: 0 !important;
+}
+
+#news-ticker-bar {
+    margin-top: 0 !important;
+       }
