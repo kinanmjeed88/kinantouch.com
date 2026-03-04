@@ -1,5 +1,5 @@
 /* TechTouch Global Styles
-   Version: 3.8 (Ticker Color Fix + Zero Gaps)
+   Version: 3.9 (Ticker Color Fix + Zero Gaps + Auto Ads Anchor Fix)
    Optimized for: Performance, AdSense Safety, Layout Stability, ZERO Bottom Gap, and ZERO Header Gap.
 */
 
@@ -184,12 +184,6 @@ ins.adsbygoogle {
     width: 100%;
 }
 
-/* Safe Containment for Auto-Ads */
-.google-auto-placed,
-.adsbygoogle-noablate {
-    contain: content;
-}
-
 /* Hide unfilled ads safely */
 ins.adsbygoogle[data-ad-status="unfilled"] {
     display: none !important; 
@@ -200,8 +194,13 @@ html[dir="rtl"] .adsbygoogle {
     text-align: center;
 }
 
+/* Fix for Anchor Ads Close Button (Prevents cutting off the arrow) */
+.adsbygoogle-noablate iframe,
+iframe[name*="google_ads_iframe"],
 iframe[src*="googleads"] {
     border: 0;
+    height: auto !important;
+    max-height: none !important;
 }
 
 /* ========================================= */
