@@ -1,8 +1,6 @@
-
 import { escapeHtml, cleanPath } from '../utils/helpers.js';
 
 export const GA_SCRIPT = (id) => `
-<!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${id}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -111,17 +109,16 @@ export const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     return `<i data-lucide="${defaultIconName}" style="width:${defaultSize}px; height:${defaultSize}px;"></i>`;
 };
 
-// --- FIXED AD UNIT (SAFE & MANUAL) ---
+// --- FIXED AD UNIT (SAFE & OPTIMIZED) ---
 export const FIXED_AD_UNIT = `
-<div class="ad-container">
-    <span class="text-[10px] text-gray-300 dark:text-gray-600 block mb-1 tracking-widest font-mono">ADVERTISEMENT</span>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7355327732066930" crossorigin="anonymous"></script>
+<div class="ad-container" style="min-width: 250px; min-height: 100px; text-align: center; margin: 2rem auto; clear: both; overflow: hidden;">
+    <span class="text-[10px] text-gray-400 block mb-2 tracking-widest font-mono">ADVERTISEMENT</span>
     <ins class="adsbygoogle"
-         style="display:block"
+         style="display:block; text-align:center;"
+         data-ad-layout="in-article"
+         data-ad-format="fluid"
          data-ad-client="ca-pub-7355327732066930"
-         data-ad-slot="1057566101"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
+         data-ad-slot="1057566101"></ins>
     <script>
          (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
