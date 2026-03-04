@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import path from 'path';
 import * as cheerio from 'cheerio';
@@ -131,27 +130,20 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         
         $('.share-buttons-container').remove();
 
-        // Smart Ad Injection Strategy
+        // Smart Ad Injection Strategy (المصححة)
         const paragraphs = $content('p');
-        // Only inject if article is long enough (at least 2 paragraphs)
+        
+        // حقن الإعلان العلوي والأوسط فقط إذا كان المقال طويلاً بما يكفي
         if (paragraphs.length > 2) {
-            // 1. Top Ad: After first paragraph
             $content(paragraphs[0]).after(FIXED_AD_UNIT);
 
-            // 2. Middle Ad: If article has enough length
             if (paragraphs.length > 4) {
                 const midPoint = Math.floor(paragraphs.length / 2);
                 $content(paragraphs[midPoint]).after(FIXED_AD_UNIT);
             }
-
-            // 3. Bottom Ad: Before last paragraph (or append to end)
-            // We'll append one at the end of the container as well to be safe
-        } else {
-            // Very short article, just append to bottom
-            $content.root().append(FIXED_AD_UNIT);
         }
         
-        // Explicit bottom ad (always)
+        // إعلان سفلي واحد دائماً في نهاية المقال
         $content.root().append(FIXED_AD_UNIT);
 
         $('article').html($content.html()); 
