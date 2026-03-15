@@ -111,7 +111,7 @@ export const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
 
 // --- FIXED AD UNIT (SAFE & OPTIMIZED) ---
 export const FIXED_AD_UNIT = `
-<div class="ad-container" style="min-width: 250px; min-height: 100px; text-align: center; margin: 2rem auto; clear: both; overflow: hidden;">
+<div class="ad-placement-wrapper" style="text-align: center; margin: 2rem auto; clear: both;">
     <span class="text-[10px] text-gray-400 block mb-2 tracking-widest font-mono">ADVERTISEMENT</span>
     <ins class="adsbygoogle"
          style="display:block; text-align:center;"
