@@ -35,7 +35,7 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
         const content = $(el).html() || '';
         if (src.includes("cdn.onesignal.com") || content.includes("OneSignal")) { $(el).remove(); }
         if (src.includes('googletagmanager.com') || content.includes("gtag(") || src.includes('G-')) { $(el).remove(); }
-        if (src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle")) { $(el).remove(); }
+        // if (src.includes("pagead2.googlesyndication.com") || content.includes("adsbygoogle")) { $(el).remove(); }
         if (content.includes("document.addEventListener('DOMContentLoaded', () => {") && content.includes("fallbackImage")) { $(el).remove(); }
         // Remove Fuse CDN injection here (handled in search-engine.js module)
         if (src.includes("fuse.js")) { $(el).remove(); }
@@ -48,6 +48,7 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
 
     const noAdsPages = ['privacy.html', 'about.html'];
     if (!noAdsPages.includes(fileName)) {
+        $('head script[src*="adsbygoogle"]').remove();
         $('head').append(AD_SCRIPT(AD_CLIENT_ID));
     }
     
