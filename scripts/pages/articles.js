@@ -118,7 +118,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
 
         // --- CONTENT PROCESSING & AD INJECTION ---
         const $content = cheerio.load(post.content, null, false);
-        $content('.adsbygoogle-container, .ad-placeholder').remove();
+        // $content('.adsbygoogle-container, .ad-placeholder').remove();
         
         // Optimize Images
         $content('img').each((i, img) => {
@@ -130,23 +130,42 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         
         $('.share-buttons-container').remove();
 
-        // Smart Ad Injection Strategy (المصححة)
-        const paragraphs = $content('p');
-        
-        // حقن الإعلان العلوي والأوسط فقط إذا كان المقال طويلاً بما يكفي
-        if (paragraphs.length > 2) {
-            $content(paragraphs[0]).after(FIXED_AD_UNIT);
-
-            if (paragraphs.length > 4) {
-                const midPoint = Math.floor(paragraphs.length / 2);
-                $content(paragraphs[midPoint]).after(FIXED_AD_UNIT);
+        // 1. إعلان بداية المنشور تحت الصورة أو الفيديو الأول (إذا وجد)
+        const mediaElements = $content('img, iframe, video');
+        if (mediaElements.length > 0) {
+            $content(mediaElements[0]).parent().after(`
+            <div class="ad-top-content mb-4 mt-2">
+               ${FIXED_AD_UNIT}
+            </div>`);
+        } else {
+            const firstParagraph = $content('p').first();
+            if (firstParagraph.length) {
+               firstParagraph.after(`
+               <div class="ad-top-content mb-4 mt-2">
+                  ${FIXED_AD_UNIT}
+               </div>`);
             }
         }
-        
-        // إعلان سفلي واحد دائماً في نهاية المقال
-        $content.root().append(FIXED_AD_UNIT);
+
+        // 2. إعلان في وسط المنشور
+        const paragraphs = $content('p');
+        if (paragraphs.length > 4) {
+            const midPoint = Math.floor(paragraphs.length / 2);
+            $content(paragraphs[midPoint]).after(`
+            <div class="ad-mid-content mb-4 mt-4">
+               ${FIXED_AD_UNIT}
+            </div>`);
+        }
 
         $('article').html($content.html()); 
+
+        // 3. إعلان ما قبل الخلاصة الذكية
+        if (post.summary) {
+            $('article').append(`
+            <div class="ad-pre-summary mb-4 mt-4">
+                ${FIXED_AD_UNIT}
+            </div>`);
+        }
 
         // --- AI SUMMARY CONTENT ---
         $('#ai-summary-container').remove();
@@ -248,11 +267,17 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             });
             relatedHTML += `</div>`;
 
-            // Inject Custom/Ad Banner between Grid & List
+            // 4. إعلان مخصص + إعلان تلقائي جوجل بين المقالات المقترحة (قد يعجبك أيضاً)
             const adHTML = generateAdBannerHTML(aboutData);
             if (adHTML) {
-                relatedHTML += adHTML;
+                relatedHTML += `<div class="ad-mid-related mb-6 mt-4">${adHTML}</div>`;
             }
+            
+            // إعلان جوجل التلقائي قبل القائمة الجانبية (List)
+            relatedHTML += `
+            <div class="ad-mid-related-google mb-6 mt-4">
+                ${FIXED_AD_UNIT}
+            </div>`;
 
             if (listPosts.length > 0) {
                 relatedHTML += `<div class="flex flex-col gap-2">`;
