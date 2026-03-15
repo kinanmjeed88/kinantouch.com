@@ -1,23 +1,28 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-NZVS1EN9RG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NZVS1EN9RG');
+</script>
+    <link rel="preconnect" href="https://esm.sh" crossorigin="">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="">
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>من نحن | TechTouch</title>
-    <meta name="description" content="تعرف على كنان الصائغ وموقع TechTouch - المصدر العربي الأول للأخبار التقنية والتطبيقات." />
+    <meta name="description" content="تعرف على كنان الصائغ وموقع TechTouch - المصدر العربي الأول للأخبار التقنية والتطبيقات.">
     <meta name="robots" content="index, follow">
     
     <!-- Google Analytics 4 (Professional Setup) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZVS1EN9RG"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+    
+    
 
-      gtag('config', 'G-NZVS1EN9RG');
-    </script>
-
-    <link rel="canonical" href="https://kinanmjeed88.github.io/about.html">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,46 +32,249 @@
     </script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
-</head>
+
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer=""></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(function(OneSignal) {
+    if (!OneSignal.initialized) {
+        OneSignal.init({
+          appId: "YOUR_ONESIGNAL_APP_ID",
+          safari_web_id: "web.onesignal.auto.xxxxx",
+          notifyButton: { enable: true },
+        });
+        OneSignal.initialized = true;
+    }
+  });
+</script>
+<link rel="canonical" href="https://kinantouch.com/about.html">
+    <style id="dynamic-theme-styles">
+/* =====================================
+   STRUCTURAL PRESERVATION
+===================================== */
+.nav-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    border-radius: 8px;
+    font-weight: 700;
+    color: #6b7280;
+    background: transparent;
+    transition: all 0.2s ease;
+    width: 100%;
+    height: 100%;
+    border: 1px solid transparent;
+}
+.dark .nav-tab { color: #9ca3af; }
+.nav-tab i { width: 18px; height: 18px; }
+
+/* Active Main Nav: Glassy Blue, Smaller */
+.nav-tab.active {
+    background: rgba(37, 99, 235, 0.12); /* Glassy Blue */
+    color: #2563eb;
+    border: 1px solid rgba(37, 99, 235, 0.2); /* Subtle Border */
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.05);
+    transform: scale(0.95); /* Slightly smaller visual footprint */
+}
+.dark .nav-tab.active {
+    background: rgba(37, 99, 235, 0.2);
+    color: #60a5fa;
+    border-color: rgba(37, 99, 235, 0.4);
+}
+
+.nav-tab:hover:not(.active) { background: #f3f4f6; color: #1f2937; }
+.dark .nav-tab:hover:not(.active) { background: #1f2937; color: #f3f4f6; }
+
+/* Category Nav: Outline Style */
+.cat-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-weight: 700;
+    border-radius: 999px;
+    background: transparent;
+    color: #6b7280;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: 2px solid transparent; /* Prepare for outline */
+}
+.dark .cat-tab { color: #9ca3af; }
+
+/* Active Category: Outline Only */
+.cat-tab.active {
+    background: transparent;
+    color: #2563eb;
+    border-color: #2563eb; /* The Outline */
+}
+.dark .cat-tab.active {
+    color: #60a5fa;
+    border-color: #60a5fa;
+}
+
+.cat-tab:hover:not(.active) { background: #f3f4f6; color: #1f2937; }
+.dark .cat-tab:hover:not(.active) { background: #374151; color: white; }
+
+.ticker-text, .ticker-text a { font-size: 14px !important; }
+
+/* =====================================
+   ROOT SCALE SYSTEM
+===================================== */
+
+:root {
+  --spacing-scale: 1.1538461538461537;
+}
+
+/* =====================================
+   NAVIGATION CONTROL
+   (Main Nav + Category Nav)
+===================================== */
+
+.nav-tab,
+.nav-tab span,
+.cat-tab,
+.cat-tab span,
+nav .nav-link,
+nav .nav-link span {
+  font-size: 14px !important;
+}
+
+/* =====================================
+   CONTENT BODY CONTROL
+===================================== */
+
+body,
+p,
+li,
+.post-card .custom-desc-size,
+.prose p,
+.prose li,
+article p,
+article li {
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+}
+
+/* =====================================
+   TITLES CONTROL (H2 / H3 / Cards)
+===================================== */
+
+h2,
+h3,
+h4,
+.prose h2,
+.prose h3,
+.post-card .custom-title-size,
+.related-fixed-title {
+  font-size: 15px !important;
+  margin-bottom: calc(8px * var(--spacing-scale)) !important;
+}
+
+/* =====================================
+   MAIN TITLES (H1)
+===================================== */
+
+h1,
+.article-header-card h1,
+.text-3xl,
+.text-4xl {
+  font-size: 26px !important;
+  margin-bottom: calc(14px * var(--spacing-scale)) !important;
+}
+
+/* =====================================
+   COMPACT SPACING SYSTEM
+===================================== */
+
+/* تقليل padding الرئيسي */
+main {
+  padding-top: calc(12px * var(--spacing-scale)) !important;
+  padding-bottom: calc(12px * var(--spacing-scale)) !important;
+}
+
+/* تقليل المسافة بين البطاقات */
+.grid {
+  gap: calc(12px * var(--spacing-scale)) !important;
+}
+
+/* تقليل المسافات بين الأقسام */
+section {
+  margin-top: calc(16px * var(--spacing-scale)) !important;
+  margin-bottom: calc(16px * var(--spacing-scale)) !important;
+}
+
+/* ضبط قسم related */
+.related-posts {
+  margin-top: calc(18px * var(--spacing-scale)) !important;
+  padding-top: calc(12px * var(--spacing-scale)) !important;
+}
+
+/* تقليل مسافة المقال */
+article {
+  margin-top: 8px !important;
+}
+
+/* تقليل padding البطاقات */
+.post-card .p-4 {
+  padding: 12px !important;
+}
+
+#about-cover-section {
+  padding: calc(30px * var(--spacing-scale)) !important;
+}
+
+</style>
+    </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col min-h-screen">
     
     <header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                  <!-- Unified Profile Image -->
-                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-md">
-                    <img id="header-profile-img" src="assets/images/me.jpg" alt="Profile photo" class="w-full h-full object-cover profile-img-display" />
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-md shrink-0">
+                    <img id="header-profile-img" src="assets/images/1770513663141_Screenshot_٢٠٢٦-٠١-٢٠-٠١-٥٤-٣٣-٩٨_99c04817c0de5652397fc8b56c3b3817.webp" alt="Profile photo" class="w-full h-full object-cover profile-img-display">
                 </div>
                 <span id="header-profile-name" class="font-bold text-lg text-gray-800 dark:text-gray-100 hidden sm:block">كنان الصائغ</span>
             </div>
-            <a href="index.html" class="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight">TechTouch</a>
+            <a href="index.html" class="flex items-center"><img src="assets/images/1770924402142_٢٠٢٦٠٢١٢_٢٢٢٦٢١.webp" alt="TechTouch" style="max-height: 40px; width: auto; display: block;"></a>
             <!-- Buttons will be injected here by the generator script cleanly -->
-        </div>
+        <div class="flex items-center gap-1 header-actions">
+        <a href="index.html" id="home-btn-header" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mx-1 order-1" aria-label="الرئيسية">
+            <i data-lucide="home" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+        </a>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors order-3">
+            <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
+            <i data-lucide="sun" class="w-5 h-5 text-yellow-500 hidden dark:block"></i>
+        </button></div></div>
     </header>
 
-    <nav class="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-16 z-30 overflow-x-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-center space-x-reverse space-x-2 h-12 min-w-max">
-                 <a href="index.html" class="nav-link flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="home" class="w-4 h-4"></i><span>الرئيسية</span>
-                </a>
-                 <a href="tools.html" class="nav-link flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="wrench" class="w-4 h-4"></i><span>الأدوات</span>
-                </a>
-                <a href="about.html" class="nav-link flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <i data-lucide="info" class="w-4 h-4"></i><span>حول</span>
-                </a>
-            </div>
-        </div>
+    <nav class="w-full sticky top-16 z-30">
+    <div class="grid grid-cols-4 gap-1 px-3 py-1 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800" style="height: 48px;">
+        <a href="index.html" class="nav-tab">
+            <span>الرئيسية</span>
+        </a>
+        <a href="tools.html" class="nav-tab">
+            <span>الأدوات</span>
+        </a>
+        <a href="about.html" class="nav-tab">
+            <span>حول</span>
+        </a>
+        <button id="nav-search-btn" class="nav-tab" aria-label="بحث">
+            <i data-lucide="search"></i>
+        </button>
+    </div>
     </nav>
 
     <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
             
             <!-- This ID allows the generator script to dynamically change background -->
-            <div id="about-cover-section" class="bg-gradient-to-r from-blue-700 to-blue-500 bg-cover bg-center h-40 relative">
+            <div id="about-cover-section" class="from-blue-700 to-blue-500 bg-cover bg-center h-40 relative" style="background: url('assets/images/1770513680706_IMG_20260131_212859_0807.webp') center/cover no-repeat;">
                  <div class="absolute -bottom-16 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-white dark:bg-gray-800 rounded-full border-[6px] border-white dark:border-gray-800 overflow-hidden shadow-lg z-10">
-                     <img src="assets/images/me.jpg" alt="Profile photo" class="w-full h-full object-cover profile-img-display" />
+                     <img src="assets/images/1770513663141_Screenshot_٢٠٢٦-٠١-٢٠-٠١-٥٤-٣٣-٩٨_99c04817c0de5652397fc8b56c3b3817.webp" alt="Profile photo" class="w-full h-full object-cover profile-img-display">
                  </div>
             </div>
             
@@ -77,10 +285,7 @@
               <div class="prose dark:prose-invert max-w-none space-y-8 text-right">
                 <!-- Intro -->
                 <section>
-                    <p class="leading-relaxed text-gray-800 dark:text-gray-200 text-lg">
-                        أنا <strong>كنان مجيد الصائغ</strong>، من مواليد 1988، مهتم بالأخبار والمعلومات التقنية والذكاء الاصطناعي.
-                        أعمل على نشر المحتوى التقني، وأدوات وتقنيات الذكاء الاصطناعي، والتطبيقات المعدلة، والتطبيقات الرياضية، وتطبيقات الأفلام والخدمات.
-                    </p>
+                    <p class="leading-relaxed text-gray-800 dark:text-gray-200 text-lg">أنا كنان مجيد الصائغ، من مواليد 1988، مهتم بالأخبار والمعلومات التقنية والذكاء الاصطناعي. أعمل على نشر المحتوى التقني، وأدوات وتقنيات الذكاء الاصطناعي، والتطبيقات المعدلة.</p>
                     <p class="leading-relaxed text-gray-800 dark:text-gray-200 mt-2">
                         يهدف موقع <strong>TechTouch</strong> إلى تقديم محتوى تقني مبسّط ومفيد للمستخدم العربي.
                     </p>
@@ -89,20 +294,14 @@
                 <!-- Telegram Bot Section (Renamed) -->
                 <section class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border border-blue-100 dark:border-blue-800">
                     <h2 class="text-xl font-bold text-blue-700 dark:text-blue-400 mb-4 flex items-center gap-2">
-                        <i data-lucide="message-square" class="w-5 h-5"></i>
-                        مركز خدمة الطلبات (Bot)
-                    </h2>
-                    <ul id="about-bot-list" class="list-none space-y-3 text-gray-700 dark:text-gray-300">
-                        <!-- Content Injected via Generator -->
-                    </ul>
+                        <i data-lucide="message-square" class="w-5 h-5"></i> سياسة الخصوصية</h2>
+                    <ul id="about-bot-list" class="list-none space-y-3 text-gray-700 dark:text-gray-300"><li class="flex items-start gap-2"><span class="text-blue-500 text-xl">✪</span><span>نحن في Kinantouch نحترم خصوصية زوارنا ونلتزم بحماية أي معلومات يتم جمعها أثناء تصفح الموقع.</span></li><li class="flex items-start gap-2"><span class="text-blue-500 text-xl">✪</span><span>باستخدامك لهذا الموقع فإنك توافق على سياسة الخصوصية الموضحة أدناه.</span></li><li class="flex items-start gap-2"><span class="text-blue-500 text-xl">✪</span><span>قد يتم عرض إعلانات من طرف ثالث عبر شبكة Adsterra..</span></li><li class="flex items-start gap-2"><span class="text-blue-500 text-xl">✪</span><span>الموقع لا يتحكم بمحتوى الإعلانات المعروضة.</span></li></ul>
                 </section>
     
                 <!-- Search Methods (Renamed) -->
                 <section class="bg-gray-50 dark:bg-gray-700/30 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
                     <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                         <i data-lucide="search" class="w-5 h-5"></i>
-                         دليل الوصول الذكي للمحتوى
-                    </h2>
+                         <i data-lucide="search" class="w-5 h-5"></i> نشر الاخبار التقنية والذكاء الاصطناعي</h2>
                     <ul id="about-search-list" class="list-none space-y-3 text-gray-700 dark:text-gray-300">
                         <!-- Content Injected via Generator -->
                     </ul>
@@ -113,38 +312,49 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800 footer">
+    
+    <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800 footer-dynamic">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-            
-            <div class="flex items-center justify-center gap-4 mb-8">
-                <!-- Facebook -->
-                <a href="https://www.facebook.com/share/1EsapVHA6W/" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#1877F2] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700">
-                    <i data-lucide="facebook" class="w-5 h-5"></i>
-                </a>
-                <!-- Instagram -->
-                <a href="https://www.instagram.com/techtouch0" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#E4405F] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700">
-                    <i data-lucide="instagram" class="w-5 h-5"></i>
-                </a>
-                <!-- TikTok -->
-                <a href="https://www.tiktok.com/@techtouch6" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-black hover:border-gray-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700">
-                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-                </a>
-                <!-- YouTube -->
-                <a href="https://youtube.com/@kinanmajeed?si=I2yuzJT2rRnEHLVg" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#FF0000] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700">
-                    <i data-lucide="youtube" class="w-5 h-5"></i>
-                </a>
-                 <!-- Telegram -->
-                 <a href="https://t.me/techtouch7" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-[#229ED9] hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-700">
-                    <i data-lucide="send" class="w-5 h-5 ml-0.5"></i>
-                </a>
+            <div class="flex items-center justify-center gap-4 mb-4 social-links-container">
+                <a href="https://www.facebook.com/share/1EsapVHA6W/" target="_blank" class="social-icon-btn hover:bg-[#1877F2] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="facebook"><img src="assets/images/1770571140448_09b6e529c7fd6a430ebe68363eb29d56.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://www.instagram.com/techtouch0" target="_blank" class="social-icon-btn hover:bg-[#E4405F] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="instagram"><img src="assets/images/1770571177732_a4615d8d20cbe48adcaf985690c46d9a.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://www.tiktok.com/@techtouch6" target="_blank" class="social-icon-btn hover:bg-black hover:border-gray-600 text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="tiktok"><img src="assets/images/1770571194656_87e7ea9953e7b312bcd242e47f56218d.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://youtube.com/@kinanmajeed?si=I2yuzJT2rRnEHLVg" target="_blank" class="social-icon-btn hover:bg-[#FF0000] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="youtube"><img src="assets/images/1770571207032_60d5a142dda8a05fb992e3e00c3959b4.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://t.me/techtouch7" target="_blank" class="social-icon-btn hover:bg-[#229ED9] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="telegram"><img src="assets/images/1770571222367_817d585a7dd0775dbc9b41927bd043ca.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a>
             </div>
-
-            <!-- Copyright -->
-            <p class="text-sm text-gray-500 font-medium">© 2024 TechTouch. جميع الحقوق محفوظة كنان الصائغ.</p>
+            <p class="text-sm text-gray-500 font-medium">© 2026 TechTouch. جميع الحقوق محفوظة.</p>
         </div>
     </footer>
+    
 
     <script src="assets/js/app.js"></script>
     <script src="assets/js/search-engine.js" type="module"></script>
-</body>
-</html>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Image Fallback
+    const fallbackImage = 'assets/images/me.jpg';
+    document.querySelectorAll('img').forEach(img => {
+        img.onerror = function() {
+            if (this.src.includes(fallbackImage)) return;
+            this.src = fallbackImage;
+            this.alt = 'Image unavailable';
+            this.classList.add('img-fallback-active');
+        };
+        if (img.naturalWidth === 0 && img.complete) {
+             img.src = fallbackImage;
+        }
+    });
+
+    // Dynamic Active State for Nav Tabs
+    const current = location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll(".nav-tab, .cat-tab").forEach(tab => {
+      const href = tab.getAttribute("href");
+      if (href && (href === current || (current === 'index.html' && href === 'index.html'))) {
+        tab.classList.add("active");
+      }
+    });
+});
+</script>
+
+        <button id="back-to-top" class="fixed bottom-6 right-6 z-50 bg-gray-900/60 hover:bg-gray-900/80 backdrop-blur-md text-white p-2 rounded-full shadow-lg transition-all duration-300 transform translate-y-10 opacity-0 invisible hover:scale-110 hover:-translate-y-1 focus:outline-none border border-white/10 group" aria-label="العودة للأعلى">
+            <i data-lucide="arrow-up" class="w-5 h-5"></i>
+        </button>
+        </body></html>

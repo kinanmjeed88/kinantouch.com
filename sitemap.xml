@@ -1,124 +1,605 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  
-  <!-- الصفحة الرئيسية -->
-  <url>
-    <loc>https://kinantouch.com/index.html</loc>
-    <lastmod>2024-05-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-    <image:image>
-      <image:loc>https://kinantouch.com/assets/images/me.jpg</image:loc>
-      <image:title>TechTouch Logo</image:title>
-    </image:image>
-  </url>
-  
-  <!-- الصفحات الأساسية -->
-  <url>
-    <loc>https://kinantouch.com/articles.html</loc>
-    <lastmod>2024-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/tools.html</loc>
-    <lastmod>2024-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/about.html</loc>
-    <lastmod>2024-05-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/privacy.html</loc>
-    <lastmod>2024-05-22</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/site-map.html</loc>
-    <lastmod>2024-05-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
 
-  <!-- أدوات الموقع -->
-  <url>
-    <loc>https://kinantouch.com/tools-sites.html</loc>
-    <lastmod>2024-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/tools-phones.html</loc>
-    <lastmod>2024-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/tools-compare.html</loc>
-    <lastmod>2024-05-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- المقالات -->
-  <url>
-    <loc>https://kinantouch.com/article-asus-gx10.html</loc>
-    <lastmod>2024-05-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&amp;fit=crop&amp;w=800&amp;q=80</image:loc>
-      <image:title>Asus GX10 Review</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/article-capcut.html</loc>
-    <lastmod>2024-05-12</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&amp;fit=crop&amp;w=800&amp;q=80</image:loc>
-      <image:title>CapCut Update</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/article-lightroom.html</loc>
-    <lastmod>2024-05-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/article-gta-vi.html</loc>
-    <lastmod>2024-05-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&amp;fit=crop&amp;w=800&amp;q=80</image:loc>
-      <image:title>GTA VI Leaks</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/article-ucl-update.html</loc>
-    <lastmod>2024-05-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://kinantouch.com/article-iphone-16.html</loc>
-    <lastmod>2024-05-04</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&amp;fit=crop&amp;w=800&amp;q=80</image:loc>
-      <image:title>iPhone 16 Leaks</image:title>
-    </image:image>
-  </url>
-
+    <url>
+        <loc>https://kinantouch.com</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/apps</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/games</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/sports</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/tools</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/about</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/tools-sites</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/tools-phones</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/tools-compare</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/tool-analysis</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/privacy</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.3</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/site-map</loc>
+        <lastmod>2026-03-15</lastmod>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-nshr-rwabt-albth-alm</loc>
+        <lastmod>2026-05-05T06:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp</image:loc>
+            <image:title>&lt;h1 class=&quot;text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight text-center&quot;&gt;   نشر روابط البث المباشر   &lt;span class=&quot;inline-block mt-2 md:mt-0 md:ml-3 px-3 py-1 rounded-full text-xs md:text-sm font-bold                 bg-red-600 text-white shadow-md animate-pulse&quot;&gt;     متجدد   &lt;/span&gt; &lt;/h1&gt;</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-by-the-time-2026</loc>
+        <lastmod>2026-03-14T18:15:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1773512743546_٢٠٢٦٠٣١٤_٠٩٢٥٢١.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 text-xl font-bold&quot;&gt;رسمياً::&lt;/span&gt; جوجل تنهي عصر تحميل التطبيقات الخارجية (APK) في أندرويد بحلول 2026</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-developed-google-gemini-2026</loc>
+        <lastmod>2026-03-12T22:52:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1773356629227_٢٠٢٦٠٣١٣_٠٢٠٣٢٦.webp</image:loc>
+            <image:title>&lt;p class=&quot;text-gray-700 dark:text-gray-300 text-lg leading-relaxed block w-full bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm&quot;&gt;     &lt;span class=&quot;text-blue-600 dark:text-blue-400 text-xl font-bold ml-1&quot;&gt;تعرف على تفاصيل:&lt;/span&gt; دمج نموذج &lt;span class=&quot;text-yellow-500 dark:text-yellow-400 text-2xl font-black mx-1&quot;&gt;Gemini&lt;/span&gt; داخل تطبيقات &lt;span class=&quot;text-yellow-500 dark:text-yellow-400 text-2xl font-black mx-1&quot;&gt;Google Workspace&lt;/span&gt; (مستندات، جداول، عروض) &lt;/p&gt;</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-cancel-mobile-dns-2026</loc>
+        <lastmod>2026-03-12T20:31:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1773347913793_دليل_تعطيل_إعدادات_DNS_الذكية.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 text-xl font-bold&quot;&gt;طريقة ::&lt;/span&gt;  الغاء dns من هواتف الأندرويد</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-tax-on-tax-people-2026</loc>
+        <lastmod>2026-03-11T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1773293254132_٢٠٢٦٠٣١٢_٠٨٢٧٠٦.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 text-xl font-bold&quot;&gt;الضريبة على الضريبة :&lt;/span&gt; كيف يدفع العراقيون ثمن إفلاس الدولة للشركات؟ | </image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-playing-destroy-battery</loc>
+        <lastmod>2026-03-11T12:40:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1773232907674_٢٠٢٦٠٣١١_٠٢٣١٠٠.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 text-xl font-bold&quot;&gt;حقيقة:&lt;/span&gt; اللعب ومشاهدة الأفلام أثناء شحن الهاتف: هل يدمر البطارية فعلاً؟</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-tax-internet-phone</loc>
+        <lastmod>2026-03-11T11:13:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1773227733336_٢٠٢٦٠٣١١_٠٢١٥٠٨.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 text-lg font-bold&quot;&gt;رسمياً::&lt;/span&gt; عودة ضريبة 20% على كارتات الرصيد واشتراكات الإنترنت في العراق وتفاصيل الأسعار</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-2026-phone-battery</loc>
+        <lastmod>2026-03-06T00:04:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1772756119004_٢٠٢٦٠٣٠٦_٠٣١٥٠٠.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 text-xl font-bold&quot;&gt;​5 خرافات وحقائق:&lt;/span&gt;  عن بطارية الهاتف الذكي: هل الشحن السريع يدمر هاتفك؟</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-otf-tv-2026</loc>
+        <lastmod>2026-03-05T03:04:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1772680577986_٢٠٢٦٠٣٠٥_٠٦١٥٥٧.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;OTF TV:&lt;/span&gt; لمشاهدة المباريات والأفلام والمسلسلات</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-truecaller-gold-2026</loc>
+        <lastmod>2026-03-05T02:36:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1772678588850_٢٠٢٦٠٣٠٥_٠٥٤٢٥٢.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;Truecaller Premium Gold:&lt;/span&gt; تحميل تروكولر جولد مجاناً | (كامل الميزات)</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-kira-tv-2026</loc>
+        <lastmod>2026-03-04T14:07:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1772634088358_٢٠٢٦٠٣٠٤_٠٥٢١١٠.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;KIRA TV:&lt;/span&gt; تطبيق لمشاهدة كافة القنوات الرياضية وMBC بجودة عالية.</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-vip-netfly</loc>
+        <lastmod>2026-02-25T09:10:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1772013254030_٢٠٢٦٠٢٢٥_١٢٣٤٠٣.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;Netfly TV:&lt;/span&gt; للاندرويد – نسخة VIP + كود التفعيل للشاشات </image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-h1-classfont-tajawal</loc>
+        <lastmod>2026-02-25T08:08:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1772006988600_٢٠٢٦٠٢٢٥_١١٠٩٣٣.webp</image:loc>
+            <image:title>&lt;h1 class=&quot;font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight&quot;&gt;   تحميل تطبيق &lt;span class=&quot;text-4xl md:text-5xl lg:text-6xl text-indigo-600 dark:text-indigo-400 inline-block&quot; dir=&quot;ltr&quot;&gt;Tellonym Premium&lt;/span&gt; (النسخة المميزة) للرسائل المجهولة &lt;/h1&gt;</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-2026-drama-remadan</loc>
+        <lastmod>2026-02-24T18:12:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771956972972_٢٠٢٦٠٢٢٤_٠٩١١٤٦.webp</image:loc>
+            <image:title>&lt;h1 class=&quot;font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight&quot;&gt;   تطبيق &lt;span class=&quot;text-indigo-600 dark:text-indigo-400 inline-block&quot;&gt;دراما رمضان 2026&lt;/span&gt; | النسخة المدفوعة لمشاهدة المسلسلات (بدون إعلانات) &lt;/h1&gt;</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-s-anime-2026</loc>
+        <lastmod>2026-02-23T21:05:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771880974102_٢٠٢٦٠٢٢٤_١٢٠٩٢٥.webp</image:loc>
+            <image:title>&lt;h1 class=&quot;font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight&quot;&gt;   تطبيق &lt;span class=&quot;text-blue-600 dark:text-blue-400 inline-block&quot; dir=&quot;ltr&quot;&gt;S Anime&lt;/span&gt;: المنصة المتكاملة لمشاهدة &lt;/h1&gt;</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-cee-tv-app-movie-2026</loc>
+        <lastmod>2026-02-23T10:37:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771843170349_٢٠٢٦٠٢٢٣_٠١٣٩١٥.webp</image:loc>
+            <image:title>&lt;h1 class=&quot;font-[Tajawal] text-4xl md:text-5xl lg:text-6xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight&quot;&gt;   تطبيق سي &lt;span class=&quot;text-5xl md:text-6xl lg:text-7xl text-blue-600 dark:text-blue-400 inline-block&quot; dir=&quot;ltr&quot;&gt;CEE&lt;/span&gt; | تحديث باقة رمضان 2026 ودعم كافة الشبكات العراقية &lt;/h1&gt;</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-anime-space-2026-app</loc>
+        <lastmod>2026-02-23T08:44:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771836804991_٢٠٢٦٠٢٢٣_١١٥٣٠٥.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;Anime Space:&lt;/span&gt; عالم كامل من الانمي</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-spacetoon-go-app</loc>
+        <lastmod>2026-02-22T21:59:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771797682066_IMG_٢٠٢٦٠٢٢٣_٠١٠١٠٨.webp</image:loc>
+            <image:title>&lt;h1 class=&quot;font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight&quot;&gt;   تطبيق &lt;span class=&quot;text-blue-600 dark:text-blue-400 inline-block&quot; dir=&quot;ltr&quot;&gt;Spacetoon Go&lt;/span&gt; كرتون وأنمي مدبلج &lt;/h1&gt;</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-iraq-tv-sport-tajawal</loc>
+        <lastmod>2026-02-22T21:34:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771796460953_٢٠٢٦٠٢٢٣_١٢٤٠٤٧.webp</image:loc>
+            <image:title>&lt;h1 class=&quot;font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight&quot;&gt;   تطبيق 1 IRAQ TV: منصتك المتكاملة للرياضة والترفيه &lt;/h1&gt;</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-sport-primetv-blu</loc>
+        <lastmod>2026-02-22T21:18:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771795516584_1771795501769.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;(Prime TV):&lt;/span&gt; رياضية، إخبارية، ترفيهية</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-2026-classtext-blue-wpa</loc>
+        <lastmod>2026-02-22T21:07:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771794691979_1771794681331.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;مواقع:&lt;/span&gt;  مفيدة لأصحاب الأيفون والأندرويد</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-span-dar-player-blue</loc>
+        <lastmod>2026-02-22T20:44:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771793796537_IMG_٢٠٢٦٠٢٢٢_٢٣٥٦١٧.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;DAR PLAYER:&lt;/span&gt; تطبيق مسلسلات وقنوات</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-blue-4k-iptv-alttbyq</loc>
+        <lastmod>2026-02-21T18:07:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771697328691_images_(25).webp</image:loc>
+            <image:title>Blue 4K IPTV التطبيق الرياضي الشهير </image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-2026-universe-pro-player</loc>
+        <lastmod>2026-02-21T12:07:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771677759101_Screenshot_٢٠٢٦-٠٢-٢١-١٥-٤٢-١٢-٨٨_373553b581509443a0e792b1078235c2.webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;حصري:&lt;/span&gt; Universe Pro Player تطبيق مميز للقنوات والمسلسلات</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-h1-classtext-2xl-mdt</loc>
+        <lastmod>2026-02-21T09:45:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771667318426_IMG_20260221_123634_430.webp</image:loc>
+            <image:title>&lt;h1 class=&quot;text-2xl md:text-3xl font-extrabold leading-tight mb-6&quot;&gt;&lt;span class=&quot;text-transparent bg-clip-text bg-gradient-to-l from-blue-600 to-cyan-500 drop-shadow-sm&quot;&gt;حصري:&lt;/span&gt; &lt;span class=&quot;text-gray-900 dark:text-white&quot;&gt;تحميل وتفعيل تطبيق Lion TV بأحدث الحسابات (للموبايل والشاشات)&lt;/span&gt;&lt;/h1&gt;</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-span-classtext-blue</loc>
+        <lastmod>2026-02-20T05:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771522987578_images_(4).webp</image:loc>
+            <image:title>&lt;span class=&quot;text-blue-600 dark:text-blue-400 font-bold&quot;&gt;حصري:&lt;/span&gt; افضل تطبيق لرمضان من Qi tv</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-tsjyl-almkalmat-bdwn</loc>
+        <lastmod>2026-02-14T18:07:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771098430535_IMG_٢٠٢٦٠٢١٤_٢٢٤٦٥٨.webp</image:loc>
+            <image:title>تسجيل المكالمات بدون الاشعار الصوتي (يجري الان تسجيل المكالمة!)</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-lwhh-mfatyh-ai-tghyr</loc>
+        <lastmod>2026-02-14T14:21:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771081515731_Screenshot_٢٠٢٦-٠٢-١٤-١٨-٠٤-٥٥-٧٣_b5a5c5cb02ca09c784c5d88160e2ec24.webp</image:loc>
+            <image:title>لوحة مفاتيح AI تغير طريقة الكتابة على هاتفك بالكامل</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-smarters-tv-pro-aqwa</loc>
+        <lastmod>2026-02-13T17:44:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1771004816117_IMG_20260213_204632_597.webp</image:loc>
+            <image:title>SMARTERS TV PRO: أقوى مشغل IPTV لمشاهدة القنوات والمحتوى الحصري 2026</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-bnaa-khbyr-thky-bast</loc>
+        <lastmod>2026-02-12T13:46:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770906689330_images_(24).webp</image:loc>
+            <image:title>بناء خبير ذكي باستخدام NotebookLM وPerplexity - الدليل الكامل</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-notebooklm-dlylk-ai</loc>
+        <lastmod>2026-02-12T03:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770844925621_Screenshot_٢٠٢٦-٠٢-١٢-٠٠-١٢-٤٦-٩١_96b26121e545231a3c569311a54cda96.webp</image:loc>
+            <image:title>هل جرّبت NotebookLM؟ أداة Google التي تفهم ملاحظاتك وتلخصها باحتراف</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-syry-tdkhl-asra-jdy</loc>
+        <lastmod>2026-02-11T15:17:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770757876687_Apple-Intelligence-Tim-Cook-780x470.webp</image:loc>
+            <image:title>Siri تدخل عصراً جديداً: تحديثات ثورية بالذكاء الاصطناعي</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-afdl-ttbyqat-althkm</loc>
+        <lastmod>2026-02-11T10:06:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770804728303_٢٠٢٦٠٢١١_١٣١١٤٨.webp</image:loc>
+            <image:title>أفضل تطبيقات التحكم بالشاشات الذكية 2026 (تحكم كامل من هاتفك)</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-seedance-20-altqnyh</loc>
+        <lastmod>2026-02-09T22:27:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770677376506_seedance-video-bytedance-.webp</image:loc>
+            <image:title>Seedance 2.0: التقنية التي وضعت هوليوود أمام أخطر اختبار في تاريخها</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-thdyth-shaml</loc>
+        <lastmod>2026-02-09T17:20:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770658001840_public.webp</image:loc>
+            <image:title>تحديث شامل لتطبيق تيليجرام على أندرويد بتصميم زجاجي عصري</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-tryqh-althmyl-mn-tyk</loc>
+        <lastmod>2026-02-09T16:14:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770567334040_٢٠٢٦٠٢٠٣_١١٣٩٢٢.webp</image:loc>
+            <image:title>طريقة التحميل من تيك توك بدون علامة مائية (شرح 2026)</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-android-data-obb</loc>
+        <lastmod>2026-02-07T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1623126908029-58cb08a2b272?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>نقل ملفات OBB وData في أندرويد 14/15 – الحل النهائي 2026</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-best-ai-platforms-2025-2026</loc>
+        <lastmod>2026-02-07T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>أفضل أدوات الذكاء الاصطناعي لعام 2025 و2026</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-best-free-ai-platforms</loc>
+        <lastmod>2026-02-07T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>أفضل منصات ذكاء اصطناعي مجانية بالكامل في 2026 (بدون اشتراك مدفوع)</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-capcut-update</loc>
+        <lastmod>2026-02-07T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770514091659_capcut-ai-features.webp</image:loc>
+            <image:title>تحديث CapCut الجديد: ميزات ذكاء اصطناعي تقلب موازين المونتاج</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-charging-tech-2026</loc>
+        <lastmod>2026-02-07T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1770514140938_images_(9).webp</image:loc>
+            <image:title>ثورة الشحن السريع والبطاريات (2021–2026): من السباق نحو السرعة إلى الكفاءة</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-dns-block-ads</loc>
+        <lastmod>2026-02-07T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>حظر الإعلانات والمواقع الضارة عبر DNS بدون برامج</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-fix-old-games</loc>
+        <lastmod>2026-02-07T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>حل مشكلة &quot;جهازك غير متوافق مع هذا الإصدار&quot; للألعاب القديمة 2026</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-web-summit-doha-2026</loc>
+        <lastmod>2026-01-28T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>قمة الويب 2026 بالدوحة: الذكاء الاصطناعي وتمكين الإبداع البشري</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-game-changing-ai-platforms</loc>
+        <lastmod>2026-01-26T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>منصات غيرت قواعد اللعبة: تعرف على Z.ai وManus</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-ai-news-labeling-debate</loc>
+        <lastmod>2026-01-24T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>هل قرأت خبراً مزيفاً اليوم؟ جدل حول تصنيف الأخبار المولدة بالذكاء الاصطناعي</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-asus-gx10</loc>
+        <lastmod>2026-01-14T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>مراجعة وحش الألعاب Asus ROG Zephyrus G16 (2024): هل يستحق سعره؟</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-future-ai-2026</loc>
+        <lastmod>2026-01-14T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>مستقبل الذكاء الاصطناعي 2026: الاتجاهات، التحديات، وتأثيره على البشرية</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-ai-designed-drugs-2026</loc>
+        <lastmod>2026-01-13T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>ثورة طبية 2026: أدوية مصممة بالكامل بواسطة AI تدخل التجارب السريرية</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-gov-summit-ai-2026</loc>
+        <lastmod>2026-01-09T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1577495508326-19a1b3cf65b7?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>القمة العالمية للحكومات 2026: إطلاق منصة Apolitical للذكاء الاصطناعي</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-gta-vi</loc>
+        <lastmod>2026-01-09T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>تسريبات GTA VI الجديدة: الموعد المتوقع، القصة، وتفاصيل خريطة Leonida</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-ucl-update</loc>
+        <lastmod>2026-01-08T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1614632537190-23e4146777db?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>تحديث تطبيق دوري أبطال أوروبا: النظام السويسري الجديد وميزات خيالية</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-telegram-security</loc>
+        <lastmod>2026-01-04T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>أمنك الرقمي: كيفية كشف وحذف الأجهزة المخترقة لحسابك في تيليجرام</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-openai-multimodal</loc>
+        <lastmod>2025-12-31T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>ثورة النماذج متعددة الوسائط: كيف غيرت OpenAI قواعد اللعبة؟</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-google-gemini-nano</loc>
+        <lastmod>2025-12-31T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1697577418970-95d99b5a55cf?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>الذكاء الاصطناعي في جيبك: نظرة على تجربة Google Gemini Nano</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-anthropic-agents</loc>
+        <lastmod>2025-12-31T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>وكلاء الذكاء الاصطناعي المستقلون: رؤية Anthropic للمستقبل</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-tesla-fsd-ai</loc>
+        <lastmod>2025-12-31T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>السيارات ذاتية القيادة: كيف تدرب Tesla شبكاتها العصبية للرؤية؟</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-midjourney-art</loc>
+        <lastmod>2025-12-31T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>الفن الرقمي الجديد: سحر Midjourney ونماذج الانتشار (Diffusion)</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-huggingface-opensource</loc>
+        <lastmod>2025-12-31T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>ديمقراطية الذكاء الاصطناعي: دور Hugging Face والمصدر المفتوح</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-perplexity-search</loc>
+        <lastmod>2025-12-31T21:00:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+            <image:title>وداعاً للروابط التقليدية: كيف يغير Perplexity AI مفهوم البحث؟</image:title>
+        </image:image>
+    </url>
 </urlset>

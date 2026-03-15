@@ -1,158 +1,499 @@
-
 export const searchIndex = [
   {
-    title: 'مراجعة شاملة لجهاز Asus GX10 الجديد',
-    desc: 'هل يستحق جهاز أسوس الجديد كل هذه الضجة؟ إليك التفاصيل الكاملة للمواصفات والأداء.',
-    url: 'article-asus-gx10.html',
-    category: 'Tech',
-    image: 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=200&q=80'
+    "title": "<h1 class=\"text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight text-center\">   نشر روابط البث المباشر   <span class=\"inline-block mt-2 md:mt-0 md:ml-3 px-3 py-1 rounded-full text-xs md:text-sm font-bold                 bg-red-600 text-white shadow-md animate-pulse\">     متجدد   </span> </h1>",
+    "desc": "يتعلق الأمر بتوزيع الروابط الخاصة بالبث المباشر للمحتوى. الهدف هو تسهيل الوصول إلى المشاهدين.",
+    "url": "article-nshr-rwabt-albth-alm.html",
+    "category": "Sports",
+    "image": "assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp"
   },
   {
-    title: 'تحديث CapCut الجديد يضيف ميزات خرافية',
-    desc: 'تعرف على أدوات التحرير الجديدة التي تمت إضافتها لتطبيق المونتاج الشهير.',
-    url: 'article-capcut.html',
-    category: 'Apps',
-    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=200&q=80'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-xl font-bold\">رسمياً::</span> جوجل تنهي عصر تحميل التطبيقات الخارجية (APK) في أندرويد بحلول 2026",
+    "desc": "تفاصيل خطة جوجل لإنهاء عصر التحميل الحر في أندرويد بحلول 2026. كيف سيؤثر فرض توثيق الهوية على ملفات APK والتطبيقات المعدلة؟\"",
+    "url": "article-by-the-time-2026.html",
+    "category": "Articles",
+    "image": "assets/images/1773512743546_٢٠٢٦٠٣١٤_٠٩٢٥٢١.webp"
   },
   {
-    title: 'تسريبات آيفون 16: ماذا ننتظر من أبل؟',
-    desc: 'نظرة أولية على التصميم الجديد والميزات المتوقعة في الهاتف القادم.',
-    url: 'article-iphone-16.html',
-    category: 'Tech',
-    image: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=200&q=80'
+    "title": "<p class=\"text-gray-700 dark:text-gray-300 text-lg leading-relaxed block w-full bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm\">     <span class=\"text-blue-600 dark:text-blue-400 text-xl font-bold ml-1\">تعرف على تفاصيل:</span> دمج نموذج <span class=\"text-yellow-500 dark:text-yellow-400 text-2xl font-black mx-1\">Gemini</span> داخل تطبيقات <span class=\"text-yellow-500 dark:text-yellow-400 text-2xl font-black mx-1\">Google Workspace</span> (مستندات، جداول، عروض) </p>",
+    "desc": "​\"تعرف على تفاصيل دمج نموذج الذكاء الاصطناعي Gemini داخل تطبيقات Google Workspace (مستندات، جداول، عروض). اكتشف الميزات الجديدة، وكيف يحمي جوجل بيانات مؤسستك.\"",
+    "url": "article-developed-google-gemini-2026.html",
+    "category": "Articles",
+    "image": "assets/images/1773356629227_٢٠٢٦٠٣١٣_٠٢٠٣٢٦.webp"
   },
   {
-    title: 'أفضل فلاتر لايت روم للمصورين',
-    desc: 'مجموعة مختارة من الفلاتر الاحترافية لتحسين صورك بضغطة زر.',
-    url: 'article-lightroom.html',
-    category: 'Apps',
-    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=200&q=80'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-xl font-bold\">طريقة ::</span>  الغاء dns من هواتف الأندرويد",
+    "desc": "\n            يُعد نظام أسماء النطاقات الخاص (Private DNS) سلاحاً تقنياً فعالاً، لكنه في الوقت ذاته قد يكون السبب الرئيسي في عزل هاتفك عن الشبكات المحلية وتوقف تطبيقاتك المفضلة ",
+    "url": "article-cancel-mobile-dns-2026.html",
+    "category": "Apps",
+    "image": "assets/images/1773347913793_دليل_تعطيل_إعدادات_DNS_الذكية.webp"
   },
   {
-    title: 'تسريبات GTA VI الجديدة',
-    desc: 'كل ما نعرفه عن لعبة العالم المفتوح المنتظرة من روكستار وتفاصيل الخريطة.',
-    url: 'article-gta-vi.html',
-    category: 'Games',
-    image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=200&q=80'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-xl font-bold\">الضريبة على الضريبة :</span> كيف يدفع العراقيون ثمن إفلاس الدولة للشركات؟ | ",
+    "desc": "هذه الإجراءات لا تمت بصلة لأي خطة اقتصادية للتعافي أو الإنعاش. إنها وبكل بساطة عقوبة مالية تُفرض على الشعب",
+    "url": "article-tax-on-tax-people-2026.html",
+    "category": "Articles",
+    "image": "assets/images/1773293254132_٢٠٢٦٠٣١٢_٠٨٢٧٠٦.webp"
   },
   {
-    title: 'تحديث تطبيق دوري أبطال أوروبا',
-    desc: 'تحليل المباريات ورؤية الإحصائيات بشكل لم يسبق له مثيل في التحديث الجديد.',
-    url: 'article-ucl-update.html',
-    category: 'Sports',
-    image: 'https://images.unsplash.com/photo-1614632537190-23e4146777db?auto=format&fit=crop&w=200&q=80'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-xl font-bold\">حقيقة:</span> اللعب ومشاهدة الأفلام أثناء شحن الهاتف: هل يدمر البطارية فعلاً؟",
+    "desc": "تعرف على التفسير العلمي حول استخدام الهاتف الذكي أثناء الشحن. هل يستهلك الهاتف طاقة البطارية أم الشاحن؟ وكيف تؤثر الألعاب ومشاهدة الأفلام على عمر بطاريتك.",
+    "url": "article-playing-destroy-battery.html",
+    "category": "Articles",
+    "image": "assets/images/1773232907674_٢٠٢٦٠٣١١_٠٢٣١٠٠.webp"
   },
   {
-    title: 'قائمة الهواتف ومواصفاتها',
-    desc: 'قاعدة بيانات شاملة لمواصفات الهواتف الذكية من جميع الشركات.',
-    url: 'tools-phones.html',
-    category: 'Tools',
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=200&q=80'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">رسمياً::</span> عودة ضريبة 20% على كارتات الرصيد واشتراكات الإنترنت في العراق وتفاصيل الأسعار",
+    "desc": "قرار فرض الضريبة بنسبة 20% على بطاقات التعبئة واشتراكات الإنترنت ",
+    "url": "article-tax-internet-phone.html",
+    "category": "Articles",
+    "image": "assets/images/1773227733336_٢٠٢٦٠٣١١_٠٢١٥٠٨.webp"
   },
   {
-    title: 'مقارنة الهواتف',
-    desc: 'أداة مقارنة الهواتف جنباً إلى جنب لمعرفة الفروقات التقنية.',
-    url: 'tools-compare.html',
-    category: 'Tools',
-    image: 'https://images.unsplash.com/photo-1550029330-8dbccaade163?auto=format&fit=crop&w=200&q=80'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-xl font-bold\">​5 خرافات وحقائق:</span>  عن بطارية الهاتف الذكي: هل الشحن السريع يدمر هاتفك؟",
+    "desc": "حقائق عن شحن بطاريات الهواتف مع التجارب",
+    "url": "article-2026-phone-battery.html",
+    "category": "Articles",
+    "image": "assets/images/1772756119004_٢٠٢٦٠٣٠٦_٠٣١٥٠٠.webp"
   },
   {
-    title: 'دليل القنوات والمواقع',
-    desc: 'تجميعة قنوات تيليجرام ومواقع مفيدة وتطبيقات معدلة.',
-    url: 'tools-sites.html',
-    category: 'Tools',
-    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=200&q=80'
-  },
-  /* --- Channels and Sites Added for Search --- */
-  {
-    title: 'كاب كات - CapCut',
-    desc: 'تعديل الفيديو.',
-    url: 'https://t.me/techtouch7/3287',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">OTF TV:</span> لمشاهدة المباريات والأفلام والمسلسلات",
+    "desc": "لمشاهدة القنوات الرياضية بث مباشر بجميع الجودات ومكتبة من الأفلام والمسلسلات",
+    "url": "article-otf-tv-2026.html",
+    "category": "Sports",
+    "image": "assets/images/1772680577986_٢٠٢٦٠٣٠٥_٠٦١٥٥٧.webp"
   },
   {
-    title: 'بوت الطلبات',
-    desc: 'بوت على التيليكرام لاستقبال طلبات التطبيقات والالعاب المعدلة.',
-    url: 'https://t.me/techtouchAI_bot',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">Truecaller Premium Gold:</span> تحميل تروكولر جولد مجاناً | (كامل الميزات)",
+    "desc": "إصدار معدل لكشف هوية المتصل وحظر المكالمات المزعجة باحترافية.",
+    "url": "article-truecaller-gold-2026.html",
+    "category": "Apps",
+    "image": "assets/images/1772678588850_٢٠٢٦٠٣٠٥_٠٥٤٢٥٢.webp"
   },
   {
-    title: 'Techtouch7',
-    desc: 'قناة نشر تطبيقات والعاب اندرويد.',
-    url: 'https://t.me/techtouch7',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">KIRA TV:</span> تطبيق لمشاهدة كافة القنوات الرياضية وMBC بجودة عالية.",
+    "desc": "يضم جميع القنوات الرياضية المشفرة لمتابعة أقوى البطولات العالمية والمحلية والبث المباشر للمباريات",
+    "url": "article-kira-tv-2026.html",
+    "category": "Sports",
+    "image": "assets/images/1772634088358_٢٠٢٦٠٣٠٤_٠٥٢١١٠.webp"
   },
   {
-    title: 'مناقشات Techtouch',
-    desc: 'تعليقات لحل المشاكل وغيرها.',
-    url: 'https://t.me/techtouch6',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">Netfly TV:</span> للاندرويد – نسخة VIP + كود التفعيل للشاشات ",
+    "desc": "تقديم محتوى ترفيهي ورياضي شامل، مصمم ليعمل بمرونة فائقة على جميع الأجهزة.",
+    "url": "article-vip-netfly.html",
+    "category": "Sports",
+    "image": "assets/images/1772013254030_٢٠٢٦٠٢٢٥_١٢٣٤٠٣.webp"
   },
   {
-    title: 'قناة الالعاب',
-    desc: 'نشر العاب اندرو معدلة.',
-    url: 'https://t.me/techtouch0',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تحميل تطبيق <span class=\"text-4xl md:text-5xl lg:text-6xl text-indigo-600 dark:text-indigo-400 inline-block\" dir=\"ltr\">Tellonym Premium</span> (النسخة المميزة) للرسائل المجهولة </h1>",
+    "desc": "منصة آمنة لاستقبال وإرسال الأسئلة والرسائل المجهولة",
+    "url": "article-h1-classfont-tajawal.html",
+    "category": "Apps",
+    "image": "assets/images/1772006988600_٢٠٢٦٠٢٢٥_١١٠٩٣٣.webp"
   },
   {
-    title: 'مناقشات الالعاب',
-    desc: 'كروب مناقشة الالعاب.',
-    url: 'https://t.me/+pScKzHOQwslhMmJi',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق <span class=\"text-indigo-600 dark:text-indigo-400 inline-block\">دراما رمضان 2026</span> | النسخة المدفوعة لمشاهدة المسلسلات (بدون إعلانات) </h1>",
+    "desc": "مكتبة ضخمة لمسلسلات الموسم والمواسم السابقة، مشاهدة وتحميل بجودات متعددة وبدون إعلانات. متوفر للهواتف والشاشات الذكية.",
+    "url": "article-2026-drama-remadan.html",
+    "category": "Apps",
+    "image": "assets/images/1771956972972_٢٠٢٦٠٢٢٤_٠٩١١٤٦.webp"
   },
   {
-    title: 'قناة PC & PS',
-    desc: 'قناة لنشر مايخص البليستيشن وبرامج الوندوز.',
-    url: 'https://t.me/techtouch4',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق <span class=\"text-blue-600 dark:text-blue-400 inline-block\" dir=\"ltr\">S Anime</span>: المنصة المتكاملة لمشاهدة </h1>",
+    "desc": " دليلك الشامل لعالم الأنمي والمغامرات (ترجمة احترافية وتحديث مستمر)",
+    "url": "article-s-anime-2026.html",
+    "category": "Apps",
+    "image": "assets/images/1771880974102_٢٠٢٦٠٢٢٤_١٢٠٩٢٥.webp"
   },
   {
-    title: 'مناقشات PC & PS',
-    desc: 'مناقشات حول الكمبيوتر والبليستيشن.',
-    url: 'https://t.me/+J1Up1q8AYgs2MWU6',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<h1 class=\"font-[Tajawal] text-4xl md:text-5xl lg:text-6xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق سي <span class=\"text-5xl md:text-6xl lg:text-7xl text-blue-600 dark:text-blue-400 inline-block\" dir=\"ltr\">CEE</span> | تحديث باقة رمضان 2026 ودعم كافة الشبكات العراقية </h1>",
+    "desc": "يُعد تطبيق CEE منصة ترفيهية رقمية شاملة، كبديل عن \"سينمانا\" و\"فودو",
+    "url": "article-cee-tv-app-movie-2026.html",
+    "category": "Apps",
+    "image": "assets/images/1771843170349_٢٠٢٦٠٢٢٣_٠١٣٩١٥.webp"
   },
   {
-    title: 'قناة الايفون',
-    desc: 'نشر مايخص الايفون تطبيقات وغيرها.',
-    url: 'https://t.me/+yqBOH5BBBEM0MTQ6',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">Anime Space:</span> عالم كامل من الانمي",
+    "desc": "مكتبة ضخمة من أحدث وأشهر مسلسلات الأنمي",
+    "url": "article-anime-space-2026-app.html",
+    "category": "Apps",
+    "image": "assets/images/1771836804991_٢٠٢٦٠٢٢٣_١١٥٣٠٥.webp"
   },
   {
-    title: 'مناقشات الايفون',
-    desc: 'حل بعض المشاكل للايفون ومناقشتها.',
-    url: 'https://t.me/+t1W3_jSUjOw0ZDYy',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق <span class=\"text-blue-600 dark:text-blue-400 inline-block\" dir=\"ltr\">Spacetoon Go</span> كرتون وأنمي مدبلج </h1>",
+    "desc": "المنصة الرسمية المخصصة لمشاهدة أفلام ومسلسلات الكرتون والأنمي المعروضة على قناة سبيستون.",
+    "url": "article-spacetoon-go-app.html",
+    "category": "Apps",
+    "image": "assets/images/1771797682066_IMG_٢٠٢٦٠٢٢٣_٠١٠١٠٨.webp"
   },
   {
-    title: 'قناة الذكاء الاصطناعي AI',
-    desc: 'نشر اخبار تقنية واخر اخبار الذكاء الاصطناعي.',
-    url: 'https://t.me/techtouch_AI',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق 1 IRAQ TV: منصتك المتكاملة للرياضة والترفيه </h1>",
+    "desc": "✅التطبيق راح يغنيك عن باقي التطبيقات الرياضية والترفيهية",
+    "url": "article-iraq-tv-sport-tajawal.html",
+    "category": "Sports",
+    "image": "assets/images/1771796460953_٢٠٢٦٠٢٢٣_١٢٤٠٤٧.webp"
   },
   {
-    title: 'قناة البث المباشر',
-    desc: 'توفير روابط مباشره لكرة القدم.',
-    url: 'https://t.me/techtouch9',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">(Prime TV):</span> رياضية، إخبارية، ترفيهية",
+    "desc": "محتوى متنوع يشمل البث المباشر للقنوات التلفزيونية العربية والعالمية",
+    "url": "article-sport-primetv-blu.html",
+    "category": "Sports",
+    "image": "assets/images/1771795516584_1771795501769.webp"
   },
   {
-    title: 'المجلد الكامل للقنوات',
-    desc: 'للاشتراك بجميع القنوات دفعة واحدة.',
-    url: 'https://t.me/addlist/Gxcy1FFJONhkMjFi',
-    category: 'Channels',
-    image: 'assets/images/me.jpg'
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">مواقع:</span>  مفيدة لأصحاب الأيفون والأندرويد",
+    "desc": "منصات متخصصة في توفير المسلسلات والافلام ...",
+    "url": "article-2026-classtext-blue-wpa.html",
+    "category": "Apps",
+    "image": "assets/images/1771794691979_1771794681331.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">DAR PLAYER:</span> تطبيق مسلسلات وقنوات",
+    "desc": "يتضمن مشاهدة مسلسلات  وقنوات عربية وعالمية",
+    "url": "article-span-dar-player-blue.html",
+    "category": "Sports",
+    "image": "assets/images/1771793796537_IMG_٢٠٢٦٠٢٢٢_٢٣٥٦١٧.webp"
+  },
+  {
+    "title": "Blue 4K IPTV التطبيق الرياضي الشهير ",
+    "desc": "التطبيق الشهير Blue 4K يوفر قنوات بجودة 4K ومكتبة أفلام ومسلسلات متجددة، ويمكن تحميله على الشاشات الذكية باستخدام كود 240314.",
+    "url": "article-blue-4k-iptv-alttbyq.html",
+    "category": "Sports",
+    "image": "assets/images/1771697328691_images_(25).webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">حصري:</span> Universe Pro Player تطبيق مميز للقنوات والمسلسلات",
+    "desc": "تطبيق \"Universe Pro Player\" يتيح مشاهدة القنوات الرياضية والترفيهية بدون إعلانات، ويتضمن معلومات الدخول وروابط تفصيلية حول الاستخدام والمزايا المتاحة.",
+    "url": "article-2026-universe-pro-player.html",
+    "category": "Sports",
+    "image": "assets/images/1771677759101_Screenshot_٢٠٢٦-٠٢-٢١-١٥-٤٢-١٢-٨٨_373553b581509443a0e792b1078235c2.webp"
+  },
+  {
+    "title": "<h1 class=\"text-2xl md:text-3xl font-extrabold leading-tight mb-6\"><span class=\"text-transparent bg-clip-text bg-gradient-to-l from-blue-600 to-cyan-500 drop-shadow-sm\">حصري:</span> <span class=\"text-gray-900 dark:text-white\">تحميل وتفعيل تطبيق Lion TV بأحدث الحسابات (للموبايل والشاشات)</span></h1>",
+    "desc": "تطبيق Lion TV هو خيارك الأمثل لمشاهدة القنوات الرياضية والترفيهية ومكتبة ضخمة من الأفلام والمسلسلات بجودة عالية",
+    "url": "article-h1-classtext-2xl-mdt.html",
+    "category": "Sports",
+    "image": "assets/images/1771667318426_IMG_20260221_123634_430.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">حصري:</span> افضل تطبيق لرمضان من Qi tv",
+    "desc": "تحتاج الى محفظة سوبر كي  بواسطة رقم موبايل او بطاقة ماستر",
+    "url": "article-span-classtext-blue.html",
+    "category": "Apps",
+    "image": "assets/images/1771522987578_images_(4).webp"
+  },
+  {
+    "title": "تسجيل المكالمات بدون الاشعار الصوتي (يجري الان تسجيل المكالمة!)",
+    "desc": "تسجيل المكالمات يتم بدون إشعار صوتي، مما يعني أن المكالمة تُسجل حالياً دون تنبيه.",
+    "url": "article-tsjyl-almkalmat-bdwn.html",
+    "category": "Apps",
+    "image": "assets/images/1771098430535_IMG_٢٠٢٦٠٢١٤_٢٢٤٦٥٨.webp"
+  },
+  {
+    "title": "لوحة مفاتيح AI تغير طريقة الكتابة على هاتفك بالكامل",
+    "desc": "التطبيق هو لوحة مفاتيح ذكية تعتمد على تقنيات GPT، تقدم أدوات للكتابة والتصحيح والترجمة، مما يعزز الإنتاجية ويوفر الوقت بميزات مثل التصحيح الذكي وإعادة الصياغة.",
+    "url": "article-lwhh-mfatyh-ai-tghyr.html",
+    "category": "Apps",
+    "image": "assets/images/1771081515731_Screenshot_٢٠٢٦-٠٢-١٤-١٨-٠٤-٥٥-٧٣_b5a5c5cb02ca09c784c5d88160e2ec24.webp"
+  },
+  {
+    "title": "SMARTERS TV PRO: أقوى مشغل IPTV لمشاهدة القنوات والمحتوى الحصري 2026",
+    "desc": "حاليا الكود متوقف\nSMARTERS TV PRO \nهو أفضل مشغل IPTV لمتابعة القنوات والمحتوى الحصري لعام 2026.",
+    "url": "article-smarters-tv-pro-aqwa.html",
+    "category": "Sports",
+    "image": "assets/images/1771004816117_IMG_20260213_204632_597.webp"
+  },
+  {
+    "title": "بناء خبير ذكي باستخدام NotebookLM وPerplexity - الدليل الكامل",
+    "desc": "بناء نظام خبير ذكاء اصطناعي باستخدام NotebookLM وPerplexity يتطلب اتباع دليل كامل. يهدف هذا المشروع إلى تسهيل استخدام تقنيات الذكاء الاصطناعي.",
+    "url": "article-bnaa-khbyr-thky-bast.html",
+    "category": "Apps",
+    "image": "assets/images/1770906689330_images_(24).webp"
+  },
+  {
+    "title": "هل جرّبت NotebookLM؟ أداة Google التي تفهم ملاحظاتك وتلخصها باحتراف",
+    "desc": "NotebookLM هو تطبيق جديد من Google يستخدم الذكاء الاصطناعي لتحويل وتلخيص الملاحظات بشكل شامل. يوفر هذا الدليل معلومات مفيدة حول كيفية استخدام التطبيق بكفاءة.",
+    "url": "article-notebooklm-dlylk-ai.html",
+    "category": "Apps",
+    "image": "assets/images/1770844925621_Screenshot_٢٠٢٦-٠٢-١٢-٠٠-١٢-٤٦-٩١_96b26121e545231a3c569311a54cda96.webp"
+  },
+  {
+    "title": "Siri تدخل عصراً جديداً: تحديثات ثورية بالذكاء الاصطناعي",
+    "desc": "سيري تدخل مرحلة جديدة من التطور، مما يعكس التقدم في تقنيات الذكاء الاصطناعي.",
+    "url": "article-syry-tdkhl-asra-jdy.html",
+    "category": "Apps",
+    "image": "assets/images/1770757876687_Apple-Intelligence-Tim-Cook-780x470.webp"
+  },
+  {
+    "title": "أفضل تطبيقات التحكم بالشاشات الذكية 2026 (تحكم كامل من هاتفك)",
+    "desc": "أفضل التطبيقات تساعد في إدارة الشاشات الذكية بكفاءة. توفر أدوات مساعدة ذكية",
+    "url": "article-afdl-ttbyqat-althkm.html",
+    "category": "Apps",
+    "image": "assets/images/1770804728303_٢٠٢٦٠٢١١_١٣١١٤٨.webp"
+  },
+  {
+    "title": "Seedance 2.0: التقنية التي وضعت هوليوود أمام أخطر اختبار في تاريخها",
+    "desc": "Seedance 2.0\" يمثل تحديًا جديدًا لهوليوود، حيث يواجه صناع الأفلام أكبر اختبار في تاريخ صناعتهم.",
+    "url": "article-seedance-20-altqnyh.html",
+    "category": "Articles",
+    "image": "assets/images/1770677376506_seedance-video-bytedance-.webp"
+  },
+  {
+    "title": "تحديث شامل لتطبيق تيليجرام على أندرويد بتصميم زجاجي عصري",
+    "desc": "طرح تطبيق «تيليكرام» تحديثًا رئيسيًا لنسخة أندرويد يحمل الإصدار 12.4.0، ويتضمن إعادة تصميم الواجهة بالكامل بالاعتماد على مفهوم «الزجاج السائل» مع شريط سفلي جديد بأربعة تبويبات، وتحويل قائمة الهامبرغر إلى قائمة النقاط الثلاث",
+    "url": "article-thdyth-shaml.html",
+    "category": "Apps",
+    "image": "assets/images/1770658001840_public.webp"
+  },
+  {
+    "title": "طريقة التحميل من تيك توك بدون علامة مائية (شرح 2026)",
+    "desc": "يمكن تحميل المحتوى من تيكتوك بدون وجود العلامة المائية، مما يتيح للمستخدمين الحصول على الفيديوهات بشكل نظيف وواضح.",
+    "url": "article-tryqh-althmyl-mn-tyk.html",
+    "category": "Apps",
+    "image": "assets/images/1770567334040_٢٠٢٦٠٢٠٣_١١٣٩٢٢.webp"
+  },
+  {
+    "title": "نقل ملفات OBB وData في أندرويد 14/15 – الحل النهائي 2026",
+    "desc": "تجاوز قيود جوجل في أندرويد 11+ و 14/15 لنقل ملفات الألعاب الكبيرة باستخدام Shizuku و ZArchiver.",
+    "url": "article-android-data-obb.html",
+    "category": "Games",
+    "image": "https://images.unsplash.com/photo-1623126908029-58cb08a2b272?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "أفضل أدوات الذكاء الاصطناعي لعام 2025 و2026",
+    "desc": "دليل شامل لأفضل منصات الذكاء الاصطناعي لعامي 2025 و 2026، يشمل ChatGPT، Gemini، Claude، وغيرها من الأدوات الرائدة.",
+    "url": "article-best-ai-platforms-2025-2026.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "أفضل منصات ذكاء اصطناعي مجانية بالكامل في 2026 (بدون اشتراك مدفوع)",
+    "desc": "قائمة مختارة لأقوى الأدوات المجانية التي يمكنك استخدامها فوراً للكتابة، البرمجة، والبحث.",
+    "url": "article-best-free-ai-platforms.html",
+    "category": "Apps",
+    "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "تحديث CapCut الجديد: ميزات ذكاء اصطناعي تقلب موازين المونتاج",
+    "desc": "تعرف على أدوات التحرير الجديدة التي تمت إضافتها لتطبيق المونتاج الشهير، بما في ذلك التتبع الذكي وتحسين الجودة.",
+    "url": "article-capcut-update.html",
+    "category": "Apps",
+    "image": "assets/images/1770514091659_capcut-ai-features.webp"
+  },
+  {
+    "title": "ثورة الشحن السريع والبطاريات (2021–2026): من السباق نحو السرعة إلى الكفاءة",
+    "desc": "مقارنة شاملة لتقنيات الشحن السريع والبطاريات من عام 2021 وحتى أحدث تقنيات السيليكون-كربون في 2026.",
+    "url": "article-charging-tech-2026.html",
+    "category": "Apps",
+    "image": "assets/images/1770514140938_images_(9).webp"
+  },
+  {
+    "title": "حظر الإعلانات والمواقع الضارة عبر DNS بدون برامج",
+    "desc": "تخلص من الإعلانات المزعجة والمواقع الضارة على أندرويد وآيفون باستخدام إعدادات DNS فقط.",
+    "url": "article-dns-block-ads.html",
+    "category": "Apps",
+    "image": "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "حل مشكلة \"جهازك غير متوافق مع هذا الإصدار\" للألعاب القديمة 2026",
+    "desc": "كيفية تشغيل الألعاب القديمة (32-bit) على هواتف أندرويد الحديثة التي تدعم 64-bit فقط.",
+    "url": "article-fix-old-games.html",
+    "category": "Games",
+    "image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "قمة الويب 2026 بالدوحة: الذكاء الاصطناعي وتمكين الإبداع البشري",
+    "desc": "كيف شكل الذكاء الاصطناعي محور الحديث في أكبر تجمع تقني في المنطقة؟",
+    "url": "article-web-summit-doha-2026.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "منصات غيرت قواعد اللعبة: تعرف على Z.ai وManus",
+    "desc": "جيل جديد من الوكلاء المستقلين وأنظمة تحويل النص إلى فيديو تصل إلى الأسواق.",
+    "url": "article-game-changing-ai-platforms.html",
+    "category": "",
+    "image": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "هل قرأت خبراً مزيفاً اليوم؟ جدل حول تصنيف الأخبار المولدة بالذكاء الاصطناعي",
+    "desc": "اقتراحات بوضع \"ملصقات غذائية\" على المحتوى الرقمي لتوضيح نسبة التدخل البشري والآلي.",
+    "url": "article-ai-news-labeling-debate.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "مراجعة وحش الألعاب Asus ROG Zephyrus G16 (2024): هل يستحق سعره؟",
+    "desc": "تحليل شامل لأقوى لابتوب ألعاب نحيف في العالم. تعرف على أداء معالج Intel Core Ultra 9 وشاشة OLED المذهلة.",
+    "url": "article-asus-gx10.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "مستقبل الذكاء الاصطناعي 2026: الاتجاهات، التحديات، وتأثيره على البشرية",
+    "desc": "استكشف كيف سيغير الذكاء الاصطناعي حياتنا بحلول عام 2026، من الرعاية الصحية إلى المواصلات، والتحديات الأخلاقية المصاحبة.",
+    "url": "article-future-ai-2026.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "ثورة طبية 2026: أدوية مصممة بالكامل بواسطة AI تدخل التجارب السريرية",
+    "desc": "كيف يختصر الذكاء الاصطناعي سنوات من البحث الطبي لإنتاج علاجات للأمراض المستعصية؟",
+    "url": "article-ai-designed-drugs-2026.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "القمة العالمية للحكومات 2026: إطلاق منصة Apolitical للذكاء الاصطناعي",
+    "desc": "أدوات جديدة لدعم الموظفين الحكوميين في اتخاذ القرارات وإدارة الموارد بكفاءة عالية.",
+    "url": "article-gov-summit-ai-2026.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1577495508326-19a1b3cf65b7?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "تسريبات GTA VI الجديدة: الموعد المتوقع، القصة، وتفاصيل خريطة Leonida",
+    "desc": "كل ما نعرفه عن لعبة العالم المفتوح المنتظرة من روكستار: تفاصيل الخريطة، الشخصيات، وموعد الإصدار.",
+    "url": "article-gta-vi.html",
+    "category": "Games",
+    "image": "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "تحديث تطبيق دوري أبطال أوروبا: النظام السويسري الجديد وميزات خيالية",
+    "desc": "تحليل شامل لتطبيق UEFA Champions League الجديد: متابعة النظام السويسري، الفانتزي، والبث المباشر للإحصائيات.",
+    "url": "article-ucl-update.html",
+    "category": "Sports",
+    "image": "https://images.unsplash.com/photo-1614632537190-23e4146777db?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "أمنك الرقمي: كيفية كشف وحذف الأجهزة المخترقة لحسابك في تيليجرام",
+    "desc": "هل يقرأ أحد رسائلك؟ دليل شامل لفحص الجلسات النشطة وتأمين حساب تيليجرام الخاص بك.",
+    "url": "article-telegram-security.html",
+    "category": "Apps",
+    "image": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "ثورة النماذج متعددة الوسائط: كيف غيرت OpenAI قواعد اللعبة؟",
+    "desc": "استكشف كيف تحولت نماذج الذكاء الاصطناعي من فهم النصوص فقط إلى معالجة الصور والصوت والفيديو في وقت واحد، وتأثير ذلك على قطاع الأعمال والمستقبل التقني.",
+    "url": "article-openai-multimodal.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "الذكاء الاصطناعي في جيبك: نظرة على تجربة Google Gemini Nano",
+    "desc": "كيف تنقل جوجل الذكاء الاصطناعي من السحابة إلى هاتفك مباشرة؟ تعرف على فوائد المعالجة المحلية من السرعة إلى الخصوصية.",
+    "url": "article-google-gemini-nano.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1697577418970-95d99b5a55cf?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "وكلاء الذكاء الاصطناعي المستقلون: رؤية Anthropic للمستقبل",
+    "desc": "الوكيل الذكي لم يعد مجرد دردشة، بل نظام ينفذ مهام معقدة تلقائياً. كيف تخطط Anthropic لمستقبل العمل الهجين بين البشر والآلة؟",
+    "url": "article-anthropic-agents.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "السيارات ذاتية القيادة: كيف تدرب Tesla شبكاتها العصبية للرؤية؟",
+    "desc": "من الكاميرات إلى الشبكات العصبية العميقة: كيف تحاول تسلا حل معضلة القيادة الذاتية الكاملة باستخدام مليارات الأميال من البيانات.",
+    "url": "article-tesla-fsd-ai.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "الفن الرقمي الجديد: سحر Midjourney ونماذج الانتشار (Diffusion)",
+    "desc": "كيف تحول الكلمات إلى لوحات فنية مذهلة؟ تعرف على التقنية خلف Midjourney وتأثيرها على صناعة التصميم والإبداع.",
+    "url": "article-midjourney-art.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "ديمقراطية الذكاء الاصطناعي: دور Hugging Face والمصدر المفتوح",
+    "desc": "لماذا يعتبر المصدر المفتوح مستقبل الذكاء الاصطناعي؟ تعرف على منصة Hugging Face التي توفر آلاف النماذج المجانية للجميع.",
+    "url": "article-huggingface-opensource.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "وداعاً للروابط التقليدية: كيف يغير Perplexity AI مفهوم البحث؟",
+    "desc": "هل انتهى عصر محركات البحث التقليدية؟ اكتشف كيف تقدم محركات الإجابة (Answer Engines) معلومات دقيقة وموثقة فورياً.",
+    "url": "article-perplexity-search.html",
+    "category": "Articles",
+    "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "title": "بوت الطلبات",
+    "desc": "بوت على التيليكرام لاستقبال طلبات التطبيقات والالعاب المعدلة",
+    "url": "https://t.me/techtouchAI_bot",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "Techtouch7",
+    "desc": "قناة نشر تطبيقات والعاب اندرويد",
+    "url": "https://t.me/techtouch7",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "مناقشات Techtouch",
+    "desc": "تعليقات لحل المشاكل وغيرها",
+    "url": "https://t.me/techtouch6",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "قناة الالعاب",
+    "desc": "نشر العاب اندرو معدلة",
+    "url": "https://t.me/techtouch0",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "مناقشات الالعاب",
+    "desc": "كروب مناقشة الالعاب",
+    "url": "https://t.me/+pScKzHOQwslhMmJi",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "قناة PC & PS",
+    "desc": "قناة لنشر مايخص البليستيشن وبرامج الوندوز",
+    "url": "https://t.me/techtouch4",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "مناقشات PC & PS",
+    "desc": "مناقشات حول الكمبيوتر والبليستيشن",
+    "url": "https://t.me/+J1Up1q8AYgs2MWU6",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "قناة الايفون",
+    "desc": "نشر مايخص الايفون تطبيقات وغيرها",
+    "url": "https://t.me/+yqBOH5BBBEM0MTQ6",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "مناقشات الايفون",
+    "desc": "حل بعض المشاكل للايفون ومناقشتها",
+    "url": "https://t.me/+t1W3_jSUjOw0ZDYy",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "قناة البث المباشر",
+    "desc": "توفير روابط مباشره لكرة القدم",
+    "url": "https://t.me/techtouch9",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
+  },
+  {
+    "title": "المجلد الكامل",
+    "desc": "للاشتراك بجميع القنوات دفعة واحدة",
+    "url": "https://t.me/addlist/Gxcy1FFJONhkMjFi",
+    "category": "Channels",
+    "image": "assets/images/me.jpg"
   }
 ];
