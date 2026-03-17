@@ -120,11 +120,17 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         const $content = cheerio.load(post.content, null, false);
         // $content('.adsbygoogle-container, .ad-placeholder').remove();
         
-        // Optimize Images
+        // Optimize Images (Added explicit width/height to prevent CLS)
         $content('img').each((i, img) => {
             const originalSrc = $content(img).attr('src');
             if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
+            
+            // Add dimensions to prevent Cumulative Layout Shift
+            if (!$content(img).attr('width')) $content(img).attr('width', '800');
+            if (!$content(img).attr('height')) $content(img).attr('height', '600');
+            
             $content(img).attr('onerror', "this.onerror=null;this.src='assets/images/me.jpg';");
+            $content(img).attr('loading', 'lazy'); // ensure lazy loading
         });
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         

@@ -19,11 +19,6 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
         $('title').text(pageTitleOverride);
         $('meta[property="og:title"]').attr('content', pageTitleOverride);
     }
-    
-    // Inject Meta Description for Global Pages if missing
-    if ($('meta[name="description"]').length === 0 && aboutData && aboutData.siteDescription) {
-        $('head').append(`<meta name="description" content="${aboutData.siteDescription}">`);
-    }
 
     // Preconnect for Performance
     const preconnectTags = `
@@ -53,8 +48,11 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
 
     const noAdsPages = ['privacy.html', 'about.html'];
     if (!noAdsPages.includes(fileName)) {
-        $('head script[src*="adsbygoogle"]').remove();
-        $('head').append(AD_SCRIPT(AD_CLIENT_ID));
+        let hasAdScript = false;
+        $('script').each((i, el) => {
+           if($(el).attr('src')?.includes('adsbygoogle')) hasAdScript = true;
+        });
+        if (!hasAdScript) { $('head').append(AD_SCRIPT(AD_CLIENT_ID)); }
     }
     
     $('head').prepend(GA_SCRIPT(GA_ID));
