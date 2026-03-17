@@ -1,4 +1,4 @@
-import { escapeHtml, cleanPath } from '../utils/helpers.js';
+import { escapeHtml, cleanPath, stripHtml } from '../utils/helpers.js';
 
 export const GA_SCRIPT = (id) => `
 <script async src="https://www.googletagmanager.com/gtag/js?id=${id}"></script>
