@@ -62,7 +62,7 @@ export async function generateCategoryPages({ postsByCategory, aboutData, channe
 
             if (currentPosts.length > 0) {
                 currentPosts.forEach((post, index) => {
-                    const isFirst = (start === 0 && index === 0 && p.slug === 'index'); // Only eager load very first card on homepage
+                    const isFirst = (index === 0 && p.slug === 'index'); // Only eager load very first card on homepage
                     grid.append(createCardHTML(post, aboutData, isFirst));
                 });
             } else {
