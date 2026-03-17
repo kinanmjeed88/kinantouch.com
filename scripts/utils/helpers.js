@@ -1,5 +1,10 @@
 import { BASE_URL } from '../config/constants.js';
 
+export const stripHtml = (str = '') => {
+    if (typeof str !== 'string') return '';
+    return str.replace(/<[^>]*>?/gm, '');
+};
+
 export const escapeHtml = (str = '') => {
     if (typeof str !== 'string') return '';
     return str.replace(/[&<>"']/g, s =>

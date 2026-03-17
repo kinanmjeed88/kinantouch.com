@@ -4,7 +4,7 @@ import * as cheerio from 'cheerio';
 import { ROOT_DIR, TEMPLATES_DIR } from '../utils/paths.js';
 import { safeWrite } from '../utils/fs.js';
 import { updateGlobalElements } from '../core/global.js';
-import { cleanPath, escapeHtml, escapeXml, toAbsoluteUrl } from '../utils/helpers.js';
+import { cleanPath, escapeHtml, escapeXml, stripHtml, toAbsoluteUrl } from '../utils/helpers.js';
 import { parseMarkdown } from '../core/markdown.js';
 import { getCatLabel, generateAdBannerHTML, FIXED_AD_UNIT } from '../core/renderer.js';
 import { BASE_URL } from '../config/constants.js';
@@ -110,7 +110,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         const existingImgDiv = $('main > div.rounded-2xl');
         const adaptiveImageHTML = `
         <div class="article-image-container">
-            <img src="${cleanPath(post.image)}" alt="${escapeHtml(post.title)}" class="article-featured-image" loading="eager" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
+            <img src="${cleanPath(post.image)}" alt="${escapeHtml(stripHtml(post.title))}" class="article-featured-image" loading="eager" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
         </div>
         `;
         
@@ -120,17 +120,11 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         const $content = cheerio.load(post.content, null, false);
         // $content('.adsbygoogle-container, .ad-placeholder').remove();
         
-        // Optimize Images (Added explicit width/height to prevent CLS)
+        // Optimize Images
         $content('img').each((i, img) => {
             const originalSrc = $content(img).attr('src');
             if (originalSrc) $content(img).attr('src', cleanPath(originalSrc));
-            
-            // Add dimensions to prevent Cumulative Layout Shift
-            if (!$content(img).attr('width')) $content(img).attr('width', '800');
-            if (!$content(img).attr('height')) $content(img).attr('height', '600');
-            
             $content(img).attr('onerror', "this.onerror=null;this.src='assets/images/me.jpg';");
-            $content(img).attr('loading', 'lazy'); // ensure lazy loading
         });
         $content('img').addClass('w-full h-auto max-w-full rounded-xl shadow-md my-4 block mx-auto border border-gray-100 dark:border-gray-700');
         
