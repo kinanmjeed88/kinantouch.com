@@ -201,7 +201,7 @@ export const getCatLabel = (cat, aboutData) => {
 };
 
 export const createCardHTML = (post, aboutData, isFirst = false) => {
-    const loadingAttr = isFirst ? 'loading="eager"' : '${loadingAttr}';
+    const loadingAttr = isFirst ? 'loading="eager"' : 'loading="lazy"';
 
     let badgeColor = 'bg-blue-600';
     let icon = 'file-text';
