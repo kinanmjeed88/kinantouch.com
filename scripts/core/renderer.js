@@ -200,7 +200,9 @@ export const getCatLabel = (cat, aboutData) => {
     return configured[cat] || defaults[cat] || 'عام';
 };
 
-export const createCardHTML = (post, aboutData) => {
+export const createCardHTML = (post, aboutData, isFirst = false) => {
+    const loadingAttr = isFirst ? 'loading="eager"' : '${loadingAttr}';
+
     let badgeColor = 'bg-blue-600';
     let icon = 'file-text';
     if(post.category === 'apps') { badgeColor = 'bg-green-600'; icon = 'smartphone'; }
@@ -216,7 +218,7 @@ export const createCardHTML = (post, aboutData) => {
     <a href="/article-${post.slug}.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="${cleanPath(post.image)}" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${escapeHtml(stripHtml(post.title))}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
+                <img src="${cleanPath(post.image)}" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${escapeHtml(stripHtml(post.title))}" ${loadingAttr} decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                 <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
                     <i data-lucide="${icon}" style="width: 1.2em; height: 1.2em;"></i><span>${getCatLabel(post.category, aboutData)}</span>

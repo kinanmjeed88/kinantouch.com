@@ -61,7 +61,10 @@ export async function generateCategoryPages({ postsByCategory, aboutData, channe
             }
 
             if (currentPosts.length > 0) {
-                currentPosts.forEach(post => grid.append(createCardHTML(post, aboutData)));
+                currentPosts.forEach((post, index) => {
+                    const isFirst = (start === 0 && index === 0 && p.slug === 'index'); // Only eager load very first card on homepage
+                    grid.append(createCardHTML(post, aboutData, isFirst));
+                });
             } else {
                 $('head').append('<meta name="robots" content="noindex, follow">');
                 grid.html('<div class="col-span-full text-center py-20 text-gray-400 text-sm">لا توجد منشورات في هذا القسم حالياً.</div>');
