@@ -20,11 +20,22 @@
     
     
 
-    
-
-
-    
-    <link rel="stylesheet" href="assets/css/tailwind-output.css">
+    <style>
+body { visibility: hidden; opacity: 0; transition: opacity 0.2s ease-in-out; }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+window.addEventListener("load", function(){
+    document.body.style.visibility = 'visible';
+    document.body.style.opacity = '1';
+});
+</script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'] } } }
+        }
+    </script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 <meta property="og:title" content="تطبيقات | TechTouch">
@@ -287,6 +298,42 @@ article {
 
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in min-h-[60vh]"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+    <a href="/article-golden-youtube.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
+        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
+            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
+                <img src="assets/images/1773975107215_20260320_055133.webp" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="تحميل YouTube Gold: اليوتيوب الذهبي بميزات البريميوم للأندرويد" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                <div class="absolute top-2 right-2 bg-green-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
+                    <i data-lucide="smartphone" style="width: 1.2em; height: 1.2em;"></i><span>تطبيقات</span>
+                </div>
+            </div>
+            <div class="p-4 flex-1 flex flex-col w-full">
+                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
+                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">٢٠‏/٠٣‏/٢٠٢٦، ٠٢:٤٨ ص</span>
+                </div>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2 custom-title-size" title="<span class=&quot;text-blue-600 dark:text-blue-400 text-lg font-bold&quot;>تحميل YouTube Gold:</span> اليوتيوب الذهبي بميزات البريميوم للأندرويد"><span class="text-blue-600 dark:text-blue-400 text-lg font-bold">تحميل YouTube Gold:</span> اليوتيوب الذهبي بميزات البريميوم للأندرويد</h3>
+                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">تطبيق للأندرويد يتيح ميزات بريميوم مجاناً، كحظر الإعلانات، التشغيل في الخلفية، وتحميل الفيديوهات بجودة عالية.</p>
+            </div>
+        </div>
+    </a>
+    <a href="/article-movies-channels-website.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
+        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
+            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
+                <img src="assets/images/1773925809572_20260319_035642.webp" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="أفضل مواقع البث المباشر للأفلام:  والرياضة وكيفية حظر الإعلانات نهائياً (DNS)" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                <div class="absolute top-2 right-2 bg-green-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
+                    <i data-lucide="smartphone" style="width: 1.2em; height: 1.2em;"></i><span>تطبيقات</span>
+                </div>
+            </div>
+            <div class="p-4 flex-1 flex flex-col w-full">
+                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
+                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">١٩‏/٠٣‏/٢٠٢٦، ٠١:٠٧ م</span>
+                </div>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full line-clamp-2 custom-title-size" title="<span class=&quot;text-blue-600 dark:text-blue-400 text-lg font-bold&quot;>أفضل مواقع البث المباشر للأفلام:</span>  والرياضة وكيفية حظر الإعلانات نهائياً (DNS)"><span class="text-blue-600 dark:text-blue-400 text-lg font-bold">أفضل مواقع البث المباشر للأفلام:</span>  والرياضة وكيفية حظر الإعلانات نهائياً (DNS)</h3>
+                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">أفضل منصات لمشاهدة الأفلام، المسلسلات، والمباريات الرياضية.</p>
+            </div>
+        </div>
+    </a>
     <a href="/article-cancel-mobile-dns-2026.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">

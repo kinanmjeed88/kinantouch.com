@@ -9,7 +9,7 @@
   <link>https://kinantouch.com</link>
   <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
   <language>ar</language>
-  <lastBuildDate>Fri, 20 Mar 2026 04:06:45 GMT</lastBuildDate>
+  <lastBuildDate>Fri, 20 Mar 2026 04:35:22 GMT</lastBuildDate>
   <ttl>60</ttl>
   <atom:link href="https://kinantouch.com/feed.xml" rel="self" type="application/rss+xml" />
 
@@ -22,67 +22,596 @@
     <category>sports</category>
     <description><![CDATA[يتعلق الأمر بتوزيع الروابط الخاصة بالبث المباشر للمحتوى. الهدف هو تسهيل الوصول إلى المشاهدين.]]></description>
     <content:encoded><![CDATA[<div>
+
 <div>
+  <img src="https://www.almutanabi.shop/images/Live1.gif" loading="lazy" alt="صورة المقال" onerror="this.setAttribute('data-error','1'); this.classList.add('border-red-400', 'bg-red-50'); this.title='تعذّر تحميل الصورة — تحقق من الرابط';" />
+</div>
+
+<div>
+<div>
+  
   <div>
-     <p>
-       ⚠️ يتم تحديث الروابط باستمرار في نفس المقال.
-     </p>
+    <p>
+      ⚠️ يتم تحديث الروابط باستمرار في نفس المقال.
+    </p>
   </div>
+  
   <div>
     <span>
       <span></span> بث مباشر
     </span>
   </div>
+  
   <div>
-    <div>
+    
+    <figure>
       <div>
-        <img src="https://upload.wikimedia.org/wikipedia/ar/5/56/Real_Madrid_CF.svg" alt="ريال مدريد" onerror="this.setAttribute('data-error','1'); this.style.border='2px dashed #f87171'; this.style.background='#fef2f2'; this.style.padding='8px'; this.title='تعذّر تحميل الصورة — تحقق من الرابط';">
+        <img src="https://upload.wikimedia.org/wikipedia/ar/4/47/FC_Barcelona_%28crest%29.svg" loading="lazy" alt="برشلونة" onerror="this.setAttribute('data-error','1'); this.classList.add('border-red-400', 'bg-red-50'); this.title='تعذّر تحميل الصورة — تحقق من الرابط';" />
       </div>
-      <h2>ريال مدريد</h2>
-    </div>
+      <figcaption>
+        برشلونة
+      </figcaption>
+    </figure>
+
     <div>
-        <span>VS</span>
+      <span>VS</span>
     </div>
-    <div>
+
+    <figure>
       <div>
-        <img src="https://upload.wikimedia.org/wikipedia/ar/a/af/Elche_CF.svg" alt="التشي" onerror="this.setAttribute('data-error','1'); this.style.border='2px dashed #f87171'; this.style.background='#fef2f2'; this.style.padding='8px'; this.title='تعذّر تحميل الصورة — تحقق من الرابط';">
+        <img src="https://upload.wikimedia.org/wikipedia/en/5/56/Newcastle_United_Logo.svg" loading="lazy" alt="نيوكاسل" onerror="this.setAttribute('data-error','1'); this.classList.add('border-red-400', 'bg-red-50'); this.title='تعذّر تحميل الصورة — تحقق من الرابط';" />
       </div>
-      <h2>التشي</h2>
-    </div>
+      <figcaption>
+        نيوكاسل
+      </figcaption>
+    </figure>
+
   </div>
+
+  
+      <div>
+         <div>
+            
+            <span><span>📺</span> beIN Sports 2</span>
+            
+            <span><span>⏰</span> 7:45 pm</span>
+         </div>
+      </div>
+  
   <div>
     <div>
-      <h3>اختر سيرفر المشاهدة</h3>
+      <span>اختر سيرفر المشاهدة</span>
     </div>
     <div>
-<a href="https://www.facebook.com/share/v/18HoWW8FV2/" target="_blank" rel="noopener noreferrer" 
-           >
-            <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> سيرفر المشاهدة (1)
-            </a>
-<a href="https://www.facebook.com/share/v/1D6SJXHQg9/" target="_blank" rel="noopener noreferrer" 
-           >
-            <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> سيرفر المشاهدة (2)
-            </a>
-<a href="https://www.facebook.com/share/v/1Zr7Z3nWQr/" target="_blank" rel="noopener noreferrer" 
-           >
-            <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> سيرفر المشاهدة (3)
-            </a>
-<a href="https://www.facebook.com/share/v/18az34LHh1/" target="_blank" rel="noopener noreferrer" 
-           >
-            <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> سيرفر المشاهدة (4)
-            </a>
+<a href="https://www.facebook.com/share/v/17rw6QEH6U/" target="_blank" rel="noopener noreferrer"
+     >
+      <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> سيرفر المشاهدة (1)
+      </a>
+<a href="https://www.facebook.com/share/v/1BqPR5K6if/" target="_blank" rel="noopener noreferrer"
+     >
+      <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> سيرفر المشاهدة (2)
+      </a>
+<a href="https://www.facebook.com/share/v/1DpMd16wzG/" target="_blank" rel="noopener noreferrer"
+     >
+      <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> سيرفر المشاهدة (3)
+      </a>
+<a href="https://www.facebook.com/share/v/18TDFdDvKN/" target="_blank" rel="noopener noreferrer"
+     >
+      <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> سيرفر المشاهدة (4)
+      </a>
+<a href="https://www.facebook.com/share/v/189aSx5YtT/" target="_blank" rel="noopener noreferrer"
+     >
+      <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg> سيرفر المشاهدة (5)
+      </a>
     </div>
     <div>
-        <p>هل تواجه مشكلة؟</p>
-        <a href="https://t.me/techtouchAI_bot" target="_blank">
-            <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.96 1.25-5.54 3.67-.52.36-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.34-.49.94-.76 3.68-1.6 6.13-2.66 7.35-3.16 3.49-1.45 4.22-1.7 4.7-1.71.11 0 .34.03.47.14.11.09.14.22.15.34-.01.05-.01.16-.02.22z"/></svg> تواصل مع الدعم
-        </a>
+      <p>هل تواجه مشكلة؟</p>
+      <a href="https://t.me/techtouchAI_bot" target="_blank">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.96 1.25-5.54 3.67-.52.36-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.34-.49.94-.76 3.68-1.6 6.13-2.66 7.35-3.16 3.49-1.45 4.22-1.7 4.7-1.71.11 0 .34.03.47.14.11.09.14.22.15.34-.01.05-.01.16-.02.22z"/></svg> تواصل مع الدعم
+      </a>
     </div>
   </div>
 </div>
+
+<div></div>
+</div>
+
 </div>]]></content:encoded>
     <media:content url="https://kinantouch.com/assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp" type="image/webp" medium="image" />
     <enclosure url="https://kinantouch.com/assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp" type="image/webp" />
+  </item>
+  <item>
+    <title><![CDATA[تحميل YouTube Gold: اليوتيوب الذهبي بميزات البريميوم للأندرويد]]></title>
+    <link>https://kinantouch.com/article-golden-youtube</link>
+    <guid isPermaLink="true">https://kinantouch.com/article-golden-youtube</guid>
+    <pubDate>Fri, 20 Mar 2026 02:48:00 GMT</pubDate>
+    <dc:creator><![CDATA[كنان الصائغ]]></dc:creator>
+    <category>apps</category>
+    <description><![CDATA[تطبيق للأندرويد يتيح ميزات بريميوم مجاناً، كحظر الإعلانات، التشغيل في الخلفية، وتحميل الفيديوهات بجودة عالية.]]></description>
+    <content:encoded><![CDATA[<div dir="rtl">
+
+    <p>
+        تطبيق "اليوتيوب الذهبي" (YouTube Gold) هو نسخة مُعدلة غير رسمية من تطبيق يوتيوب الأساسي لنظام أندرويد. يقدم هذا الإصدار مجموعة متكاملة من الميزات المتقدمة التي تتطلب عادةً اشتراكاً مدفوعاً، ويجمع بين التخصيص البصري وتجاوز القيود الرسمية.
+    </p>
+
+    <div>
+        <div>
+            <i></i>
+            <span>التحديث الشامل</span>
+        </div>
+    </div>
+
+    <section>
+        <div>
+            <span>
+                <i></i>
+            </span>
+            <h3>الميزات الأساسية والمتقدمة</h3>
+        </div>
+
+        <ul>
+            <li>
+                <strong>إزالة وحظر الإعلانات:</strong> منع ظهور جميع الفواصل الإعلانية قبل، أثناء، أو بعد مقاطع الفيديو بشكل نهائي.
+            </li>
+            <li>
+                <strong>التشغيل في الخلفية:</strong> استمرار تشغيل المقطع الصوتي عند الخروج من التطبيق أو قفل شاشة الهاتف الذكي.
+            </li>
+            <li>
+                <strong>تحميل الفيديوهات والوسائط:</strong> توفير أداة مدمجة لتنزيل الفيديوهات والصوتيات بالصيغة والجودة المطلوبة وحفظها في ذاكرة الجهاز.
+            </li>
+            <li>
+                <strong>جودة العرض المفتوحة (4K HDR):</strong> تجاوز قيود الدقة المفروضة وتشغيل الفيديوهات بأعلى جودة ممكنة.
+            </li>
+            <li>
+                <strong>واجهة ذهبية مخصصة:</strong> تصميم بصري مميز، مع إمكانية تخصيص الواجهة وإخفاء الفيديوهات القصيرة (Shorts).
+            </li>
+            <li>
+                <strong>مشاهدة بدون توقف:</strong> ضمان استمرارية التشغيل التلقائي دون رسائل تأكيد الانتباه.
+            </li>
+            <li>
+                <strong>إظهار إحصائيات عدم الإعجاب:</strong> إعادة تفعيل وعرض عداد "لم يعجبني" (Dislikes).
+            </li>
+            <li>
+                <strong>ميزات بريميوم وتكبير الشاشة:</strong> دعم ملء الشاشة وتفعيل خصائص الحسابات المدفوعة مجاناً.
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h3>
+            <i></i> المتطلبات التقنية وطريقة التشغيل
+        </h3>
+        <div>
+            <p>
+                التطبيق لا يتوفر في المتاجر الرسمية. لضمان عمل التطبيق بكامل طاقته، وتحديداً لتسجيل الدخول بحساب جوجل ومزامنة الاشتراكات وقوائم التشغيل، يُعد <strong>تثبيت التطبيق المساعد (MicroG)</strong> أمراً حتمياً. بدون هذا المساعد، سيعمل اليوتيوب الذهبي كمتصفح لزائر غير مسجل فقط.
+            </p>
+        </div>
+    </section>
+
+    <section>
+        
+        <a href="https://t.me/techtouch7/223?single" target="_blank" rel="noopener noreferrer"
+          >
+            <i></i>
+            <div>
+                <span>متاح بصيغة APK مباشرة</span>
+                <span>تحميل اليوتيوب الذهبي</span>
+            </div>
+        </a>
+
+        <a href="https://t.me/techtouch7/223?single" target="_blank" rel="noopener noreferrer"
+          >
+            <i></i>
+            <div>
+                <span>مطلوب لتسجيل الدخول</span>
+                <span>تحميل المساعد (MicroG)</span>
+            </div>
+        </a>
+
+    </section>
+
+</div>
+]]></content:encoded>
+    <media:content url="https://kinantouch.com/assets/images/1773975107215_20260320_055133.webp" type="image/webp" medium="image" />
+    <enclosure url="https://kinantouch.com/assets/images/1773975107215_20260320_055133.webp" type="image/webp" />
+  </item>
+  <item>
+    <title><![CDATA[أفضل مواقع البث المباشر للأفلام:  والرياضة وكيفية حظر الإعلانات نهائياً (DNS)]]></title>
+    <link>https://kinantouch.com/article-movies-channels-website</link>
+    <guid isPermaLink="true">https://kinantouch.com/article-movies-channels-website</guid>
+    <pubDate>Thu, 19 Mar 2026 13:07:00 GMT</pubDate>
+    <dc:creator><![CDATA[كنان الصائغ]]></dc:creator>
+    <category>apps</category>
+    <description><![CDATA[أفضل منصات لمشاهدة الأفلام، المسلسلات، والمباريات الرياضية.]]></description>
+    <content:encoded><![CDATA[<div dir="rtl">
+
+    <p>
+        الدليل الشامل لمنصات المشاهدة والبث المباشر للأفلام والرياضة، توفر هذه القائمة وصولاً مباشراً لمجموعة من أبرز منصات المشاهدة عبر الإنترنت لجميع الأجهزة، مع شرح حصري لكيفية حظر الإعلانات المزعجة نهائياً.
+    </p>
+
+    <div>
+        <div>
+            <i></i>
+            <span>دليل حصري 2026</span>
+        </div>
+    </div>
+
+    <section>
+        <div>
+            <span>
+                <i></i>
+            </span>
+            <h3>أولاً: مواقع الأفلام والمسلسلات</h3>
+        </div>
+
+        <p>تضم هذه القائمة منصات توفر مكتبات واسعة من الأعمال السينمائية والتلفزيونية بأعلى جودة:</p>
+
+        <div>
+            
+            <a href="https://laroza.shop/moslslat4.php" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>Laroza (لاروزا)</span>
+                </div>
+                <i></i>
+            </a>
+
+            <a href="https://moviebox.club/" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>MovieBox (موفي بوكس)</span>
+                </div>
+                <i></i>
+            </a>
+
+            <a href="https://themoviebox.org/" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>TheMovieBox</span>
+                </div>
+                <i></i>
+            </a>
+
+            <a href="https://moviebox.ng/" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>MovieBox NG</span>
+                </div>
+                <i></i>
+            </a>
+
+            <a href="https://sflix.film/" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>SFlix (إس فليكس)</span>
+                </div>
+                <i></i>
+            </a>
+
+            <a href="https://netnaija.film/" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>NetNaija (نت نايجا)</span>
+                </div>
+                <i></i>
+            </a>
+
+            <a href="https://m.filmcity12.com/" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>FilmCity (فيلم سيتي)</span>
+                </div>
+                <i></i>
+            </a>
+
+            <a href="https://plx.show/" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>PLX Show</span>
+                </div>
+                <i></i>
+            </a>
+
+            <a href="https://jdmoon.netlify.app/" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>JDmoon (جي دي مون)</span>
+                </div>
+                <i></i>
+            </a>
+
+            <a href="https://wecima.show/" target="_blank" rel="noopener noreferrer"
+              >
+                <div>
+                    <i></i>
+                    <span>WeCima (بديل ايجي بست)</span>
+                </div>
+                <i></i>
+            </a>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <span>
+                <i></i>
+            </span>
+            <h3>ثانياً: مواقع البث الرياضي والقنوات المباشرة</h3>
+        </div>
+
+        <p>تتضمن هذه القائمة منصات متخصصة في نقل المباريات المباشرة والقنوات الرياضية بدون تقطيع:</p>
+
+        <div>
+            
+            <div>
+                <h4>Yacine TV (ياسين تي في)</h4>
+                <a href="https://yaciinetv.com/" target="_blank" rel="noopener noreferrer">دخول المنصة</a>
+            </div>
+
+            <div>
+                <h4>Yalla Sport (يلا شوت)</h4>
+                <a href="https://www.yalla-sport.net/" target="_blank" rel="noopener noreferrer">دخول المنصة</a>
+            </div>
+
+            <div>
+                <h4>Shoot TV (شوت تي في)</h4>
+                <span>كود الدخول: 1231</span>
+                <a href="http://www.shoottvlives.giize.com" target="_blank" rel="noopener noreferrer">دخول المنصة</a>
+            </div>
+
+            <div>
+                <h4>Cast X (كاست إكس)</h4>
+                <span>كود الدخول: 2222</span>
+                <a href="https://cast-x.site" target="_blank" rel="noopener noreferrer">دخول المنصة</a>
+            </div>
+
+            <div>
+                <h4>Remo TV (ريمو تي في)</h4>
+                <a href="https://remo-tv.com/live" target="_blank" rel="noopener noreferrer">دخول المنصة</a>
+            </div>
+
+            <div>
+                <h4>Ostoura TV (الأسطورة)</h4>
+                <a href="https://live.ostora.tv/" target="_blank" rel="noopener noreferrer">دخول المنصة</a>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>
+            <i></i> ثالثاً: كيفية تخطي وحظر الإعلانات (DNS)
+        </h3>
+        
+        <div>
+            تخلص من النوافذ المنبثقة والإعلانات المزعجة في المواقع والتطبيقات بسهولة وبدون الحاجة لتثبيت أي برامج إضافية.
+        </div>
+
+        <h4><i></i> للأندرويد (Android)</h4>
+        
+        <div dir="ltr">
+            <div>
+                <div>
+                    <span>AdGuard DNS - Family Filter</span>
+                </div>
+                <div>
+<pre><code>DNS Address:
+dns-family.adguard.com</code></pre>
+                </div>
+            </div>
+
+            <div>
+                <div>
+                    <span>AdGuard DNS - Default</span>
+                </div>
+                <div>
+<pre><code>DNS Address:
+dns.adguard-dns.com</code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <div>
+            <a href="https://vm.tiktok.com/ZT6E6RE6u/" target="_blank" rel="noopener noreferrer">
+                <i></i> شاهد شرح طريقة الإضافة للأندرويد
+            </a>
+        </div>
+
+        <h4><i></i> لأنظمة الآيفون (iOS)</h4>
+        
+        <div>
+            <ol>
+                <li>باستخدام <strong>Safari</strong>، قم بتنزيل ملف تعريف DNS المناسب.</li>
+                <li>انتقل إلى <strong>الإعدادات</strong> وسترى إشعارًا بتنزيل ملف تعريف جديد.</li>
+                <li>انقر فوق الإشعار ثم انقر فوق <strong>تثبيت (Install)</strong>.</li>
+            </ol>
+        </div>
+
+        <div>
+            <a href="https://vt.tiktok.com/ZS2t8aGS1/" target="_blank" rel="noopener noreferrer">
+                <i></i> شاهد شرح طريقة الإضافة للآيفون
+            </a>
+        </div>
+    </section>
+
+</div>
+]]></content:encoded>
+    <media:content url="https://kinantouch.com/assets/images/1773925809572_20260319_035642.webp" type="image/webp" medium="image" />
+    <enclosure url="https://kinantouch.com/assets/images/1773925809572_20260319_035642.webp" type="image/webp" />
+  </item>
+  <item>
+    <title><![CDATA[حسابات أكستريم:  (Xtream IPTV) مجانية ومحدثة]]></title>
+    <link>https://kinantouch.com/article-extreme-accounts-iptv</link>
+    <guid isPermaLink="true">https://kinantouch.com/article-extreme-accounts-iptv</guid>
+    <pubDate>Wed, 18 Mar 2026 20:43:00 GMT</pubDate>
+    <dc:creator><![CDATA[كنان الصائغ]]></dc:creator>
+    <category>sports</category>
+    <description><![CDATA[تحميل أفضل مشغل IPTV بدون إعلانات مع شرح إضافة الأكواد. يتضمن حسابات اكستريم]]></description>
+    <content:encoded><![CDATA[<div dir="rtl">
+
+    <p>
+        <span>#تحديث</span> مشغل ملفات IPTV اكستريم و M3U. دليلك الشامل لتشغيل وإدارة الملفات عبر تطبيق التشغيل الأفضل، مع توفير حسابات اكستريم (Xtream) مجانية، وروابط تحميل لكافة المنصات.
+    </p>
+
+    <div>
+        <div>
+            <img src="https://store-images.s-microsoft.com/image/apps.16279.13585032091773240.4bccec73-8553-4cf4-9cd6-1461f6ab35d9.36817858-a9fd-4617-af4e-7dd2aca3c698?h=307" alt="تطبيق IPTV" />
+        </div>
+    </div>
+
+    <section>
+        <h3>طريقة إضافة كود اكستريم (Xtream) للتطبيق</h3>
+        <div>
+            شاهد الشرح السريع التالي لمعرفة كيفية إدخال بيانات السيرفر (URL, Username, Password) بشكل صحيح لتشغيل القنوات بدون أخطاء.
+        </div>
+        
+        <div>
+            <div>
+                <iframe 
+                   
+                    src="https://www.youtube.com/embed/9SYHAGKzXg0"
+                    title="طريقة اضافة حساب أكستريم"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <span>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            </span>
+            <h3>يسمح لك بمشاهدة المحتوى حسب الطلب:</h3>
+        </div>
+
+        <div>
+            <ul>
+                <li>رياضه</li>
+                <li>قنوات</li>
+                <li>افلام</li>
+                <li>مسلسلات</li>
+            </ul>
+        </div>
+
+        <div>
+            <strong>التعديل:</strong>
+            <ul>
+                <li>جميع ميزات مدفوعة مجاناً</li>
+                <li>خالية من الاعلانات</li>
+                <li>تدعم أكواد بصيغة Xtream و M3U</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h3>حسابات أكستريم (Xtream IPTV) المجانية</h3>
+        
+        <div dir="ltr">
+            <div>
+                <div>
+                    <span>الحساب 1 | Expires: 2026-05-21</span>
+                    <span>Active | 1 Conn</span>
+                </div>
+                <div>
+<pre><code>URL: http://starshare.one
+Username: umaduttjisgpr
+Password: iptvsonu
+
+M3U Link:
+http://starshare.one/get.php?username=umaduttjisgpr&password=iptvsonu&type=m3u_plus</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div dir="ltr">
+            <div>
+                <div>
+                    <span>الحساب 2 | Expires: 2026-11-24</span>
+                    <span>Active | 1 Conn</span>
+                </div>
+                <div>
+<pre><code>URL: http://s3.e-cdn.me:80
+Username: Bengamenbukinafaso2026
+Password: msvrpi45e1
+
+M3U Link:
+http://s3.e-cdn.me:80/get.php?username=Bengamenbukinafaso2026&password=msvrpi45e1&type=m3u_plus</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div dir="ltr">
+            <div>
+                <div>
+                    <span>الحساب 3 | Expires: 2026-06-25</span>
+                    <span>Active | 2 Conn</span>
+                </div>
+                <div>
+<pre><code>URL: http://eaiptv.net:8080
+Username: gg855
+Password: 01001877769
+
+M3U Link:
+http://eaiptv.net:8080/get.php?username=gg855&password=01001877769&type=m3u_plus</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>روابط التحميل المباشرة</h3>
+
+        <div>
+            <div>
+                <h4>للشاشات الذكية (Smart TV)</h4>
+                <p>استخدم تطبيق Downloader وأدخل الكود التالي للتحميل المباشر:</p>
+            </div>
+            <div>
+                <span>8152914</span>
+            </div>
+        </div>
+
+        <div>
+            
+            <a href="https://apps.apple.com/us/app/smarters-player-lite/id1628995509" target="_blank" rel="noopener noreferrer"
+              >
+                <i></i>
+                <span>تحميل للايفون (Smarters Lite)</span>
+            </a>
+
+            <a href="https://t.me/techtouch7/995" target="_blank" rel="noopener noreferrer"
+              >
+                <i></i>
+                <span>تحميل للويندوز (Windows)</span>
+            </a>
+
+        </div>
+    </section>
+
+    <section>
+        <a href="https://t.me/techtouch7/1830?single" target="_blank" rel="noopener noreferrer"
+          >
+            <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.96 1.25-5.54 3.67-.52.36-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.34-.49.94-.76 3.68-1.6 6.13-2.66 7.35-3.16 3.49-1.45 4.22-1.7 4.7-1.71.11 0 .34.03.47.14.11.09.14.22.15.34-.01.05-.01.16-.02.22z"/></svg>
+            <div>
+                <span>لتحميل التطبيق للاندرويد من تيليجرام</span>
+            </div>
+        </a>
+    </section>
+
+</div>
+]]></content:encoded>
+    <media:content url="https://kinantouch.com/assets/images/1773867498004_20260318_115752.webp" type="image/webp" medium="image" />
+    <enclosure url="https://kinantouch.com/assets/images/1773867498004_20260318_115752.webp" type="image/webp" />
   </item>
   <item>
     <title><![CDATA[رسمياً:: جوجل تنهي عصر تحميل التطبيقات الخارجية (APK) في أندرويد بحلول 2026]]></title>
@@ -1624,264 +2153,6 @@
 </div>]]></content:encoded>
     <media:content url="https://kinantouch.com/assets/images/1771836804991_٢٠٢٦٠٢٢٣_١١٥٣٠٥.webp" type="image/webp" medium="image" />
     <enclosure url="https://kinantouch.com/assets/images/1771836804991_٢٠٢٦٠٢٢٣_١١٥٣٠٥.webp" type="image/webp" />
-  </item>
-  <item>
-    <title><![CDATA[تطبيق Spacetoon Go كرتون وأنمي مدبلج]]></title>
-    <link>https://kinantouch.com/article-spacetoon-go-app</link>
-    <guid isPermaLink="true">https://kinantouch.com/article-spacetoon-go-app</guid>
-    <pubDate>Sun, 22 Feb 2026 21:59:00 GMT</pubDate>
-    <dc:creator><![CDATA[كنان الصائغ]]></dc:creator>
-    <category>apps</category>
-    <description><![CDATA[المنصة الرسمية المخصصة لمشاهدة أفلام ومسلسلات الكرتون والأنمي المعروضة على قناة سبيستون.]]></description>
-    <content:encoded><![CDATA[ <div>
-
-  <section>
-    <h2>نظرة عامة على تطبيق سبيستون غو (Spacetoon Go)</h2>
-    <p>
-      تطبيق Spacetoon Go هو المنصة الرسمية المخصصة لمشاهدة أفلام ومسلسلات الكرتون والأنمي المعروضة على قناة سبيستون. يوفر التطبيق تجربة مشاهدة عالية الجودة، ويضم مكتبة ضخمة تحتوى على الأعمال الكرتونية الكلاسيكية والحديثة، سواء كانت مدبلجة أو مترجمة للعربية، مع إمكانية استخدامه بسلاسة على الهواتف والأجهزة اللوحية.
-    </p>
-  </section>
-
-  <hr>
-
-  <section>
-    <div>
-        <h3>تفاصيل هذا الإصدار</h3>
-        <span>v2.18.0 🧊</span>
-    </div>
-    
-    <ul>
-      <li>
-        🏷️ <strong>نسخة معدلة:</strong> تم تحسينها لتقديم تجربة مستخدم أفضل.
-      </li>
-      <li>
-        ❌ <strong>بدون إعلانات:</strong> مشاهدة متواصلة وخالية تماماً من الفواصل الإعلانية المزعجة.
-      </li>
-      <li>
-        ☑️ <strong>استقرار في الأداء:</strong> التطبيق يعمل بكفاءة ودون أي مشاكل تقنية تذكر.
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <div>
-      <span>⚠️</span>
-      <div>
-        <h3>ملاحظة فنية هامة جداً عند التسجيل</h3>
-        <p>
-          يرجى العلم أن عملية التسجيل في هذه النسخة من التطبيق تتم حصراً من خلال خيار <span>البريد الإلكتروني (Email) فقط</span>. قد لا تعمل طرق التسجيل الأخرى.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <a href="https://t.me/techtouch7/4926" target="_blank" rel="noopener noreferrer"
-      >
-      <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.96 1.25-5.54 3.67-.52.36-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.34-.49.94-.76 3.68-1.6 6.13-2.66 7.35-3.16 3.49-1.45 4.22-1.7 4.7-1.71.11 0 .34.03.47.14.11.09.14.22.15.34-.01.05-.01.16-.02.22z"/></svg>
-      <div>
-          <span>⬇️ رابط تحميل التطبيق</span>
-          <span>عبر قناتنا على Telegram</span>
-      </div>
-    </a>
-  </section>
-
-</div>]]></content:encoded>
-    <media:content url="https://kinantouch.com/assets/images/1771797682066_IMG_٢٠٢٦٠٢٢٣_٠١٠١٠٨.webp" type="image/webp" medium="image" />
-    <enclosure url="https://kinantouch.com/assets/images/1771797682066_IMG_٢٠٢٦٠٢٢٣_٠١٠١٠٨.webp" type="image/webp" />
-  </item>
-  <item>
-    <title><![CDATA[تطبيق 1 IRAQ TV: منصتك المتكاملة للرياضة والترفيه]]></title>
-    <link>https://kinantouch.com/article-iraq-tv-sport-tajawal</link>
-    <guid isPermaLink="true">https://kinantouch.com/article-iraq-tv-sport-tajawal</guid>
-    <pubDate>Sun, 22 Feb 2026 21:34:00 GMT</pubDate>
-    <dc:creator><![CDATA[كنان الصائغ]]></dc:creator>
-    <category>sports</category>
-    <description><![CDATA[✅التطبيق راح يغنيك عن باقي التطبيقات الرياضية والترفيهية]]></description>
-    <content:encoded><![CDATA[<div>
-
-  <section>
-    <div>
-      <span>🌙</span>
-      <h3>تحديث باقة رمضان 2026</h3>
-    </div>
-    <div>
-      <p>
-        تمت إضافة أكثر من 100+ مسلسل ضمن باقة رمضان 2026 حصرياً.
-      </p>
-      <p>
-        جميع المسلسلات تتوفر بأعلى دقة عرض ممكنة.
-        <br>
-        <span>(فقط مسلسل "يحيى وليل البنفسج" سيتم تحديثه لأعلى دقة فور توفرها).</span>
-      </p>
-    </div>
-  </section>
-
-  <section>
-    <h2>نظرة عامة على تطبيق 1 IRAQ TV</h2>
-    <p>
-      يُعد تطبيق <strong>1 IRAQ TV</strong> البديل الأمثل والشامل الذي يغنيك عن باقي التطبيقات الرياضية والترفيهية. يتميز التطبيق بأداء سلس وسريع جداً، وهو متوافق تماماً للعمل على الهواتف المحمولة والشاشات الذكية (TV). كما يأتي بتصميم داكن (Dark Mode) مريح للعين لضمان أفضل تجربة مشاهدة ممكنة.
-    </p>
-  </section>
-
-  <section>
-    <div>
-      <span>📺</span>
-      <h3>أقسام ومحتويات التطبيق</h3>
-    </div>
-
-    <ul>
-      <li>
-        <strong>باقات الشبكات الخاصة:</strong> يضم جميع قنوات (شبكتي Shabakaty)، قنوات (Super TV gg)، قنوات (Veo)، وقنوات (MyTV).
-      </li>
-      <li>
-        <strong>قنوات لجميع الشبكات:</strong> باقات قنوات رياضية، إخبارية، وترفيهية تعمل بكفاءة على كافة مزودي خدمة الإنترنت بدون قيود.
-      </li>
-      <li>
-        <strong>باقة Kurd Sport:</strong> تمت إضافتها حديثاً، وتضمن لك هذه القنوات الكردية نقل وعرض أي مباراة أو حدث رياضي هام دائماً.
-      </li>
-      <li>
-        <strong>مكتبة متجددة:</strong> يحتوي التطبيق على باقات وقنوات أخرى متنوعة يمكنك استكشافها بنفسك.
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <div>
-      <span>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-      </span>
-      <h3>كود التحميل للشاشات الذكية (Downloader)</h3>
-    </div>
-
-    <div dir="ltr">
-      <div>
-          <div>
-              <div>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-              </div>
-              <span>TV Downloader Code</span>
-          </div>
-          <div>
-              <pre><code>📺 كود تطبيق 1 IRAQ TV:
-<span>7794196</span></code></pre>
-          </div>
-      </div>
-    </div>
-    
-    <div>
-      <div>
-        <span>⚠️</span>
-        <div>
-          <span>ملاحظات هامة جداً:</span>
-          <ul>
-            <li>باقات (شبكتي، فيو، سوبر، وماي تي في) تعمل <strong>على شبكة إيرثلنك فقط</strong>، وفي بعض الأحيان تتوقف وتعرض المحتوى وقت البث المباشر فقط.</li>
-            <li>التطبيق <strong>لا يعمل نهائياً</strong> على الأجهزة التي تحتوي على روت (Root) أو تطبيقات التقاط وسحب الروابط.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <a href="https://t.me/techtouch7/4782" target="_blank" rel="noopener noreferrer"
-      >
-      <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.96 1.25-5.54 3.67-.52.36-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.34-.49.94-.76 3.68-1.6 6.13-2.66 7.35-3.16 3.49-1.45 4.22-1.7 4.7-1.71.11 0 .34.03.47.14.11.09.14.22.15.34-.01.05-.01.16-.02.22z"/></svg>
-      <div>
-          <span>⬇️ رابط تحميل التطبيق المباشر (متجر بلاي)</span>
-          <span>عبر قناتنا على Telegram</span>
-      </div>
-    </a>
-  </section>
-
-</div>
-]]></content:encoded>
-    <media:content url="https://kinantouch.com/assets/images/1771796460953_٢٠٢٦٠٢٢٣_١٢٤٠٤٧.webp" type="image/webp" medium="image" />
-    <enclosure url="https://kinantouch.com/assets/images/1771796460953_٢٠٢٦٠٢٢٣_١٢٤٠٤٧.webp" type="image/webp" />
-  </item>
-  <item>
-    <title><![CDATA[(Prime TV): رياضية، إخبارية، ترفيهية]]></title>
-    <link>https://kinantouch.com/article-sport-primetv-blu</link>
-    <guid isPermaLink="true">https://kinantouch.com/article-sport-primetv-blu</guid>
-    <pubDate>Sun, 22 Feb 2026 21:18:00 GMT</pubDate>
-    <dc:creator><![CDATA[كنان الصائغ]]></dc:creator>
-    <category>sports</category>
-    <description><![CDATA[محتوى متنوع يشمل البث المباشر للقنوات التلفزيونية العربية والعالمية]]></description>
-    <content:encoded><![CDATA[<div>
-
-  <section>
-    <h2>نظرة عامة على تطبيق برايم تيفي (Prime TV)</h2>
-    <p>
-      يُعد تطبيق برايم تيفي منصة ترفيهية متكاملة تهدف لتقديم تجربة مشاهدة غنية للمستخدمين. يتيح التطبيق الوصول إلى محتوى متنوع يشمل البث المباشر للقنوات التلفزيونية العربية والعالمية بمختلف تصنيفاتها (رياضية، إخبارية، ترفيهية)، بالإضافة إلى مكتبة متجددة من الأفلام والمسلسلات الحديثة والكلاسيكية [استنتاج].
-    </p>
-    <p>
-      صُمم التطبيق ليعمل على مختلف الأجهزة، مع التركيز على توفير واجهة استخدام سلسة ودعم لجودات بث متعددة تتناسب مع سرعات الإنترنت المختلفة.
-    </p>
-  </section>
-
-  <hr>
-
-  <section>
-    <h3>إصدار تحديث جديد (New Update Release) ✅</h3>
-    <p>
-      تم إصدار تحديث هام لتطبيق Prime TV يركز على تحسين الأداء التقني ومعالجة المشاكل السابقة لضمان استقرار البث.
-    </p>
-    
-    <h4>أبرز المميزات والإصلاحات في هذا الإصدار:</h4>
-    <ul>
-      <li>
-        ⭕️ <strong>إصلاحات جوهرية للشاشات:</strong> تم معالجة جميع الأخطاء البرمجية السابقة في نسخ التلفاز الذكي، وأصبح التطبيق يعمل الآن بامتياز واستقرار عالي.
-      </li>
-      <li>
-        ⭕️ <strong>تحسين الأداء (Optimization):</strong> تم تقليل الحمل على موارد النظام بشكل كبير، مما يجعله أسرع وأخف، خصيصاً على الأجهزة ذات المواصفات الضعيفة والمتوسطة.
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <div>
-      <span>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-      </span>
-      <h3>بيانات التحميل والتفعيل</h3>
-    </div>
-
-    <div dir="ltr">
-      <div>
-          <div>
-              <div>
-                  <span></span>
-              </div>
-              <span>Installation Details</span>
-          </div>
-          <div>
-              <pre><code>🖥️ كود التحميل لأجهزة التلفاز (TV Downloader Code):
-<span>9670207</span>
-
-✅ كود التفعيل (Activation Code):
-<span>2026</span></code></pre>
-          </div>
-      </div>
-      <p>إستمتع الآن بالمشاهدة!</p>
-    </div>
-  </section>
-
-  <section>
-    <a href="https://t.me/techtouch7/4939" target="_blank" rel="noopener noreferrer"
-      >
-      <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.96 1.25-5.54 3.67-.52.36-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.34-.49.94-.76 3.68-1.6 6.13-2.66 7.35-3.16 3.49-1.45 4.22-1.7 4.7-1.71.11 0 .34.03.47.14.11.09.14.22.15.34-.01.05-.01.16-.02.22z"/></svg>
-      <div>
-          <span>⬇️ قم بتحميل التطبيق من هنا</span>
-          <span>عبر قناتنا على Telegram</span>
-      </div>
-    </a>
-  </section>
-
-</div>]]></content:encoded>
-    <media:content url="https://kinantouch.com/assets/images/1771795516584_1771795501769.webp" type="image/webp" medium="image" />
-    <enclosure url="https://kinantouch.com/assets/images/1771795516584_1771795501769.webp" type="image/webp" />
   </item>
 </channel>
 </rss>

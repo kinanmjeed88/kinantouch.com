@@ -38,6 +38,9 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         $('head').append(`<meta property="og:title" content="${escapeXml(cleanTitle)}">`);
         $('head').append(`<meta property="og:description" content="${escapeXml(cleanDesc)}">`);
         $('head').append(`<meta property="og:url" content="${canonicalUrl}">`);
+        $('head').append(`<meta property="og:image" content="${fullImageUrl}">`);
+        $('head').append(`<meta name="twitter:card" content="summary_large_image">`);
+        $('head').append(`<meta name="twitter:image" content="${fullImageUrl}">`);
         
         const formattedDate = post.effectiveDate.toLocaleString('ar-EG', {
             year: 'numeric', month: '2-digit', day: '2-digit',

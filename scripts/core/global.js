@@ -103,7 +103,10 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
 
     // 4. Update Meta & Favicons
     $('link[rel*="icon"]').attr('href', profileImgSrc);
-    $('meta[property="og:image"]').attr('content', toAbsoluteUrl(profileImgSrc));
+    // Only update og:image if it's not an article page or if it's currently empty
+    if (!isArticle || $('meta[property="og:image"]').length === 0) {
+        $('meta[property="og:image"]').attr('content', toAbsoluteUrl(profileImgSrc));
+    }
     
     // Site Title Logic
     let siteTitleEl = $('header a[href="index.html"]').filter((i, el) => {

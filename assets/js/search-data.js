@@ -7,6 +7,27 @@ export const searchIndex = [
     "image": "assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp"
   },
   {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">تحميل YouTube Gold:</span> اليوتيوب الذهبي بميزات البريميوم للأندرويد",
+    "desc": "تطبيق للأندرويد يتيح ميزات بريميوم مجاناً، كحظر الإعلانات، التشغيل في الخلفية، وتحميل الفيديوهات بجودة عالية.",
+    "url": "article-golden-youtube.html",
+    "category": "Apps",
+    "image": "assets/images/1773975107215_20260320_055133.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">أفضل مواقع البث المباشر للأفلام:</span>  والرياضة وكيفية حظر الإعلانات نهائياً (DNS)",
+    "desc": "أفضل منصات لمشاهدة الأفلام، المسلسلات، والمباريات الرياضية.",
+    "url": "article-movies-channels-website.html",
+    "category": "Apps",
+    "image": "assets/images/1773925809572_20260319_035642.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">حسابات أكستريم:</span>  (Xtream IPTV) مجانية ومحدثة",
+    "desc": "تحميل أفضل مشغل IPTV بدون إعلانات مع شرح إضافة الأكواد. يتضمن حسابات اكستريم",
+    "url": "article-extreme-accounts-iptv.html",
+    "category": "Sports",
+    "image": "assets/images/1773867498004_20260318_115752.webp"
+  },
+  {
     "title": "<span class=\"text-blue-600 dark:text-blue-400 text-xl font-bold\">رسمياً::</span> جوجل تنهي عصر تحميل التطبيقات الخارجية (APK) في أندرويد بحلول 2026",
     "desc": "تفاصيل خطة جوجل لإنهاء عصر التحميل الحر في أندرويد بحلول 2026. كيف سيؤثر فرض توثيق الهوية على ملفات APK والتطبيقات المعدلة؟\"",
     "url": "article-by-the-time-2026.html",
