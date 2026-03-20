@@ -203,8 +203,9 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         }
 
         const tags = [getCatLabel(post.category, aboutData)];
-        if(post.title) {
-            const words = post.title.split(' ').filter(w => w.length > 3 && !['كيف', 'ماذا', 'لماذا', 'هذا', 'التي', 'الذي'].includes(w));
+        if(cleanTitle) {
+            // Use cleanTitle which has HTML stripped, instead of post.title which might contain HTML tags
+            const words = cleanTitle.split(' ').filter(w => w.length > 3 && !['كيف', 'ماذا', 'لماذا', 'هذا', 'التي', 'الذي'].includes(w));
             tags.push(...words.slice(0, 4));
         }
         const uniqueTags = [...new Set(tags)];
@@ -268,7 +269,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
                         <img src="${cleanPath(r.image)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                     </div>
                     <div class="p-2 flex-1 flex flex-col">
-                        <h4 class="text-xs font-bold text-gray-900 dark:text-white leading-relaxed group-hover:text-blue-600 transition-colors mb-2">${r.title}</h4>
+                        <h4 class="font-bold text-gray-900 dark:text-white leading-relaxed group-hover:text-blue-600 transition-colors mb-2" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${stripHtml(r.title || '')}</h4>
                         <div class="mt-auto pt-2 border-t border-gray-50 dark:border-gray-700/50 flex items-center justify-between text-[10px] text-gray-400">
                              <span class="truncate text-blue-500/80">${getCatLabel(r.category, aboutData)}</span>
                              <span dir="ltr" class="font-mono">${rDate}</span>
@@ -299,7 +300,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
                     <a href="/article-${r.slug}.html" class="flex items-start gap-3 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all group">
                         <img src="${cleanPath(r.image)}" class="w-16 h-12 object-cover rounded-lg shrink-0 bg-gray-200 dark:bg-gray-700" loading="lazy" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                         <div class="flex-1 min-w-0 self-center">
-                            <h4 class="text-xs font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 transition-colors">${r.title}</h4>
+                            <h4 class="font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 transition-colors" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${stripHtml(r.title || '')}</h4>
                             <div class="flex gap-2 mt-1">
                                 <span class="text-[10px] text-gray-400 font-mono" dir="ltr">${rDate}</span>
                             </div>
