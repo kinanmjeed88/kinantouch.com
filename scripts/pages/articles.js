@@ -28,8 +28,16 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         const fullUrl = `${BASE_URL}/${pageSlug}`; // Fallback/Physical Ref
         const fullImageUrl = toAbsoluteUrl(post.image);
         
-        $('title').text(`${post.title} | ${aboutData.siteName || "TechTouch"}`);
-        $('meta[name="description"]').attr('content', post.description);
+        const cleanTitle = stripHtml(post.title || '');
+        const cleanDesc = stripHtml(post.description || '');
+        
+        $('title').text(`${cleanTitle} | ${aboutData.siteName || "TechTouch"}`);
+        $('meta[name="description"]').attr('content', cleanDesc);
+        
+        // Also add strict OG tags here to ensure they are available for global.js or directly overridden
+        $('head').append(`<meta property="og:title" content="${escapeXml(cleanTitle)}">`);
+        $('head').append(`<meta property="og:description" content="${escapeXml(cleanDesc)}">`);
+        $('head').append(`<meta property="og:url" content="${canonicalUrl}">`);
         
         const formattedDate = post.effectiveDate.toLocaleString('ar-EG', {
             year: 'numeric', month: '2-digit', day: '2-digit',
@@ -209,7 +217,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         const shareSectionHTML = `
         <div class="share-buttons-container mt-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 text-center">
             <h3 class="font-bold text-gray-800 dark:text-white mb-4 text-sm">شارك المعلومة</h3>
-            <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(post.title)}" data-url="${canonicalUrl}">
+            <div class="flex flex-wrap justify-center gap-4" id="dynamic-share-buttons" data-title="${escapeXml(cleanTitle)}" data-url="${canonicalUrl}">
                 <a href="#" class="share-btn whatsapp w-9 h-9 flex items-center justify-center rounded-full bg-[#25D366] text-white hover:opacity-90 shadow-sm transition-transform hover:scale-110" aria-label="Share on WhatsApp">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
                 </a>
@@ -305,7 +313,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
         const safeJsonLd = { 
             "@context": "https://schema.org", 
             "@type": "Article", 
-            "headline": post.title || '', 
+            "headline": cleanTitle, 
             "image": post.image ? [fullImageUrl] : [], 
             "datePublished": post.publishedAt.toISOString(), 
             "dateModified": post.updatedAt.toISOString(), 
@@ -315,7 +323,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
                 "name": aboutData.siteName || "TechTouch", 
                 "logo": { "@type": "ImageObject", "url": toAbsoluteUrl(aboutData.profileImage) } 
             }, 
-            "description": post.description || '', 
+            "description": cleanDesc, 
             "mainEntityOfPage": { "@type": "WebPage", "@id": canonicalUrl } 
         };
         

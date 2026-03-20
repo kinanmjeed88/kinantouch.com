@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import { BASE_URL, GA_ID, ONESIGNAL_APP_ID, AD_CLIENT_ID, GOOGLE_SITE_VERIFICATION } from '../config/constants.js';
 import { GA_SCRIPT, AD_SCRIPT, ONESIGNAL_SCRIPT, IMG_ERROR_SCRIPT, TICKER_HTML_TEMPLATE, generateSocialFooter } from './renderer.js';
-import { cleanPath, escapeHtml, toAbsoluteUrl } from '../utils/helpers.js';
+import { cleanPath, escapeHtml, stripHtml, toAbsoluteUrl } from '../utils/helpers.js';
 
 export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverride = '', aboutData) => {
     const $ = cheerio.load(htmlContent, { decodeEntities: false });
@@ -16,13 +16,15 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
 
     // SEO Title Logic
     if (pageTitleOverride) {
-        $('title').text(pageTitleOverride);
-        $('meta[property="og:title"]').attr('content', pageTitleOverride);
-    }
-    
-    // Inject Meta Description for Global Pages if missing
-    if ($('meta[name="description"]').length === 0 && aboutData && aboutData.siteDescription) {
-        $('head').append(`<meta name="description" content="${aboutData.siteDescription}">`);
+        const cleanOverride = stripHtml(pageTitleOverride);
+        $('title').text(cleanOverride);
+        
+        // Update or inject og:title
+        if ($('meta[property="og:title"]').length) {
+            $('meta[property="og:title"]').attr('content', cleanOverride);
+        } else {
+            $('head').append(`<meta property="og:title" content="${cleanOverride}">`);
+        }
     }
 
     // Preconnect for Performance
