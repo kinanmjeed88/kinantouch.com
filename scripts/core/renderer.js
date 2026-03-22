@@ -71,26 +71,28 @@ export const TICKER_HTML_TEMPLATE = `
 </div>
 `;
 
-export const CATEGORY_NAV_TEMPLATE = `
+// Function to generate dynamic category nav
+export const generateCategoryNavHTML = (categoriesData) => {
+    let tabs = '';
+    categoriesData.forEach((cat, index) => {
+        // First category maps to index.html as homepage
+        const url = index === 0 ? 'index.html' : `${cat.id}.html`;
+        tabs += `
+        <a href="${url}" class="cat-tab">
+            <span>${cat.name}</span>
+        </a>`;
+    });
+    
+    return `
 <div class="w-full py-2 bg-gray-950 border-b border-gray-800">
     <div class="w-full px-3 overflow-x-auto no-scrollbar">
       <div class="flex items-center gap-2 min-w-max">
-        <a href="index.html" class="cat-tab">
-            <span>__LABEL_ARTICLES__</span>
-        </a>
-        <a href="apps.html" class="cat-tab">
-            <span>__LABEL_APPS__</span>
-        </a>
-        <a href="games.html" class="cat-tab">
-            <span>__LABEL_GAMES__</span>
-        </a>
-         <a href="sports.html" class="cat-tab">
-            <span>__LABEL_SPORTS__</span>
-        </a>
+        ${tabs}
       </div>
     </div>
-</div>
-`;
+</div>`;
+};
+
 
 export const renderIconHTML = (iconData, defaultIconName, defaultSize = 20) => {
     if (typeof iconData === 'string') {
@@ -194,20 +196,26 @@ export const generateSocialFooter = (aboutData) => {
     `;
 };
 
-export const getCatLabel = (cat, aboutData) => {
-    const defaults = { 'articles': 'اخبار', 'apps': 'تطبيقات', 'games': 'ألعاب', 'sports': 'رياضة' };
-    const configured = aboutData.categories?.labels || {};
-    return configured[cat] || defaults[cat] || 'عام';
+export const getCatLabel = (cat, categoriesData = []) => {
+    const found = categoriesData.find(c => c.id === cat);
+    return found ? found.name : 'عام';
 };
 
-export const createCardHTML = (post, aboutData, isFirst = false) => {
+export const createCardHTML = (post, aboutData, categoriesData = [], isFirst = false) => {
     const loadingAttr = isFirst ? 'loading="eager"' : 'loading="lazy"';
 
+    // Dynamic badge colors and icons based on category index or id
+    const colors = ['bg-blue-600', 'bg-green-600', 'bg-purple-600', 'bg-orange-600', 'bg-red-600', 'bg-teal-600', 'bg-indigo-600', 'bg-pink-600'];
+    const icons = ['file-text', 'smartphone', 'gamepad-2', 'trophy', 'cpu', 'globe', 'hash', 'star'];
     let badgeColor = 'bg-blue-600';
     let icon = 'file-text';
-    if(post.category === 'apps') { badgeColor = 'bg-green-600'; icon = 'smartphone'; }
-    if(post.category === 'games') { badgeColor = 'bg-purple-600'; icon = 'gamepad-2'; }
-    if(post.category === 'sports') { badgeColor = 'bg-orange-600'; icon = 'trophy'; }
+    
+    const catIndex = categoriesData.findIndex(c => c.id === post.category);
+    if (catIndex !== -1) {
+        badgeColor = colors[catIndex % colors.length];
+        icon = icons[catIndex % icons.length];
+    }
+    
     
     const dateStr = post.effectiveDate.toLocaleString('ar-EG', {
         year: 'numeric', month: '2-digit', day: '2-digit',
@@ -221,7 +229,7 @@ export const createCardHTML = (post, aboutData, isFirst = false) => {
                 <img src="${cleanPath(post.image)}" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${escapeHtml(stripHtml(post.title))}" ${loadingAttr} decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                 <div class="absolute top-2 right-2 ${badgeColor} text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
-                    <i data-lucide="${icon}" style="width: 1.2em; height: 1.2em;"></i><span>${getCatLabel(post.category, aboutData)}</span>
+                    <i data-lucide="${icon}" style="width: 1.2em; height: 1.2em;"></i><span>${getCatLabel(post.category, categoriesData)}</span>
                 </div>
             </div>
             <div class="p-4 flex-1 flex flex-col w-full">

@@ -23,6 +23,12 @@ export async function loadSiteData() {
     });
 
     let channelsData = readJsonSafe(path.join(DATA_DIR, 'channels.json'), []);
+    let categoriesData = readJsonSafe(path.join(DATA_DIR, 'categories.json'), [
+        { "id": "articles", "name": "اخبار" },
+        { "id": "apps", "name": "تطبيقات" },
+        { "id": "games", "name": "ألعاب" },
+        { "id": "sports", "name": "رياضة" }
+    ]);
 
     // 2. Load Posts
     const rawPosts = [];
@@ -77,5 +83,17 @@ export async function loadSiteData() {
     // Sort by Date Descending
     rawPosts.sort((a, b) => b.effectiveDate - a.effectiveDate);
 
-    return { aboutData, channelsData, posts: rawPosts };
+    
+    // Create necessary maps
+    const postsByCategory = {};
+    const postsBySlug = {};
+    rawPosts.forEach(post => {
+        if (!postsByCategory[post.category]) {
+            postsByCategory[post.category] = [];
+        }
+        postsByCategory[post.category].push(post);
+        postsBySlug[post.slug] = post;
+    });
+
+    return { aboutData, channelsData, allPosts: rawPosts, postsByCategory, postsBySlug, categoriesData };
 }

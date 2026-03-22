@@ -9,7 +9,7 @@ import { parseMarkdown } from '../core/markdown.js';
 import { getCatLabel, generateAdBannerHTML, FIXED_AD_UNIT } from '../core/renderer.js';
 import { BASE_URL } from '../config/constants.js';
 
-export async function generateIndividualArticles({ allPosts, aboutData }) {
+export async function generateIndividualArticles({ allPosts, postsByCategory, aboutData, channelsData, categoriesData }) {
     let templatePath = path.join(TEMPLATES_DIR, 'article-asus-gx10.html');
     if (!fs.existsSync(templatePath)) templatePath = path.join(ROOT_DIR, 'article-asus-gx10.html');
 
@@ -202,7 +202,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
             $('article').append(summaryContentHTML);
         }
 
-        const tags = [getCatLabel(post.category, aboutData)];
+        const tags = [getCatLabel(post.category, categoriesData)];
         if(cleanTitle) {
             // Use cleanTitle which has HTML stripped, instead of post.title which might contain HTML tags
             const words = cleanTitle.split(' ').filter(w => w.length > 3 && !['كيف', 'ماذا', 'لماذا', 'هذا', 'التي', 'الذي'].includes(w));
@@ -271,7 +271,7 @@ export async function generateIndividualArticles({ allPosts, aboutData }) {
                     <div class="p-2 flex-1 flex flex-col">
                         <h4 class="font-bold text-gray-900 dark:text-white leading-relaxed group-hover:text-blue-600 transition-colors mb-2" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${stripHtml(r.title || '')}</h4>
                         <div class="mt-auto pt-2 border-t border-gray-50 dark:border-gray-700/50 flex items-center justify-between text-[10px] text-gray-400">
-                             <span class="truncate text-blue-500/80">${getCatLabel(r.category, aboutData)}</span>
+                             <span class="truncate text-blue-500/80">${getCatLabel(r.category, categoriesData)}</span>
                              <span dir="ltr" class="font-mono">${rDate}</span>
                         </div>
                     </div>

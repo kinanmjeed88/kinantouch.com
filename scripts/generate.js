@@ -24,7 +24,7 @@ async function updateSearchData(allPosts, channelsData) {
     try {
         console.log('🚀 Starting Modular Build Process...');
         
-        const { aboutData, channelsData, posts } = await loadSiteData();
+        const { aboutData, channelsData, allPosts: posts, postsByCategory, categoriesData } = await loadSiteData();
         
         // --- 🔎 DEBUG: Profile Image Check ---
         console.log("========================================");
@@ -32,20 +32,14 @@ async function updateSearchData(allPosts, channelsData) {
         console.log("========================================");
         // -------------------------------------
 
-        // Group posts for category pages
-        const postsByCategory = posts.reduce((acc, post) => {
-            const cat = post.category || 'general';
-            if (!acc[cat]) acc[cat] = [];
-            acc[cat].push(post);
-            return acc;
-        }, {});
+        // Grouping is handled by loader.js
 
         // Run Page Generators
         updateAboutPageDetails(aboutData);
         updateChannelsPage(channelsData, aboutData);
         updateToolsPage(aboutData);
-        await generateCategoryPages({ postsByCategory, aboutData, channelsData });
-        await generateIndividualArticles({ allPosts: posts, aboutData });
+        await generateCategoryPages({ postsByCategory, aboutData, channelsData, categoriesData });
+        await generateIndividualArticles({ allPosts: posts, postsByCategory, aboutData, channelsData, categoriesData });
         
         // Update Utilities
         await updateSearchData(posts, channelsData);

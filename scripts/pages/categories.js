@@ -4,10 +4,10 @@ import * as cheerio from 'cheerio';
 import { ROOT_DIR, TEMPLATES_DIR } from '../utils/paths.js';
 import { safeWrite } from '../utils/fs.js';
 import { updateGlobalElements } from '../core/global.js';
-import { CATEGORY_NAV_TEMPLATE, createCardHTML } from '../core/renderer.js';
+import { generateCategoryNavHTML, createCardHTML } from '../core/renderer.js';
 import { BASE_URL } from '../config/constants.js';
 
-export async function generateCategoryPages({ postsByCategory, aboutData, channelsData }) {
+export async function generateCategoryPages({ postsByCategory, aboutData, channelsData, categoriesData }) {
     // Read template from templates dir, fallback to root
     let templatePath = path.join(TEMPLATES_DIR, 'articles.html');
     if (!fs.existsSync(templatePath)) templatePath = path.join(ROOT_DIR, 'articles.html');
@@ -15,14 +15,14 @@ export async function generateCategoryPages({ postsByCategory, aboutData, channe
     if (!fs.existsSync(templatePath)) return;
     
     let baseTemplate = fs.readFileSync(templatePath, 'utf8');
-    const labels = aboutData.categories?.labels || {};
-
-    const pages = [
-        { file: 'index.html', cat: 'articles', title: labels.articles || 'الأخبار', desc: 'آخر الأخبار التقنية والمقالات الحصرية من TechTouch.' },
-        { file: 'apps.html', cat: 'apps', title: labels.apps || 'تطبيقات', desc: 'أفضل تطبيقات أندرويد وآيفون المعدلة والمفيدة.' },
-        { file: 'games.html', cat: 'games', title: labels.games || 'ألعاب', desc: 'أحدث الألعاب ومراجعاتها.' },
-        { file: 'sports.html', cat: 'sports', title: labels.sports || 'رياضة', desc: 'تغطية الأحداث الرياضية والتقنيات المتعلقة بها.' }
-    ];
+    const pages = categoriesData.map((cat, index) => {
+        return {
+            file: index === 0 ? 'index.html' : `${cat.id}.html`,
+            cat: cat.id,
+            title: cat.name,
+            desc: `قسم ${cat.name} في موقع ${aboutData.siteName || "TechTouch"}`
+        };
+    });
 
     pages.forEach(p => {
         const posts = postsByCategory[p.cat] || [];
@@ -36,11 +36,7 @@ export async function generateCategoryPages({ postsByCategory, aboutData, channe
             // 1. Inject Category Nav
             const oldTabContainer = $('.w-full.py-2');
             if (oldTabContainer.length) {
-                let navHtml = CATEGORY_NAV_TEMPLATE
-                    .replace('__LABEL_ARTICLES__', labels.articles || 'اخبار')
-                    .replace('__LABEL_APPS__', labels.apps || 'تطبيقات')
-                    .replace('__LABEL_GAMES__', labels.games || 'ألعاب')
-                    .replace('__LABEL_SPORTS__', labels.sports || 'رياضة');
+                let navHtml = generateCategoryNavHTML(categoriesData);
                 oldTabContainer.replaceWith(navHtml);
             }
 
@@ -63,7 +59,7 @@ export async function generateCategoryPages({ postsByCategory, aboutData, channe
             if (currentPosts.length > 0) {
                 currentPosts.forEach((post, index) => {
                     const isFirst = (index === 0 && p.slug === 'index'); // Only eager load very first card on homepage
-                    grid.append(createCardHTML(post, aboutData, isFirst));
+                    grid.append(createCardHTML(post, aboutData, categoriesData, isFirst));
                 });
             } else {
                 $('head').append('<meta name="robots" content="noindex, follow">');
