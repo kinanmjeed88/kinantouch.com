@@ -78,10 +78,28 @@ document.addEventListener('DOMContentLoaded', () => {
 window.switchTab = (tabName) => {
     document.querySelectorAll('aside button').forEach(btn => btn.classList.remove('tab-active'));
     document.getElementById(`nav-${tabName}`).classList.add('tab-active');
-    document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden-section'));
-    document.getElementById(`sec-${tabName}`).classList.remove('hidden-section');
+    
+    // Hide all main content sections (divs or sections with id starting with sec-)
+    const sections = ['posts', 'channels', 'categories', 'settings'];
+    sections.forEach(secName => {
+        const el = document.getElementById(`sec-${secName}`);
+        if(el) {
+            el.classList.add('hidden-section');
+            // Also add hidden for divs that might not use hidden-section class correctly
+            el.classList.add('hidden');
+        }
+    });
+    
+    // Show active section
+    const activeEl = document.getElementById(`sec-${tabName}`);
+    if(activeEl) {
+        activeEl.classList.remove('hidden-section');
+        activeEl.classList.remove('hidden');
+    }
+
     if (tabName === 'posts') loadPosts();
     if (tabName === 'channels') loadChannels();
+    if (tabName === 'categories') loadCategories();
     if (tabName === 'settings') loadSettings();
 };
 
@@ -779,3 +797,171 @@ window.autoSlug = () => { const title = document.getElementById('pTitle').value;
 window.handleFileSelect = async (input, targetId, previewId = null) => { if (input.files && input.files[0]) { const btn = input.nextElementSibling; const originalText = btn.innerText; btn.innerText = 'جاري الضغط...'; btn.disabled = true; try { const url = await api.uploadImage(input.files[0]); document.getElementById(targetId).value = url; if(previewId) { let pUrl = url.startsWith('http') ? url : '../' + url; document.getElementById(previewId).src = pUrl; } } catch(e) { alert('Upload failed: ' + e.message); } btn.innerText = originalText; btn.disabled = false; } };
 window.insertTag = (tag) => { const ta = document.getElementById('pContent'); const start = ta.selectionStart; const end = ta.selectionEnd; ta.value = ta.value.substring(0, start) + tag + ta.value.substring(end); ta.focus(); ta.selectionStart = ta.selectionEnd = start + tag.length; };
 function showToast(msg) { const t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('translate-y-[-100%]', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-[-100%]', 'opacity-0'), 3000); }
+// --- Categories Logic ---
+let editingCategoryIndex = -1;
+
+window.loadCategories = async function() {
+    try {
+        const path = 'content/data/categories.json';
+        const fileData = await githubGet(path);
+        
+        if (fileData) {
+            categories = JSON.parse(decodeBase64Unicode(fileData.content));
+        } else {
+            categories = [
+                { id: "articles", name: "اخبار" },
+                { id: "apps", name: "تطبيقات" },
+                { id: "games", name: "ألعاب" },
+                { id: "sports", name: "رياضة" }
+            ];
+            await saveCategoriesToGithub();
+        }
+    } catch (e) {
+        console.error("Error loading categories:", e);
+        categories = [];
+    }
+    renderCategories();
+    updateCategoryDropdown();
+}
+
+window.renderCategories = function() {
+    const list = document.getElementById('categoriesList');
+    if(!list) return;
+    
+    const countEl = document.getElementById('categoriesCount');
+    if(countEl) countEl.innerText = `${categories.length} أقسام`;
+    
+    list.innerHTML = '';
+    
+    if (categories.length === 0) {
+        list.innerHTML = '<div class="text-center py-10 text-gray-400">لا توجد أقسام حالياً.</div>';
+        return;
+    }
+    
+    categories.forEach((cat, index) => {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between p-3 sm:p-4 bg-white border border-gray-100 rounded-xl hover:shadow-md transition-shadow group";
+        
+        div.innerHTML = `
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                    <i data-lucide="folder" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800">${cat.name}</h3>
+                    <p class="text-xs text-gray-400 font-mono">${cat.id}</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="editCategory(${index})"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                <button class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" onclick="deleteCategory(${index})"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+    
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+window.updateCategoryDropdown = function() {
+    const select = document.getElementById('pCat');
+    if(!select) return;
+    
+    const currentValue = select.value;
+    select.innerHTML = '';
+    categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.id;
+        option.innerText = cat.name;
+        select.appendChild(option);
+    });
+    if(currentValue) select.value = currentValue;
+}
+
+window.openCategoryEditor = () => {
+    editingCategoryIndex = -1;
+    document.getElementById('cId').value = '';
+    document.getElementById('cId').disabled = false;
+    document.getElementById('cName').value = '';
+    document.getElementById('categoryEditorTitle').innerText = 'إضافة قسم جديد';
+    document.getElementById('categoryEditor').classList.remove('hidden');
+};
+
+window.closeCategoryEditor = () => {
+    document.getElementById('categoryEditor').classList.add('hidden');
+};
+
+window.editCategory = (index) => {
+    editingCategoryIndex = index;
+    const cat = categories[index];
+    document.getElementById('cId').value = cat.id;
+    document.getElementById('cId').disabled = true;
+    document.getElementById('cName').value = cat.name;
+    document.getElementById('categoryEditorTitle').innerText = 'تعديل القسم';
+    document.getElementById('categoryEditor').classList.remove('hidden');
+};
+
+window.saveCategory = async () => {
+    const id = document.getElementById('cId').value.trim();
+    const name = document.getElementById('cName').value.trim();
+    
+    if(!id || !name) {
+        alert("يرجى إدخال المعرف والاسم.");
+        return;
+    }
+    
+    if(editingCategoryIndex === -1 && categories.some(c => c.id === id)) {
+        alert("المعرف موجود مسبقاً، يرجى اختيار معرف آخر.");
+        return;
+    }
+    
+    const newCat = { id, name };
+    
+    if (editingCategoryIndex > -1) {
+        categories[editingCategoryIndex] = newCat;
+    } else {
+        categories.push(newCat);
+    }
+    
+    closeCategoryEditor();
+    renderCategories();
+    updateCategoryDropdown();
+    
+    await saveCategoriesToGithub();
+};
+
+window.deleteCategory = async (index) => {
+    if(!confirm("هل أنت متأكد من حذف هذا القسم؟ قد يؤثر ذلك على المقالات المرتبطة به.")) return;
+    
+    categories.splice(index, 1);
+    renderCategories();
+    updateCategoryDropdown();
+    
+    await saveCategoriesToGithub();
+};
+
+window.saveCategoriesToGithub = async function() {
+    const path = 'content/data/categories.json';
+    const contentToSave = JSON.stringify(categories, null, 2);
+    
+    let sha = null;
+    try {
+        const existing = await githubGet(path);
+        if (existing) sha = existing.sha;
+    } catch(e){}
+    
+    const btn = document.getElementById('categoriesCount'); 
+    if(btn) btn.innerHTML = 'جاري الحفظ...';
+    
+    const success = await githubPut(path, contentToSave, sha, "Update categories");
+    
+    if(btn) btn.innerHTML = `${categories.length} أقسام`;
+    
+    if(success) {
+        alert("تم حفظ الأقسام بنجاح! يُرجى إعادة بناء الموقع لتطبيق التغييرات على القوائم.");
+    } else {
+        alert("فشل حفظ الأقسام.");
+    }
+}
