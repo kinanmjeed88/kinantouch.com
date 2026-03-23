@@ -1,6 +1,22 @@
 [
-  { "id": "articles", "name": "اخبار" },
-  { "id": "apps", "name": "تطبيقات" },
-  { "id": "games", "name": "ألعاب" },
-  { "id": "sports", "name": "رياضة" }
+  {
+    "id": "articles",
+    "name": "اخبار"
+  },
+  {
+    "id": "apps",
+    "name": "تطبيقات"
+  },
+  {
+    "id": "games",
+    "name": "ألعاب"
+  },
+  {
+    "id": "sports",
+    "name": "رياضة"
+  },
+  {
+    "id": "AI",
+    "name": "AI"
+  }
 ]
