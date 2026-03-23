@@ -195,7 +195,7 @@ function initIconPicker() {
     // 2. Add Standard Lucide Icons
     commonIcons.forEach(iconName => {
         const div = document.createElement('div');
-        div.className = 'icon-option';
+        div.className = 'icon-option text-gray-700';
         div.title = iconName;
         div.innerHTML = `<i data-lucide="${iconName}" class="w-5 h-5"></i>`;
         div.onclick = () => selectLucideIcon(iconName);
