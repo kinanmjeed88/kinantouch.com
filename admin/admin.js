@@ -7,6 +7,7 @@ let ghConfig = {
 
 let cachedPosts = [];
 let cachedChannels = [];
+let categories = [];
 let cachedAbout = {};
 let currentEditingPost = null; // Store path/sha for updates
 
@@ -57,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('ghModal').classList.remove('hidden');
     } else {
         loadPosts();
+        loadCategories();
     }
     
     document.addEventListener('click', function (e) {
@@ -803,10 +805,10 @@ let editingCategoryIndex = -1;
 window.loadCategories = async function() {
     try {
         const path = 'content/data/categories.json';
-        const fileData = await githubGet(path);
+        const fileData = await api.get(path);
         
         if (fileData) {
-            categories = JSON.parse(decodeBase64Unicode(fileData.content));
+            categories = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
         } else {
             categories = [
                 { id: "articles", name: "اخبار" },
@@ -948,14 +950,14 @@ window.saveCategoriesToGithub = async function() {
     
     let sha = null;
     try {
-        const existing = await githubGet(path);
+        const existing = await api.get(path);
         if (existing) sha = existing.sha;
     } catch(e){}
     
     const btn = document.getElementById('categoriesCount'); 
     if(btn) btn.innerHTML = 'جاري الحفظ...';
     
-    const success = await githubPut(path, contentToSave, sha, "Update categories");
+    const success = await api.put(path, contentToSave, "Update categories", sha);
     
     if(btn) btn.innerHTML = `${categories.length} أقسام`;
     
