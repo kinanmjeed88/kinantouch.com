@@ -82,7 +82,7 @@ window.switchTab = (tabName) => {
     document.getElementById(`nav-${tabName}`).classList.add('tab-active');
     
     // Hide all main content sections (divs or sections with id starting with sec-)
-    const sections = ['posts', 'channels', 'categories', 'settings'];
+    const sections = ['posts', 'channels', 'categories', 'settings', 'stats'];
     sections.forEach(secName => {
         const el = document.getElementById(`sec-${secName}`);
         if(el) {
@@ -103,6 +103,7 @@ window.switchTab = (tabName) => {
     if (tabName === 'channels') loadChannels();
     if (tabName === 'categories') loadCategories();
     if (tabName === 'settings') loadSettings();
+    if (tabName === 'stats') loadStats();
 };
 
 async function compressAndConvertToWebP(file) {
@@ -965,5 +966,100 @@ window.saveCategoriesToGithub = async function() {
         alert("تم حفظ الأقسام بنجاح! يُرجى إعادة بناء الموقع لتطبيق التغييرات على القوائم.");
     } else {
         alert("فشل حفظ الأقسام.");
+    }
+}
+
+// --- STATS LOGIC ---
+async function loadStats() {
+    const loader = document.getElementById('statsLoader');
+    const content = document.getElementById('statsContent');
+    loader.classList.remove('hidden');
+    content.classList.add('hidden');
+
+    try {
+        // Fetch posts
+        const postsFiles = await api.get('content/posts');
+        const totalPosts = postsFiles.filter(f => f.name.endsWith('.json')).length;
+        document.getElementById('statTotalPosts').innerText = totalPosts;
+
+        // Fetch categories
+        let catsObj = {};
+        try {
+            const catsFile = await api.get('content/data/categories.json');
+            categories = JSON.parse(decodeURIComponent(escape(atob(catsFile.content))));
+            document.getElementById('statTotalCats').innerText = categories.length;
+        } catch(e) { console.error("Could not load categories", e); }
+
+        // Aggregate posts per category
+        let postsPerCat = {};
+        const postsData = await Promise.all(postsFiles.map(async f => {
+            if(f.name.endsWith('.json')) {
+                const file = await api.get(`content/posts/${f.name}`);
+                return JSON.parse(decodeURIComponent(escape(atob(file.content))));
+            }
+            return null;
+        }));
+        
+        const validPosts = postsData.filter(p => p !== null);
+        validPosts.forEach(post => {
+            const cat = post.category || 'عام';
+            postsPerCat[cat] = (postsPerCat[cat] || 0) + 1;
+        });
+
+        // Display Posts Per Category
+        const catsListHtml = Object.entries(postsPerCat).sort((a,b)=>b[1]-a[1]).map(([cat, count]) => {
+            const catName = categories.find(c => c.id === cat)?.name || cat;
+            return `<div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                <span class="font-bold text-gray-700">${catName}</span>
+                <span class="bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full text-sm">${count}</span>
+            </div>`;
+        }).join('');
+        document.getElementById('statCatsList').innerHTML = catsListHtml || '<p class="text-gray-500">لا توجد بيانات</p>';
+
+        // Fetch Analytics
+        let analytics = {};
+        try {
+            const analyticsFile = await api.get('content/data/analytics.json');
+            analytics = JSON.parse(decodeURIComponent(escape(atob(analyticsFile.content))));
+        } catch(e) { console.warn("Analytics data not found or empty"); }
+
+        // Calculate total views and top posts
+        let totalViews = 0;
+        let topPosts = [];
+
+        Object.entries(analytics).forEach(([path, views]) => {
+            totalViews += views;
+            // Try to match path to a post
+            const slugMatch = path.match(/^\/article-(.*?)\.html/);
+            if (slugMatch) {
+                const slug = slugMatch[1];
+                const post = validPosts.find(p => p.slug === slug);
+                if (post) {
+                    topPosts.push({ title: post.title, views: views, url: path });
+                }
+            }
+        });
+
+        document.getElementById('statTotalViews').innerText = totalViews;
+
+        // Display Top Posts
+        const topPostsHtml = topPosts.sort((a,b)=>b.views - a.views).slice(0, 10).map((post, i) => {
+            return `<div class="flex justify-between items-center p-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <span class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-bold shrink-0">${i+1}</span>
+                    <a href="${post.url}" target="_blank" class="font-bold text-gray-700 truncate hover:text-blue-600">${post.title}</a>
+                </div>
+                <span class="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-full text-sm shrink-0 flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3"></i> ${post.views}</span>
+            </div>`;
+        }).join('');
+        document.getElementById('statTopPostsList').innerHTML = topPostsHtml || '<p class="text-gray-500">جاري جمع البيانات من GA4 (يتم التحديث يومياً)</p>';
+
+        lucide.createIcons();
+        loader.classList.add('hidden');
+        content.classList.remove('hidden');
+
+    } catch (e) {
+        console.error(e);
+        loader.innerHTML = '<p class="text-red-500">حدث خطأ في جلب البيانات. تأكد من إعدادات الاتصال.</p>';
     }
 }

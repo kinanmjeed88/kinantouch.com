@@ -55,6 +55,10 @@
                 <i data-lucide="folder-tree" class="w-5 h-5"></i>
                 الأقسام
             </button>
+            <button onclick="switchTab('stats')" id="nav-stats" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-gray-600 hover:bg-gray-50">
+                <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+                الإحصائيات
+            </button>
             <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-gray-600 hover:bg-gray-50">
                 <i data-lucide="user-cog" class="w-5 h-5"></i>
                 الملف الشخصي والمظهر
@@ -232,6 +236,41 @@
                 <div class="p-4 overflow-y-auto max-h-[60vh] custom-scroll">
                     <div id="categoriesList" class="flex flex-col gap-3">
                         <div class="text-center py-10 text-gray-400">جاري التحميل...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-stats" class="hidden-section space-y-6">
+            <h2 class="text-2xl font-bold mb-6">إحصائيات المنشورات والمشاهدات</h2>
+            <div id="statsLoader" class="flex justify-center py-12"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>
+            <div id="statsContent" class="hidden space-y-8">
+                <!-- Overview Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="file-text" class="w-7 h-7"></i></div>
+                        <div><p class="text-gray-500 font-bold text-sm">إجمالي المنشورات</p><h3 id="statTotalPosts" class="text-3xl font-black text-gray-800">0</h3></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-green-50 text-green-600 flex items-center justify-center"><i data-lucide="eye" class="w-7 h-7"></i></div>
+                        <div><p class="text-gray-500 font-bold text-sm">إجمالي المشاهدات (GA4)</p><h3 id="statTotalViews" class="text-3xl font-black text-gray-800">0</h3></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><i data-lucide="folder" class="w-7 h-7"></i></div>
+                        <div><p class="text-gray-500 font-bold text-sm">إجمالي الأقسام</p><h3 id="statTotalCats" class="text-3xl font-black text-gray-800">0</h3></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Posts per Category -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="pie-chart" class="text-gray-400"></i> المنشورات لكل قسم</h3>
+                        <div id="statCatsList" class="space-y-3"></div>
+                    </div>
+                    <!-- Top Posts -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="trending-up" class="text-gray-400"></i> أعلى المنشورات زيارة</h3>
+                        <div id="statTopPostsList" class="space-y-3"></div>
                     </div>
                 </div>
             </div>

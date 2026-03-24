@@ -9,7 +9,7 @@ import { parseMarkdown } from '../core/markdown.js';
 import { getCatLabel, generateAdBannerHTML, FIXED_AD_UNIT } from '../core/renderer.js';
 import { BASE_URL } from '../config/constants.js';
 
-export async function generateIndividualArticles({ allPosts, postsByCategory, aboutData, channelsData, categoriesData }) {
+export async function generateIndividualArticles({ allPosts, postsByCategory, aboutData, channelsData, categoriesData, analyticsData }) {
     let templatePath = path.join(TEMPLATES_DIR, 'article-asus-gx10.html');
     if (!fs.existsSync(templatePath)) templatePath = path.join(ROOT_DIR, 'article-asus-gx10.html');
 
@@ -47,6 +47,9 @@ export async function generateIndividualArticles({ allPosts, postsByCategory, ab
             hour: '2-digit', minute: '2-digit', hour12: true
         });
         
+        // Match Analytics Path: e.g. "/article-xyz.html" or "/article-xyz"
+        const pageViews = (analyticsData && analyticsData[`/${pageSlug}`]) ? analyticsData[`/${pageSlug}`] : 0;
+
         // --- SMART TITLE RENDERING ---
         let titleContent = '';
         const titleRaw = (post.title || '').trim();
@@ -83,7 +86,7 @@ export async function generateIndividualArticles({ allPosts, postsByCategory, ab
                     <div class="w-px h-3 bg-gray-300 dark:bg-gray-600"></div>
                     <div class="flex items-center gap-1.5 view-count-wrapper group" title="المشاهدات">
                         <i data-lucide="eye" class="w-4 h-4 text-green-500 group-hover:scale-110 transition-transform"></i>
-                        <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}">—</span>
+                        <span class="view-count-display font-bold font-mono tracking-tight" data-slug="${post.slug}">${pageViews > 0 ? pageViews : '—'}</span>
                     </div>
                 </div>
             </div>

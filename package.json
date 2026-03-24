@@ -8,6 +8,8 @@
     "build": "node scripts/generate.js"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.12"
+    "@google-analytics/data": "^5.2.1",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^17.3.1"
   }
 }

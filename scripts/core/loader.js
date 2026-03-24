@@ -7,6 +7,7 @@ import { parseMarkdown } from './markdown.js';
 
 export async function loadSiteData() {
     // 1. Load Configuration
+    let analyticsData = readJsonSafe(path.join(DATA_DIR, 'analytics.json'), {});
     let aboutData = readJsonSafe(path.join(DATA_DIR, 'about.json'), { 
         profileName: "TechTouch", 
         bio: "", 
@@ -95,5 +96,5 @@ export async function loadSiteData() {
         postsBySlug[post.slug] = post;
     });
 
-    return { aboutData, channelsData, allPosts: rawPosts, postsByCategory, postsBySlug, categoriesData };
+    return { aboutData, channelsData, analyticsData, allPosts: rawPosts, postsByCategory, postsBySlug, categoriesData };
 }
