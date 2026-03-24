@@ -11,6 +11,20 @@
     <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <script type="speculationrules">
+    {
+      "prefetch": [{
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": {"href_matches": "/logout"}},
+            { "not": {"href_matches": "/admin/*"}}
+          ]
+        },
+        "eagerness": "moderate"
+      }]
+    }
+    </script>
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -293,11 +307,32 @@ article {
         <a href="sports.html" class="cat-tab">
             <span>رياضة</span>
         </a>
+        <a href="AI.html" class="cat-tab">
+            <span>AI</span>
+        </a>
       </div>
     </div>
 </div>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in min-h-[60vh]"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+    <a href="/article-google-new-restrictions.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
+        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
+            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
+                <img src="assets/images/1774126953633_IMG_20260321_234337_910.webp" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="قيود جوجل الجديدة:: صعوبة تثبيت التطبيقات APK" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                <div class="absolute top-2 right-2 bg-blue-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
+                    <i data-lucide="file-text" style="width: 1.2em; height: 1.2em;"></i><span>اخبار</span>
+                </div>
+            </div>
+            <div class="p-4 flex-1 flex flex-col w-full">
+                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
+                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">٢١‏/٠٣‏/٢٠٢٦، ٠٩:٠١ م</span>
+                </div>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="قيود جوجل الجديدة:: صعوبة تثبيت التطبيقات APK" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">قيود جوجل الجديدة:: صعوبة تثبيت التطبيقات APK</h3>
+                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">تفاصيل قيود أندرويد الصارمة لعرقلة تثبيت تطبيقات APK من خارج متجر Play. فترات انتظار، حظر صلاحيات، وتعقيد متعمد بحجة حماية المستخدم.</p>
+            </div>
+        </div>
+    </a>
     <a href="/article-by-the-time-2026.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
@@ -313,24 +348,6 @@ article {
                 </div>
                 <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="رسمياً:: جوجل تنهي عصر تحميل التطبيقات الخارجية (APK) في أندرويد بحلول 2026" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">رسمياً:: جوجل تنهي عصر تحميل التطبيقات الخارجية (APK) في أندرويد بحلول 2026</h3>
                 <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">تفاصيل خطة جوجل لإنهاء عصر التحميل الحر في أندرويد بحلول 2026. كيف سيؤثر فرض توثيق الهوية على ملفات APK والتطبيقات المعدلة؟"</p>
-            </div>
-        </div>
-    </a>
-    <a href="/article-developed-google-gemini-2026.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
-        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
-            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="assets/images/1773356629227_٢٠٢٦٠٣١٣_٠٢٠٣٢٦.webp" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="     تعرف على تفاصيل: دمج نموذج Gemini داخل تطبيقات Google Workspace (مستندات، جداول، عروض) " loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 bg-blue-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
-                    <i data-lucide="file-text" style="width: 1.2em; height: 1.2em;"></i><span>اخبار</span>
-                </div>
-            </div>
-            <div class="p-4 flex-1 flex flex-col w-full">
-                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
-                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">١٢‏/٠٣‏/٢٠٢٦، ١٠:٥٢ م</span>
-                </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="     تعرف على تفاصيل: دمج نموذج Gemini داخل تطبيقات Google Workspace (مستندات، جداول، عروض) " style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">     تعرف على تفاصيل: دمج نموذج Gemini داخل تطبيقات Google Workspace (مستندات، جداول، عروض) </h3>
-                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">​"تعرف على تفاصيل دمج نموذج الذكاء الاصطناعي Gemini داخل تطبيقات Google Workspace (مستندات، جداول، عروض). اكتشف الميزات الجديدة، وكيف يحمي جوجل بيانات مؤسستك."</p>
             </div>
         </div>
     </a>
@@ -424,10 +441,10 @@ article {
             </div>
         </div>
     </a>
-    <a href="/article-best-ai-platforms-2025-2026.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
+    <a href="/article-charging-tech-2026.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="أفضل أدوات الذكاء الاصطناعي لعام 2025 و2026" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
+                <img src="assets/images/1770514140938_images_(9).webp" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="ثورة الشحن السريع والبطاريات (2021–2026): من السباق نحو السرعة إلى الكفاءة" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                 <div class="absolute top-2 right-2 bg-blue-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
                     <i data-lucide="file-text" style="width: 1.2em; height: 1.2em;"></i><span>اخبار</span>
@@ -437,8 +454,8 @@ article {
                 <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
                     <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">٠٧‏/٠٢‏/٢٠٢٦، ٠٩:٠٠ م</span>
                 </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="أفضل أدوات الذكاء الاصطناعي لعام 2025 و2026" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">أفضل أدوات الذكاء الاصطناعي لعام 2025 و2026</h3>
-                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">دليل شامل لأفضل منصات الذكاء الاصطناعي لعامي 2025 و 2026، يشمل ChatGPT، Gemini، Claude، وغيرها من الأدوات الرائدة.</p>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="ثورة الشحن السريع والبطاريات (2021–2026): من السباق نحو السرعة إلى الكفاءة" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">ثورة الشحن السريع والبطاريات (2021–2026): من السباق نحو السرعة إلى الكفاءة</h3>
+                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">مقارنة شاملة لتقنيات الشحن السريع والبطاريات من عام 2021 وحتى أحدث تقنيات السيليكون-كربون في 2026.</p>
             </div>
         </div>
     </a>
@@ -496,42 +513,6 @@ article {
             </div>
         </div>
     </a>
-    <a href="/article-future-ai-2026.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
-        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
-            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="مستقبل الذكاء الاصطناعي 2026: الاتجاهات، التحديات، وتأثيره على البشرية" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 bg-blue-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
-                    <i data-lucide="file-text" style="width: 1.2em; height: 1.2em;"></i><span>اخبار</span>
-                </div>
-            </div>
-            <div class="p-4 flex-1 flex flex-col w-full">
-                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
-                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">١٤‏/٠١‏/٢٠٢٦، ٠٩:٠٠ م</span>
-                </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="مستقبل الذكاء الاصطناعي 2026: الاتجاهات، التحديات، وتأثيره على البشرية" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">مستقبل الذكاء الاصطناعي 2026: الاتجاهات، التحديات، وتأثيره على البشرية</h3>
-                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">استكشف كيف سيغير الذكاء الاصطناعي حياتنا بحلول عام 2026، من الرعاية الصحية إلى المواصلات، والتحديات الأخلاقية المصاحبة.</p>
-            </div>
-        </div>
-    </a>
-    <a href="/article-ai-designed-drugs-2026.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
-        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
-            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="ثورة طبية 2026: أدوية مصممة بالكامل بواسطة AI تدخل التجارب السريرية" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 bg-blue-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
-                    <i data-lucide="file-text" style="width: 1.2em; height: 1.2em;"></i><span>اخبار</span>
-                </div>
-            </div>
-            <div class="p-4 flex-1 flex flex-col w-full">
-                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
-                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">١٣‏/٠١‏/٢٠٢٦، ٠٩:٠٠ م</span>
-                </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="ثورة طبية 2026: أدوية مصممة بالكامل بواسطة AI تدخل التجارب السريرية" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">ثورة طبية 2026: أدوية مصممة بالكامل بواسطة AI تدخل التجارب السريرية</h3>
-                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">كيف يختصر الذكاء الاصطناعي سنوات من البحث الطبي لإنتاج علاجات للأمراض المستعصية؟</p>
-            </div>
-        </div>
-    </a>
     <a href="/article-gov-summit-ai-2026.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
@@ -547,60 +528,6 @@ article {
                 </div>
                 <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="القمة العالمية للحكومات 2026: إطلاق منصة Apolitical للذكاء الاصطناعي" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">القمة العالمية للحكومات 2026: إطلاق منصة Apolitical للذكاء الاصطناعي</h3>
                 <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">أدوات جديدة لدعم الموظفين الحكوميين في اتخاذ القرارات وإدارة الموارد بكفاءة عالية.</p>
-            </div>
-        </div>
-    </a>
-    <a href="/article-openai-multimodal.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
-        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
-            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="ثورة النماذج متعددة الوسائط: كيف غيرت OpenAI قواعد اللعبة؟" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 bg-blue-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
-                    <i data-lucide="file-text" style="width: 1.2em; height: 1.2em;"></i><span>اخبار</span>
-                </div>
-            </div>
-            <div class="p-4 flex-1 flex flex-col w-full">
-                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
-                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">٣١‏/١٢‏/٢٠٢٥، ٠٩:٠٠ م</span>
-                </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="ثورة النماذج متعددة الوسائط: كيف غيرت OpenAI قواعد اللعبة؟" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">ثورة النماذج متعددة الوسائط: كيف غيرت OpenAI قواعد اللعبة؟</h3>
-                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">استكشف كيف تحولت نماذج الذكاء الاصطناعي من فهم النصوص فقط إلى معالجة الصور والصوت والفيديو في وقت واحد، وتأثير ذلك على قطاع الأعمال والمستقبل التقني.</p>
-            </div>
-        </div>
-    </a>
-    <a href="/article-google-gemini-nano.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
-        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
-            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="https://images.unsplash.com/photo-1697577418970-95d99b5a55cf?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="الذكاء الاصطناعي في جيبك: نظرة على تجربة Google Gemini Nano" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 bg-blue-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
-                    <i data-lucide="file-text" style="width: 1.2em; height: 1.2em;"></i><span>اخبار</span>
-                </div>
-            </div>
-            <div class="p-4 flex-1 flex flex-col w-full">
-                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
-                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">٣١‏/١٢‏/٢٠٢٥، ٠٩:٠٠ م</span>
-                </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="الذكاء الاصطناعي في جيبك: نظرة على تجربة Google Gemini Nano" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">الذكاء الاصطناعي في جيبك: نظرة على تجربة Google Gemini Nano</h3>
-                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">كيف تنقل جوجل الذكاء الاصطناعي من السحابة إلى هاتفك مباشرة؟ تعرف على فوائد المعالجة المحلية من السرعة إلى الخصوصية.</p>
-            </div>
-        </div>
-    </a>
-    <a href="/article-anthropic-agents.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
-        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
-            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="وكلاء الذكاء الاصطناعي المستقلون: رؤية Anthropic للمستقبل" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 bg-blue-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
-                    <i data-lucide="file-text" style="width: 1.2em; height: 1.2em;"></i><span>اخبار</span>
-                </div>
-            </div>
-            <div class="p-4 flex-1 flex flex-col w-full">
-                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
-                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">٣١‏/١٢‏/٢٠٢٥، ٠٩:٠٠ م</span>
-                </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="وكلاء الذكاء الاصطناعي المستقلون: رؤية Anthropic للمستقبل" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">وكلاء الذكاء الاصطناعي المستقلون: رؤية Anthropic للمستقبل</h3>
-                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">الوكيل الذكي لم يعد مجرد دردشة، بل نظام ينفذ مهام معقدة تلقائياً. كيف تخطط Anthropic لمستقبل العمل الهجين بين البشر والآلة؟</p>
             </div>
         </div>
     </a>
@@ -640,24 +567,6 @@ article {
             </div>
         </div>
     </a>
-    <a href="/article-huggingface-opensource.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
-        <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
-            <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
-                <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="ديمقراطية الذكاء الاصطناعي: دور Hugging Face والمصدر المفتوح" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/me.jpg';">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                <div class="absolute top-2 right-2 bg-blue-600 text-white font-bold rounded-full flex items-center gap-1 shadow-lg z-10 custom-badge-size" style="padding: 0.3em 0.6em;">
-                    <i data-lucide="file-text" style="width: 1.2em; height: 1.2em;"></i><span>اخبار</span>
-                </div>
-            </div>
-            <div class="p-4 flex-1 flex flex-col w-full">
-                <div class="flex items-center gap-2 text-gray-400 mb-2 custom-meta-size">
-                    <i data-lucide="clock" style="width: 1.2em; height: 1.2em;"></i><span dir="ltr" class="text-xs font-bold">٣١‏/١٢‏/٢٠٢٥، ٠٩:٠٠ م</span>
-                </div>
-                <h3 class="font-bold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors break-words whitespace-normal w-full" title="ديمقراطية الذكاء الاصطناعي: دور Hugging Face والمصدر المفتوح" style="font-size: 14px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">ديمقراطية الذكاء الاصطناعي: دور Hugging Face والمصدر المفتوح</h3>
-                <p class="text-gray-500 dark:text-gray-400 line-clamp-2 mb-0 flex-1 leading-relaxed break-words whitespace-normal w-full custom-desc-size">لماذا يعتبر المصدر المفتوح مستقبل الذكاء الاصطناعي؟ تعرف على منصة Hugging Face التي توفر آلاف النماذج المجانية للجميع.</p>
-            </div>
-        </div>
-    </a>
     <a href="/article-perplexity-search.html" class="group block w-full h-full animate-fade-in post-card-wrapper">
         <div class="post-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col relative w-full">
             <div class="h-40 sm:h-48 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-700">
@@ -681,7 +590,7 @@ article {
     <footer class="bg-gray-900 text-gray-300 py-10 mt-auto border-t border-gray-800 footer-dynamic">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
             <div class="flex items-center justify-center gap-4 mb-4 social-links-container">
-                <a href="https://www.facebook.com/share/1EsapVHA6W/" target="_blank" class="social-icon-btn hover:bg-[#1877F2] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="facebook"><img src="assets/images/1770571140448_09b6e529c7fd6a430ebe68363eb29d56.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://www.instagram.com/techtouch0" target="_blank" class="social-icon-btn hover:bg-[#E4405F] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="instagram"><img src="assets/images/1770571177732_a4615d8d20cbe48adcaf985690c46d9a.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://www.tiktok.com/@techtouch6" target="_blank" class="social-icon-btn hover:bg-black hover:border-gray-600 text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="tiktok"><img src="assets/images/1770571194656_87e7ea9953e7b312bcd242e47f56218d.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://youtube.com/@kinanmajeed?si=I2yuzJT2rRnEHLVg" target="_blank" class="social-icon-btn hover:bg-[#FF0000] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="youtube"><img src="assets/images/1770571207032_60d5a142dda8a05fb992e3e00c3959b4.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://t.me/techtouch7" target="_blank" class="social-icon-btn hover:bg-[#229ED9] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="telegram"><img src="assets/images/1770571222367_817d585a7dd0775dbc9b41927bd043ca.webp" style="width:128px; height:128px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a>
+                <a href="https://www.facebook.com/share/1EsapVHA6W/" target="_blank" class="social-icon-btn hover:bg-[#1877F2] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="facebook"><img src="assets/images/1774254151689_20260323_035406.webp" style="width:100px; height:100px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://www.instagram.com/techtouch0" target="_blank" class="social-icon-btn hover:bg-[#E4405F] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="instagram"><img src="assets/images/1774254018837_20260323_040122.webp" style="width:100px; height:100px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://www.tiktok.com/@techtouch6" target="_blank" class="social-icon-btn hover:bg-black hover:border-gray-600 text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="tiktok"><img src="assets/images/1774254050936_20260323_035604.webp" style="width:100px; height:100px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://youtube.com/@kinanmajeed?si=I2yuzJT2rRnEHLVg" target="_blank" class="social-icon-btn hover:bg-[#FF0000] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="youtube"><img src="assets/images/1774257091669_20260323_040457.webp" style="width:100px; height:100px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a><a href="https://t.me/techtouch7" target="_blank" class="social-icon-btn hover:bg-[#229ED9] text-gray-300 hover:text-white shadow-lg transition-colors" aria-label="telegram"><img src="assets/images/1774253846302_20260323_035134.webp" style="width:100px; height:100px; object-fit:contain; display:block;" alt="icon" onerror="this.src='assets/images/me.jpg'"></a>
             </div>
             <p class="text-sm text-gray-500 font-medium">© 2026 TechTouch. جميع الحقوق محفوظة.</p>
         </div>

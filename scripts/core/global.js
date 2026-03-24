@@ -27,13 +27,27 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
         }
     }
 
-    // Preconnect for Performance
+    // Preconnect for Performance & Speculation Rules for faster navigation (bfcache optimization)
     const preconnectTags = `
     <link rel="preconnect" href="https://esm.sh" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <script type="speculationrules">
+    {
+      "prefetch": [{
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": {"href_matches": "/logout"}},
+            { "not": {"href_matches": "/admin/*"}}
+          ]
+        },
+        "eagerness": "moderate"
+      }]
+    }
+    </script>
     `;
     $('head').prepend(preconnectTags);
 

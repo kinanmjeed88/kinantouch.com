@@ -7,6 +7,48 @@ export const searchIndex = [
     "image": "assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp"
   },
   {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">حسابات أكستريم:</span>  (Xtream IPTV) مجانية ومحدثة",
+    "desc": "تحميل أفضل مشغل IPTV بدون إعلانات مع شرح إضافة الأكواد. يتضمن حسابات اكستريم",
+    "url": "article-extreme-accounts-iptv.html",
+    "category": "Sports",
+    "image": "assets/images/1774270463586_20260323_155405.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">قيود جوجل الجديدة::</span> صعوبة تثبيت التطبيقات APK",
+    "desc": "تفاصيل قيود أندرويد الصارمة لعرقلة تثبيت تطبيقات APK من خارج متجر Play. فترات انتظار، حظر صلاحيات، وتعقيد متعمد بحجة حماية المستخدم.",
+    "url": "article-google-new-restrictions.html",
+    "category": "Articles",
+    "image": "assets/images/1774126953633_IMG_20260321_234337_910.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">كود داونلودر للشاشات::</span>  أضخم مكتبة تطبيقات (IPTV وأفلام) بروابط مباشرة",
+    "desc": "أضخم مكتبة تطبيقات للشاشات الذكية (أفلام، مسلسلات، IPTV). حملها بروابط مباشرة أو عبر كود تطبيق داونلودر (5033352) لتثبيت سريع بضغطة زر.",
+    "url": "article-downloader-code.html",
+    "category": "Apps",
+    "image": "assets/images/1774116778233_20260321_211216.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">Cinemana:</span> سينمانا شبكتي تحميل النسخة الرسمية والمعدلة",
+    "desc": "دليلك الشامل لتطبيق سينمانا شبكتي في العراق. استمتع بآلاف الأفلام والمسلسلات بدقة 4K ",
+    "url": "article-cinemana-update-x.html",
+    "category": "Apps",
+    "image": "assets/images/1774036212507_20260320_104947.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">أدوات الذكاء الاصطناعي:</span>  للمبرمجين في 2026: بيئات تطوير ووكلاء ذكية",
+    "desc": "أقوى أدوات الذكاء الاصطناعي لتسريع البرمجة في 2026. دليل شامل يغطي بيئات التطوير المتكاملة",
+    "url": "article-ai-intelligence-tools.html",
+    "category": "AI",
+    "image": "assets/images/1774013019847_20260320_042312.webp"
+  },
+  {
+    "title": "AI دليل أفضل أدوات الذكاء الاصطناعي لإنشاء وتحرير الفيديو باحترافية",
+    "desc": "اكتشف أبرز أدوات الذكاء الاصطناعي لتوليد وتحرير الفيديوهات بسرعة وسهولة. قائمة شاملة بالمميزات والعيوب لكل أداة لصناع المحتوى.",
+    "url": "article-video-creation-ai.html",
+    "category": "AI",
+    "image": "assets/images/1774010382298_20260320_033907.webp"
+  },
+  {
     "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">تحميل YouTube Gold:</span> اليوتيوب الذهبي بميزات البريميوم للأندرويد",
     "desc": "تطبيق للأندرويد يتيح ميزات بريميوم مجاناً، كحظر الإعلانات، التشغيل في الخلفية، وتحميل الفيديوهات بجودة عالية.",
     "url": "article-golden-youtube.html",
@@ -21,13 +63,6 @@ export const searchIndex = [
     "image": "assets/images/1773925809572_20260319_035642.webp"
   },
   {
-    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">حسابات أكستريم:</span>  (Xtream IPTV) مجانية ومحدثة",
-    "desc": "تحميل أفضل مشغل IPTV بدون إعلانات مع شرح إضافة الأكواد. يتضمن حسابات اكستريم",
-    "url": "article-extreme-accounts-iptv.html",
-    "category": "Sports",
-    "image": "assets/images/1773867498004_20260318_115752.webp"
-  },
-  {
     "title": "<span class=\"text-blue-600 dark:text-blue-400 text-xl font-bold\">رسمياً::</span> جوجل تنهي عصر تحميل التطبيقات الخارجية (APK) في أندرويد بحلول 2026",
     "desc": "تفاصيل خطة جوجل لإنهاء عصر التحميل الحر في أندرويد بحلول 2026. كيف سيؤثر فرض توثيق الهوية على ملفات APK والتطبيقات المعدلة؟\"",
     "url": "article-by-the-time-2026.html",
@@ -35,10 +70,10 @@ export const searchIndex = [
     "image": "assets/images/1773512743546_٢٠٢٦٠٣١٤_٠٩٢٥٢١.webp"
   },
   {
-    "title": "<p class=\"text-gray-700 dark:text-gray-300 text-lg leading-relaxed block w-full bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm\">     <span class=\"text-blue-600 dark:text-blue-400 text-xl font-bold ml-1\">تعرف على تفاصيل:</span> دمج نموذج <span class=\"text-yellow-500 dark:text-yellow-400 text-2xl font-black mx-1\">Gemini</span> داخل تطبيقات <span class=\"text-yellow-500 dark:text-yellow-400 text-2xl font-black mx-1\">Google Workspace</span> (مستندات، جداول، عروض) </p>",
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">تعرف على تفاصيل دمج نموذج Gemini داخل تطبيقات Google Workspace (مستندات، جداول، عروض):</span> منصتك المتكاملة للرياضة والترفيه",
     "desc": "​\"تعرف على تفاصيل دمج نموذج الذكاء الاصطناعي Gemini داخل تطبيقات Google Workspace (مستندات، جداول، عروض). اكتشف الميزات الجديدة، وكيف يحمي جوجل بيانات مؤسستك.\"",
     "url": "article-developed-google-gemini-2026.html",
-    "category": "Articles",
+    "category": "AI",
     "image": "assets/images/1773356629227_٢٠٢٦٠٣١٣_٠٢٠٣٢٦.webp"
   },
   {
@@ -105,28 +140,28 @@ export const searchIndex = [
     "image": "assets/images/1772013254030_٢٠٢٦٠٢٢٥_١٢٣٤٠٣.webp"
   },
   {
-    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تحميل تطبيق <span class=\"text-4xl md:text-5xl lg:text-6xl text-indigo-600 dark:text-indigo-400 inline-block\" dir=\"ltr\">Tellonym Premium</span> (النسخة المميزة) للرسائل المجهولة </h1>",
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">Tellonym Premium:</span> تطبيق (النسخة المميزة) للرسائل المجهولة",
     "desc": "منصة آمنة لاستقبال وإرسال الأسئلة والرسائل المجهولة",
     "url": "article-h1-classfont-tajawal.html",
     "category": "Apps",
     "image": "assets/images/1772006988600_٢٠٢٦٠٢٢٥_١١٠٩٣٣.webp"
   },
   {
-    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق <span class=\"text-indigo-600 dark:text-indigo-400 inline-block\">دراما رمضان 2026</span> | النسخة المدفوعة لمشاهدة المسلسلات (بدون إعلانات) </h1>",
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">تطبيق دراما رمضان 2026:</span> النسخة المدفوعة لمشاهدة المسلسلات بدون إعلانات",
     "desc": "مكتبة ضخمة لمسلسلات الموسم والمواسم السابقة، مشاهدة وتحميل بجودات متعددة وبدون إعلانات. متوفر للهواتف والشاشات الذكية.",
     "url": "article-2026-drama-remadan.html",
     "category": "Apps",
     "image": "assets/images/1771956972972_٢٠٢٦٠٢٢٤_٠٩١١٤٦.webp"
   },
   {
-    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق <span class=\"text-blue-600 dark:text-blue-400 inline-block\" dir=\"ltr\">S Anime</span>: المنصة المتكاملة لمشاهدة </h1>",
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">تطبيق S Anime:</span> المنصة المتكاملة لمشاهدة",
     "desc": " دليلك الشامل لعالم الأنمي والمغامرات (ترجمة احترافية وتحديث مستمر)",
     "url": "article-s-anime-2026.html",
     "category": "Apps",
     "image": "assets/images/1771880974102_٢٠٢٦٠٢٢٤_١٢٠٩٢٥.webp"
   },
   {
-    "title": "<h1 class=\"font-[Tajawal] text-4xl md:text-5xl lg:text-6xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق سي <span class=\"text-5xl md:text-6xl lg:text-7xl text-blue-600 dark:text-blue-400 inline-block\" dir=\"ltr\">CEE</span> | تحديث باقة رمضان 2026 ودعم كافة الشبكات العراقية </h1>",
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">تحديث باقة رمضان 2026:</span> تطبيق سي CEE يدعم كافة الشبكات العراقية.",
     "desc": "يُعد تطبيق CEE منصة ترفيهية رقمية شاملة، كبديل عن \"سينمانا\" و\"فودو",
     "url": "article-cee-tv-app-movie-2026.html",
     "category": "Apps",
@@ -140,14 +175,14 @@ export const searchIndex = [
     "image": "assets/images/1771836804991_٢٠٢٦٠٢٢٣_١١٥٣٠٥.webp"
   },
   {
-    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق <span class=\"text-blue-600 dark:text-blue-400 inline-block\" dir=\"ltr\">Spacetoon Go</span> كرتون وأنمي مدبلج </h1>",
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">تطبيق Spacetoon Go:</span> تطبيق كرتون وأنمي مدبلج",
     "desc": "المنصة الرسمية المخصصة لمشاهدة أفلام ومسلسلات الكرتون والأنمي المعروضة على قناة سبيستون.",
     "url": "article-spacetoon-go-app.html",
     "category": "Apps",
     "image": "assets/images/1771797682066_IMG_٢٠٢٦٠٢٢٣_٠١٠١٠٨.webp"
   },
   {
-    "title": "<h1 class=\"font-[Tajawal] text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-8 leading-tight\">   تطبيق 1 IRAQ TV: منصتك المتكاملة للرياضة والترفيه </h1>",
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">تطبيق 1 IRAQ TV:</span> منصتك المتكاملة للرياضة والترفيه",
     "desc": "✅التطبيق راح يغنيك عن باقي التطبيقات الرياضية والترفيهية",
     "url": "article-iraq-tv-sport-tajawal.html",
     "category": "Sports",
@@ -189,7 +224,7 @@ export const searchIndex = [
     "image": "assets/images/1771677759101_Screenshot_٢٠٢٦-٠٢-٢١-١٥-٤٢-١٢-٨٨_373553b581509443a0e792b1078235c2.webp"
   },
   {
-    "title": "<h1 class=\"text-2xl md:text-3xl font-extrabold leading-tight mb-6\"><span class=\"text-transparent bg-clip-text bg-gradient-to-l from-blue-600 to-cyan-500 drop-shadow-sm\">حصري:</span> <span class=\"text-gray-900 dark:text-white\">تحميل وتفعيل تطبيق Lion TV بأحدث الحسابات (للموبايل والشاشات)</span></h1>",
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">حصري تحميل وتفعيل تطبيق Lion TV بأحدث الحسابات (للموبايل والشاشات):</span> منصتك المتكاملة للرياضة والترفيه",
     "desc": "تطبيق Lion TV هو خيارك الأمثل لمشاهدة القنوات الرياضية والترفيهية ومكتبة ضخمة من الأفلام والمسلسلات بجودة عالية",
     "url": "article-h1-classtext-2xl-mdt.html",
     "category": "Sports",
@@ -213,7 +248,7 @@ export const searchIndex = [
     "title": "لوحة مفاتيح AI تغير طريقة الكتابة على هاتفك بالكامل",
     "desc": "التطبيق هو لوحة مفاتيح ذكية تعتمد على تقنيات GPT، تقدم أدوات للكتابة والتصحيح والترجمة، مما يعزز الإنتاجية ويوفر الوقت بميزات مثل التصحيح الذكي وإعادة الصياغة.",
     "url": "article-lwhh-mfatyh-ai-tghyr.html",
-    "category": "Apps",
+    "category": "AI",
     "image": "assets/images/1771081515731_Screenshot_٢٠٢٦-٠٢-١٤-١٨-٠٤-٥٥-٧٣_b5a5c5cb02ca09c784c5d88160e2ec24.webp"
   },
   {
@@ -283,14 +318,14 @@ export const searchIndex = [
     "title": "أفضل أدوات الذكاء الاصطناعي لعام 2025 و2026",
     "desc": "دليل شامل لأفضل منصات الذكاء الاصطناعي لعامي 2025 و 2026، يشمل ChatGPT، Gemini، Claude، وغيرها من الأدوات الرائدة.",
     "url": "article-best-ai-platforms-2025-2026.html",
-    "category": "Articles",
+    "category": "AI",
     "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
   },
   {
     "title": "أفضل منصات ذكاء اصطناعي مجانية بالكامل في 2026 (بدون اشتراك مدفوع)",
     "desc": "قائمة مختارة لأقوى الأدوات المجانية التي يمكنك استخدامها فوراً للكتابة، البرمجة، والبحث.",
     "url": "article-best-free-ai-platforms.html",
-    "category": "Apps",
+    "category": "AI",
     "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80"
   },
   {
@@ -304,7 +339,7 @@ export const searchIndex = [
     "title": "ثورة الشحن السريع والبطاريات (2021–2026): من السباق نحو السرعة إلى الكفاءة",
     "desc": "مقارنة شاملة لتقنيات الشحن السريع والبطاريات من عام 2021 وحتى أحدث تقنيات السيليكون-كربون في 2026.",
     "url": "article-charging-tech-2026.html",
-    "category": "Apps",
+    "category": "Articles",
     "image": "assets/images/1770514140938_images_(9).webp"
   },
   {
@@ -353,14 +388,14 @@ export const searchIndex = [
     "title": "مستقبل الذكاء الاصطناعي 2026: الاتجاهات، التحديات، وتأثيره على البشرية",
     "desc": "استكشف كيف سيغير الذكاء الاصطناعي حياتنا بحلول عام 2026، من الرعاية الصحية إلى المواصلات، والتحديات الأخلاقية المصاحبة.",
     "url": "article-future-ai-2026.html",
-    "category": "Articles",
+    "category": "AI",
     "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
   },
   {
     "title": "ثورة طبية 2026: أدوية مصممة بالكامل بواسطة AI تدخل التجارب السريرية",
     "desc": "كيف يختصر الذكاء الاصطناعي سنوات من البحث الطبي لإنتاج علاجات للأمراض المستعصية؟",
     "url": "article-ai-designed-drugs-2026.html",
-    "category": "Articles",
+    "category": "AI",
     "image": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1200&q=80"
   },
   {
@@ -395,21 +430,21 @@ export const searchIndex = [
     "title": "ثورة النماذج متعددة الوسائط: كيف غيرت OpenAI قواعد اللعبة؟",
     "desc": "استكشف كيف تحولت نماذج الذكاء الاصطناعي من فهم النصوص فقط إلى معالجة الصور والصوت والفيديو في وقت واحد، وتأثير ذلك على قطاع الأعمال والمستقبل التقني.",
     "url": "article-openai-multimodal.html",
-    "category": "Articles",
+    "category": "AI",
     "image": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80"
   },
   {
     "title": "الذكاء الاصطناعي في جيبك: نظرة على تجربة Google Gemini Nano",
     "desc": "كيف تنقل جوجل الذكاء الاصطناعي من السحابة إلى هاتفك مباشرة؟ تعرف على فوائد المعالجة المحلية من السرعة إلى الخصوصية.",
     "url": "article-google-gemini-nano.html",
-    "category": "Articles",
+    "category": "AI",
     "image": "https://images.unsplash.com/photo-1697577418970-95d99b5a55cf?auto=format&fit=crop&w=1200&q=80"
   },
   {
     "title": "وكلاء الذكاء الاصطناعي المستقلون: رؤية Anthropic للمستقبل",
     "desc": "الوكيل الذكي لم يعد مجرد دردشة، بل نظام ينفذ مهام معقدة تلقائياً. كيف تخطط Anthropic لمستقبل العمل الهجين بين البشر والآلة؟",
     "url": "article-anthropic-agents.html",
-    "category": "Articles",
+    "category": "AI",
     "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
   },
   {
@@ -430,7 +465,7 @@ export const searchIndex = [
     "title": "ديمقراطية الذكاء الاصطناعي: دور Hugging Face والمصدر المفتوح",
     "desc": "لماذا يعتبر المصدر المفتوح مستقبل الذكاء الاصطناعي؟ تعرف على منصة Hugging Face التي توفر آلاف النماذج المجانية للجميع.",
     "url": "article-huggingface-opensource.html",
-    "category": "Articles",
+    "category": "AI",
     "image": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80"
   },
   {
@@ -449,7 +484,7 @@ export const searchIndex = [
   },
   {
     "title": "Techtouch7",
-    "desc": "قناة نشر تطبيقات والعاب اندرويد",
+    "desc": "قناة تطبيقات الأندرويد",
     "url": "https://t.me/techtouch7",
     "category": "Channels",
     "image": "assets/images/me.jpg"
@@ -477,7 +512,7 @@ export const searchIndex = [
   },
   {
     "title": "قناة PC & PS",
-    "desc": "قناة لنشر مايخص البليستيشن وبرامج الوندوز",
+    "desc": "كل مايخص ps وبرامج الوندوز",
     "url": "https://t.me/techtouch4",
     "category": "Channels",
     "image": "assets/images/me.jpg"
