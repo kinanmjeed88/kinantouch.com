@@ -24,12 +24,9 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Generate Analytics Key JSON
-        run: echo '${{ secrets.GA4_SERVICE_ACCOUNT }}' > .secret_ga4_key.json
-
       - name: Fetch Analytics & Build Site
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: .secret_ga4_key.json
+          GA4_SECRET_JSON: ${{ secrets.GA4_SERVICE_ACCOUNT }}
         run: |
           node scripts/fetch-analytics.js
           npm run build

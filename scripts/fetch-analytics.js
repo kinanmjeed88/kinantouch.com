@@ -15,7 +15,17 @@ async function main() {
   try {
     // Requires GOOGLE_APPLICATION_CREDENTIALS in .env pointing to the JSON key file
     // Or set the env var directly in CI/CD (GitHub Secrets)
-    const analyticsDataClient = new BetaAnalyticsDataClient();
+    let credentials;
+    if (process.env.GA4_SECRET_JSON) {
+        try {
+            credentials = JSON.parse(process.env.GA4_SECRET_JSON);
+            console.log('✅ Found GA4 credentials from environment variable.');
+        } catch(e) {
+            console.error('❌ Failed to parse GA4_SECRET_JSON:', e.message);
+        }
+    }
+
+    const analyticsDataClient = credentials ? new BetaAnalyticsDataClient({ credentials }) : new BetaAnalyticsDataClient();
 
     const [response] = await analyticsDataClient.runReport({
       property: `properties/${propertyId}`,
