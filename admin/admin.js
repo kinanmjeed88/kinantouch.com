@@ -994,8 +994,16 @@ async function loadStats() {
         let postsPerCat = {};
         const postsData = await Promise.all(postsFiles.map(async f => {
             if(f.name.endsWith('.json')) {
-                const file = await api.get(`content/posts/${f.name}`);
-                return JSON.parse(decodeURIComponent(escape(atob(file.content))));
+                try {
+                    const file = await api.get(`content/posts/${f.name}`);
+                    const parsed = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+                    // Safely assign slug from filename if missing, mirroring generator logic
+                    if (!parsed.slug) parsed.slug = f.name.replace('.json', '');
+                    return parsed;
+                } catch(e) {
+                    console.error("Error parsing post file:", f.name, e);
+                    return null;
+                }
             }
             return null;
         }));
@@ -1031,9 +1039,9 @@ async function loadStats() {
             totalViews += views;
             // 'key' is now exactly the slug (e.g. "my-post-slug") or "/"
             if (key !== '/') {
-                const post = validPosts.find(p => p.slug.trim().toLowerCase() === key);
+                const post = validPosts.find(p => (p.slug || '').trim().toLowerCase() === key);
                 if (post) {
-                    topPosts.push({ title: post.title, views: views, url: `/article-${key}.html` });
+                    topPosts.push({ title: post.title || 'بدون عنوان', views: views, url: `/article-${key}.html` });
                 }
             }
         });
