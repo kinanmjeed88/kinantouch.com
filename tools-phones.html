@@ -120,7 +120,29 @@ window.addEventListener("load", function(){
         const allPhones = [];
         phonesDatabase.forEach(brand => { brand.phones.forEach(phone => { allPhones.push({ ...phone, brand: brand.brand }); }); });
         function renderSpecs(phone, brandName) {
-            displayBrand.textContent = brandName; displayName.textContent = phone.name; specsGrid.innerHTML = '';
+            
+            displayBrand.textContent = brandName; 
+            displayName.textContent = phone.name; 
+            specsGrid.innerHTML = '';
+            
+            // Image handling
+            let specsCard = document.getElementById('specsCard');
+            let imgContainer = document.getElementById('phoneImageContainer');
+            if (!imgContainer) {
+                imgContainer = document.createElement('div');
+                imgContainer.id = 'phoneImageContainer';
+                imgContainer.className = 'w-32 h-32 md:w-48 md:h-48 shrink-0 mx-auto bg-transparent flex items-center justify-center overflow-hidden mb-6';
+                
+                // Insert after the title header in specsCard, or just before specsGrid
+                specsGrid.parentNode.insertBefore(imgContainer, specsGrid);
+            }
+            if (phone.image) {
+                imgContainer.innerHTML = `<img src="${phone.image}" alt="${phone.name}" class="max-w-full max-h-full object-contain p-2" onerror="this.onerror=null; this.parentElement.style.display='none';">`;
+                imgContainer.style.display = 'flex';
+            } else {
+                imgContainer.style.display = 'none';
+            }
+
             for (const [key, value] of Object.entries(phone.specs)) {
                 const config = specConfig[key] || { label: key, icon: "info" };
                 const item = document.createElement('div');
