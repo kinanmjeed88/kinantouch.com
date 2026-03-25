@@ -9,7 +9,7 @@
   <link>https://kinantouch.com</link>
   <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
   <language>ar</language>
-  <lastBuildDate>Wed, 25 Mar 2026 01:08:54 GMT</lastBuildDate>
+  <lastBuildDate>Wed, 25 Mar 2026 01:49:29 GMT</lastBuildDate>
   <ttl>60</ttl>
   <atom:link href="https://kinantouch.com/feed.xml" rel="self" type="application/rss+xml" />
 
@@ -119,6 +119,113 @@
 </div>]]></content:encoded>
     <media:content url="https://kinantouch.com/assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp" type="image/webp" medium="image" />
     <enclosure url="https://kinantouch.com/assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp" type="image/webp" />
+  </item>
+  <item>
+    <title><![CDATA[DLTA 4K: تحميل تطبيق للشاشات والهواتف مع كود التفعيل (قنوات رياضية)]]></title>
+    <link>https://kinantouch.com/article-dlta-4k-sport</link>
+    <guid isPermaLink="true">https://kinantouch.com/article-dlta-4k-sport</guid>
+    <pubDate>Wed, 25 Mar 2026 01:31:00 GMT</pubDate>
+    <dc:creator><![CDATA[كنان الصائغ]]></dc:creator>
+    <category>sports</category>
+    <description><![CDATA[حمل تطبيق DLTA 4K لمشاهدة القنوات الرياضية والعالمية مجاناً. يتضمن كود تفعيل جاهز، وكود مباشر (5463741) للتحميل السريع على الشاشات والهواتف.]]></description>
+    <content:encoded><![CDATA[<div dir="rtl">
+
+    <p>
+        تطبيق <strong>DLTA 4K</strong> المميز لمشاهدة القنوات الرياضية والعالمية بجودة عالية. نوفر لك بيانات تفعيل جاهزة، بالإضافة إلى كود تحميل مباشر للشاشات الذكية ورابط للهواتف.
+    </p>
+
+    <div>
+        <div></div>
+        <div>
+            <span>
+                <i></i>
+            </span>
+            <div>
+                <h3>DLTA 4K</h3>
+                <p>قنوات رياضية وعالمية</p>
+            </div>
+        </div>
+        <div>
+            <i></i> كود جديد (New Code)
+        </div>
+    </div>
+
+    <div>
+        <div>
+            <i></i> بيانات التفعيل
+        </div>
+        
+        <p>اضغط مرة واحدة على النص لنسخ الكود مباشرة</p>
+
+        <div dir="ltr">
+            
+            <div onclick="copyActivationData('Adghrrhh', this)">
+                <span>Username</span>
+                <div>
+                    <span>Adghrrhh</span>
+                    <i></i>
+                </div>
+            </div>
+
+            <div onclick="copyActivationData('rBBQ9d2EB2', this)">
+                <span>Password</span>
+                <div>
+                    <span>rBBQ9d2EB2</span>
+                    <i></i>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <h2>روابط التحميل المباشرة</h2>
+    
+    <div>
+        <div>
+            <i></i>
+            <h4>للشاشات الذكية (Downloader)</h4>
+            <p>أدخل كود التحميل السريع التالي:</p>
+            <div>
+                <span>5463741</span>
+            </div>
+        </div>
+
+        <div>
+            <i></i>
+            <h4>للهواتف الذكية</h4>
+            <p>حمل التطبيق مباشرة عبر قناتنا على تيليجرام:</p>
+            <a href="https://t.me/techtouch7/3376" target="_blank" rel="noopener noreferrer">
+                <i></i>
+                تنزيل التطبيق
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function copyActivationData(text, element) {
+            navigator.clipboard.writeText(text).then(() => {
+                const icon = element.querySelector('.copy-icon');
+                const originalClass = icon.className;
+                
+                // تغيير الأيقونة للدلالة على نجاح النسخ
+                icon.className = 'fas fa-check text-green-400 copy-icon';
+                element.classList.add('ring-2', 'ring-green-500');
+                
+                // إعادة الزر لحالته الطبيعية
+                setTimeout(() => {
+                    icon.className = originalClass;
+                    element.classList.remove('ring-2', 'ring-green-500');
+                }, 1500);
+            }).catch(err => {
+                console.error('فشل النسخ: ', err);
+            });
+        }
+    </script>
+
+</div>
+]]></content:encoded>
+    <media:content url="https://kinantouch.com/assets/images/1774402338053_Screenshot_2026-03-25-04-16-14-82_4ccd35b013b9b2701b80fcc97a35f841.webp" type="image/webp" medium="image" />
+    <enclosure url="https://kinantouch.com/assets/images/1774402338053_Screenshot_2026-03-25-04-16-14-82_4ccd35b013b9b2701b80fcc97a35f841.webp" type="image/webp" />
   </item>
   <item>
     <title><![CDATA[حسابات أكستريم:  (Xtream IPTV) مجانية ومحدثة]]></title>
@@ -3452,97 +3559,6 @@ dns.adguard-dns.com</code></pre>
 ]]></content:encoded>
     <media:content url="https://kinantouch.com/assets/images/1772634088358_٢٠٢٦٠٣٠٤_٠٥٢١١٠.webp" type="image/webp" medium="image" />
     <enclosure url="https://kinantouch.com/assets/images/1772634088358_٢٠٢٦٠٣٠٤_٠٥٢١١٠.webp" type="image/webp" />
-  </item>
-  <item>
-    <title><![CDATA[Netfly TV: للاندرويد – نسخة VIP + كود التفعيل للشاشات]]></title>
-    <link>https://kinantouch.com/article-vip-netfly</link>
-    <guid isPermaLink="true">https://kinantouch.com/article-vip-netfly</guid>
-    <pubDate>Wed, 25 Feb 2026 09:10:00 GMT</pubDate>
-    <dc:creator><![CDATA[كنان الصائغ]]></dc:creator>
-    <category>sports</category>
-    <description><![CDATA[تقديم محتوى ترفيهي ورياضي شامل، مصمم ليعمل بمرونة فائقة على جميع الأجهزة.]]></description>
-    <content:encoded><![CDATA[<div>
-
-  <section>
-    <h2>نظرة عامة على تطبيق NETFLY Tv</h2>
-    <p>
-      تطبيق <strong>Netfly</strong> هو منصة بث شاملة تجمع بين خدمات الفيديو حسب الطلب (VOD) والبث التلفزيوني المباشر (Live TV). يركز التطبيق على توفير محتوى ترفيهي ورياضي متكامل، مصمم ليعمل بمرونة عالية على مختلف الأجهزة الذكية.
-    </p>
-  </section>
-
-  <section>
-    <div>
-      <span>🎬</span>
-      <h3>محتويات التطبيق والميزات</h3>
-    </div>
-
-    <ul>
-      <li>
-        <strong>قنوات الأفلام والمسلسلات:</strong> باقات مخصصة لبث أحدث الإصدارات السينمائية والأعمال الدرامية على مدار الساعة.
-      </li>
-      <li>
-        <strong>قنوات الرياضة والباقات العالمية:</strong> تغطية شاملة للأحداث الرياضية عبر قنوات متخصصة، بالإضافة إلى باقات تلفزيونية عالمية متنوعة.
-      </li>
-      <li>
-        <strong>توافق شامل:</strong> يعمل بكفاءة على الشاشات الذكية (Smart TVs)، أجهزة (TV Box)، الهواتف المحمولة، والأجهزة اللوحية.
-      </li>
-      <li>
-        <strong>نسخة الهواتف (VIP):</strong> نسخة معدلة ومفتوحة الصلاحيات (Premium) توفر وصولاً كاملاً للمحتوى المدفوع للهواتف المحمولة.
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <div>
-      <span>
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-      </span>
-      <h3>كود التحميل للشاشات الذكية (Downloader)</h3>
-    </div>
-
-    <div dir="ltr">
-      <div>
-          <div>
-              <div>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-              </div>
-              <span>TV Downloader Code</span>
-          </div>
-          <div>
-              <pre><code>📺 كود تطبيق NETFLY Tv:
-<span>6214124</span></code></pre>
-          </div>
-      </div>
-    </div>
-    
-    <div>
-      <div>
-        <span>⚠️</span>
-        <div>
-          <span>ملاحظة هامة:</span>
-          <span>نسخة الشاشات الذكية المحملة عبر هذا الكود النسخة معدلة VIP).</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <a href="https://t.me/techtouch7/3797" target="_blank" rel="noopener noreferrer"
-      >
-      <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.96 1.25-5.54 3.67-.52.36-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.34-.49.94-.76 3.68-1.6 6.13-2.66 7.35-3.16 3.49-1.45 4.22-1.7 4.7-1.71.11 0 .34.03.47.14.11.09.14.22.15.34-.01.05-.01.16-.02.22z"/></svg>
-      <div>
-          <span>⬇️ رابط تحميل تطبيق NETFLY Tv للهواتف</span>
-          <span>عبر قناتنا على Telegram</span>
-      </div>
-    </a>
-  </section>
-
-</div>
-]]></content:encoded>
-    <media:content url="https://kinantouch.com/assets/images/1772013254030_٢٠٢٦٠٢٢٥_١٢٣٤٠٣.webp" type="image/webp" medium="image" />
-    <enclosure url="https://kinantouch.com/assets/images/1772013254030_٢٠٢٦٠٢٢٥_١٢٣٤٠٣.webp" type="image/webp" />
   </item>
 </channel>
 </rss>

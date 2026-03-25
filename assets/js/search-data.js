@@ -7,6 +7,13 @@ export const searchIndex = [
     "image": "assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp"
   },
   {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">DLTA 4K:</span> تحميل تطبيق للشاشات والهواتف مع كود التفعيل (قنوات رياضية)",
+    "desc": "حمل تطبيق DLTA 4K لمشاهدة القنوات الرياضية والعالمية مجاناً. يتضمن كود تفعيل جاهز، وكود مباشر (5463741) للتحميل السريع على الشاشات والهواتف.",
+    "url": "article-dlta-4k-sport.html",
+    "category": "Sports",
+    "image": "assets/images/1774402338053_Screenshot_2026-03-25-04-16-14-82_4ccd35b013b9b2701b80fcc97a35f841.webp"
+  },
+  {
     "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">حسابات أكستريم:</span>  (Xtream IPTV) مجانية ومحدثة",
     "desc": "تحميل أفضل مشغل IPTV بدون إعلانات مع شرح إضافة الأكواد. يتضمن حسابات اكستريم",
     "url": "article-extreme-accounts-iptv.html",
@@ -512,42 +519,42 @@ export const searchIndex = [
   },
   {
     "title": "قناة PC & PS",
-    "desc": "كل مايخص ps وبرامج الوندوز",
+    "desc": "مايخص ps وبرامج الوندوز",
     "url": "https://t.me/techtouch4",
     "category": "Channels",
     "image": "assets/images/me.jpg"
   },
   {
     "title": "مناقشات PC & PS",
-    "desc": "مناقشات حول الكمبيوتر والبليستيشن",
+    "desc": " الكمبيوتر والبليستيشن",
     "url": "https://t.me/+J1Up1q8AYgs2MWU6",
     "category": "Channels",
     "image": "assets/images/me.jpg"
   },
   {
     "title": "قناة الايفون",
-    "desc": "نشر مايخص الايفون تطبيقات وغيرها",
+    "desc": "نشر مايخص الايفون  ",
     "url": "https://t.me/+yqBOH5BBBEM0MTQ6",
     "category": "Channels",
     "image": "assets/images/me.jpg"
   },
   {
     "title": "مناقشات الايفون",
-    "desc": "حل بعض المشاكل للايفون ومناقشتها",
+    "desc": "حل المشاكل للايفون ومناقشتها",
     "url": "https://t.me/+t1W3_jSUjOw0ZDYy",
     "category": "Channels",
     "image": "assets/images/me.jpg"
   },
   {
     "title": "قناة البث المباشر",
-    "desc": "توفير روابط مباشره لكرة القدم",
+    "desc": "روابط بث مباشره للرياضه",
     "url": "https://t.me/techtouch9",
     "category": "Channels",
     "image": "assets/images/me.jpg"
   },
   {
     "title": "المجلد الكامل",
-    "desc": "للاشتراك بجميع القنوات دفعة واحدة",
+    "desc": "كل القنوات على التيليكرام",
     "url": "https://t.me/addlist/Gxcy1FFJONhkMjFi",
     "category": "Channels",
     "image": "assets/images/me.jpg"

@@ -13,8 +13,6 @@ async function main() {
   console.log('🔄 Fetching GA4 Analytics...');
 
   try {
-    // Requires GOOGLE_APPLICATION_CREDENTIALS in .env pointing to the JSON key file
-    // Or set the env var directly in CI/CD (GitHub Secrets)
     let credentials;
     if (process.env.GA4_SECRET_JSON) {
         try {
@@ -50,13 +48,20 @@ async function main() {
     const analyticsData = {};
 
     response.rows.forEach(row => {
-      const path = row.dimensionValues[0].value;
+      const rawPath = row.dimensionValues[0].value;
       const views = parseInt(row.metricValues[0].value, 10);
       
-      // Filter out non-article paths if necessary, or just store all
-      // Typically path is like "/article-xyz.html" or "/"
-      if (path.startsWith('/article-') || path === '/') {
-          analyticsData[path] = views;
+      let decodedPath = rawPath;
+      try { decodedPath = decodeURIComponent(rawPath); } catch(e) {}
+
+      // Normalize path to get the exact slug
+      // E.g. "/article-my-slug.html?fbclid=123" -> "my-slug"
+      const slugMatch = decodedPath.match(/^\/article-([^/?#\.]+)/);
+      if (slugMatch) {
+          const slug = slugMatch[1].trim().toLowerCase();
+          analyticsData[slug] = (analyticsData[slug] || 0) + views;
+      } else if (decodedPath === '/' || decodedPath.startsWith('/index.html')) {
+          analyticsData['/'] = (analyticsData['/'] || 0) + views;
       }
     });
 

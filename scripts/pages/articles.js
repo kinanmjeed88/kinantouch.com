@@ -47,11 +47,9 @@ export async function generateIndividualArticles({ allPosts, postsByCategory, ab
             hour: '2-digit', minute: '2-digit', hour12: true
         });
         
-        // Match Analytics Path: e.g. "/article-xyz.html" or "/article-xyz"
-        const htmlPath = `/${pageSlug}`;
-        const cleanPathSlug = `/article-${post.slug}`;
-        const pageViews = (analyticsData && (analyticsData[htmlPath] || analyticsData[cleanPathSlug])) 
-                            ? (analyticsData[htmlPath] || analyticsData[cleanPathSlug]) : 0;
+        // Match Analytics Path: key in analyticsData is now normalized to the post slug
+        const slugKey = post.slug.trim().toLowerCase();
+        const pageViews = (analyticsData && analyticsData[slugKey]) ? analyticsData[slugKey] : 0;
 
         // --- SMART TITLE RENDERING ---
         let titleContent = '';

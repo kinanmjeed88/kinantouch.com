@@ -1027,15 +1027,13 @@ async function loadStats() {
         let totalViews = 0;
         let topPosts = [];
 
-        Object.entries(analytics).forEach(([path, views]) => {
+        Object.entries(analytics).forEach(([key, views]) => {
             totalViews += views;
-            // Try to match path to a post
-            const slugMatch = path.match(/^\/article-([^/?#\.]+)/);
-            if (slugMatch) {
-                const slug = slugMatch[1];
-                const post = validPosts.find(p => p.slug === slug);
+            // 'key' is now exactly the slug (e.g. "my-post-slug") or "/"
+            if (key !== '/') {
+                const post = validPosts.find(p => p.slug.trim().toLowerCase() === key);
                 if (post) {
-                    topPosts.push({ title: post.title, views: views, url: path });
+                    topPosts.push({ title: post.title, views: views, url: `/article-${key}.html` });
                 }
             }
         });
