@@ -89,7 +89,12 @@
     "name": "المجلد الكامل",
     "desc": "للاشتراك بجميع القنوات دفعة واحدة",
     "url": "https://t.me/addlist/Gxcy1FFJONhkMjFi",
-    "icon": "folder-plus",
-    "color": "blue"
+    "icon": "sparkles",
+    "color": "blue",
+    "iconData": {
+      "type": "lucide",
+      "value": "sparkles",
+      "size": "24"
+    }
   }
 ]
