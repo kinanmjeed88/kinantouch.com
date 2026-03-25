@@ -524,7 +524,7 @@
                         <label class="label">صورة الهاتف</label>
                         <div class="flex gap-4 items-center">
                             <div class="w-24 h-24 rounded-lg border bg-white flex items-center justify-center overflow-hidden shrink-0">
-                                <img id="phPreviewImg" src="" class="max-w-full max-h-full object-contain" onerror="this.src='assets/images/me.jpg'">
+                                <img id="phPreviewImg" src="" class="max-w-full max-h-full object-contain" onerror="this.onerror=null; this.src='../assets/images/me.jpg';">
                             </div>
                             <div class="flex-1 space-y-2">
                                 <input type="file" id="phFileInput" class="hidden" accept="image/*" onchange="handleFileSelect(this, 'phImageUrl', 'phPreviewImg')">

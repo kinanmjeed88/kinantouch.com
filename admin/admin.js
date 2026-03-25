@@ -1120,7 +1120,7 @@ function renderPhonesList() {
             div.innerHTML = `
                 <div class="flex gap-4 items-center border-b pb-4">
                     <div class="w-16 h-16 bg-gray-50 rounded-lg overflow-hidden border shrink-0 flex items-center justify-center">
-                        <img src="${imgUrl}" class="max-w-full max-h-full object-contain" alt="${phone.name}" onerror="this.src='../assets/images/me.jpg'">
+                        <img src="${imgUrl}" class="max-w-full max-h-full object-contain" alt="${phone.name}" onerror="this.onerror=null; this.src='../assets/images/me.jpg';">
                     </div>
                     <div class="flex-1 min-w-0">
                         <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">${brandGroup.brand}</span>
@@ -1135,7 +1135,7 @@ function renderPhonesList() {
                     <div class="flex gap-1.5 items-center bg-gray-50 p-2 rounded-lg"><i data-lucide="battery-charging" class="w-3.5 h-3.5 shrink-0"></i><span class="truncate" title="${phone.specs.battery}">${phone.specs.battery || '-'}</span></div>
                 </div>
                 <div class="flex justify-end gap-2 pt-3 mt-auto border-t">
-                    <button onclick="editPhone(${bIndex}, ${pIndex})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                    <button onclick="openPhoneEditor(${bIndex}, ${pIndex})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                     <button onclick="deletePhone(${bIndex}, ${pIndex})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                 </div>
             `;
