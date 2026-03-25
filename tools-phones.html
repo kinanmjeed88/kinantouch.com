@@ -11,7 +11,25 @@ body { visibility: hidden; opacity: 0; transition: opacity 0.2s ease-in-out; }
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
-window.addEventListener("load", function(){
+window.addEventListener("load", async function(){
+        // Fetch and update profile info dynamically from about.json
+        try {
+            const aboutRes = await fetch('content/data/about.json');
+            if (aboutRes.ok) {
+                const aboutData = await aboutRes.json();
+                const profileImgEl = document.getElementById('header-profile-img');
+                const profileNameEl = document.getElementById('header-profile-name');
+                if (profileImgEl && aboutData.profileImage) {
+                    profileImgEl.src = aboutData.profileImage;
+                }
+                if (profileNameEl && aboutData.name) {
+                    profileNameEl.textContent = aboutData.name;
+                }
+            }
+        } catch(e) {
+            console.error('Failed to load about data:', e);
+        }
+
     document.body.style.visibility = 'visible';
     document.body.style.opacity = '1';
 });
@@ -137,10 +155,11 @@ window.addEventListener("load", function(){
                 specsGrid.parentNode.insertBefore(imgContainer, specsGrid);
             }
             if (phone.image) {
-                imgContainer.innerHTML = `<img src="${phone.image}" alt="${phone.name}" class="max-w-full max-h-full object-contain p-2" onerror="this.onerror=null; this.parentElement.style.display='none';">`;
+                imgContainer.innerHTML = `<img src="${phone.image}" alt="${phone.name}" class="max-w-full max-h-full object-contain p-2" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>';">`;
                 imgContainer.style.display = 'flex';
             } else {
-                imgContainer.style.display = 'none';
+                imgContainer.innerHTML = `<img src="data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>" alt="Phone Placeholder" class="max-w-full max-h-full object-contain p-2 opacity-30">`;
+                imgContainer.style.display = 'flex';
             }
 
             for (const [key, value] of Object.entries(phone.specs)) {
