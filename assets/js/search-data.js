@@ -367,7 +367,7 @@ export const searchIndex = [
     "title": "منصات غيرت قواعد اللعبة: تعرف على Z.ai وManus",
     "desc": "جيل جديد من الوكلاء المستقلين وأنظمة تحويل النص إلى فيديو تصل إلى الأسواق.",
     "url": "article-game-changing-ai-platforms.html",
-    "category": "",
+    "category": "Articles",
     "image": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80"
   },
   {
