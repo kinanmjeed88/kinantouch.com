@@ -5,6 +5,8 @@
       {
         "id": "iphone14",
         "name": "iPhone 14",
+        "image": "assets/images/1774461018692_1000194338.webp",
+        "price": "",
         "specs": {
           "chipset": "A15 Bionic",
           "ram": "6GB",
