@@ -47,7 +47,7 @@
   {
     "id": "pc_ps",
     "name": "قناة PC & PS",
-    "desc": "كل مايخص ps وبرامج الوندوز",
+    "desc": "مايخص ps وبرامج الوندوز",
     "url": "https://t.me/techtouch4",
     "icon": "monitor",
     "color": "indigo"
@@ -55,7 +55,7 @@
   {
     "id": "pc_ps_discuss",
     "name": "مناقشات PC & PS",
-    "desc": "مناقشات حول الكمبيوتر والبليستيشن",
+    "desc": " الكمبيوتر والبليستيشن",
     "url": "https://t.me/+J1Up1q8AYgs2MWU6",
     "icon": "message-square",
     "color": "indigo"
@@ -63,7 +63,7 @@
   {
     "id": "iphone",
     "name": "قناة الايفون",
-    "desc": "نشر مايخص الايفون تطبيقات وغيرها",
+    "desc": "نشر مايخص الايفون  ",
     "url": "https://t.me/+yqBOH5BBBEM0MTQ6",
     "icon": "smartphone",
     "color": "slate"
@@ -71,7 +71,7 @@
   {
     "id": "iphone_discuss",
     "name": "مناقشات الايفون",
-    "desc": "حل بعض المشاكل للايفون ومناقشتها",
+    "desc": "حل المشاكل للايفون ومناقشتها",
     "url": "https://t.me/+t1W3_jSUjOw0ZDYy",
     "icon": "message-square",
     "color": "slate"
@@ -79,7 +79,7 @@
   {
     "id": "live",
     "name": "قناة البث المباشر",
-    "desc": "توفير روابط مباشره لكرة القدم",
+    "desc": "روابط بث مباشره للرياضه",
     "url": "https://t.me/techtouch9",
     "icon": "tv",
     "color": "orange"
@@ -87,7 +87,7 @@
   {
     "id": "all_folder",
     "name": "المجلد الكامل",
-    "desc": "للاشتراك بجميع القنوات دفعة واحدة",
+    "desc": "كل القنوات على التيليكرام",
     "url": "https://t.me/addlist/Gxcy1FFJONhkMjFi",
     "icon": "sparkles",
     "color": "blue",
