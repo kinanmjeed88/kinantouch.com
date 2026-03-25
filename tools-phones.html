@@ -100,7 +100,14 @@ window.addEventListener("load", function(){
     </footer>
     <script src="assets/js/app.js"></script>
     <script type="module">
-        import { phonesDatabase } from "./assets/js/phones-data.js";
+        let phonesDatabase = [];
+        try {
+            const res = await fetch('content/data/phones.json');
+            phonesDatabase = await res.json();
+        } catch(e) {
+            console.error('Failed to load phones database:', e);
+        }
+
         const brandSelect = document.getElementById('brandSelect');
         const modelSelect = document.getElementById('modelSelect');
         const searchInput = document.getElementById('searchInput');

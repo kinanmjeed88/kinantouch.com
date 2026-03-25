@@ -89,7 +89,14 @@ window.addEventListener("load", function(){
     </footer>
     <script src="assets/js/app.js"></script>
     <script type="module">
-        import { phonesDatabase } from "./assets/js/phones-data.js";
+        let phonesDatabase = [];
+        try {
+            const res = await fetch('content/data/phones.json');
+            phonesDatabase = await res.json();
+        } catch(e) {
+            console.error('Failed to load phones database:', e);
+        }
+
         const specsMap = [{ key: "screen", label: "الشاشة" }, { key: "chipset", label: "المعالج" }, { key: "ram", label: "الرام" }, { key: "storage", label: "التخزين" }, { key: "camera", label: "الكاميرا" }, { key: "battery", label: "البطارية" }];
         const brandA = document.getElementById('brandA'); const modelA = document.getElementById('modelA'); const brandB = document.getElementById('brandB'); const modelB = document.getElementById('modelB'); const compareBtn = document.getElementById('compareBtn'); const compareResult = document.getElementById('compareResult'); const specsContainer = document.getElementById('specsContainer');
         function populateBrands() {

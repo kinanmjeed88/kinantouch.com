@@ -82,7 +82,7 @@ window.switchTab = (tabName) => {
     document.getElementById(`nav-${tabName}`).classList.add('tab-active');
     
     // Hide all main content sections (divs or sections with id starting with sec-)
-    const sections = ['posts', 'channels', 'categories', 'settings', 'stats'];
+    const sections = ['posts', 'channels', 'categories', 'settings', 'stats', 'phones'];
     sections.forEach(secName => {
         const el = document.getElementById(`sec-${secName}`);
         if(el) {
@@ -104,6 +104,7 @@ window.switchTab = (tabName) => {
     if (tabName === 'categories') loadCategories();
     if (tabName === 'settings') loadSettings();
     if (tabName === 'stats') loadStats();
+    if (tabName === 'phones') loadPhones();
 };
 
 async function compressAndConvertToWebP(file) {
@@ -1069,3 +1070,229 @@ async function loadStats() {
         loader.innerHTML = '<p class="text-red-500">حدث خطأ في جلب البيانات. تأكد من إعدادات الاتصال.</p>';
     }
 }
+
+// --- PHONES LOGIC ---
+let cachedPhones = [];
+let phonesSha = null;
+
+async function loadPhones() {
+    const loader = document.getElementById('phonesLoader');
+    const list = document.getElementById('phonesList');
+    loader.classList.remove('hidden');
+    list.innerHTML = '';
+
+    try {
+        const file = await api.get('content/data/phones.json');
+        cachedPhones = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+        phonesSha = file.sha;
+
+        // Populate Brand Filter
+        const brands = [...new Set(cachedPhones.map(brandGroup => brandGroup.brand))].sort();
+        const filterSelect = document.getElementById('filterPhoneBrand');
+        filterSelect.innerHTML = '<option value="all">الكل</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
+
+        renderPhonesList();
+    } catch(e) {
+        console.error("No phones DB found, creating empty.", e);
+        cachedPhones = [];
+        renderPhonesList();
+    } finally {
+        loader.classList.add('hidden');
+    }
+}
+
+function renderPhonesList() {
+    const list = document.getElementById('phonesList');
+    const filter = document.getElementById('filterPhoneBrand').value;
+    list.innerHTML = '';
+
+    let displayedCount = 0;
+    cachedPhones.forEach((brandGroup, bIndex) => {
+        if (filter !== 'all' && brandGroup.brand !== filter) return;
+
+        brandGroup.phones.forEach((phone, pIndex) => {
+            displayedCount++;
+            const div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-4 transition-all hover:shadow-md hover:-translate-y-1 group';
+            
+            const imgUrl = phone.image ? (phone.image.startsWith('http') ? phone.image : `../${phone.image}`) : '../assets/images/me.jpg';
+            
+            div.innerHTML = `
+                <div class="flex gap-4 items-center border-b pb-4">
+                    <div class="w-16 h-16 bg-gray-50 rounded-lg overflow-hidden border shrink-0 flex items-center justify-center">
+                        <img src="${imgUrl}" class="max-w-full max-h-full object-contain" alt="${phone.name}" onerror="this.src='../assets/images/me.jpg'">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">${brandGroup.brand}</span>
+                        <h3 class="font-black text-gray-900 truncate" title="${phone.name}">${phone.name}</h3>
+                        ${phone.price ? `<span class="text-sm font-bold text-green-600 mt-1 inline-block">${phone.price}</span>` : ''}
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs text-gray-600 flex-1">
+                    <div class="flex gap-1.5 items-center bg-gray-50 p-2 rounded-lg"><i data-lucide="cpu" class="w-3.5 h-3.5 shrink-0"></i><span class="truncate" title="${phone.specs.chipset}">${phone.specs.chipset || '-'}</span></div>
+                    <div class="flex gap-1.5 items-center bg-gray-50 p-2 rounded-lg"><i data-lucide="memory-stick" class="w-3.5 h-3.5 shrink-0"></i><span class="truncate" title="${phone.specs.ram}">${phone.specs.ram || '-'}</span></div>
+                    <div class="flex gap-1.5 items-center bg-gray-50 p-2 rounded-lg"><i data-lucide="hard-drive" class="w-3.5 h-3.5 shrink-0"></i><span class="truncate" title="${phone.specs.storage}">${phone.specs.storage || '-'}</span></div>
+                    <div class="flex gap-1.5 items-center bg-gray-50 p-2 rounded-lg"><i data-lucide="battery-charging" class="w-3.5 h-3.5 shrink-0"></i><span class="truncate" title="${phone.specs.battery}">${phone.specs.battery || '-'}</span></div>
+                </div>
+                <div class="flex justify-end gap-2 pt-3 mt-auto border-t">
+                    <button onclick="editPhone(${bIndex}, ${pIndex})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                    <button onclick="deletePhone(${bIndex}, ${pIndex})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    });
+    
+    if (displayedCount === 0) list.innerHTML = '<div class="col-span-full py-8 text-center text-gray-500 font-bold">لا يوجد هواتف لعرضها، أضف هاتفاً جديداً.</div>';
+    lucide.createIcons();
+}
+
+window.autoPhoneId = () => {
+    const brand = document.getElementById('phBrand').value.trim();
+    const name = document.getElementById('phName').value.trim();
+    if(brand && name) {
+        document.getElementById('phInternalId').value = `${brand.toLowerCase()}-${name.toLowerCase()}`.replace(/[^a-z0-9]/g, '');
+    }
+};
+
+window.openPhoneEditor = (bIndex = -1, pIndex = -1) => {
+    document.getElementById('phoneEditor').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    const editorTitle = document.getElementById('phoneEditorTitle');
+    const fields = ['Brand', 'Name', 'InternalId', 'Price', 'ImageUrl', 'SpecChipset', 'SpecRam', 'SpecStorage', 'SpecScreen', 'SpecBattery', 'SpecCamera'];
+    
+    if (bIndex >= 0 && pIndex >= 0) {
+        const brandGroup = cachedPhones[bIndex];
+        const phone = brandGroup.phones[pIndex];
+        
+        editorTitle.innerText = `تعديل: ${phone.name}`;
+        document.getElementById('phId').value = `${bIndex}:${pIndex}`; // Store old indices
+        
+        document.getElementById('phBrand').value = brandGroup.brand || '';
+        document.getElementById('phName').value = phone.name || '';
+        document.getElementById('phInternalId').value = phone.id || '';
+        document.getElementById('phPrice').value = phone.price || '';
+        
+        document.getElementById('phImageUrl').value = phone.image || '';
+        document.getElementById('phPreviewImg').src = phone.image ? (phone.image.startsWith('http') ? phone.image : `../${phone.image}`) : '../assets/images/me.jpg';
+        
+        document.getElementById('phSpecChipset').value = phone.specs?.chipset || '';
+        document.getElementById('phSpecRam').value = phone.specs?.ram || '';
+        document.getElementById('phSpecStorage').value = phone.specs?.storage || '';
+        document.getElementById('phSpecScreen').value = phone.specs?.screen || '';
+        document.getElementById('phSpecBattery').value = phone.specs?.battery || '';
+        document.getElementById('phSpecCamera').value = phone.specs?.camera || '';
+        
+    } else {
+        editorTitle.innerText = "إضافة هاتف جديد";
+        document.getElementById('phId').value = "new";
+        fields.forEach(f => document.getElementById(`ph${f}`).value = '');
+        document.getElementById('phPreviewImg').src = '';
+    }
+};
+
+window.closePhoneEditor = () => {
+    document.getElementById('phoneEditor').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+};
+
+window.savePhone = async () => {
+    const brandRaw = document.getElementById('phBrand').value.trim();
+    const nameRaw = document.getElementById('phName').value.trim();
+    if (!brandRaw || !nameRaw) return alert("الشركة والاسم مطلوبان.");
+
+    // Standardize brand capitalization (e.g. Apple, Samsung)
+    const brand = brandRaw.charAt(0).toUpperCase() + brandRaw.slice(1).toLowerCase();
+
+    const newPhoneData = {
+        id: document.getElementById('phInternalId').value || `${brand}-${nameRaw}`.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(),
+        name: nameRaw,
+        image: document.getElementById('phImageUrl').value.trim(),
+        price: document.getElementById('phPrice').value.trim(),
+        specs: {
+            chipset: document.getElementById('phSpecChipset').value.trim(),
+            ram: document.getElementById('phSpecRam').value.trim(),
+            storage: document.getElementById('phSpecStorage').value.trim(),
+            screen: document.getElementById('phSpecScreen').value.trim(),
+            battery: document.getElementById('phSpecBattery').value.trim(),
+            camera: document.getElementById('phSpecCamera').value.trim()
+        }
+    };
+
+    const editId = document.getElementById('phId').value;
+    let oldBrandGroup = null;
+    let oldPhoneIndex = -1;
+
+    // If editing, find old position to replace or move
+    if (editId !== "new") {
+        const parts = editId.split(':');
+        const bIdx = parseInt(parts[0]);
+        const pIdx = parseInt(parts[1]);
+        if (cachedPhones[bIdx]) {
+            oldBrandGroup = cachedPhones[bIdx];
+            oldPhoneIndex = pIdx;
+            
+            // Remove from old location before inserting to new/same location
+            cachedPhones[bIdx].phones.splice(pIdx, 1);
+            // Cleanup empty brand group
+            if (cachedPhones[bIdx].phones.length === 0) {
+                cachedPhones.splice(bIdx, 1);
+            }
+        }
+    }
+
+    // Insert into correct brand group
+    let targetGroup = cachedPhones.find(bg => bg.brand === brand);
+    if (!targetGroup) {
+        targetGroup = { brand: brand, phones: [] };
+        cachedPhones.push(targetGroup);
+    }
+    
+    // Check if ID already exists in target group to prevent duplicates
+    const existIdx = targetGroup.phones.findIndex(p => p.id === newPhoneData.id);
+    if (existIdx >= 0) {
+        targetGroup.phones[existIdx] = newPhoneData; // Update
+    } else {
+        targetGroup.phones.push(newPhoneData); // Append
+    }
+
+    // Sort brands and phones alphabetically for neatness
+    cachedPhones.sort((a,b) => a.brand.localeCompare(b.brand));
+    cachedPhones.forEach(bg => bg.phones.sort((a,b) => a.name.localeCompare(b.name)));
+
+    try {
+        const btn = document.querySelector('#phoneEditor .btn-primary');
+        btn.innerText = "جاري الحفظ...";
+        await api.put('content/data/phones.json', JSON.stringify(cachedPhones, null, 2), `Update Phones DB: ${nameRaw}`, phonesSha);
+        showToast('تم حفظ الهاتف بنجاح');
+        
+        // Re-fetch to get new SHA and update UI
+        await loadPhones();
+        closePhoneEditor();
+    } catch(e) {
+        alert("فشل الحفظ: " + e.message);
+    }
+};
+
+window.deletePhone = async (bIndex, pIndex) => {
+    if (!confirm("هل أنت متأكد من حذف هذا الهاتف؟ سيؤثر هذا على صفحات مقارنة الهواتف.")) return;
+    
+    const phoneName = cachedPhones[bIndex].phones[pIndex].name;
+    cachedPhones[bIndex].phones.splice(pIndex, 1);
+    
+    // Cleanup empty brands
+    if (cachedPhones[bIndex].phones.length === 0) {
+        cachedPhones.splice(bIndex, 1);
+    }
+
+    try {
+        await api.put('content/data/phones.json', JSON.stringify(cachedPhones, null, 2), `Delete Phone: ${phoneName}`, phonesSha);
+        showToast('تم الحذف بنجاح');
+        await loadPhones();
+    } catch(e) {
+        alert("فشل الحذف: " + e.message);
+    }
+};
+
+// Also patch the sections array in switchTab to include phones
