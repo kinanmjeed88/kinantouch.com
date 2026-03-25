@@ -48,7 +48,10 @@ export async function generateIndividualArticles({ allPosts, postsByCategory, ab
         });
         
         // Match Analytics Path: e.g. "/article-xyz.html" or "/article-xyz"
-        const pageViews = (analyticsData && analyticsData[`/${pageSlug}`]) ? analyticsData[`/${pageSlug}`] : 0;
+        const htmlPath = `/${pageSlug}`;
+        const cleanPathSlug = `/article-${post.slug}`;
+        const pageViews = (analyticsData && (analyticsData[htmlPath] || analyticsData[cleanPathSlug])) 
+                            ? (analyticsData[htmlPath] || analyticsData[cleanPathSlug]) : 0;
 
         // --- SMART TITLE RENDERING ---
         let titleContent = '';

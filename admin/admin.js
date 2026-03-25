@@ -1030,7 +1030,7 @@ async function loadStats() {
         Object.entries(analytics).forEach(([path, views]) => {
             totalViews += views;
             // Try to match path to a post
-            const slugMatch = path.match(/^\/article-(.*?)\.html/);
+            const slugMatch = path.match(/^\/article-([^/?#\.]+)/);
             if (slugMatch) {
                 const slug = slugMatch[1];
                 const post = validPosts.find(p => p.slug === slug);
