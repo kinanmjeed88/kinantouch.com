@@ -435,6 +435,8 @@
       {
         "id": "galaxy-s25",
         "name": "Samsung Galaxy S25",
+        "image": "https://images.samsung.com/is/image/samsung/p6pim/levant_ar/2501/gallery/levant-ar-galaxy-s25-s936-534317-sm-s936bzkomea-thumb-544696275?imbypass=true",
+        "price": "",
         "specs": {
           "chipset": "Exynos 2500 / Snapdragon 8 Elite",
           "ram": "12GB",
