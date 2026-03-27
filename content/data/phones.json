@@ -393,6 +393,8 @@
       {
         "id": "galaxy-s23-ultra",
         "name": "Samsung Galaxy S23 Ultra",
+        "image": "https://images.samsung.com/il/smartphones/galaxy-s23-ultra/images/galaxy-s23-ultra-highlights-colors-green-back-s.jpg",
+        "price": "",
         "specs": {
           "chipset": "Snapdragon 8 Gen 2 for Galaxy",
           "ram": "8GB / 12GB",
