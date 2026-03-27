@@ -407,6 +407,8 @@
       {
         "id": "galaxy-s24",
         "name": "Samsung Galaxy S24",
+        "image": "https://images.samsung.com/is/image/samsung/p6pim/iq_ar/2401/gallery/iq-ar-galaxy-s24-plus-sm-s926bzvcmea-thumb-539298960?imbypass=true",
+        "price": "",
         "specs": {
           "chipset": "Exynos 2400 / Snapdragon 8 Gen 3",
           "ram": "8GB",
