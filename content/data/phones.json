@@ -421,6 +421,8 @@
       {
         "id": "galaxy-s24-ultra",
         "name": "Samsung Galaxy S24 Ultra",
+        "image": "https://m.media-amazon.com/images/I/717Q2swzhBL._AC_UF350,350_QL80_FMwebp_.jpg",
+        "price": "",
         "specs": {
           "chipset": "Snapdragon 8 Gen 3 for Galaxy",
           "ram": "12GB",
