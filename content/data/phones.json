@@ -461,6 +461,8 @@
       {
         "id": "galaxy-z-fold6",
         "name": "Samsung Galaxy Z Fold6",
+        "image": "https://images.samsung.com/levant_ar/smartphones/galaxy-z-fold6/buy/kv_global_MO_v3.jpg?imbypass=true",
+        "price": "",
         "specs": {
           "chipset": "Snapdragon 8 Gen 3 for Galaxy",
           "ram": "12GB",
