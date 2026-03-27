@@ -461,8 +461,10 @@
         }
       },
       {
-        "id": "galaxy-s25-plus",
+        "id": "samsungsamsunggalaxys25",
         "name": "Samsung Galaxy S25+",
+        "image": "https://images.samsung.com/is/image/samsung/p6pim/iq_ar/sm-s731bzkvmea/gallery/iq-ar-galaxy-s25-fe-sm-s731-sm-s731bzkvmea-thumb-549011995?imbypass=true",
+        "price": "",
         "specs": {
           "chipset": "Exynos 2500 / Snapdragon 8 Elite",
           "ram": "12GB",
