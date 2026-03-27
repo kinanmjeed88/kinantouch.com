@@ -379,6 +379,8 @@
       {
         "id": "galaxy-s22-ultra",
         "name": "Samsung Galaxy S22 Ultra",
+        "image": "https://images.samsung.com/levant_ar/smartphones/galaxy-s22-ultra/buy/S22_Ultra_ProductKV_Black_MO.jpg?imbypass=true",
+        "price": "",
         "specs": {
           "chipset": "Exynos 2200 / Snapdragon 8 Gen 1",
           "ram": "8GB / 12GB",
