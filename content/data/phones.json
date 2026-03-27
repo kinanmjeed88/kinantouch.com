@@ -449,6 +449,8 @@
       {
         "id": "galaxy-s25-ultra",
         "name": "Samsung Galaxy S25 Ultra",
+        "image": "https://cdn.shortpixel.ai/spai/q_glossy+ret_img+to_webp/mobizil.com/wp-content/uploads/2025/01/Samsung-Galaxy-S25-Ultra-5G.jpg",
+        "price": "",
         "specs": {
           "chipset": "Snapdragon 8 Elite for Galaxy",
           "ram": "16GB",
