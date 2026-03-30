@@ -6,7 +6,7 @@ import { BASE_URL } from '../config/constants.js';
 
 export function generateSitemap(allPosts, aboutData) {
     const sitemapPath = path.join(ROOT_DIR, 'sitemap.xml');
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString();
 
     // ✅ Clean URLs بدون .html
     const staticPages = [
@@ -59,7 +59,7 @@ export function generateSitemap(allPosts, aboutData) {
         <priority>0.8</priority>
         <image:image>
             <image:loc>${escapeXml(fullImg)}</image:loc>
-            <image:title>${escapeXml(post.title)}</image:title>
+            <image:title>${escapeXml(post.title.replace(/<[^>]*>?/gm, '').trim())}</image:title>
         </image:image>
     </url>`;
     });
