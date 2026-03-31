@@ -7,11 +7,11 @@ export const searchIndex = [
     "image": "assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp"
   },
   {
-    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">DLTA 4K:</span> تحميل تطبيق للشاشات والهواتف مع كود التفعيل (قنوات رياضية)",
-    "desc": "حمل تطبيق DLTA 4K لمشاهدة القنوات الرياضية والعالمية مجاناً. يتضمن كود تفعيل جاهز، وكود مباشر (5463741) للتحميل السريع على الشاشات والهواتف.",
-    "url": "article-dlta-4k-sport.html",
+    "title": "تحديث الأسطورة 2026: استقرار فائق، بدون إعلانات، وإضافة قنوات رياضية حصرية.",
+    "desc": "حمل التحديث الأحدث لتطبيق الأسطورة للشاشات والهواتف، واستمتع بمشاهدة جميع القنوات الرياضية والترفيهية بجودة عالية وخالية من الإعلانات.",
+    "url": "article-al-shoura-tv-2026.html",
     "category": "Sports",
-    "image": "assets/images/1774402338053_Screenshot_2026-03-25-04-16-14-82_4ccd35b013b9b2701b80fcc97a35f841.webp"
+    "image": "assets/images/1774894672307_20260330_211731.webp"
   },
   {
     "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">حسابات أكستريم:</span>  (Xtream IPTV) مجانية ومحدثة",
@@ -19,6 +19,13 @@ export const searchIndex = [
     "url": "article-extreme-accounts-iptv.html",
     "category": "Sports",
     "image": "assets/images/1774270463586_20260323_155405.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">DLTA 4K:</span> تحميل تطبيق للشاشات والهواتف مع كود التفعيل (قنوات رياضية)",
+    "desc": "حمل تطبيق DLTA 4K لمشاهدة القنوات الرياضية والعالمية مجاناً. يتضمن كود تفعيل جاهز، وكود مباشر (5463741) للتحميل السريع على الشاشات والهواتف.",
+    "url": "article-dlta-4k-sport.html",
+    "category": "Sports",
+    "image": "assets/images/1774402338053_Screenshot_2026-03-25-04-16-14-82_4ccd35b013b9b2701b80fcc97a35f841.webp"
   },
   {
     "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">قيود جوجل الجديدة::</span> صعوبة تثبيت التطبيقات APK",
@@ -446,13 +453,6 @@ export const searchIndex = [
     "url": "article-google-gemini-nano.html",
     "category": "AI",
     "image": "https://images.unsplash.com/photo-1697577418970-95d99b5a55cf?auto=format&fit=crop&w=1200&q=80"
-  },
-  {
-    "title": "وكلاء الذكاء الاصطناعي المستقلون: رؤية Anthropic للمستقبل",
-    "desc": "الوكيل الذكي لم يعد مجرد دردشة، بل نظام ينفذ مهام معقدة تلقائياً. كيف تخطط Anthropic لمستقبل العمل الهجين بين البشر والآلة؟",
-    "url": "article-anthropic-agents.html",
-    "category": "AI",
-    "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
   },
   {
     "title": "السيارات ذاتية القيادة: كيف تدرب Tesla شبكاتها العصبية للرؤية؟",
