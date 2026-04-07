@@ -1586,12 +1586,11 @@ window.saveAppStoreData = async () => {
         </script>
 `;
             // Insert it before appsContainer
-            htmlContent = htmlContent.replace('<div id="appsContainer"', storesHtml + '
-        <div id="appsContainer"');
+            htmlContent = htmlContent.replace('<div id="appsContainer"', storesHtml + '\n        <div id="appsContainer"');
         }
         
         // Update the app-card generation in the template to include data-store
-        if(htmlContent.includes('<div class="app-card') && !htmlContent.includes('data-store="\${app.store || ''}"')) {
+        if(htmlContent.includes('<div class="app-card') && !htmlContent.includes('data-store="\${app.store || \'\'}"')) {
              htmlContent = htmlContent.replace(/<div class=\"app-card /g, '<div data-store="${app.store || \'\'}" class="app-card ');
         }
 
