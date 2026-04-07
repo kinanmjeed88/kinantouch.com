@@ -1308,9 +1308,21 @@ window.loadAppStoreData = async () => {
     document.getElementById('storeContent').classList.add('hidden');
     try {
         const response = await api.get('content/posts/Smart-TV-dawnlwdr.json');
-        storeDataRaw = response;
+        storeDataRaw = response; // keep original response for sha
         
-        let htmlContent = storeDataRaw.content || '';
+        // Decode base64 and parse JSON
+        let decodedJson;
+        try {
+            decodedJson = JSON.parse(decodeURIComponent(escape(atob(storeDataRaw.content))));
+        } catch(e) {
+            console.error("Decoding error for App Store data", e);
+            decodedJson = {};
+        }
+
+        // We will attach the parsed JSON back to storeDataRaw so we can save it later
+        storeDataRaw.parsedData = decodedJson;
+        
+        let htmlContent = decodedJson.content || '';
         
         // Parse Apps
         const appsRegex = /const\s+appsData\s*=\s*(\[[\s\S]*?\])\s*;/;
@@ -1526,7 +1538,9 @@ window.saveAppStoreData = async () => {
     btn.disabled = true;
     
     try {
-        let htmlContent = storeDataRaw.content || '';
+        // Get the decoded json we attached earlier
+        let decodedJson = storeDataRaw.parsedData || {};
+        let htmlContent = decodedJson.content || '';
         
         // Serialize arrays back to JS string representation
         const serializeArray = (arr) => {
@@ -1598,9 +1612,11 @@ window.saveAppStoreData = async () => {
              htmlContent = htmlContent.replace(/<div class=\"app-card /g, '<div data-store="${app.store || \'\'}" class="app-card ');
         }
 
-        storeDataRaw.content = htmlContent;
+        decodedJson.content = htmlContent;
+        // Stringify the full JSON file content before putting it to API
+        const finalContentToSave = JSON.stringify(decodedJson, null, 2);
 
-        await api.put(storeDataRaw.path, storeDataRaw, storeDataRaw.sha, "CMS: Update Smart-TV App Store");
+        await api.put(storeDataRaw.path, finalContentToSave, "CMS: Update Smart-TV App Store", storeDataRaw.sha);
         showToast('تم حفظ المتجر بنجاح!');
         // Reload to get new sha
         await loadAppStoreData();
