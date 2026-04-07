@@ -82,7 +82,7 @@ window.switchTab = (tabName) => {
     document.getElementById(`nav-${tabName}`).classList.add('tab-active');
     
     // Hide all main content sections (divs or sections with id starting with sec-)
-    const sections = ['posts', 'channels', 'categories', 'settings', 'stats', 'phones'];
+    const sections = ['posts', 'channels', 'categories', 'settings', 'stats', 'phones', 'appstore'];
     sections.forEach(secName => {
         const el = document.getElementById(`sec-${secName}`);
         if(el) {
@@ -1296,3 +1296,317 @@ window.deletePhone = async (bIndex, pIndex) => {
 };
 
 // Also patch the sections array in switchTab to include phones
+
+
+// --- App Store CMS Logic ---
+let storeDataRaw = null;
+let parsedApps = [];
+let parsedStores = []; // Optional stores
+
+window.loadAppStoreData = async () => {
+    document.getElementById('storeLoader').classList.remove('hidden');
+    document.getElementById('storeContent').classList.add('hidden');
+    try {
+        const response = await api.get('content/posts/Smart-TV-dawnlwdr.json');
+        storeDataRaw = response;
+        
+        let htmlContent = storeDataRaw.content || '';
+        
+        // Parse Apps
+        const appsRegex = /const\s+appsData\s*=\s*(\[[^;]*\]);/s;
+        const appsMatch = appsRegex.exec(htmlContent);
+        if (appsMatch && appsMatch[1]) {
+            try {
+                // Safely evaluate the array (it uses JS object literal syntax, not strict JSON)
+                let arrayStr = appsMatch[1];
+                // Replace keys without quotes to make it JSON-like enough for a simple eval, or just use a new Function
+                parsedApps = new Function('return ' + arrayStr)();
+            } catch(e) {
+                console.error("Failed to parse appsData:", e);
+                parsedApps = [];
+            }
+        } else {
+            parsedApps = [];
+        }
+
+        // Parse Stores (Categories) - Optional, we'll store them in a similar variable `storesData` if we add them
+        const storesRegex = /const\s+storesData\s*=\s*(\[[^;]*\]);/s;
+        const storesMatch = storesRegex.exec(htmlContent);
+        if (storesMatch && storesMatch[1]) {
+             try {
+                parsedStores = new Function('return ' + storesMatch[1])();
+            } catch(e) {
+                console.error("Failed to parse storesData:", e);
+                parsedStores = [];
+            }
+        } else {
+            parsedStores = [];
+        }
+
+        renderAppStoreUI();
+        document.getElementById('storeLoader').classList.add('hidden');
+        document.getElementById('storeContent').classList.remove('hidden');
+    } catch(e) {
+        alert("فشل تحميل بيانات المتجر: " + e.message);
+        document.getElementById('storeLoader').classList.add('hidden');
+    }
+};
+
+function renderAppStoreUI() {
+    // 1. Render Stores
+    const storesList = document.getElementById('storesList');
+    storesList.innerHTML = '';
+    
+    // Update App Modal category select
+    const catSelect = document.getElementById('storeAppCategory');
+    catSelect.innerHTML = '<option value="">بدون متجر</option>';
+    
+    parsedStores.forEach((store, index) => {
+        // Add to list
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center p-3 bg-gray-50 border border-gray-100 rounded-lg';
+        div.innerHTML = `
+            <span class="font-bold">${store.name}</span>
+            <div class="flex gap-1">
+                <button onclick="editStore(${index})" class="p-1.5 text-blue-600 hover:bg-blue-100 rounded"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                <button onclick="deleteStore(${index})" class="p-1.5 text-red-600 hover:bg-red-100 rounded"><i data-lucide="trash" class="w-4 h-4"></i></button>
+            </div>
+        `;
+        storesList.appendChild(div);
+        
+        // Add to select
+        const opt = document.createElement('option');
+        opt.value = store.name;
+        opt.innerText = store.name;
+        catSelect.appendChild(opt);
+    });
+    
+    if(parsedStores.length === 0) {
+        storesList.innerHTML = '<div class="col-span-full text-sm text-gray-500 text-center py-2">لا توجد متاجر مضافة حتى الآن.</div>';
+    }
+
+    renderAppsTable();
+    lucide.createIcons();
+}
+
+function renderAppsTable(query = '') {
+    const tbody = document.getElementById('appsTableBody');
+    tbody.innerHTML = '';
+    
+    const filtered = parsedApps.filter(app => app.name.toLowerCase().includes(query.toLowerCase()));
+    
+    filtered.forEach((app, idx) => {
+        const realIndex = parsedApps.indexOf(app);
+        const tr = document.createElement('tr');
+        tr.className = 'border-b hover:bg-gray-50';
+        let safeIcon = app.icon || 'https://via.placeholder.com/44?text=No+Icon';
+        if (safeIcon && !safeIcon.startsWith('http')) {
+             safeIcon = safeIcon.replace(/^(\.\.\/)+/, '');
+             safeIcon = '../' + safeIcon;
+        }
+
+        tr.innerHTML = `
+            <td class="px-4 py-3 flex items-center gap-3">
+                <img src="${safeIcon}" class="w-8 h-8 rounded object-contain bg-gray-100" onerror="this.src='https://via.placeholder.com/44'">
+                <span class="font-bold text-gray-800" dir="ltr">${app.name}</span>
+            </td>
+            <td class="px-4 py-3"><a href="${app.url}" target="_blank" class="text-blue-500 hover:underline dir-ltr text-xs inline-block truncate max-w-[150px]">${app.url || ''}</a></td>
+            <td class="px-4 py-3"><span class="bg-gray-100 px-2 py-1 rounded text-xs text-gray-600">${app.store || 'بدون متجر'}</span></td>
+            <td class="px-4 py-3">
+                <div class="flex gap-2">
+                    <button onclick="editApp(${realIndex})" class="p-1.5 text-blue-600 hover:bg-blue-100 rounded"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                    <button onclick="deleteApp(${realIndex})" class="p-1.5 text-red-600 hover:bg-red-100 rounded"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    lucide.createIcons();
+}
+
+window.filterAppsInCMS = () => {
+    renderAppsTable(document.getElementById('appSearchInput').value);
+}
+
+// Store CRUD
+window.openStoreModal = () => {
+    document.getElementById('storeEditIndex').value = '';
+    document.getElementById('storeCatName').value = '';
+    document.getElementById('storeModalTitle').innerText = 'متجر جديد';
+    document.getElementById('storeModal').classList.remove('hidden');
+};
+
+window.editStore = (idx) => {
+    document.getElementById('storeEditIndex').value = idx;
+    document.getElementById('storeCatName').value = parsedStores[idx].name;
+    document.getElementById('storeModalTitle').innerText = 'تعديل متجر';
+    document.getElementById('storeModal').classList.remove('hidden');
+};
+
+window.deleteStore = (idx) => {
+    if(!confirm('هل أنت متأكد من الحذف؟')) return;
+    parsedStores.splice(idx, 1);
+    renderAppStoreUI();
+};
+
+window.saveStoreToCategories = () => {
+    const name = document.getElementById('storeCatName').value.trim();
+    if(!name) return alert('يرجى كتابة الاسم');
+    const idx = document.getElementById('storeEditIndex').value;
+    
+    if(idx !== '') {
+        parsedStores[idx].name = name;
+    } else {
+        parsedStores.push({ name: name });
+    }
+    
+    document.getElementById('storeModal').classList.add('hidden');
+    renderAppStoreUI();
+};
+
+// App CRUD
+window.openAppModal = () => {
+    document.getElementById('appEditIndex').value = '';
+    document.getElementById('storeAppName').value = '';
+    document.getElementById('storeAppUrl').value = '';
+    document.getElementById('storeAppIcon').value = '';
+    document.getElementById('storeAppCategory').value = '';
+    document.getElementById('appModalTitle').innerText = 'تطبيق جديد';
+    document.getElementById('appModal').classList.remove('hidden');
+};
+
+window.editApp = (idx) => {
+    const app = parsedApps[idx];
+    document.getElementById('appEditIndex').value = idx;
+    document.getElementById('storeAppName').value = app.name || '';
+    document.getElementById('storeAppUrl').value = app.url || '';
+    document.getElementById('storeAppIcon').value = app.icon || '';
+    document.getElementById('storeAppCategory').value = app.store || '';
+    document.getElementById('appModalTitle').innerText = 'تعديل تطبيق';
+    document.getElementById('appModal').classList.remove('hidden');
+};
+
+window.deleteApp = (idx) => {
+    if(!confirm('هل أنت متأكد من الحذف؟')) return;
+    parsedApps.splice(idx, 1);
+    renderAppStoreUI();
+};
+
+window.saveAppToTable = () => {
+    const name = document.getElementById('storeAppName').value.trim();
+    const url = document.getElementById('storeAppUrl').value.trim();
+    const icon = document.getElementById('storeAppIcon').value.trim();
+    const store = document.getElementById('storeAppCategory').value.trim();
+    
+    if(!name || !url) return alert('الاسم والرابط مطلوبان');
+    
+    const newApp = { name, url };
+    if(icon) newApp.icon = icon;
+    if(store) newApp.store = store;
+    
+    const idx = document.getElementById('appEditIndex').value;
+    if(idx !== '') {
+        parsedApps[idx] = newApp;
+    } else {
+        parsedApps.push(newApp);
+    }
+    
+    document.getElementById('appModal').classList.add('hidden');
+    renderAppStoreUI();
+};
+
+window.saveAppStoreData = async () => {
+    const btn = document.getElementById('btnSaveStore');
+    btn.innerText = 'جاري الحفظ...';
+    btn.disabled = true;
+    
+    try {
+        let htmlContent = storeDataRaw.content || '';
+        
+        // Serialize arrays back to JS string representation
+        const serializeArray = (arr) => {
+            return '[\n' + arr.map(item => {
+                let parts = [];
+                if(item.name) parts.push(`name: "${item.name.replace(/"/g, '\\"')}"`);
+                if(item.url) parts.push(`url: "${item.url.replace(/"/g, '\\"')}"`);
+                if(item.icon) parts.push(`icon: "${item.icon.replace(/"/g, '\\"')}"`);
+                if(item.store) parts.push(`store: "${item.store.replace(/"/g, '\\"')}"`);
+                return `            { ${parts.join(', ')} }`;
+            }).join(',\n') + '\n        ]';
+        };
+
+        const newAppsString = serializeArray(parsedApps);
+        const newStoresString = serializeArray(parsedStores);
+
+        // Replace appsData array
+        if(htmlContent.match(/const\s+appsData\s*=\s*\[[^;]*\];/s)) {
+            htmlContent = htmlContent.replace(/const\s+appsData\s*=\s*\[[^;]*\];/s, `const appsData = ${newAppsString};`);
+        } else {
+            // Inject if missing? It shouldn't be missing, but just in case
+            alert("خطأ: تعذر العثور على مصفوفة appsData في الملف الأصلي.");
+            btn.innerText = 'حفظ جميع التعديلات';
+            btn.disabled = false;
+            return;
+        }
+
+        // Handle storesData - we inject it before appsData if it doesn't exist
+        if(htmlContent.match(/const\s+storesData\s*=\s*\[[^;]*\];/s)) {
+            htmlContent = htmlContent.replace(/const\s+storesData\s*=\s*\[[^;]*\];/s, `const storesData = ${newStoresString};`);
+        } else if (parsedStores.length > 0) {
+            htmlContent = htmlContent.replace('const appsData =', `const storesData = ${newStoresString};
+        const appsData =`);
+        }
+        
+        // Provide logic to render stores in the HTML if needed. Currently, the page only renders apps. 
+        // We will inject a stores container if it doesn't exist.
+        if(!htmlContent.includes('id="storesContainer"')) {
+            const storesHtml = `
+        <div id="storesContainer" class="flex flex-wrap gap-2 justify-center mb-6"></div>
+        <script>
+            function renderStores() {
+                const sContainer = document.getElementById('storesContainer');
+                if(!sContainer || typeof storesData === 'undefined') return;
+                sContainer.innerHTML = '';
+                storesData.forEach(s => {
+                    sContainer.innerHTML += \`<button onclick="filterByStore('\${s.name}')" class="px-4 py-2 bg-gray-100 hover:bg-emerald-500 hover:text-white rounded-full text-sm font-bold transition-colors dark:bg-slate-800 dark:hover:bg-emerald-600">\${s.name}</button>\`;
+                });
+                sContainer.innerHTML += \`<button onclick="filterByStore('')" class="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-sm font-bold dark:bg-slate-800 dark:text-emerald-400">الكل</button>\`;
+            }
+            function filterByStore(storeName) {
+                const allCards = document.querySelectorAll('.app-card');
+                allCards.forEach(card => {
+                    if(!storeName || card.dataset.store === storeName) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+            setTimeout(() => { if(typeof renderStores === 'function') renderStores(); }, 100);
+        </script>
+`;
+            // Insert it before appsContainer
+            htmlContent = htmlContent.replace('<div id="appsContainer"', storesHtml + '
+        <div id="appsContainer"');
+        }
+        
+        // Update the app-card generation in the template to include data-store
+        if(htmlContent.includes('<div class="app-card') && !htmlContent.includes('data-store="\${app.store || ''}"')) {
+             htmlContent = htmlContent.replace(/<div class=\"app-card /g, '<div data-store="${app.store || \'\'}" class="app-card ');
+        }
+
+        storeDataRaw.content = htmlContent;
+
+        await api.put(storeDataRaw.path, storeDataRaw, storeDataRaw.sha, "CMS: Update Smart-TV App Store");
+        showToast('تم حفظ المتجر بنجاح!');
+        // Reload to get new sha
+        await loadAppStoreData();
+        
+    } catch(e) {
+        alert("فشل الحفظ: " + e.message);
+    } finally {
+        btn.innerText = 'حفظ جميع التعديلات';
+        btn.disabled = false;
+    }
+};
+
