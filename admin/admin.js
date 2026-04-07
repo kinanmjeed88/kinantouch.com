@@ -1572,7 +1572,10 @@ window.saveAppStoreData = async () => {
         let decodedJson = null;
         if (storeDataRaw && storeDataRaw.parsedData) {
             decodedJson = JSON.parse(JSON.stringify(storeDataRaw.parsedData)); // Deep copy to avoid reference issues
-        } else if (storeDataRaw && storeDataRaw.content) {
+        }
+        
+        // If parsedData was mutated or lost its content, fall back to decoding the raw response
+        if ((!decodedJson || !decodedJson.content) && storeDataRaw && storeDataRaw.content) {
              try {
                 decodedJson = JSON.parse(decodeURIComponent(escape(atob(storeDataRaw.content))));
             } catch(e) {
