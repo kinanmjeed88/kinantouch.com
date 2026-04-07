@@ -1374,9 +1374,12 @@ function renderAppStoreUI() {
     const storesList = document.getElementById('storesList');
     storesList.innerHTML = '';
     
-    // Update App Modal category select
+    // Hide or clear App Modal category select since it's no longer used
     const catSelect = document.getElementById('storeAppCategory');
-    catSelect.innerHTML = '<option value="">بدون متجر</option>';
+    if(catSelect) {
+        catSelect.innerHTML = '<option value="">بدون متجر</option>';
+        catSelect.parentElement.style.display = 'none'; // Hide the entire label/select container
+    }
     
     parsedStores.forEach((store, index) => {
         // Add to list
@@ -1390,12 +1393,6 @@ function renderAppStoreUI() {
             </div>
         `;
         storesList.appendChild(div);
-        
-        // Add to select
-        const opt = document.createElement('option');
-        opt.value = store.name;
-        opt.innerText = store.name;
-        catSelect.appendChild(opt);
     });
     
     if(parsedStores.length === 0) {
@@ -1424,11 +1421,10 @@ function renderAppsTable(query = '') {
 
         tr.innerHTML = `
             <td class="px-4 py-3 flex items-center gap-3">
-                <img src="${safeIcon}" class="w-8 h-8 rounded object-contain bg-gray-100" onerror="this.src='https://via.placeholder.com/44'">
+                <img src="${safeIcon}" class="w-8 h-8 rounded object-contain bg-gray-100" onerror="this.onerror=null; this.src='../assets/images/me.jpg'">
                 <span class="font-bold text-gray-800" dir="ltr">${app.name}</span>
             </td>
             <td class="px-4 py-3"><a href="${app.url}" target="_blank" class="text-blue-500 hover:underline dir-ltr text-xs inline-block truncate max-w-[150px]">${app.url || ''}</a></td>
-            <td class="px-4 py-3"><span class="bg-gray-100 px-2 py-1 rounded text-xs text-gray-600">${app.store || 'بدون متجر'}</span></td>
             <td class="px-4 py-3">
                 <div class="flex gap-2">
                     <button onclick="editApp(${realIndex})" class="p-1.5 text-blue-600 hover:bg-blue-100 rounded"><i data-lucide="edit" class="w-4 h-4"></i></button>
@@ -1567,49 +1563,39 @@ window.saveAppStoreData = async () => {
             return;
         }
 
-        // Handle storesData - we inject it before appsData if it doesn't exist
-        if(htmlContent.match(/const\s+storesData\s*=\s*\[[\s\S]*?\]\s*;/s)) {
-            htmlContent = htmlContent.replace(/const\s+storesData\s*=\s*\[[\s\S]*?\]\s*;/s, `const storesData = ${newStoresString};`);
-        } else if (parsedStores.length > 0) {
-            htmlContent = htmlContent.replace('const appsData =', `const storesData = ${newStoresString};
-        const appsData =`);
+        // Handle Stores - Update the HTML template directly
+        const storesContainerRegex = /(<div class="grid grid-cols-2 gap-3 sm:gap-5 mb-12">)[\s\S]*?(<\/div>\s*<div class="bg-blue-50)/s;
+        if(htmlContent.match(storesContainerRegex)) {
+            let generatedHtml = "\n";
+            parsedStores.forEach((store, idx) => {
+                const isFirst = idx % 2 === 0;
+                const bgGradient = isFirst ? "from-blue-50 to-cyan-50 dark:from-slate-800 dark:to-slate-750 border-blue-100" : "from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-750 border-purple-100";
+                const iconColor = isFirst ? "text-blue-600 dark:text-blue-400" : "text-purple-600 dark:text-purple-400";
+                const titleColor = isFirst ? "text-blue-900 dark:text-blue-300" : "text-purple-900 dark:text-purple-300";
+                const glowColor = isFirst ? "bg-blue-400" : "bg-purple-400";
+
+                generatedHtml += `        <a href="${store.url}" target="_self" class="group h-full block">
+            <div class="bg-gradient-to-br ${bgGradient} dark:border-slate-700 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col items-center justify-center text-center cursor-pointer">
+                <div class="mb-3 sm:mb-6 relative">
+                    <div class="absolute inset-0 ${glowColor} blur-2xl opacity-20 group-hover:opacity-30 transition-opacity rounded-full"></div>
+                    <div class="relative bg-white dark:bg-slate-700 p-3 sm:p-5 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-7 h-7 sm:w-12 sm:h-12 ${iconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="font-black text-sm sm:text-2xl ${titleColor} mb-1 sm:mb-2">${store.name}</h3>
+                <p class="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400">${store.desc || ''}</p>
+            </div>
+        </a>\n`;
+            });
+            htmlContent = htmlContent.replace(storesContainerRegex, `$1${generatedHtml}    $2`);
         }
         
-        // Provide logic to render stores in the HTML if needed. Currently, the page only renders apps. 
-        // We will inject a stores container if it doesn't exist.
-        if(!htmlContent.includes('id="storesContainer"')) {
-            const storesHtml = `
-        <div id="storesContainer" class="flex flex-wrap gap-2 justify-center mb-6"></div>
-        <script>
-            function renderStores() {
-                const sContainer = document.getElementById('storesContainer');
-                if(!sContainer || typeof storesData === 'undefined') return;
-                sContainer.innerHTML = '';
-                storesData.forEach(s => {
-                    sContainer.innerHTML += \`<button onclick="filterByStore('\${s.name}')" class="px-4 py-2 bg-gray-100 hover:bg-emerald-500 hover:text-white rounded-full text-sm font-bold transition-colors dark:bg-slate-800 dark:hover:bg-emerald-600">\${s.name}</button>\`;
-                });
-                sContainer.innerHTML += \`<button onclick="filterByStore('')" class="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-sm font-bold dark:bg-slate-800 dark:text-emerald-400">الكل</button>\`;
-            }
-            function filterByStore(storeName) {
-                const allCards = document.querySelectorAll('.app-card');
-                allCards.forEach(card => {
-                    if(!storeName || card.dataset.store === storeName) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }
-            setTimeout(() => { if(typeof renderStores === 'function') renderStores(); }, 100);
-        </script>
-`;
-            // Insert it before appsContainer
-            htmlContent = htmlContent.replace('<div id="appsContainer"', storesHtml + '\n        <div id="appsContainer"');
-        }
-        
-        // Update the app-card generation in the template to include data-store
-        if(htmlContent.includes('<div class="app-card') && !htmlContent.includes('data-store="\${app.store || \'\'}"')) {
-             htmlContent = htmlContent.replace(/<div class=\"app-card /g, '<div data-store="${app.store || \'\'}" class="app-card ');
+        // Clean up any previously injected storesData or storesContainer scripts if they exist
+        htmlContent = htmlContent.replace(/const\s+storesData\s*=\s*\[[\s\S]*?\]\s*;\s*/s, '');
+        if (htmlContent.includes('<div id="storesContainer"')) {
+             htmlContent = htmlContent.replace(/<div id="storesContainer"[\s\S]*?<\/script>/s, '');
         }
 
         decodedJson.content = htmlContent;
