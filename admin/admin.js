@@ -1313,7 +1313,7 @@ window.loadAppStoreData = async () => {
         let htmlContent = storeDataRaw.content || '';
         
         // Parse Apps
-        const appsRegex = /const\s+appsData\s*=\s*(\[[^;]*\]);/s;
+        const appsRegex = /const\s+appsData\s*=\s*(\[[\s\S]*?\])\s*;/;
         const appsMatch = appsRegex.exec(htmlContent);
         if (appsMatch && appsMatch[1]) {
             try {
@@ -1330,7 +1330,7 @@ window.loadAppStoreData = async () => {
         }
 
         // Parse Stores (Categories) - Optional, we'll store them in a similar variable `storesData` if we add them
-        const storesRegex = /const\s+storesData\s*=\s*(\[[^;]*\]);/s;
+        const storesRegex = /const\s+storesData\s*=\s*(\[[\s\S]*?\])\s*;/;
         const storesMatch = storesRegex.exec(htmlContent);
         if (storesMatch && storesMatch[1]) {
              try {
@@ -1539,8 +1539,8 @@ window.saveAppStoreData = async () => {
         const newStoresString = serializeArray(parsedStores);
 
         // Replace appsData array
-        if(htmlContent.match(/const\s+appsData\s*=\s*\[[^;]*\];/s)) {
-            htmlContent = htmlContent.replace(/const\s+appsData\s*=\s*\[[^;]*\];/s, `const appsData = ${newAppsString};`);
+        if(htmlContent.match(/const\s+appsData\s*=\s*\[[\s\S]*?\]\s*;/s)) {
+            htmlContent = htmlContent.replace(/const\s+appsData\s*=\s*\[[\s\S]*?\]\s*;/s, `const appsData = ${newAppsString};`);
         } else {
             // Inject if missing? It shouldn't be missing, but just in case
             alert("خطأ: تعذر العثور على مصفوفة appsData في الملف الأصلي.");
@@ -1550,8 +1550,8 @@ window.saveAppStoreData = async () => {
         }
 
         // Handle storesData - we inject it before appsData if it doesn't exist
-        if(htmlContent.match(/const\s+storesData\s*=\s*\[[^;]*\];/s)) {
-            htmlContent = htmlContent.replace(/const\s+storesData\s*=\s*\[[^;]*\];/s, `const storesData = ${newStoresString};`);
+        if(htmlContent.match(/const\s+storesData\s*=\s*\[[\s\S]*?\]\s*;/s)) {
+            htmlContent = htmlContent.replace(/const\s+storesData\s*=\s*\[[\s\S]*?\]\s*;/s, `const storesData = ${newStoresString};`);
         } else if (parsedStores.length > 0) {
             htmlContent = htmlContent.replace('const appsData =', `const storesData = ${newStoresString};
         const appsData =`);
