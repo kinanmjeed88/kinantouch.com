@@ -1329,18 +1329,23 @@ window.loadAppStoreData = async () => {
             parsedApps = [];
         }
 
-        // Parse Stores (Categories) - Optional, we'll store them in a similar variable `storesData` if we add them
-        const storesRegex = /const\s+storesData\s*=\s*(\[[\s\S]*?\])\s*;/;
-        const storesMatch = storesRegex.exec(htmlContent);
+        // Parse Stores (Categories) directly from HTML blocks based on the user's template
+        const storesContainerRegex = /<div class="grid grid-cols-2 gap-3 sm:gap-5 mb-12">([\s\S]*?)<\/div>\s*<div class="bg-blue-50/s;
+        const storesMatch = storesContainerRegex.exec(htmlContent);
+        parsedStores = [];
+        
         if (storesMatch && storesMatch[1]) {
-             try {
-                parsedStores = new Function('return ' + storesMatch[1])();
-            } catch(e) {
-                console.error("Failed to parse storesData:", e);
-                parsedStores = [];
+            const storesHtml = storesMatch[1];
+            // Regex to match a single store block
+            const storeRegex = /<a href="([^"]+)"[^>]*>[\s\S]*?<h3[^>]*>([^<]+)<\/h3>[\s\S]*?<p[^>]*>([^<]+)<\/p>/g;
+            let m;
+            while ((m = storeRegex.exec(storesHtml)) !== null) {
+                parsedStores.push({
+                    url: m[1].trim(),
+                    name: m[2].trim(),
+                    desc: m[3].trim()
+                });
             }
-        } else {
-            parsedStores = [];
         }
 
         renderAppStoreUI();
@@ -1536,7 +1541,6 @@ window.saveAppStoreData = async () => {
         };
 
         const newAppsString = serializeArray(parsedApps);
-        const newStoresString = serializeArray(parsedStores);
 
         // Replace appsData array
         if(htmlContent.match(/const\s+appsData\s*=\s*\[[\s\S]*?\]\s*;/s)) {
