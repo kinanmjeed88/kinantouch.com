@@ -1348,16 +1348,29 @@ window.loadAppStoreData = async () => {
         
         if (storesMatch && storesMatch[1]) {
             const storesHtml = storesMatch[1];
-            // Regex to match a single store block
-            const storeRegex = /<a href="([^"]+)"[^>]*>[\s\S]*?<h3[^>]*>([^<]+)<\/h3>[\s\S]*?<p[^>]*>([^<]+)<\/p>/g;
-            let m;
-            while ((m = storeRegex.exec(storesHtml)) !== null) {
-                parsedStores.push({
-                    url: m[1].trim(),
-                    name: m[2].trim(),
-                    desc: m[3].trim()
-                });
-            }
+            // Split storesHtml into individual <a> tags to parse them more reliably
+            const storeBlocks = storesHtml.split('</a>').filter(s => s.trim().length > 0);
+            
+            storeBlocks.forEach(block => {
+                const urlMatch = block.match(/<a[^>]*href="([^"]+)"/);
+                const nameMatch = block.match(/<h3[^>]*>([^<]+)<\/h3>/);
+                const descMatch = block.match(/<p[^>]*>([^<]*)<\/p>/);
+                
+                let iconStr = '';
+                const iconLucideMatch = block.match(/data-lucide="([^"]+)"/);
+                const iconImgMatch = block.match(/<img[^>]*src="([^"]+)"[^>]*alt="Store Icon"/);
+                if (iconImgMatch) iconStr = iconImgMatch[1];
+                else if (iconLucideMatch) iconStr = iconLucideMatch[1];
+
+                if (urlMatch && nameMatch) {
+                    parsedStores.push({
+                        url: urlMatch[1].trim(),
+                        name: nameMatch[1].trim(),
+                        desc: descMatch ? descMatch[1].trim() : '',
+                        icon: iconStr
+                    });
+                }
+            });
         }
 
         renderAppStoreUI();
@@ -1385,9 +1398,18 @@ function renderAppStoreUI() {
         // Add to list
         const div = document.createElement('div');
         div.className = 'flex justify-between items-center p-3 bg-gray-50 border border-gray-100 rounded-lg';
+        let safeIcon = store.icon;
+        let iconHtml = safeIcon ? (safeIcon.startsWith('http') || safeIcon.includes('/') ? `<img src="${safeIcon}" class="w-6 h-6 object-contain">` : `<i data-lucide="${safeIcon}" class="w-5 h-5"></i>`) : '<i data-lucide="store" class="w-5 h-5"></i>';
+        
         div.innerHTML = `
-            <span class="font-bold">${store.name}</span>
-            <div class="flex gap-1">
+            <div class="flex items-center gap-3">
+                <div class="bg-gray-200 p-2 rounded-lg text-gray-600 flex items-center justify-center">${iconHtml}</div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-gray-800 text-sm">${store.name}</span>
+                    <a href="${store.url}" target="_blank" class="text-xs text-blue-500 hover:underline truncate max-w-[150px] dir-ltr">${store.url}</a>
+                </div>
+            </div>
+            <div class="flex gap-1 shrink-0">
                 <button onclick="editStore(${index})" class="p-1.5 text-blue-600 hover:bg-blue-100 rounded"><i data-lucide="edit" class="w-4 h-4"></i></button>
                 <button onclick="deleteStore(${index})" class="p-1.5 text-red-600 hover:bg-red-100 rounded"><i data-lucide="trash" class="w-4 h-4"></i></button>
             </div>
@@ -1445,13 +1467,20 @@ window.filterAppsInCMS = () => {
 window.openStoreModal = () => {
     document.getElementById('storeEditIndex').value = '';
     document.getElementById('storeCatName').value = '';
+    document.getElementById('storeCatUrl').value = '';
+    document.getElementById('storeCatDesc').value = '';
+    document.getElementById('storeCatIcon').value = '';
     document.getElementById('storeModalTitle').innerText = 'متجر جديد';
     document.getElementById('storeModal').classList.remove('hidden');
 };
 
 window.editStore = (idx) => {
     document.getElementById('storeEditIndex').value = idx;
-    document.getElementById('storeCatName').value = parsedStores[idx].name;
+    const store = parsedStores[idx];
+    document.getElementById('storeCatName').value = store.name || '';
+    document.getElementById('storeCatUrl').value = store.url || '';
+    document.getElementById('storeCatDesc').value = store.desc || '';
+    document.getElementById('storeCatIcon').value = store.icon || '';
     document.getElementById('storeModalTitle').innerText = 'تعديل متجر';
     document.getElementById('storeModal').classList.remove('hidden');
 };
@@ -1464,13 +1493,18 @@ window.deleteStore = (idx) => {
 
 window.saveStoreToCategories = () => {
     const name = document.getElementById('storeCatName').value.trim();
-    if(!name) return alert('يرجى كتابة الاسم');
+    const url = document.getElementById('storeCatUrl').value.trim();
+    const desc = document.getElementById('storeCatDesc').value.trim();
+    const icon = document.getElementById('storeCatIcon').value.trim();
+    
+    if(!name || !url) return alert('يرجى كتابة الاسم والرابط');
+    
     const idx = document.getElementById('storeEditIndex').value;
     
     if(idx !== '') {
-        parsedStores[idx].name = name;
+        parsedStores[idx] = { name, url, desc, icon };
     } else {
-        parsedStores.push({ name: name });
+        parsedStores.push({ name, url, desc, icon });
     }
     
     document.getElementById('storeModal').classList.add('hidden');
@@ -1574,14 +1608,17 @@ window.saveAppStoreData = async () => {
                 const titleColor = isFirst ? "text-blue-900 dark:text-blue-300" : "text-purple-900 dark:text-purple-300";
                 const glowColor = isFirst ? "bg-blue-400" : "bg-purple-400";
 
+                let iconDisplay = `<i data-lucide="${store.icon || 'shopping-cart'}" class="w-7 h-7 sm:w-12 sm:h-12 ${iconColor}"></i>`;
+                if (store.icon && (store.icon.startsWith('http') || store.icon.includes('/'))) {
+                    iconDisplay = `<img src="${store.icon}" class="w-7 h-7 sm:w-12 sm:h-12 object-contain" alt="Store Icon">`;
+                }
+
                 generatedHtml += `        <a href="${store.url}" target="_self" class="group h-full block">
             <div class="bg-gradient-to-br ${bgGradient} dark:border-slate-700 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col items-center justify-center text-center cursor-pointer">
                 <div class="mb-3 sm:mb-6 relative">
                     <div class="absolute inset-0 ${glowColor} blur-2xl opacity-20 group-hover:opacity-30 transition-opacity rounded-full"></div>
-                    <div class="relative bg-white dark:bg-slate-700 p-3 sm:p-5 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-7 h-7 sm:w-12 sm:h-12 ${iconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
+                    <div class="relative bg-white dark:bg-slate-700 p-3 sm:p-5 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                        ${iconDisplay}
                     </div>
                 </div>
                 <h3 class="font-black text-sm sm:text-2xl ${titleColor} mb-1 sm:mb-2">${store.name}</h3>
