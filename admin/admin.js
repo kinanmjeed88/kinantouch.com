@@ -1569,7 +1569,21 @@ window.saveAppStoreData = async () => {
     
     try {
         // Get the decoded json we attached earlier
-        let decodedJson = storeDataRaw.parsedData || {};
+        let decodedJson = null;
+        if (storeDataRaw && storeDataRaw.parsedData) {
+            decodedJson = JSON.parse(JSON.stringify(storeDataRaw.parsedData)); // Deep copy to avoid reference issues
+        } else if (storeDataRaw && storeDataRaw.content) {
+             try {
+                decodedJson = JSON.parse(decodeURIComponent(escape(atob(storeDataRaw.content))));
+            } catch(e) {
+                console.error("Fallback decoding failed", e);
+            }
+        }
+
+        if (!decodedJson) {
+             throw new Error("لا توجد بيانات ليتم حفظها.");
+        }
+
         let htmlContent = decodedJson.content || '';
         
         // Serialize arrays back to JS string representation
