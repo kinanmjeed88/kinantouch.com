@@ -89,7 +89,7 @@ export const updateGlobalElements = (htmlContent, fileName = '', pageTitleOverri
     if (fileName === 'index.html') {
         canonicalUrl = `${BASE_URL}/`;
     } else {
-        canonicalUrl = `${BASE_URL}/${fileName}`;
+        canonicalUrl = `${BASE_URL}/${fileName.replace('.html', '')}`;
     }
     
     $('link[rel="canonical"]').remove();
