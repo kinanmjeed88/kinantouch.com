@@ -7,6 +7,34 @@ export const searchIndex = [
     "image": "assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp"
   },
   {
+    "title": "حول هاتفك لمساعد ذكي بدون إنترنت مع تطبيق Google AI Edge Gallery",
+    "desc": "",
+    "url": "article-googleai-edge-gallery.html",
+    "category": "Apps",
+    "image": "assets/images/1775717711397_FB_IMG_1775715766061.webp"
+  },
+  {
+    "title": "التغير المناخي بعدسات الأقمار الصناعية: بيانات رسمية من ناسا",
+    "desc": "​\"اكتشف كيف تبدو التغيرات المناخية من الفضاء عبر الأقمار الصناعية. تعرف على تأثير ذوبان الجليد، إزالة الغابات، وتوسع المدن على مستقبل الأرض ببيانات رسمية.\"",
+    "url": "article-nasa-earth-space.html",
+    "category": "Articles",
+    "image": "assets/images/1775336668848_20260405_120404.webp"
+  },
+  {
+    "title": "أفضل متاجر التطبيقات للشاشات الذكية .",
+    "desc": "دليلك الشامل والموثوق لتحميل تطبيقات Smart TV عبر الكود 6000654 الطريقة الأسرع .",
+    "url": "article-smart-tv-dawnlwdr.html",
+    "category": "TVscreen",
+    "image": "assets/images/1775246858793_20260403_230720.webp"
+  },
+  {
+    "title": "أفضل راوترات في العراق 2026: مقارنة شاملة لفئة 85-100 ألف دينار",
+    "desc": "دليل شراء احترافي يقارن أفضل راوترات الإنترنت في السوق العراقي لعام 2026 بسعر يتراوح بين 85 و100 ألف دينار.",
+    "url": "article-game-home-router.html",
+    "category": "Articles",
+    "image": "assets/images/1775038008366_20260401_130620.webp"
+  },
+  {
     "title": "تحديث الأسطورة 2026: استقرار فائق، بدون إعلانات، وإضافة قنوات رياضية حصرية.",
     "desc": "حمل التحديث الأحدث لتطبيق الأسطورة للشاشات والهواتف، واستمتع بمشاهدة جميع القنوات الرياضية والترفيهية بجودة عالية وخالية من الإعلانات.",
     "url": "article-al-shoura-tv-2026.html",
@@ -38,7 +66,7 @@ export const searchIndex = [
     "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">كود داونلودر للشاشات::</span>  أضخم مكتبة تطبيقات (IPTV وأفلام) بروابط مباشرة",
     "desc": "أضخم مكتبة تطبيقات للشاشات الذكية (أفلام، مسلسلات، IPTV). حملها بروابط مباشرة أو عبر كود تطبيق داونلودر (5033352) لتثبيت سريع بضغطة زر.",
     "url": "article-downloader-code.html",
-    "category": "Apps",
+    "category": "TVscreen",
     "image": "assets/images/1774116778233_20260321_211216.webp"
   },
   {
