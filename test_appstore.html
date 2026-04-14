@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+const testHtml = `
+const appsData = [
+    { name: "App 1", url: "url1" }
+];
+`;
+const appsRegex = /const\s+appsData\s*=\s*(\[[^;]*\]);/s;
+const match = appsRegex.exec(testHtml);
+console.log(match ? match[1] : "No match");
+</script>
+</head>
+<body>Test</body>
+</html>
