@@ -84,16 +84,18 @@ window.addEventListener("load", async function(){
             <span class="h-px bg-gray-200 dark:bg-gray-700 w-20"></span>
         </div>
         <!-- 2. Selection Dropdowns -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-            <div>
-                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">الشركة المصنعة</label>
-                <select id="brandSelect" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"><option value="">اختر الشركة</option></select>
+        
+        <div class="flex flex-row gap-2 sm:gap-6 mb-8 max-w-2xl mx-auto bg-white dark:bg-gray-800 p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 items-end">
+            <div class="flex-1">
+                <label class="block text-[10px] sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">الشركة</label>
+                <select id="brandSelect" class="w-full p-2 sm:p-3 text-xs sm:text-sm rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"><option value="">الشركة</option></select>
             </div>
-            <div>
-                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">موديل الهاتف</label>
-                <select id="modelSelect" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all disabled:opacity-50" disabled><option value="">اختر الموديل أولاً</option></select>
+            <div class="flex-1">
+                <label class="block text-[10px] sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">الموديل</label>
+                <select id="modelSelect" class="w-full p-2 sm:p-3 text-xs sm:text-sm rounded-lg sm:rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all" disabled><option value="">الموديل</option></select>
             </div>
         </div>
+
         <!-- 3. Specs Display Card -->
         <div id="specsCard" class="hidden animate-fade-in">
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
@@ -199,7 +201,7 @@ window.addEventListener("load", async function(){
         // Auto display recent phones
         const recentPhonesContainer = document.createElement('div');
         recentPhonesContainer.className = 'mt-12';
-        recentPhonesContainer.innerHTML = '<h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">أحدث الهواتف المضافة</h2><div id="recentPhonesGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>';
+        recentPhonesContainer.innerHTML = '<h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">أحدث الهواتف المضافة</h2><div id="recentPhonesGrid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-4"></div>';
         
         // Find main container to append to
         const mainCard = document.querySelector('main > div');
@@ -237,8 +239,8 @@ window.addEventListener("load", async function(){
                 
                 card.innerHTML = `
                     ${imgStr}
-                    <h3 class="font-bold text-sm text-gray-900 dark:text-white line-clamp-1">${phone.name}</h3>
-                    <p class="text-xs text-gray-500 mt-1">${phone.brand}</p>
+                    <h3 class="font-bold text-[11px] sm:text-sm text-gray-900 dark:text-white line-clamp-1">${phone.name}</h3>
+                    <p class="text-[9px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1">${phone.brand}</p>
                 `;
                 
                 card.onclick = () => {
