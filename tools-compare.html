@@ -6,9 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="قارن بين مواصفات الهواتف الذكية جنباً إلى جنب بسهولة وسرعة." />
     <title>مقارنة الهواتف | TechTouch</title>
-    <style>
-body { visibility: hidden; opacity: 0; transition: opacity 0.2s ease-in-out; }
-</style>
+    
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 window.addEventListener("load", async function(){
@@ -30,8 +28,8 @@ window.addEventListener("load", async function(){
             console.error('Failed to load about data:', e);
         }
 
-    document.body.style.visibility = 'visible';
-    document.body.style.opacity = '1';
+    
+    
 });
 </script>
     <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Segoe UI','Tahoma','Geneva','Verdana','sans-serif']}}}}</script>
@@ -127,11 +125,83 @@ window.addEventListener("load", async function(){
         }
         brandA.addEventListener('change', () => handleBrandChange(brandA, modelA)); brandB.addEventListener('change', () => handleBrandChange(brandB, modelB));
         populateBrands();
+
+        // Auto select the two newest phones
+        function autoSelectLatest() {
+            let allPhones = [];
+            phonesDatabase.forEach(b => { b.phones.forEach(p => { allPhones.push({...p, brand: b.brand}); }); });
+            
+            if(allPhones.length >= 2) {
+                const latest1 = allPhones[allPhones.length - 1];
+                const latest2 = allPhones[allPhones.length - 2];
+                
+                brandA.value = latest1.brand;
+                handleBrandChange(brandA, modelA);
+                modelA.value = latest1.id;
+                
+                brandB.value = latest2.brand;
+                handleBrandChange(brandB, modelB);
+                modelB.value = latest2.id;
+                
+                compareBtn.click();
+            }
+        }
+        autoSelectLatest();
+
+        
         compareBtn.addEventListener('click', () => {
             const idA = modelA.value; const idB = modelB.value;
             if (!idA || !idB) { alert("يرجى اختيار هاتفين للمقارنة"); return; }
             let phoneA, phoneB;
-            phonesDatabase.forEach(brand => { const foundA = brand.phones.find(p => p.id === idA); if (foundA) phoneA = foundA; const foundB = brand.phones.find(p => p.id === idB); if (foundB) phoneB = foundB; });
+            phonesDatabase.forEach(brand => { 
+                const foundA = brand.phones.find(p => p.id === idA); if (foundA) phoneA = foundA; 
+                const foundB = brand.phones.find(p => p.id === idB); if (foundB) phoneB = foundB; 
+            });
+            document.getElementById('nameA').textContent = phoneA.name; document.getElementById('nameB').textContent = phoneB.name;
+            
+            // Image handling (Side by Side)
+            let imgContA = document.getElementById('imgContainerA');
+            if(!imgContA) {
+                imgContA = document.createElement('div');
+                imgContA.id = 'imgContainerA';
+                imgContA.className = 'h-24 sm:h-40 w-full flex items-center justify-center mb-2';
+                const headerA = document.getElementById('nameA').parentElement;
+                headerA.insertBefore(imgContA, headerA.firstChild);
+            }
+            imgContA.innerHTML = phoneA.image ? `<img src="${phoneA.image}" alt="${phoneA.name}" class="h-full w-auto max-w-full object-contain p-1">` : '';
+
+            let imgContB = document.getElementById('imgContainerB');
+            if(!imgContB) {
+                imgContB = document.createElement('div');
+                imgContB.id = 'imgContainerB';
+                imgContB.className = 'h-24 sm:h-40 w-full flex items-center justify-center mb-2';
+                const headerB = document.getElementById('nameB').parentElement;
+                headerB.insertBefore(imgContB, headerB.firstChild);
+            }
+            imgContB.innerHTML = phoneB.image ? `<img src="${phoneB.image}" alt="${phoneB.name}" class="h-full w-auto max-w-full object-contain p-1">` : '';
+
+            specsContainer.innerHTML = '';
+            specsMap.forEach(spec => {
+                const valA = phoneA.specs[spec.key] || 'غير متوفر'; const valB = phoneB.specs[spec.key] || 'غير متوفر';
+                let colorClassA = 'text-gray-900 dark:text-white', colorClassB = 'text-gray-900 dark:text-white';
+                // Simple logic to highlight the "better" spec based on text length (very naive, just for visual appeal)
+                if (valA.length > valB.length) { colorClassA = 'text-emerald-600 dark:text-emerald-400 font-black'; } else if (valB.length > valA.length) { colorClassB = 'text-emerald-600 dark:text-emerald-400 font-black'; }
+                
+                
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-[1fr_60px_1fr] sm:grid-cols-[1fr_100px_1fr] gap-2 items-center py-2 sm:py-3 border-b border-gray-100 dark:border-gray-800 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors';
+                row.innerHTML = `
+                    <div class="text-[10px] sm:text-sm ${colorClassA} text-center leading-tight px-1">${valA}</div>
+                    <div class="text-[8px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center bg-gray-100 dark:bg-gray-800 py-0.5 sm:py-1 px-1 sm:px-2 rounded-lg">${spec.label}</div>
+                    <div class="text-[10px] sm:text-sm ${colorClassB} text-center leading-tight px-1">${valB}</div>
+                `;
+
+                specsContainer.appendChild(row);
+            });
+            compareResult.classList.remove('hidden');
+            compareResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
             document.getElementById('nameA').textContent = phoneA.name; document.getElementById('nameB').textContent = phoneB.name;
             
             // Image handling

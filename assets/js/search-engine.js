@@ -78,7 +78,7 @@ class TechTouchSearch {
     }
 
     bindTriggers() {
-        const triggers = document.querySelectorAll('#nav-search-btn, #search-trigger');
+        const triggers = document.querySelectorAll('#nav-search-btn, #search-trigger, #search-trigger-desktop');
         triggers.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();

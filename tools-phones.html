@@ -6,9 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="قاعدة بيانات الهواتف الذكية - ابحث عن أي هاتف واعرف مواصفاته الكاملة." />
     <title>مواصفات الهواتف | TechTouch</title>
-    <style>
-body { visibility: hidden; opacity: 0; transition: opacity 0.2s ease-in-out; }
-</style>
+    
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 window.addEventListener("load", async function(){
@@ -30,8 +28,8 @@ window.addEventListener("load", async function(){
             console.error('Failed to load about data:', e);
         }
 
-    document.body.style.visibility = 'visible';
-    document.body.style.opacity = '1';
+    
+    
 });
 </script>
     <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Segoe UI','Tahoma','Geneva','Verdana','sans-serif']}}}}</script>
@@ -134,6 +132,9 @@ window.addEventListener("load", async function(){
         const displayBrand = document.getElementById('displayBrand');
         const displayName = document.getElementById('displayName');
         const specsGrid = document.getElementById('specsGrid');
+        // Make specs grid more compact
+        specsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3';
+
         const specConfig = { "chipset": { label: "المعالج", icon: "cpu" }, "ram": { label: "الرام (RAM)", icon: "memory-stick" }, "storage": { label: "التخزين", icon: "hard-drive" }, "screen": { label: "الشاشة", icon: "smartphone" }, "battery": { label: "البطارية", icon: "battery-charging" }, "camera": { label: "الكاميرا", icon: "camera" } };
         const allPhones = [];
         phonesDatabase.forEach(brand => { brand.phones.forEach(phone => { allPhones.push({ ...phone, brand: brand.brand }); }); });
@@ -194,6 +195,68 @@ window.addEventListener("load", async function(){
             }
         });
         document.addEventListener('click', (e) => { if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) { searchSuggestions.classList.add('hidden'); } });
+    
+        // Auto display recent phones
+        const recentPhonesContainer = document.createElement('div');
+        recentPhonesContainer.className = 'mt-12';
+        recentPhonesContainer.innerHTML = '<h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">أحدث الهواتف المضافة</h2><div id="recentPhonesGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>';
+        
+        // Find main container to append to
+        const mainCard = document.querySelector('main > div');
+        if(mainCard) {
+            mainCard.appendChild(recentPhonesContainer);
+        }
+
+        function renderRecentPhones() {
+            const grid = document.getElementById('recentPhonesGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            
+            // Get last 8 phones overall (assuming they are appended to the end of their respective arrays or just sorted by something)
+            // The JSON doesn't have a date, so we'll just take the last phone of each brand, up to 8.
+            let recents = [];
+            phonesDatabase.forEach(b => {
+                if(b.phones.length > 0) {
+                    recents.push({...b.phones[b.phones.length - 1], brand: b.brand});
+                }
+            });
+            // If we need more, take the second to last, etc.
+            if(recents.length < 8) {
+                phonesDatabase.forEach(b => {
+                    if(b.phones.length > 1 && recents.length < 8) {
+                        recents.push({...b.phones[b.phones.length - 2], brand: b.brand});
+                    }
+                });
+            }
+            
+            recents.slice(0, 8).forEach(phone => {
+                const card = document.createElement('div');
+                card.className = 'bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm cursor-pointer hover:shadow-md transition-shadow flex flex-col items-center text-center';
+                
+                const imgStr = phone.image ? `<img src="${phone.image}" class="h-24 w-auto object-contain mb-3">` : `<div class="h-24 w-24 bg-gray-100 dark:bg-gray-700 rounded-lg mb-3 flex items-center justify-center"><i data-lucide="smartphone" class="text-gray-400"></i></div>`;
+                
+                card.innerHTML = `
+                    ${imgStr}
+                    <h3 class="font-bold text-sm text-gray-900 dark:text-white line-clamp-1">${phone.name}</h3>
+                    <p class="text-xs text-gray-500 mt-1">${phone.brand}</p>
+                `;
+                
+                card.onclick = () => {
+                    searchInput.value = phone.name;
+                    brandSelect.value = phone.brand;
+                    // trigger brand select change
+                    brandSelect.dispatchEvent(new Event('change'));
+                    modelSelect.value = phone.id;
+                    renderSpecs(phone, phone.brand);
+                };
+                
+                grid.appendChild(card);
+            });
+            if(window.lucide) window.lucide.createIcons();
+        }
+        
+        renderRecentPhones();
+
     </script>
 </body>
 </html>
