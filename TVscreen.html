@@ -28,16 +28,22 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="قسم تطبيقات وبرامج الشاشات الذكية (Smart TV, Android TV).">
     <title>الشاشات 📺 | TechTouch</title>
     
     <!-- Google Analytics 4 (Professional Setup) -->
     
     
 
-    
+    <style>
+body { visibility: hidden; opacity: 0; transition: opacity 0.2s ease-in-out; }
+</style>
 <script src="https://cdn.tailwindcss.com"></script>
-
+<script>
+window.addEventListener("load", function(){
+    document.body.style.visibility = 'visible';
+    document.body.style.opacity = '1';
+});
+</script>
     <script>
         tailwind.config = {
             darkMode: 'class',
