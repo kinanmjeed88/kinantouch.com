@@ -4,63 +4,81 @@
 
     <url>
         <loc>https://kinantouch.com</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/apps</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/games</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/sports</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tools</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/about</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tools-sites</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tools-phones</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tools-compare</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tool-analysis</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/privacy</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.3</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/site-map</loc>
-        <lastmod>2026-06-03T03:54:14.612Z</lastmod>
+        <lastmod>2026-06-04T03:48:10.859Z</lastmod>
         <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-download-reezn-tv</loc>
+        <lastmod>2026-06-03T17:15:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1776362291260_Reezn-TV.webp</image:loc>
+            <image:title>تحميل تطبيق Reezn TV لمشاهدة القنوات والأفلام (للهواتف والشاشات)</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-extreme-accounts-iptv</loc>
+        <lastmod>2026-06-03T10:30:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1774270463586_20260323_155405.webp</image:loc>
+            <image:title>حسابات أكستريم:  (Xtream IPTV) مجانية ومحدثة</image:title>
+        </image:image>
     </url>
     <url>
         <loc>https://kinantouch.com/article-vip-netfly</loc>
@@ -69,15 +87,6 @@
         <image:image>
             <image:loc>https://kinantouch.com/assets/images/1772013254030_٢٠٢٦٠٢٢٥_١٢٣٤٠٣.webp</image:loc>
             <image:title>Netfly TV: للاندرويد – نسخة VIP + كود التفعيل للشاشات</image:title>
-        </image:image>
-    </url>
-    <url>
-        <loc>https://kinantouch.com/article-extreme-accounts-iptv</loc>
-        <lastmod>2026-05-23T10:30:00.000Z</lastmod>
-        <priority>0.8</priority>
-        <image:image>
-            <image:loc>https://kinantouch.com/assets/images/1774270463586_20260323_155405.webp</image:loc>
-            <image:title>حسابات أكستريم:  (Xtream IPTV) مجانية ومحدثة</image:title>
         </image:image>
     </url>
     <url>
@@ -114,15 +123,6 @@
         <image:image>
             <image:loc>https://kinantouch.com/assets/images/1776430787154_20260417_035917.webp</image:loc>
             <image:title>أقوى 5 تطبيقات VPN مدفوعة لفتح المواقع المحجوبة</image:title>
-        </image:image>
-    </url>
-    <url>
-        <loc>https://kinantouch.com/article-download-reezn-tv</loc>
-        <lastmod>2026-04-16T17:53:00.000Z</lastmod>
-        <priority>0.8</priority>
-        <image:image>
-            <image:loc>https://kinantouch.com/assets/images/1776362291260_Reezn-TV.webp</image:loc>
-            <image:title>تحميل تطبيق Reezn TV لمشاهدة القنوات والأفلام (للهواتف والشاشات)</image:title>
         </image:image>
     </url>
     <url>
