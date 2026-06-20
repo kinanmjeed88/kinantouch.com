@@ -4,63 +4,81 @@
 
     <url>
         <loc>https://kinantouch.com</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/apps</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/games</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/sports</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tools</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/about</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tools-sites</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tools-phones</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tools-compare</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/tool-analysis</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.7</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/privacy</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.3</priority>
     </url>
     <url>
         <loc>https://kinantouch.com/site-map</loc>
-        <lastmod>2026-06-19T04:05:57.622Z</lastmod>
+        <lastmod>2026-06-20T03:29:25.063Z</lastmod>
         <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-hasbh-altaqh-alshmsy</loc>
+        <lastmod>2026-06-20T02:22:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1781922403728_photoi.webp</image:loc>
+            <image:title>حاسبة الطاقة الشمسية الاحترافية | تصميم منظومات الطاقة بدقة</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://kinantouch.com/article-thmyl-ttbyq-althakry</loc>
+        <lastmod>2026-06-20T00:39:00.000Z</lastmod>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://kinantouch.com/assets/images/1781916373041_20260620_034554.webp</image:loc>
+            <image:title>تحميل تطبيق الذاكرين: أضخم مكتبة إسلامية شاملة بدون إعلانات</image:title>
+        </image:image>
     </url>
     <url>
         <loc>https://kinantouch.com/article-extreme-accounts-iptv</loc>
