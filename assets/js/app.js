@@ -326,11 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
     silentDlBtns.forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
-            let link = this.getAttribute('data-tvapplink');
-            if (link) {
-                // Sanitize GitHub links to use /raw/ instead of /blob/ for direct download
-                if (link.includes('github.com') && link.includes('/blob/')) {
-                    link = link.replace('/blob/', '/raw/');
+            let downloadUrl = e.currentTarget.href || this.getAttribute('data-tvapplink');
+            if (downloadUrl) {
+                if (downloadUrl.includes('github.com') && downloadUrl.includes('/blob/')) {
+                    downloadUrl = downloadUrl.replace('/blob/', '/raw/');
                 }
 
                 // Show a toast or feedback (optional)
@@ -341,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Create invisible iframe
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
-                iframe.src = link;
+                iframe.src = downloadUrl;
                 document.body.appendChild(iframe);
 
                 // Reset button text after short delay

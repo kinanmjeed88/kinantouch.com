@@ -1570,93 +1570,10 @@ window.saveAppStoreData = async () => {
     btn.disabled = true;
     
     try {
-        // Get the decoded json we attached earlier
-        let decodedJson = null;
-        if (storeDataRaw && storeDataRaw.parsedData) {
-            decodedJson = JSON.parse(JSON.stringify(storeDataRaw.parsedData)); // Deep copy to avoid reference issues
-        }
-        
-        // If parsedData was mutated or lost its content, fall back to decoding the raw response
-        if ((!decodedJson || !decodedJson.content) && storeDataRaw && storeDataRaw.content) {
-             try {
-                decodedJson = JSON.parse(decodeURIComponent(escape(atob(storeDataRaw.content))));
-            } catch(e) {
-                console.error("Fallback decoding failed", e);
-            }
-        }
-
-        if (!decodedJson) {
-             throw new Error("لا توجد بيانات ليتم حفظها.");
-        }
-
-        let htmlContent = decodedJson.content || '';
-        
-        // Serialize arrays back to JS string representation
-        const serializeArray = (arr) => {
-            return '[\n' + arr.map(item => {
-                let parts = [];
-                if(item.name) parts.push(`name: "${item.name.replace(/"/g, '\\"')}"`);
-                if(item.url) parts.push(`url: "${item.url.replace(/"/g, '\\"')}"`);
-                if(item.icon) parts.push(`icon: "${item.icon.replace(/"/g, '\\"')}"`);
-                if(item.store) parts.push(`store: "${item.store.replace(/"/g, '\\"')}"`);
-                return `            { ${parts.join(', ')} }`;
-            }).join(',\n') + '\n        ]';
-        };
-
-        const newAppsString = serializeArray(parsedApps);
-
-        // Replace appsData array
-        if(htmlContent.match(/const\s+appsData\s*=\s*\[[\s\S]*?\]\s*;/s)) {
-            htmlContent = htmlContent.replace(/const\s+appsData\s*=\s*\[[\s\S]*?\]\s*;/s, `const appsData = ${newAppsString};`);
-        } else {
-            // Inject if missing? It shouldn't be missing, but just in case
-            alert("خطأ: تعذر العثور على مصفوفة appsData في الملف الأصلي.");
-            btn.innerText = 'حفظ جميع التعديلات';
-            btn.disabled = false;
-            return;
-        }
-
-        // Handle Stores - Update the HTML template directly
-        const storesContainerRegex = /(<div class="grid grid-cols-2 gap-3 sm:gap-5 mb-12">)[\s\S]*?(<\/div>\s*<div class="bg-blue-50)/s;
-        let generatedHtml = "\n";
-        if(htmlContent.match(storesContainerRegex)) {
-            parsedStores.forEach((store, idx) => {
-                const isFirst = idx % 2 === 0;
-                const bgGradient = isFirst ? "from-blue-50 to-cyan-50 dark:from-slate-800 dark:to-slate-750 border-blue-100" : "from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-750 border-purple-100";
-                const iconColor = isFirst ? "text-blue-600 dark:text-blue-400" : "text-purple-600 dark:text-purple-400";
-                const titleColor = isFirst ? "text-blue-900 dark:text-blue-300" : "text-purple-900 dark:text-purple-300";
-                const glowColor = isFirst ? "bg-blue-400" : "bg-purple-400";
-
-                let iconDisplay = `<i data-lucide="${store.icon || 'shopping-cart'}" class="w-7 h-7 sm:w-12 sm:h-12 ${iconColor}"></i>`;
-                if (store.icon && (store.icon.startsWith('http') || store.icon.includes('/'))) {
-                    iconDisplay = `<img src="${store.icon}" class="w-7 h-7 sm:w-12 sm:h-12 object-contain" alt="Store Icon">`;
-                }
-
-                generatedHtml += `        <a href="${store.url}" target="_self" class="group h-full block">
-            <div class="bg-gradient-to-br ${bgGradient} dark:border-slate-700 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col items-center justify-center text-center cursor-pointer">
-                <div class="mb-3 sm:mb-6 relative">
-                    <div class="absolute inset-0 ${glowColor} blur-2xl opacity-20 group-hover:opacity-30 transition-opacity rounded-full"></div>
-                    <div class="relative bg-white dark:bg-slate-700 p-3 sm:p-5 rounded-xl sm:rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
-                        ${iconDisplay}
-                    </div>
-                </div>
-                <h3 class="font-black text-sm sm:text-2xl ${titleColor} mb-1 sm:mb-2">${store.name}</h3>
-                <p class="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400">${store.desc || ''}</p>
-            </div>
-        </a>\n`;
-            });
-            htmlContent = htmlContent.replace(storesContainerRegex, `$1${generatedHtml}    $2`);
-        }
-        
-        // Clean up any previously injected storesData or storesContainer scripts if they exist
-        htmlContent = htmlContent.replace(/const\s+storesData\s*=\s*\[[\s\S]*?\]\s*;\s*/s, '');
-        if (htmlContent.includes('<div id="storesContainer"')) {
-             htmlContent = htmlContent.replace(/<div id="storesContainer"[\s\S]*?<\/script>/s, '');
-        }
-
-        decodedJson.content = htmlContent;
-        // Stringify the full JSON file content before putting it to API
-        const finalContentToSave = JSON.stringify(decodedJson, null, 2);
+        const finalContentToSave = JSON.stringify({
+            stores: parsedStores,
+            apps: parsedApps
+        }, null, 2);
 
         await api.put(storeDataRaw.path, finalContentToSave, "CMS: Update Smart-TV App Store JSON", storeDataRaw.sha);
 
