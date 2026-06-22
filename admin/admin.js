@@ -1660,42 +1660,6 @@ window.saveAppStoreData = async () => {
 
         await api.put(storeDataRaw.path, finalContentToSave, "CMS: Update Smart-TV App Store JSON", storeDataRaw.sha);
 
-        // --- NEW CODE: Update live HTML file ---
-        try {
-            // Fetch the live HTML file
-            const htmlFileResponse = await api.get('Smart-TV-dawnlwdr/index.html');
-            let liveHtmlContent = '';
-            
-            // Decode base64
-            if (htmlFileResponse && htmlFileResponse.content) {
-                liveHtmlContent = decodeURIComponent(escape(atob(htmlFileResponse.content)));
-            }
-
-            if (liveHtmlContent) {
-                // Apply the exact same Regex replacements to the live HTML file
-                if(liveHtmlContent.match(/const\s+appsData\s*=\s*\[[\s\S]*?\]\s*;/s)) {
-                    liveHtmlContent = liveHtmlContent.replace(/const\s+appsData\s*=\s*\[[\s\S]*?\]\s*;/s, `const appsData = ${newAppsString};`);
-                }
-
-                if(liveHtmlContent.match(storesContainerRegex)) {
-                    liveHtmlContent = liveHtmlContent.replace(storesContainerRegex, `$1${generatedHtml}    $2`);
-                }
-
-                // Clean up any previously injected storesData or storesContainer scripts if they exist
-                liveHtmlContent = liveHtmlContent.replace(/const\s+storesData\s*=\s*\[[\s\S]*?\]\s*;\s*/s, '');
-                if (liveHtmlContent.includes('<div id="storesContainer"')) {
-                     liveHtmlContent = liveHtmlContent.replace(/<div id="storesContainer"[\s\S]*?<\/script>/s, '');
-                }
-
-                // Put it back
-                await api.put('Smart-TV-dawnlwdr/index.html', liveHtmlContent, "CMS: Update Smart-TV App Store Live HTML", htmlFileResponse.sha);
-            }
-        } catch (htmlErr) {
-            console.error("Failed to update live HTML file:", htmlErr);
-            throw new Error("تم تحديث قاعدة البيانات ولكن فشل تحديث الصفحة المباشرة: " + htmlErr.message);
-        }
-        // --- END NEW CODE ---
-
         showToast('تم حفظ المتجر بنجاح!');
         // Reload to get new sha
         await loadAppStoreData();
