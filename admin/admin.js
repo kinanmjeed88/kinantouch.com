@@ -374,7 +374,7 @@ function renderPosts() {
 
 window.openPostEditor = () => { 
     document.getElementById('postEditor').classList.remove('hidden'); 
-    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId', 'pSummary'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; }); 
+    ['pTitle', 'pSlug', 'pDesc', 'pContent', 'pImage', 'pYoutubeId', 'pSummary', 'ptvAppLink'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
     document.getElementById('pSlug').dataset.mode = 'new'; document.getElementById('pSlug').readOnly = false; document.getElementById('editorTitle').innerText = 'مقال جديد'; 
     document.getElementById('pDate').value = ''; // Reset date field for new posts
     
@@ -412,6 +412,7 @@ window.openEditByIndex = (index) => {
     setVal('pContent', p.content);
     setVal('pImage', p.image);
     setVal('pYoutubeId', p.youtubeVideoId);
+    setVal('ptvAppLink', p.tvAppLink);
     setVal('pDate', p.date);
     setVal('pTime', p.time || "00:00");
     setVal('pSummary', p.summary);
@@ -475,7 +476,8 @@ window.savePost = async () => {
             content: getVal('pContent'),
             youtubeVideoId: getVal('pYoutubeId'),
             summary: getVal('pSummary'),
-            renderMode: renderMode // Save the render mode preference
+            renderMode: renderMode, // Save the render mode preference
+            tvAppLink: document.getElementById('ptvAppLink') ? document.getElementById('ptvAppLink').value : ''
         };
 
         if (!postData.updated) delete postData.updated;
@@ -1616,8 +1618,8 @@ window.saveAppStoreData = async () => {
 
         // Handle Stores - Update the HTML template directly
         const storesContainerRegex = /(<div class="grid grid-cols-2 gap-3 sm:gap-5 mb-12">)[\s\S]*?(<\/div>\s*<div class="bg-blue-50)/s;
+        let generatedHtml = "\n";
         if(htmlContent.match(storesContainerRegex)) {
-            let generatedHtml = "\n";
             parsedStores.forEach((store, idx) => {
                 const isFirst = idx % 2 === 0;
                 const bgGradient = isFirst ? "from-blue-50 to-cyan-50 dark:from-slate-800 dark:to-slate-750 border-blue-100" : "from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-750 border-purple-100";
@@ -1661,7 +1663,7 @@ window.saveAppStoreData = async () => {
         // --- NEW CODE: Update live HTML file ---
         try {
             // Fetch the live HTML file
-            const htmlFileResponse = await api.get('article-smart-tv-dawnlwdr.html');
+            const htmlFileResponse = await api.get('Smart-TV-dawnlwdr/index.html');
             let liveHtmlContent = '';
             
             // Decode base64
@@ -1686,7 +1688,7 @@ window.saveAppStoreData = async () => {
                 }
 
                 // Put it back
-                await api.put('article-smart-tv-dawnlwdr.html', liveHtmlContent, "CMS: Update Smart-TV App Store Live HTML", htmlFileResponse.sha);
+                await api.put('Smart-TV-dawnlwdr/index.html', liveHtmlContent, "CMS: Update Smart-TV App Store Live HTML", htmlFileResponse.sha);
             }
         } catch (htmlErr) {
             console.error("Failed to update live HTML file:", htmlErr);

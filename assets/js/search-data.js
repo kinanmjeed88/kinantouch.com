@@ -1,10 +1,66 @@
 export const searchIndex = [
   {
+    "title": "حاسبة الطاقة الشمسية الاحترافية | تصميم منظومات الطاقة بدقة",
+    "desc": "التطبيق الهندسي الأول لتصميم منظومات الطاقة الشمسية. احسب عدد الألواح، سعة البطاريات، وأحجام القواطع بدقة معايير NEC العالمية مع استخراج تقارير PDF فنية.",
+    "url": "article-hasbh-altaqh-alshmsy.html",
+    "category": "APP_Ai",
+    "image": "assets/images/1781922403728_photoi.webp"
+  },
+  {
+    "title": "تحميل تطبيق الذاكرين: أضخم مكتبة إسلامية شاملة بدون إعلانات",
+    "desc": "حمل تطبيق الذاكرين، مكتبتك الإسلامية الشاملة التي تضم أكثر من 38 ألف نص ديني من القرآن الكريم والأدعية. تطبيق سريع، خالي تماماً من الإعلانات، ويدعم التحديث الهوائي!",
+    "url": "article-thmyl-ttbyq-althakry.html",
+    "category": "APP_Ai",
+    "image": "assets/images/1781916373041_20260620_034554.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">حسابات أكستريم:</span>  (Xtream IPTV) مجانية ومحدثة",
+    "desc": "تحميل أفضل مشغل IPTV بدون إعلانات مع شرح إضافة الأكواد. يتضمن حسابات اكستريم",
+    "url": "article-extreme-accounts-iptv.html",
+    "category": "Sports",
+    "image": "assets/images/1774270463586_20260323_155405.webp"
+  },
+  {
+    "title": "تحميل تطبيق Reezn TV لمشاهدة القنوات والأفلام (للهواتف والشاشات)",
+    "desc": "تمتع بمشاهدة القنوات العربية والأجنبية، وأحدث الأفلام والمسلسلات للهواتف وشاشات التلفاز الذكية.\"",
+    "url": "article-download-reezn-tv.html",
+    "category": "Apps",
+    "image": "assets/images/1776362291260_Reezn-TV.webp"
+  },
+  {
+    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">Netfly TV:</span> للاندرويد – نسخة VIP + كود التفعيل للشاشات ",
+    "desc": "تقديم محتوى ترفيهي ورياضي شامل، مصمم ليعمل بمرونة فائقة على جميع الأجهزة.",
+    "url": "article-vip-netfly.html",
+    "category": "Sports",
+    "image": "assets/images/1772013254030_٢٠٢٦٠٢٢٥_١٢٣٤٠٣.webp"
+  },
+  {
     "title": "<h1 class=\"text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight text-center\">   نشر روابط البث المباشر   <span class=\"inline-block mt-2 md:mt-0 md:ml-3 px-3 py-1 rounded-full text-xs md:text-sm font-bold                 bg-red-600 text-white shadow-md animate-pulse\">     متجدد   </span> </h1>",
     "desc": "يتعلق الأمر بتوزيع الروابط الخاصة بالبث المباشر للمحتوى. الهدف هو تسهيل الوصول إلى المشاهدين.",
     "url": "article-nshr-rwabt-albth-alm.html",
     "category": "Sports",
     "image": "assets/images/1770940566987_file_000000004e90720a8791e6fdb9905420_(1).webp"
+  },
+  {
+    "title": "تطبيق Aura Cine Play للأفلام وغرف المشاهدة الجماعية",
+    "desc": "اكتشف تطبيق Aura Cine Play لتجربة سينمائية واجتماعية فريدة! مكتبة أفلام ومسلسلات متجددة، غرف مشاهدة جماعية مع الأصدقاء، واقتراحات ذكية تناسب ذوقك. حمل الآن!",
+    "url": "article-ttbyq-aura-cine-play.html",
+    "category": "Apps",
+    "image": "assets/images/1778275365004_20260509_122202.webp"
+  },
+  {
+    "title": "​\"DeepSeek-V4: نموذج الذكاء الاصطناعي الأقوى والأسرع يضاهي النماذج العالمية-!\"",
+    "desc": "الجيل الجديد من الذكاء الاصطناعي بقدرات مذهلة! اختر بين DeepSeek-V4 Pro للأداء الفائق و 100K سياق رمزي، أو DeepSeek-V4 Flash للسرعة الخارقة (أسرع 30 مرة). مع ميزات اخرى.",
+    "url": "article-deepseek-v4-update.html",
+    "category": "AI",
+    "image": "assets/images/1777032119895_20260424_150133.webp"
+  },
+  {
+    "title": "أقوى 5 تطبيقات VPN مدفوعة لفتح المواقع المحجوبة",
+    "desc": "حمل الآن أفضل تطبيقات VPN المعدلة (Panda, Psiphon, 1.1.1.1, VPNify) بنسخ بريميوم مدفوعة مجاناً. تجاوز الحجب.",
+    "url": "article-aqwa-4-ttbyqat-vpn-m.html",
+    "category": "Apps",
+    "image": "assets/images/1776430787154_20260417_035917.webp"
   },
   {
     "title": "حول هاتفك لمساعد ذكي بدون إنترنت مع تطبيق Google AI Edge Gallery",
@@ -40,13 +96,6 @@ export const searchIndex = [
     "url": "article-al-shoura-tv-2026.html",
     "category": "Sports",
     "image": "assets/images/1774894672307_20260330_211731.webp"
-  },
-  {
-    "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">حسابات أكستريم:</span>  (Xtream IPTV) مجانية ومحدثة",
-    "desc": "تحميل أفضل مشغل IPTV بدون إعلانات مع شرح إضافة الأكواد. يتضمن حسابات اكستريم",
-    "url": "article-extreme-accounts-iptv.html",
-    "category": "Sports",
-    "image": "assets/images/1774270463586_20260323_155405.webp"
   },
   {
     "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">DLTA 4K:</span> تحميل تطبيق للشاشات والهواتف مع كود التفعيل (قنوات رياضية)",
@@ -173,13 +222,6 @@ export const searchIndex = [
     "url": "article-kira-tv-2026.html",
     "category": "Sports",
     "image": "assets/images/1772634088358_٢٠٢٦٠٣٠٤_٠٥٢١١٠.webp"
-  },
-  {
-    "title": "<span class=\"text-blue-600 dark:text-blue-400 font-bold\">Netfly TV:</span> للاندرويد – نسخة VIP + كود التفعيل للشاشات ",
-    "desc": "تقديم محتوى ترفيهي ورياضي شامل، مصمم ليعمل بمرونة فائقة على جميع الأجهزة.",
-    "url": "article-vip-netfly.html",
-    "category": "Sports",
-    "image": "assets/images/1772013254030_٢٠٢٦٠٢٢٥_١٢٣٤٠٣.webp"
   },
   {
     "title": "<span class=\"text-blue-600 dark:text-blue-400 text-lg font-bold\">Tellonym Premium:</span> تطبيق (النسخة المميزة) للرسائل المجهولة",

@@ -320,4 +320,31 @@ document.addEventListener('DOMContentLoaded', () => {
             viewCounter.textContent = '—'; 
         });
     }
+
+    // --- DIRECT DOWNLOAD TV APP LISTENER ---
+    const silentDlBtns = document.querySelectorAll('.silent-dl-btn');
+    silentDlBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const link = this.getAttribute('data-tvapplink');
+            if (link) {
+                // Show a toast or feedback (optional)
+                const originalText = this.innerHTML;
+                this.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>جاري التحميل...</span>`;
+                if(window.lucide) window.lucide.createIcons();
+
+                // Create invisible iframe
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = link;
+                document.body.appendChild(iframe);
+
+                // Reset button text after short delay
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    if(window.lucide) window.lucide.createIcons();
+                }, 3000);
+            }
+        });
+    });
 });

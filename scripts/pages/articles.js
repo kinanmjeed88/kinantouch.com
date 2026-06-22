@@ -73,6 +73,19 @@ export async function generateIndividualArticles({ allPosts, postsByCategory, ab
             `;
         }
 
+        // --- DIRECT DOWNLOAD TV APP BUTTON ---
+        let silentDownloadButtonHTML = '';
+        if (post.tvAppLink) {
+            silentDownloadButtonHTML = `
+            <div class="w-full flex justify-center mt-3 mb-5">
+                <button class="silent-dl-btn inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition-all" data-tvapplink="${escapeHtml(post.tvAppLink)}">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>تحميل تطبيق التلفاز مباشر</span>
+                </button>
+            </div>
+            `;
+        }
+
         const articleHeaderHTML = `
         <header class="mb-8 relative">
             <div class="article-header-card relative z-20">
@@ -92,6 +105,7 @@ export async function generateIndividualArticles({ allPosts, postsByCategory, ab
                 </div>
             </div>
             ${summaryButtonHTML}
+            ${silentDownloadButtonHTML}
         </header>
         `;
         
