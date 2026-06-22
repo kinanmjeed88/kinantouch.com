@@ -326,8 +326,13 @@ document.addEventListener('DOMContentLoaded', () => {
     silentDlBtns.forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
-            const link = this.getAttribute('data-tvapplink');
+            let link = this.getAttribute('data-tvapplink');
             if (link) {
+                // Sanitize GitHub links to use /raw/ instead of /blob/ for direct download
+                if (link.includes('github.com') && link.includes('/blob/')) {
+                    link = link.replace('/blob/', '/raw/');
+                }
+
                 // Show a toast or feedback (optional)
                 const originalText = this.innerHTML;
                 this.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>جاري التحميل...</span>`;
