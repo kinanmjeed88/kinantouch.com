@@ -324,35 +324,66 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DIRECT DOWNLOAD TV APP LISTENER ---
     const silentDlBtns = document.querySelectorAll('.silent-dl-btn');
     silentDlBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', async function(e) {
             e.preventDefault();
-            let downloadUrl = e.currentTarget.href || this.getAttribute('data-tvapplink');
-            if (downloadUrl) {
-                // 1. URL Sanitizer: تحويل مسار جيت هاب إلى المسار الخام الفعلي للتحميل
-                if (downloadUrl.includes('github.com') && downloadUrl.includes('/blob/')) {
-                    downloadUrl = downloadUrl.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+            let originalUrl = e.currentTarget.href || this.getAttribute('data-tvapplink');
+            if (!originalUrl) return;
+
+            let downloadUrl = originalUrl;
+            let fileName = 'app.apk'; // اسم افتراضي
+
+            // 1. معالجة الرابط واستخراج اسم الملف
+            try {
+                let u = new URL(originalUrl);
+                if (u.hostname.includes('github.com') && u.pathname.includes('/blob/')) {
+                    u.hostname = 'raw.githubusercontent.com';
+                    u.pathname = u.pathname.replace('/blob/', '/');
+                    downloadUrl = u.toString();
                 }
+                // استخراج اسم الملف وفك التشفير (مثل تحويل %20 إلى مسافة)
+                fileName = decodeURIComponent(u.pathname.split('/').pop()) || 'app.apk';
+            } catch(err) {
+                console.error('URL Parsing Error', err);
+            }
 
-                // توفير تغذية راجعة بصرية للمستخدم (UX)
-                const originalText = this.innerHTML;
-                this.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>جاري التحميل...</span>`;
-                if(window.lucide) window.lucide.createIcons();
+            // 2. تحديث الواجهة للمستخدم
+            const originalText = this.innerHTML;
+            this.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>جاري التحميل...</span>`;
+            // تعطيل الزر لمنع الضغط المزدوج
+            this.style.pointerEvents = 'none';
+            if(window.lucide) window.lucide.createIcons();
 
-                // 2. Dummy Anchor Technique: محاكاة الضغط للتحميل كـ Attachment وتجاوز Iframe Block
+            // 3. التنفيذ المعماري: Fetch -> Blob -> ObjectURL
+            try {
+                const response = await fetch(downloadUrl);
+                if (!response.ok) throw new Error('Network response error');
+
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+
+                // 4. الرابط الوهمي الصامت (Same-Origin)
                 const tempLink = document.createElement('a');
                 tempLink.style.display = 'none';
-                tempLink.href = downloadUrl;
-                tempLink.setAttribute('download', '');
-                tempLink.setAttribute('target', '_blank'); // كإجراء أمني إضافي
+                tempLink.href = blobUrl;
+                tempLink.setAttribute('download', fileName);
                 document.body.appendChild(tempLink);
-                tempLink.click();
-                document.body.removeChild(tempLink);
 
-                // استعادة حالة الزر الأصلية
+                tempLink.click();
+
+                // 5. التنظيف وتحرير الذاكرة
                 setTimeout(() => {
-                    this.innerHTML = originalText;
-                    if(window.lucide) window.lucide.createIcons();
-                }, 3000);
+                    document.body.removeChild(tempLink);
+                    window.URL.revokeObjectURL(blobUrl);
+                }, 100);
+
+            } catch (error) {
+                console.error('Download failed:', error);
+                alert('فشل التحميل التلقائي، يرجى المحاولة لاحقاً أو التحقق من الرابط.');
+            } finally {
+                // إرجاع حالة الزر الأصلية
+                this.innerHTML = originalText;
+                this.style.pointerEvents = 'auto';
+                if(window.lucide) window.lucide.createIcons();
             }
         });
     });

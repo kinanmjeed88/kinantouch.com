@@ -9,7 +9,7 @@
   <link>https://kinantouch.com</link>
   <description>المصدر العربي الأول للمقالات التقنية، مراجعات الهواتف، والتطبيقات.</description>
   <language>ar</language>
-  <lastBuildDate>Mon, 22 Jun 2026 21:40:13 GMT</lastBuildDate>
+  <lastBuildDate>Tue, 23 Jun 2026 01:21:07 GMT</lastBuildDate>
   <ttl>60</ttl>
   <atom:link href="https://kinantouch.com/feed.xml" rel="self" type="application/rss+xml" />
 
@@ -1900,7 +1900,7 @@ function copyToClipboard(text, message) {
     </div>
 
     <div>
-        <a href="https://pixeldrain.com/l/RmnSpDMM" target="_self">
+        <a href="https://pixeldrain.com/l/z1jHgDtr" target="_self">
             <div>
                 <div>
                     <div></div>
@@ -1908,7 +1908,7 @@ function copyToClipboard(text, message) {
                         <i></i>
                     </div>
                 </div>
-                <h3>متجر kinantouch</h3>
+                <h3>متجر kinantouch0</h3>
                 <p>اكثر من ١٣٠ تطبيق</p>
             </div>
         </a>
@@ -2051,7 +2051,7 @@ function copyToClipboard(text, message) {
             { name: "FX File Explorer", url: "https://pixeldrain.com/u/2gNyexoR", icon: "https://raw.githubusercontent.com/iraqapps/tvapps/main/img/fxfile.png" },
             { name: "IPTV", url: "https://pixeldrain.com/u/8WBZ4gCF", icon: "https://raw.githubusercontent.com/iraqapps/tvapps/main/img/iptv.png" },
             { name: "افلامي - Aflaame", url: "https://pixeldrain.com/u/KsbtxmJ9", icon: "https://raw.githubusercontent.com/iraqapps/tvapps/main/img/aflaametv.png" },
-            { name: "1IRAQ TV v4", url: "https://github.com/techtouchAI/techtouchAI/blob/main/public/data/app/1IRAQ%20TV.apk", icon: "assets/images/1782083469235_1_iraq_tv.webp" }
+            { name: "1IRAQ TV V4.0", url: "https://github.com/techtouchAI/techtouchAI/blob/main/public/data/app/1IRAQ%20TV.apk", icon: "assets/images/1782083469235_1_iraq_tv.webp" }
         ];
 
         const container = document.getElementById('appsContainer');
