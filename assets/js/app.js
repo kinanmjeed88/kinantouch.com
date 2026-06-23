@@ -321,70 +321,67 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- DIRECT DOWNLOAD TV APP LISTENER ---
-    const silentDlBtns = document.querySelectorAll('.silent-dl-btn');
-    silentDlBtns.forEach(btn => {
-        btn.addEventListener('click', async function(e) {
-            e.preventDefault();
-            let originalUrl = e.currentTarget.href || this.getAttribute('data-tvapplink');
-            if (!originalUrl) return;
+    // --- DIRECT DOWNLOAD TV APP LISTENER (Event Delegation) ---
+    document.addEventListener('click', async function(e) {
+        const btn = e.target.closest('.silent-dl-btn');
+        if (!btn) return; // تجاهل الضغطات على العناصر الأخرى
 
-            let downloadUrl = originalUrl;
-            let fileName = 'app.apk'; // اسم افتراضي
+        e.preventDefault(); // إيقاف فتح الرابط الافتراضي فوراً
 
-            // 1. معالجة الرابط واستخراج اسم الملف
-            try {
-                let u = new URL(originalUrl);
-                if (u.hostname.includes('github.com') && u.pathname.includes('/blob/')) {
-                    u.hostname = 'raw.githubusercontent.com';
-                    u.pathname = u.pathname.replace('/blob/', '/');
-                    downloadUrl = u.toString();
-                }
-                // استخراج اسم الملف وفك التشفير (مثل تحويل %20 إلى مسافة)
-                fileName = decodeURIComponent(u.pathname.split('/').pop()) || 'app.apk';
-            } catch(err) {
-                console.error('URL Parsing Error', err);
+        let originalUrl = btn.href || btn.getAttribute('data-tvapplink');
+        if (!originalUrl) return;
+
+        let downloadUrl = originalUrl;
+        let fileName = 'app.apk';
+
+        // 1. معالجة الرابط واستخراج اسم الملف
+        try {
+            let u = new URL(originalUrl);
+            if (u.hostname.includes('github.com') && u.pathname.includes('/blob/')) {
+                u.hostname = 'raw.githubusercontent.com';
+                u.pathname = u.pathname.replace('/blob/', '/');
+                downloadUrl = u.toString();
             }
+            fileName = decodeURIComponent(u.pathname.split('/').pop()) || 'app.apk';
+        } catch(err) {
+            console.error('URL Parsing Error', err);
+        }
 
-            // 2. تحديث الواجهة للمستخدم
-            const originalText = this.innerHTML;
-            this.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>جاري التحميل...</span>`;
-            // تعطيل الزر لمنع الضغط المزدوج
-            this.style.pointerEvents = 'none';
+        // 2. تحديث الواجهة للمستخدم
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>جاري التحميل...</span>`;
+        btn.style.pointerEvents = 'none'; // منع الضغط المزدوج
+        if(window.lucide) window.lucide.createIcons();
+
+        // 3. محاولة التحميل المعماري (Fetch -> Blob)
+        try {
+            const response = await fetch(downloadUrl);
+            if (!response.ok) throw new Error('Network error');
+
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+
+            const tempLink = document.createElement('a');
+            tempLink.style.display = 'none';
+            tempLink.href = blobUrl;
+            tempLink.setAttribute('download', fileName);
+            document.body.appendChild(tempLink);
+            tempLink.click();
+
+            setTimeout(() => {
+                document.body.removeChild(tempLink);
+                window.URL.revokeObjectURL(blobUrl);
+            }, 100);
+
+        } catch (error) {
+            console.warn('Fetch download failed, falling back to direct navigation:', error);
+            // خطة الطوارئ: التوجيه للرابط المباشر الذي سيفرضه خادم Github كملف تنزيل
+            window.location.href = downloadUrl;
+        } finally {
+            // إرجاع حالة الزر
+            btn.innerHTML = originalText;
+            btn.style.pointerEvents = 'auto';
             if(window.lucide) window.lucide.createIcons();
-
-            // 3. التنفيذ المعماري: Fetch -> Blob -> ObjectURL
-            try {
-                const response = await fetch(downloadUrl);
-                if (!response.ok) throw new Error('Network response error');
-
-                const blob = await response.blob();
-                const blobUrl = window.URL.createObjectURL(blob);
-
-                // 4. الرابط الوهمي الصامت (Same-Origin)
-                const tempLink = document.createElement('a');
-                tempLink.style.display = 'none';
-                tempLink.href = blobUrl;
-                tempLink.setAttribute('download', fileName);
-                document.body.appendChild(tempLink);
-
-                tempLink.click();
-
-                // 5. التنظيف وتحرير الذاكرة
-                setTimeout(() => {
-                    document.body.removeChild(tempLink);
-                    window.URL.revokeObjectURL(blobUrl);
-                }, 100);
-
-            } catch (error) {
-                console.error('Download failed:', error);
-                alert('فشل التحميل التلقائي، يرجى المحاولة لاحقاً أو التحقق من الرابط.');
-            } finally {
-                // إرجاع حالة الزر الأصلية
-                this.innerHTML = originalText;
-                this.style.pointerEvents = 'auto';
-                if(window.lucide) window.lucide.createIcons();
-            }
-        });
+        }
     });
 });
