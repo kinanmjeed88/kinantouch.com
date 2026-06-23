@@ -321,20 +321,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- DIRECT DOWNLOAD TV APP LISTENER (Event Delegation) ---
+    // --- DIRECT DOWNLOAD TV APP LISTENER (Smart Target Delegation) ---
     document.addEventListener('click', async function(e) {
-        const btn = e.target.closest('.silent-dl-btn');
-        if (!btn) return; // تجاهل الضغطات على العناصر الأخرى
-
-        e.preventDefault(); // إيقاف فتح الرابط الافتراضي فوراً
+        // 1. التقاط أي ضغطة على أي رابط
+        const btn = e.target.closest('a') || e.target.closest('.silent-dl-btn');
+        if (!btn) return;
 
         let originalUrl = btn.href || btn.getAttribute('data-tvapplink');
         if (!originalUrl) return;
 
+        // 2. التحقق الذكي: هل هذا الرابط مستهدف للتحميل الصامت؟
+        const isSilentClass = btn.classList.contains('silent-dl-btn') || btn.hasAttribute('data-tvapplink');
+        const isGithubBlob = originalUrl.includes('github.com') && originalUrl.includes('/blob/');
+
+        // إذا لم يكن زراً مخصصاً ولم يكن رابط جيت هاب، دعه يعمل بشكل طبيعي (لا تتدخل)
+        if (!isSilentClass && !isGithubBlob) return;
+
+        // 3. إيقاف السلوك الافتراضي وبدء المعالجة
+        e.preventDefault();
+
         let downloadUrl = originalUrl;
         let fileName = 'app.apk';
 
-        // 1. معالجة الرابط واستخراج اسم الملف
+        // 4. معالجة الرابط واستخراج اسم الملف
         try {
             let u = new URL(originalUrl);
             if (u.hostname.includes('github.com') && u.pathname.includes('/blob/')) {
@@ -347,13 +356,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('URL Parsing Error', err);
         }
 
-        // 2. تحديث الواجهة للمستخدم
+        // 5. تحديث الواجهة للمستخدم (Feedback)
         const originalText = btn.innerHTML;
-        btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>جاري التحميل...</span>`;
+        btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin inline-block align-middle mr-1"></i><span class="inline-block align-middle">جاري التحميل...</span>`;
         btn.style.pointerEvents = 'none'; // منع الضغط المزدوج
         if(window.lucide) window.lucide.createIcons();
 
-        // 3. محاولة التحميل المعماري (Fetch -> Blob)
+        // 6. التحميل المعماري (Fetch -> Blob)
         try {
             const response = await fetch(downloadUrl);
             if (!response.ok) throw new Error('Network error');
@@ -375,10 +384,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.warn('Fetch download failed, falling back to direct navigation:', error);
-            // خطة الطوارئ: التوجيه للرابط المباشر الذي سيفرضه خادم Github كملف تنزيل
+            // خطة الطوارئ
             window.location.href = downloadUrl;
         } finally {
-            // إرجاع حالة الزر
+            // إرجاع حالة الزر الأصلية
             btn.innerHTML = originalText;
             btn.style.pointerEvents = 'auto';
             if(window.lucide) window.lucide.createIcons();
