@@ -328,22 +328,27 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             let downloadUrl = e.currentTarget.href || this.getAttribute('data-tvapplink');
             if (downloadUrl) {
+                // 1. URL Sanitizer: تحويل مسار جيت هاب إلى المسار الخام الفعلي للتحميل
                 if (downloadUrl.includes('github.com') && downloadUrl.includes('/blob/')) {
-                    downloadUrl = downloadUrl.replace('/blob/', '/raw/');
+                    downloadUrl = downloadUrl.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
                 }
 
-                // Show a toast or feedback (optional)
+                // توفير تغذية راجعة بصرية للمستخدم (UX)
                 const originalText = this.innerHTML;
                 this.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>جاري التحميل...</span>`;
                 if(window.lucide) window.lucide.createIcons();
 
-                // Create invisible iframe
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = downloadUrl;
-                document.body.appendChild(iframe);
+                // 2. Dummy Anchor Technique: محاكاة الضغط للتحميل كـ Attachment وتجاوز Iframe Block
+                const tempLink = document.createElement('a');
+                tempLink.style.display = 'none';
+                tempLink.href = downloadUrl;
+                tempLink.setAttribute('download', '');
+                tempLink.setAttribute('target', '_blank'); // كإجراء أمني إضافي
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
 
-                // Reset button text after short delay
+                // استعادة حالة الزر الأصلية
                 setTimeout(() => {
                     this.innerHTML = originalText;
                     if(window.lucide) window.lucide.createIcons();
