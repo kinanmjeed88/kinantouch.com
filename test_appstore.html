@@ -11,6 +11,7 @@ const appsRegex = /const\s+appsData\s*=\s*(\[[^;]*\]);/s;
 const match = appsRegex.exec(testHtml);
 console.log(match ? match[1] : "No match");
 </script>
+<script>if(localStorage.theme==='dark'||(!('theme' in localStorage)&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');</script>
 </head>
 <body>Test</body>
 </html>

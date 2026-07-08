@@ -33,15 +33,10 @@
     
     
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-window.addEventListener("load", function(){
-    document.body.style.visibility = 'visible';
-    document.body.style.opacity = '1';
-});
-</script>
+
     <script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Segoe UI','Tahoma','Geneva','Verdana','sans-serif']}}}}</script>
     <link rel="stylesheet" href="assets/css/style.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
 <meta property="og:title" content="وكلاء الذكاء الاصطناعي المستقلون: رؤية Anthropic للمستقبل"><meta property="og:description" content="الوكيل الذكي لم يعد مجرد دردشة، بل نظام ينفذ مهام معقدة تلقائياً. كيف تخطط Anthropic لمستقبل العمل الهجين بين البشر والآلة؟"><meta property="og:url" content="https://kinantouch.com/article-anthropic-agents"><meta property="og:image" content="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"><script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "Article",
@@ -248,7 +243,8 @@ article {
 }
 
 </style>
-    </head>
+    <script>if(localStorage.theme==='dark'||(!('theme' in localStorage)&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');</script>
+</head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col min-h-screen">
     <header class="w-full bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -494,7 +490,7 @@ article {
         </div>
     </footer>
     
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/app.js" defer></script>
 
 
 <script>
